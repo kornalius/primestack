@@ -29,19 +29,34 @@ app.configure(configuration())
 
 app.configure(logger)
 
+app.get('log')({ level: 'info', message: 'Setting up Express middlewares...' })
+
 // Enable security, CORS, compression, favicon and body parsing
+app.get('log')({ level: 'info', message: '  - Secure HTTP headers' })
 app.use(helmet({ contentSecurityPolicy: false }))
+app.get('log')({ level: 'info', message: '  - CORS' })
 app.use(cors())
+app.get('log')({ level: 'info', message: '  - Compression' })
 app.use(compress())
+app.get('log')({ level: 'info', message: '  - JSON payload' })
 app.use(json())
+app.get('log')({ level: 'info', message: '  - URL encoded payload' })
 app.use(urlencoded({ extended: true }))
+app.get('log')({ level: 'info', message: '  - Favicon' })
 app.use(favicon(path.join(app.get('public'), 'favicon.ico')))
 // Host the public folder
+app.get('log')({ level: 'info', message: '  - Public folder' })
 app.use('/', staticFiles(app.get('public')))
 
 // Set up Plugins and providers
+app.get('log')({ level: 'info', message: '  - REST' })
 app.configure(rest())
 
+app.get('log')({
+  level: 'info',
+  message: `Setting up socketio on path /${app.get('wsPath')}/ \
+with ${app.get('socketsListeners') || 255} listeners...`
+})
 app.configure(socketio({
   path: `/${app.get('wsPath')}/`
 }, (io) => {
@@ -53,14 +68,19 @@ app.configure(socketio({
   })
 }))
 
-// Set up our services (see `services/composites.ts`)
+app.get('log')({ level: 'info', message: 'Setting up Feathers...' })
+
+// Set up our services
+app.get('log')({ level: 'info', message: '  - services' })
 app.configure(services)
 // Set up event channels (see channels.ts)
+app.get('log')({ level: 'info', message: '  - channels' })
 app.configure(channels)
 
 // Configure a middleware for 404s and the error handler
 app.use(notFound())
 
+app.get('log')({ level: 'info', message: '  - global hooks' })
 app.hooks(appHooks)
 
 setTimeout(async () => {

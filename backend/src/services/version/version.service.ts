@@ -45,6 +45,8 @@ export class Version {
 }
 
 export default function (app: Application): void {
+  app.get('log')({ level: 'info', message: '    - Version' })
+
   // Initialize our service with any options it requires
   app.use('version', new Version())
 
