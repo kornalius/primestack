@@ -1,0 +1,9 @@
+.nyc_output
+coverage
+node_modules
+tests/fixtures
+tests/integrations/eslint-plugin-import
+!.vuepress
+Tests
+docs/.vuepress/dist
+**/*.js
