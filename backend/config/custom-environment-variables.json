@@ -1,0 +1,23 @@
+{
+  "env": "NODE_ENV",
+  "host": "HOST",
+  "port": "PORT",
+  "public": "PUBLIC",
+  "keepAliveTimeout": "KEEP_ALIVE_TIMEOUT",
+  "keepAliveMax": "KEEP_ALIVE_MAX",
+  "apiUrl": "API_URL",
+  "wsPath": "WS",
+  "authentication": {
+    "secret": "AUTHENTICATION_SECRET",
+    "entity": "AUTHENTICATION_ENTITY",
+    "entityId": "AUTHENTICATION_ID",
+    "service": "AUTHENTICATION_SERVICE",
+    "jwtOptions": {
+      "audience": "JWT_AUDIENCE",
+      "issuer": "JWT_ISSUER",
+      "algorithm": "JWT_ALGORITHM",
+      "expiresIn": "JWT_EXPIRATION"
+    }
+  },
+  "socketListeners": "SOCKET_LISTENERS"
+}

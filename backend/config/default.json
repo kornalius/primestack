@@ -1,0 +1,27 @@
+{
+  "env": "ENV",
+  "host": "HOST",
+  "port": "PORT",
+  "public": "PUBLIC",
+  "apiUrl": "API_URL",
+  "wsPath": "WS",
+  "authentication": {
+    "secret": "AUTHENTICATION_SECRET",
+    "authStrategies": ["local"],
+    "jwtOptions": {
+      "header": {
+        "typ": "access"
+      },
+      "audience": "JWT_AUDIENCE",
+      "issuer": "JWT_ISSUER",
+      "algorithm": "JWT_ALGORITHM",
+      "expiresIn": "JWT_EXPIRATION"
+    }
+  },
+  "paginate": {
+    "default": 10,
+    "max": 50
+  },
+  "defaultAuthentication": "authentication",
+  "socketListeners": "SOCKET_LISTENERS"
+}
