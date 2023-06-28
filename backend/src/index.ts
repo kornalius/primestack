@@ -1,18 +1,13 @@
 import app from './app'
+import { info, error } from './logger'
 
 const host = app.get('host')
 const port = app.get('port')
 
 app.listen(port).then(() => {
-  app.get('log')({
-    level: 'info',
-    message: `Feathers application started on http://${host}:${port}`,
-  })
+  info(`Feathers application started on http://${host}:${port}`)
 })
 
 process.on('unhandledRejection', (reason) => {
-  app.get('log')({
-    level: 'error',
-    message: `Unhandled Rejection. ${reason}`,
-  })
+  error(`Unhandled Rejection. ${reason}`)
 })

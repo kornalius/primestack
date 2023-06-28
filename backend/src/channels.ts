@@ -1,5 +1,5 @@
-import '@feathersjs/transport-commons'
-import { HookContext } from '@feathersjs/feathers'
+import { HookContext, Params, RealTimeConnection } from '@feathersjs/feathers'
+import { AuthenticationResult } from '@feathersjs/authentication'
 import { Application } from './declarations'
 
 export default function (app: Application): void {
@@ -8,20 +8,15 @@ export default function (app: Application): void {
     return
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  app.on('connection', (connection: any): void => {
+  app.on('connection', (connection: RealTimeConnection): void => {
     // On a new real-time connection, add it to the anonymous channel
     app.channel('anonymous').join(connection)
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  app.on('login', (authResult: any, { connection }: any): void => {
+  app.on('login', (authResult: AuthenticationResult, { connection }: Params) => {
     // connection can be undefined if there is no
     // real-time connection, e.g. when logging in via REST
     if (connection) {
-      // Obtain the logged in user from the connection
-      // const user = connection.user;
-
       // The connection is no longer anonymous, remove it
       app.channel('anonymous').leave(connection)
 
@@ -30,18 +25,6 @@ export default function (app: Application): void {
 
       // Add it to that specific appId channel
       // app.channel(`appIds/${connection.appId}`).join(connection);
-
-      // Channels can be named anything and joined on any condition
-
-      // E.g. to send real-time events only to admins use
-      // if(user.isAdmin) { app.channel('admins').join(connection); }
-
-      // If the user has joined e.g. chat rooms
-      // if(Array.isArray(user.rooms)) user.rooms.forEach(room => app.channel(`rooms/${room.id}`).join(connection));
-
-      // Easily organize users by email and userid for things like messaging
-      // app.channel(`emails/${user.email}`).join(connection);
-      // app.channel(`userIds/${user.id}`).join(connection);
     }
   })
 

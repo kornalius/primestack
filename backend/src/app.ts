@@ -1,93 +1,80 @@
-import path from 'path'
-import favicon from 'serve-favicon'
-import compress from 'compression'
-import helmet from 'helmet'
-import cors from 'cors'
+import {
+  koa, rest, bodyParser, errorHandler, parseAuthentication, cors, serveStatic,
+} from '@feathersjs/koa'
 
-import { feathers, HookContext as FeathersHookContext } from '@feathersjs/feathers'
+import { feathers } from '@feathersjs/feathers'
 import configuration from '@feathersjs/configuration'
-import express, {
-  json, urlencoded, static as staticFiles, rest, notFound
-} from '@feathersjs/express'
 import socketio from '@feathersjs/socketio'
 
-import { AnyData } from '@/shared/commons'
-import { Application } from './declarations'
-import { ServiceTypes } from './services/types'
+import { Application, ServiceTypes } from './declarations'
 
-import logger from './logger'
+import { configurationValidator } from './configuration'
+import logger, { info } from './logger'
 import services from './services'
 import appHooks from './app.hooks'
 import channels from './channels'
+import mongodb from './mongodb'
 
-const app: Application = express(feathers<ServiceTypes>())
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type HookContext<T = any> = { app: Application } & FeathersHookContext<T>
+const app: Application = koa(feathers<ServiceTypes>())
 
 // Load app configuration
-app.configure(configuration())
+app.configure(configuration(configurationValidator))
 
+// Setting up Winston logger
 app.configure(logger)
 
-app.get('log')({ level: 'info', message: 'Setting up Express middlewares...' })
+info('Setting up Koa...')
 
-// Enable security, CORS, compression, favicon and body parsing
-app.get('log')({ level: 'info', message: '  - Secure HTTP headers' })
-app.use(helmet({ contentSecurityPolicy: false }))
-app.get('log')({ level: 'info', message: '  - CORS' })
+info('  - CORS')
 app.use(cors())
-app.get('log')({ level: 'info', message: '  - Compression' })
-app.use(compress())
-app.get('log')({ level: 'info', message: '  - JSON payload' })
-app.use(json())
-app.get('log')({ level: 'info', message: '  - URL encoded payload' })
-app.use(urlencoded({ extended: true }))
-app.get('log')({ level: 'info', message: '  - Favicon' })
-app.use(favicon(path.join(app.get('public'), 'favicon.ico')))
-// Host the public folder
-app.get('log')({ level: 'info', message: '  - Public folder' })
-app.use('/', staticFiles(app.get('public')))
 
-// Set up Plugins and providers
-app.get('log')({ level: 'info', message: '  - REST' })
+info('  - Public folder')
+app.use(serveStatic(app.get('public')))
+
+info('  - Error handler')
+app.use(errorHandler())
+
+info('  - Authentication parser')
+app.use(parseAuthentication())
+
+info('  - JSON payload parser')
+app.use(bodyParser())
+
+info('  - REST')
 app.configure(rest())
 
-app.get('log')({
-  level: 'info',
-  message: `Setting up socketio on path /${app.get('wsPath')}/ \
-with ${app.get('socketsListeners') || 255} listeners...`
-})
-app.configure(socketio({
-  path: `/${app.get('wsPath')}/`
-}, (io) => {
-  io.sockets.setMaxListeners(app.get('socketsListeners') || 255)
-  io.use((socket, next) => {
-    // eslint-disable-next-line no-param-reassign
-    (socket as AnyData).feathers.appId = socket.handshake.query.appId
-    next()
+info(`Setting up socketio on path "${app.get('wsPath')}/" \
+with ${app.get('socketsListeners') || 255} listeners...`)
+app.configure(
+  socketio({
+    path: `/${app.get('wsPath')}/`,
+    cors: {
+      origin: app.get('origins')
+    }
+  }, (io) => {
+    io.sockets.setMaxListeners(app.get('socketsListeners') || 255)
+    // io.use((socket, next) => {
+    //   // eslint-disable-next-line no-param-reassign
+    //   (socket as AnyData).feathers.appId = socket.handshake.query.appId
+    //   next()
+    // })
   })
-}))
+)
 
-app.get('log')({ level: 'info', message: 'Setting up Feathers...' })
+info('Setting up Feathers...')
 
-// Set up our services
-app.get('log')({ level: 'info', message: '  - services' })
+info('  - services')
 app.configure(services)
-// Set up event channels (see channels.ts)
-app.get('log')({ level: 'info', message: '  - channels' })
+
+info('  - channels')
 app.configure(channels)
 
-// Configure a middleware for 404s and the error handler
-app.use(notFound())
-
-app.get('log')({ level: 'info', message: '  - global hooks' })
+info('  - global hooks')
 app.hooks(appHooks)
 
-setTimeout(async () => {
-  app.get('log')({
-    level: 'info',
-    message: `Running in ${app.get('env') || 'development'} mode`
-  })
-}, 1000)
+info('Setting up MongoDB...')
+app.configure(mongodb)
+
+info(`Running in ${app.get('env') || 'development'} mode`)
 
 export default app

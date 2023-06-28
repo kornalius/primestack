@@ -1,12 +1,13 @@
 {
-  "env": "NODE_ENV",
+  "env": "ENV",
   "host": "HOST",
-  "port": "PORT",
+  "port": {
+    "__name": "PORT",
+    "__format": "number"
+  },
   "public": "PUBLIC",
-  "keepAliveTimeout": "KEEP_ALIVE_TIMEOUT",
-  "keepAliveMax": "KEEP_ALIVE_MAX",
-  "apiUrl": "API_URL",
-  "wsPath": "WS",
+  "wsPath": "WS_PATH",
+  "debug": "DEBUG",
   "authentication": {
     "secret": "AUTHENTICATION_SECRET",
     "entity": "AUTHENTICATION_ENTITY",
@@ -19,5 +20,23 @@
       "expiresIn": "JWT_EXPIRATION"
     }
   },
-  "socketListeners": "SOCKET_LISTENERS"
+  "origins": {
+    "__name": "ORIGINS",
+    "__format": "json"
+  },
+  "paginate": {
+    "default": {
+      "__name": "PAGINATE_DEFAULT",
+      "__format": "number"
+    },
+    "max": {
+      "__name": "PAGINATE_MAX",
+      "__format": "number"
+    }
+  },
+  "socketListeners": {
+    "__name": "SOCKET_LISTENERS",
+    "__format": "number"
+  },
+  "mongodb": "MONGODB"
 }

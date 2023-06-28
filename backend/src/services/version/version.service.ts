@@ -1,7 +1,9 @@
-import { Application } from '@feathersjs/express'
+import { Application } from '@feathersjs/koa'
 import { Id, NullableId, Params } from '@feathersjs/feathers'
 import { MethodNotAllowed } from '@feathersjs/errors'
 import hooks from './version.hooks'
+
+const path = 'version'
 
 interface Data {
   id: Id
@@ -45,13 +47,18 @@ export class Version {
 }
 
 export default function (app: Application): void {
-  app.get('log')({ level: 'info', message: '    - Version' })
-
   // Initialize our service with any options it requires
-  app.use('version', new Version())
+  app.use(path, new Version())
 
   // Get our initialized service so that we can register hooks
-  const service = app.service('version')
+  const service = app.service(path)
 
   service.hooks(hooks)
+}
+
+// Add this service to the service type index
+declare module '../../declarations' {
+  interface ServiceTypes {
+    [path]: Version
+  }
 }

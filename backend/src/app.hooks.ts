@@ -1,4 +1,10 @@
+import { logError } from './hooks/log-error'
+
 export default {
+  around: {
+    all: [logError]
+  },
+
   before: {
     all: [],
     find: [],

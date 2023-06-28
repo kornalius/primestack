@@ -4,6 +4,13 @@
   "description": "PrimeStack backend",
   "main": "src/",
   "private": true,
+  "keywords": [],
+  "author": "Alain Deschenes",
+  "license": "MIT",
+  "types": "./lib",
+  "engines": {
+    "node": ">= 16.20.0"
+  },
   "scripts": {
     "lint": "eslint src/. test/. --config .eslintrc.js --ext .ts --fix",
     "test": "npm run lint && npm run compile",
@@ -12,37 +19,45 @@
     "build": "rm -rf lib/ && tsc"
   },
   "directories": {
-    "lib": "src",
+    "lib": "src/",
     "test": "test/",
     "config": "config/"
   },
-  "keywords": [],
-  "author": "Alain Deschenes",
-  "license": "MIT",
-  "types": "./lib",
+  "feathers": {
+    "language": "ts",
+    "packager": "yarn",
+    "database": "mongodb",
+    "framework": "koa",
+    "transports": [
+      "rest",
+      "websockets"
+    ],
+    "schema": "typebox"
+  },
   "dependencies": {
     "@feathersjs/authentication": "^5.0.6",
+    "@feathersjs/authentication-client": "^5.0.6",
     "@feathersjs/authentication-local": "^5.0.6",
     "@feathersjs/authentication-oauth": "^5.0.6",
     "@feathersjs/configuration": "^5.0.6",
     "@feathersjs/errors": "^5.0.6",
-    "@feathersjs/express": "^5.0.6",
     "@feathersjs/feathers": "^5.0.6",
+    "@feathersjs/koa": "^5.0.6",
+    "@feathersjs/mongodb": "^5.0.6",
+    "@feathersjs/schema": "^5.0.6",
     "@feathersjs/socketio": "^5.0.6",
     "@feathersjs/transport-commons": "^5.0.6",
-    "compression": "^1.7.4",
-    "cors": "^2.8.5",
+    "@feathersjs/typebox": "^5.0.6",
     "dayjs": "^1.11.8",
-    "helmet": "^7.0.0",
     "lodash": "^4.17.21",
-    "serve-favicon": "^2.5.0",
+    "mongodb": "^5.6.0",
     "winston": "^3.9.0"
   },
   "devDependencies": {
-    "@types/compression": "^1.7.2",
+    "@feathersjs/cli": "^5.0.6",
+    "@feathersjs/rest-client": "^5.0.6",
     "@types/lodash": "^4.14.195",
     "@types/node": "^20.3.2",
-    "@types/serve-favicon": "^2.5.4",
     "@typescript-eslint/eslint-plugin": "^5.60.1",
     "@typescript-eslint/parser": "^5.60.1",
     "eslint": "^8.43.0",

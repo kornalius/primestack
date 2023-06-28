@@ -7,6 +7,14 @@ const messagesToIgnore: string[] = []
 
 let winstonLogger: Logger
 
+export const info = (message: string): void => {
+  winstonLogger.info(message)
+}
+
+export const error = (message: string): void => {
+  winstonLogger.error(message)
+}
+
 export default (app: Application): Logger => {
   if (!winstonLogger && app) {
     const ignorePrivate = format((info) => {
@@ -23,24 +31,38 @@ export default (app: Application): Logger => {
       return info
     })
 
-    const customTransports = [new transports.Console({
-      format: ignorePrivate(),
-    })]
+    const customTransports = [
+      new transports.Console({
+        format: ignorePrivate(),
+      })
+    ]
 
     // Configure the Winston logger. For the complete documentation see https://github.com/winstonjs/winston
     winstonLogger = createLogger({
       // To see more detailed errors, change this to 'debug'
-      level: 'info',
+      level: app.get('debug') || 'info',
       levels: config.npm.levels,
       format: format.combine(
         ignoreMessages(),
         format.splat(),
-        format.simple()
+        format.errors({ stack: true }),
+        format.colorize(),
+        format.timestamp(),
+        format.printf(({
+          level,
+          message,
+          timestamp,
+          stack
+        }) => {
+          if (stack) {
+            // print log trace
+            return `${timestamp} ${level}: ${message} - ${stack}`
+          }
+          return `${timestamp} ${level}: ${message}`
+        }),
       ),
       transports: customTransports,
     })
-
-    app.set('log', winstonLogger.log.bind(winstonLogger))
   }
 
   return winstonLogger
