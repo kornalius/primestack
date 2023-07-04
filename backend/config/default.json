@@ -1,6 +1,14 @@
 {
   "authentication": {
-    "authStrategies": ["local"],
+    "authStrategies": [
+      "jwt",
+      "local",
+      "google",
+      "facebook",
+      "twitter",
+      "github",
+      "auth0"
+    ],
     "jwtOptions": {
       "header": {
         "typ": "access"

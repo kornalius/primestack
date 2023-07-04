@@ -120,7 +120,7 @@ export const scanDiff = (v1: AnyData, v2: AnyData): AnyData => {
  */
 export const getId = (data?: AnyData): string | undefined => (
   // eslint-disable-next-line no-underscore-dangle
-  data?.id || data?.__id
+  data?._id || data?.__id
 )
 
 /**

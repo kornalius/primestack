@@ -11,7 +11,7 @@ const syncWithStorage = ['itemsById']
 
 export const api = createPiniaClient(feathersClient, {
   pinia,
-  idField: 'id',
+  idField: '_id',
   // optional
   ssr: false,
   whitelist: [],

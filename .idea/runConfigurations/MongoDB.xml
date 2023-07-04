@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="MongoDB" type="docker-deploy" factoryName="docker-image" server-name="Docker">
+    <deployment type="docker-image">
+      <settings>
+        <option name="imageTag" value="mongo:latest" />
+        <option name="containerName" value="mongodb" />
+      </settings>
+    </deployment>
+    <method v="2" />
+  </configuration>
+</component>

@@ -1,0 +1,10 @@
+// Get version
+POST http://localhost:3030/users
+Accept: application/json
+Content-Type: application/json
+
+{
+  "email": "arianesoftinc@gmail.com",
+  "password": "molson"
+}
+###

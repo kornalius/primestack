@@ -1,17 +1,15 @@
 import {
   koa, rest, bodyParser, errorHandler, parseAuthentication, cors, serveStatic,
 } from '@feathersjs/koa'
-
 import { feathers } from '@feathersjs/feathers'
 import configuration from '@feathersjs/configuration'
 import socketio from '@feathersjs/socketio'
-
 import { Application, ServiceTypes } from './declarations'
-
 import { configurationValidator } from './configuration'
 import logger, { info } from './logger'
 import services from './services'
 import appHooks from './app.hooks'
+import { authentication } from './authentication'
 import channels from './channels'
 import mongodb from './mongodb'
 
@@ -61,6 +59,12 @@ app.configure(
   })
 )
 
+info('Setting up MongoDB...')
+app.configure(mongodb)
+
+info('Setting up Authentication...')
+app.configure(authentication)
+
 info('Setting up Feathers...')
 
 info('  - services')
@@ -71,9 +75,6 @@ app.configure(channels)
 
 info('  - global hooks')
 app.hooks(appHooks)
-
-info('Setting up MongoDB...')
-app.configure(mongodb)
 
 info(`Running in ${app.get('env') || 'development'} mode`)
 

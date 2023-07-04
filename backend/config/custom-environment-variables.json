@@ -18,6 +18,32 @@
       "issuer": "JWT_ISSUER",
       "algorithm": "JWT_ALGORITHM",
       "expiresIn": "JWT_EXPIRATION"
+    },
+    "local": {
+      "usernameField": "USERNAME_FIELD",
+      "passwordField": "USERNAME_PASSWORD"
+    },
+    "oauth": {
+      "google": {
+        "key": "GOOGLE_ID",
+        "secret": "GOOGLE_SECRET"
+      },
+      "facebook": {
+        "key": "FACEBOOK_ID",
+        "secret": "FACEBOOK_SECRET"
+      },
+      "twitter": {
+        "key": "TWITTER_ID",
+        "secret": "TWITTER_SECRET"
+      },
+      "github": {
+        "key": "GITHUB_ID",
+        "secret": "GITHUB_SECRET"
+      },
+      "auth0": {
+        "key": "AUTH0_ID",
+        "secret": "AUTH0_SECRET"
+      }
     }
   },
   "origins": {
