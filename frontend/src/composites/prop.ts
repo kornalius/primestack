@@ -62,11 +62,11 @@ export const useSyncedProp = (
 }
 
 /**
- * Creates a new Ref which is initialized with the value property
- * and updated when the property value changes. When the Ref changes, it
- * emits an input with the new value
+ * Creates a new Ref which is initialized with the model-value property
+ * and updated when the property model-value changes. When the Ref changes, it
+ * emits an update:model-value with the new value
  */
-export const useVModel = (
+export const useModelValue = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   props: Record<string, any>,
   emit: (e: string, ...args) => void,

@@ -19,9 +19,6 @@ module.exports = {
   },
   ignorePatterns: [],
   rules: {
-    'no-plusplus': ['error', {
-      allowForLoopAfterthoughts: true,
-    }],
     'vuejs-accessibility/click-events-have-key-events': 'off',
     'vuejs-accessibility/form-control-has-label': 'off',
     'vue/valid-v-slot': ['error', {

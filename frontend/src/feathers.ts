@@ -2,6 +2,8 @@ import { feathers, HookContext } from '@feathersjs/feathers'
 import { stripSlashes } from '@feathersjs/commons'
 import socketio from '@feathersjs/socketio-client'
 import io from 'socket.io-client'
+import { GeneralError, NotFound } from '@feathersjs/errors'
+import useSnacks from '@/features/Snacks/composites'
 import { getEnv } from './utils/variables'
 
 const API_URL = getEnv(import.meta.env.VITE_API_URL) as string
@@ -71,13 +73,74 @@ export const hooks = {
   },
 }
 
+const errorHandler = (context: HookContext): HookContext => {
+  const snacks = useSnacks()
+
+  const { error } = context
+
+  if (!error) {
+    return context
+  }
+
+  // Logout errors should be eaten
+  if (context.error.code === 401 && context.method === 'remove') {
+    return context
+  }
+
+  // Will display original errors in the console only
+  // if (skipErrorSnacks()) {
+  //   // eslint-disable-next-line no-console
+  //   console.error(error)
+  //   return context
+  // }
+
+  const pushSnack = (err) => {
+    snacks.push({
+      ...err,
+      level: 'Error',
+    })
+  }
+
+  if (error) {
+    if (!error.code) {
+      pushSnack({
+        ...context,
+        error: new GeneralError('server error'),
+      })
+      return context
+    }
+
+    let err
+    let message = ''
+
+    switch (error.code) {
+      case 408:
+        message = 'Server timeout!'
+        err = new GeneralError(message)
+        break
+
+      case 404:
+        message = `Could not ${error.hook?.method} resource with ID ${error.hook?.id}`
+        err = new NotFound(message)
+        break
+
+      default:
+        err = new GeneralError(error)
+    }
+
+    pushSnack(err)
+  }
+
+  return context
+}
+
 export const feathersClient = feathers()
   .configure(socketio(socket, { timeout: SOCKET_TIMEOUT }))
   .hooks({
     before: {
       all: [
-        hooks.authentication(),
-        hooks.populateHeader(),
+        // hooks.authentication(),
+        // hooks.populateHeader(),
       ],
     },
     error: {

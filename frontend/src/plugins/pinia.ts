@@ -3,7 +3,7 @@ import { createPiniaClient } from 'feathers-pinia'
 import { feathersClient } from '@/feathers'
 import { AnyData } from '@/shared/commons'
 
-import version from '@/features/Version/service'
+import health from '@/features/Health/service'
 
 export const pinia = createPinia()
 
@@ -40,6 +40,6 @@ export const api = createPiniaClient(feathersClient, {
   },
 
   services: {
-    version,
+    health,
   },
 })

@@ -4,4 +4,8 @@ export default (lazyLoad, patterns) => ([
     path: '/home',
     component: lazyLoad('views/Home/Main'),
   },
+  {
+    path: '/test',
+    component: lazyLoad('views/Home/Test'),
+  },
 ])

@@ -11,7 +11,7 @@ function lazyLoad(view) {
   return () => import(/* @vite-ignore */ dynamicPath)
 }
 
-export const routes = [
+const routes = [
   {
     path: '/',
     name: 'Index',
@@ -19,25 +19,11 @@ export const routes = [
   },
   ...Login(lazyLoad, patterns),
   ...Home(lazyLoad, patterns),
+  // Always leave this as last one,
+  // but you can also remove it
   {
-    path: '/unauthenticated',
-    name: 'Unauthenticated',
-    component: lazyLoad('views/Error/Unauthenticated'),
-  },
-  {
-    path: '/404',
-    name: 'NotFound',
-    component: lazyLoad('views/Error/NotFound'),
-  },
-  {
-    path: '/network-error',
-    name: 'NetworkError',
-    component: lazyLoad('views/Error/NetworkError'),
-  },
-  {
-    path: '/invalid-data',
-    name: 'InvalidData',
-    component: lazyLoad('views/Error/InvalidData'),
+    path: '/:catchAll(.*)*',
+    component: lazyLoad('views/Errors/NotFound'),
   },
 ] as RouteRecordRaw[]
 

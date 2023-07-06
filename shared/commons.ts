@@ -11,7 +11,7 @@ export interface FeathersTempRecordInterface {
 }
 
 export interface BaseInterface extends FeathersTempRecordInterface {
-  id?: Id;
+  _id?: Id;
   'created_at': Timestamp;
   'created_by': string;
   'updated_at': Timestamp;

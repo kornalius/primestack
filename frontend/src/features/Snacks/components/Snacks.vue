@@ -1,0 +1,31 @@
+<template>
+  <transition
+    v-for="snack in snacks"
+    :key="snack"
+    enter-active-class="animate__animated animate__fadeIn"
+    leave-active-class="animate__animated animate__fadeOut"
+    appear
+  >
+    <q-banner :class="snackClass(snack)" inline-actions>
+      {{ snack.message }}
+
+      <template #action>
+        <q-btn
+          label="Dismiss"
+          flat
+          @click="removeSnack(snack.id)"
+        />
+      </template>
+    </q-banner>
+  </transition>
+</template>
+
+<script setup lang="ts">
+import useSnacks from '@/features/Snacks/composites'
+
+const {
+  snacks,
+  snackClass,
+  remove: removeSnack,
+} = useSnacks()
+</script>
