@@ -1,6 +1,7 @@
-import { Type, getValidator, defaultAppConfiguration } from '@feathersjs/typebox'
-import type { Static } from '@feathersjs/typebox'
-
+import {
+  Type, Static, getValidator, defaultAppConfiguration,
+} from '@feathersjs/typebox'
+// eslint-disable-next-line import/no-cycle
 import { dataValidator } from './validators'
 
 export const configurationSchema = Type.Intersect([

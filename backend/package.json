@@ -14,7 +14,7 @@
   "scripts": {
     "lint": "eslint src/. test/. --config .eslintrc.js --ext .ts --fix",
     "test": "npm run lint && npm run compile",
-    "dev": "export $(cat .env | xargs) && ts-node-dev --no-notify src/",
+    "dev": "export $(cat .env | xargs) && ts-node-dev --no-notify -r tsconfig-paths/register src/",
     "start": "node lib/",
     "build": "rm -rf lib/ && tsc"
   },
@@ -34,6 +34,9 @@
     ],
     "schema": "typebox"
   },
+  "bundledDependencies": [
+    "@/shared"
+  ],
   "dependencies": {
     "@feathersjs/authentication": "^5.0.6",
     "@feathersjs/authentication-client": "^5.0.6",

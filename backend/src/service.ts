@@ -1,10 +1,12 @@
 import get from 'lodash/get'
+import omit from 'lodash/omit'
+import difference from 'lodash/difference'
 // eslint-disable-next-line import/no-cycle
 import { CreateServiceOptions, HookContext } from '@/declarations'
 import {
   getValidator, querySyntax, Static, Type
 } from '@feathersjs/typebox'
-import { resolve, hooks as schemaHooks } from '@feathersjs/schema'
+import { resolve, hooks as schemaHooks, virtual } from '@feathersjs/schema'
 import { authenticate } from '@feathersjs/authentication'
 import { Application } from '@feathersjs/koa'
 import { NextFunction, Params, ServiceInterface } from '@feathersjs/feathers'
@@ -12,7 +14,8 @@ import { HookFunction } from '@feathersjs/feathers/src/declarations'
 import { AnyData } from '@/shared/commons'
 import { MongoDBService } from '@feathersjs/mongodb'
 import { Collection, Db } from 'mongodb'
-import omit from 'lodash/omit'
+import { softDelete } from './hooks/soft-delete'
+// eslint-disable-next-line import/no-cycle
 import {
   dataValidator as validatorForData,
   queryValidator as validatorForQuery,
@@ -35,23 +38,157 @@ export class BaseService {
 
 // By default calls the standard MongoDB adapter service methods but can be customized with your own functionality.
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export class MongoService<ServiceParams extends Params = AnyData> extends MongoDBService<
+export class MongoService<ServiceParams extends Params = Params> extends MongoDBService<
   AnyData,
   AnyData,
   AnyData,
   AnyData
 > {}
 
+export const reservedFields = [
+  '_id',
+  'createdAt',
+  'createdBy',
+  'updatedAt',
+  'updatedBy',
+  'deletedAt',
+  'deletedBy',
+  'userId',
+  '_user',
+]
+
+export const fieldTypes = [
+  'string',
+  'number',
+  'boolean',
+]
+
 export const createService = (name: string, klass: Newable<AnyData>, options: CreateServiceOptions) => {
-  type TSType = Static<typeof options.schema>
+  const { schema } = options
+
+  /**
+   * Upgrade Schema
+   */
+
+  if (options.created) {
+    schema.properties = {
+      ...schema.properties,
+      createdAt: Type.String({ format: 'date-time' }),
+      createdBy: Type.Optional(Type.String({ objectid: true })),
+    }
+  }
+
+  if (options.updated) {
+    schema.properties = {
+      ...schema.properties,
+      updatedAt: Type.String({ format: 'date-time' }),
+      updatedBy: Type.Optional(Type.String({ objectid: true })),
+    }
+  }
+
+  if (options.softDelete) {
+    schema.properties = {
+      ...schema.properties,
+      deletedAt: Type.Optional(Type.String({ format: 'date-time' })),
+      deletedBy: Type.Optional(Type.String({ objectid: true })),
+    }
+  }
+
+  if (options.user) {
+    schema.properties = {
+      ...schema.properties,
+      userId: Type.Optional(Type.String({ objectid: true })),
+      _user: Type.Optional(Type.Ref(Type.String({ $id: 'User' }))),
+    }
+  }
+
+  /**
+   * Custom resolvers
+   */
+
+  const userIdResolver = options.user
+    ? {
+      userId: async (value: AnyData, record: AnyData, context: HookContext) => (
+        // Associate the currently authenticated user
+        // eslint-disable-next-line no-underscore-dangle
+        context.params?.user?._id
+      ),
+    } : {}
+
+  const limitToUserIdResolver = options.user
+    ? {
+      userId: async (value: AnyData, query: AnyData, context: HookContext) => {
+        if (context.params?.user) {
+          // eslint-disable-next-line no-underscore-dangle
+          return context.params.user._id
+        }
+        return value
+      }
+    } : {}
+
+  const limitToNonDeletedResolver = options.softDelete
+    ? {
+      deletedAt: async () => null,
+    } : {}
+
+  const createdResolver = options.created
+    ? {
+      createdAt: async () => Date.now(),
+      createdBy: async (value: AnyData, record: AnyData, context: HookContext) => (
+        // eslint-disable-next-line no-underscore-dangle
+        context.params?.user?._id
+      ),
+    } : {}
+
+  const updatedResolver = options.updated
+    ? {
+      updatedAt: async () => Date.now(),
+      updatedBy: async (value: AnyData, record: AnyData, context: HookContext) => (
+        // eslint-disable-next-line no-underscore-dangle
+        context.params?.user?._id
+      ),
+    } : {}
+
+  const nullifyDeletedAtResolver = options.softDelete
+    ? {
+      deletedAt: async () => null,
+    } : {}
+
+  const userResolver = options.user
+    ? {
+      _user: virtual(async (record: AnyData, context: HookContext) => {
+        if (record.userId) {
+          // Populate the user associated via `userId`
+          return context.app.service('users').get(record.userId)
+        }
+        return undefined
+      }),
+    } : {}
+
+  /**
+   * Result
+   */
+
+  type TSType = Static<typeof schema>
 
   const resultResolver = resolve<TSType, HookContext>(
-    options.resolvers?.result || {}
+    {
+      ...(options.resolvers?.result || {}),
+      ...userResolver as AnyData,
+    }
   )
+
+  /**
+   * External
+   */
 
   const externalResolver = resolve<TSType, HookContext>(
     options.resolvers?.external || {}
   )
+
+  /**
+   * Create
+   */
 
   const dataKeys = Array.isArray(options.validators?.data)
     ? options.validators?.data
@@ -59,32 +196,57 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
 
   // Schema for creating new entries
   const dataSchema = Type.Pick(
-    options.schema,
-    dataKeys || [],
-    { $id: `${options.schema.$id}Data` }
+    schema,
+    difference(dataKeys || Object.keys(schema.properties), reservedFields) as string[],
+    { $id: `${schema.$id}Data` }
   )
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   type Data = Static<typeof dataSchema>
   const dataValidator = getValidator(dataSchema, validatorForData)
   const dataResolver = resolve<TSType, HookContext>(
-    options.resolvers?.data?.$create || options.resolvers?.data || {}
+    {
+      ...(options.resolvers?.data?.$create || options.resolvers?.data || {}),
+      ...userIdResolver as AnyData,
+      ...createdResolver as AnyData,
+      ...nullifyDeletedAtResolver as AnyData,
+    }
   )
 
+  /**
+   * Patch
+   */
+
   // Schema for updating existing entries
-  const patchSchema = Type.Partial(options.schema, {
-    $id: `${options.schema.$id}Patch`
-  })
+  const patchSchema = Type.Partial(
+    dataSchema,
+    { $id: `${schema.$id}Patch`, additionalProperties: false }
+  )
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   type Patch = Static<typeof patchSchema>
   const patchValidator = getValidator(patchSchema, validatorForData)
   const patchResolver = resolve<TSType, HookContext>(
-    options.resolvers?.data?.$patch || options.resolvers?.data || {}
+    {
+      ...(options.resolvers?.data?.$patch || options.resolvers?.data || {}),
+      ...updatedResolver as AnyData,
+    }
   )
 
-  const queryKeys = ['id', ...(options.validators?.query || [])]
+  /**
+   * Query
+   */
+
+  const queryKeys = [
+    '_id',
+    ...(options.validators?.query || []),
+    ...(options.created ? ['createdAt', 'createdBy'] : []),
+    ...(options.updated ? ['updatedAt', 'updatedBy'] : []),
+    ...(options.softDelete ? ['deletedAt', 'deletedBy'] : []),
+    ...(options.user ? ['userId'] : []),
+  ]
 
   // Schema for allowed query properties
-  const queryProperties = Type.Pick(options.schema, queryKeys)
+  const queryProperties = Type.Pick(schema, queryKeys)
   const querySchema = Type.Intersect(
     [
       querySyntax(queryProperties),
@@ -96,8 +258,16 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
   type Query = Static<typeof querySchema>
   const queryValidator = getValidator(querySchema, validatorForQuery)
   const queryResolver = resolve<Query, HookContext>(
-    options.resolvers?.query || {}
+    {
+      ...(options.resolvers?.query || {}),
+      ...limitToUserIdResolver as AnyData,
+      ...limitToNonDeletedResolver as AnyData,
+    }
   )
+
+  /**
+   * Hooks
+   */
 
   type MyServiceInterface = ServiceInterface<
     TSType,
@@ -169,6 +339,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
         ...expandHooks('before.patch'),
       ],
       remove: [
+        ...(options.softDelete ? [softDelete] : []),
         ...expandHooks('before.remove'),
       ],
     },
@@ -223,7 +394,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
 
   return {
     schemas: {
-      main: options.schema,
+      main: schema,
       create: dataSchema,
       patch: patchSchema,
       query: querySchema,
@@ -252,8 +423,9 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
         Model: collection
           ? app.get('mongodbClient')
             .then((db: Db) => db.collection(collection))
-            .then((collection: Collection) => {
+            .then(async (collection: Collection) => {
               if (options.indexes) {
+                await collection.dropIndexes()
                 options.indexes.forEach((index) => {
                   collection.createIndex(index.fields, omit(index, ['fields']))
                     // eslint-disable-next-line @typescript-eslint/no-empty-function

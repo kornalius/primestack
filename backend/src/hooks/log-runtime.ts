@@ -1,6 +1,6 @@
 import { HookContext } from '@/declarations'
 import { NextFunction } from '@feathersjs/feathers'
-import { info } from '../logger'
+import { info } from '@/logger'
 
 export const logRuntime = async (context: HookContext, next: NextFunction) => {
   const startTime = Date.now()

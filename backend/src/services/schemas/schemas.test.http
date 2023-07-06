@@ -1,0 +1,94 @@
+// List schemas
+GET http://localhost:3030/schemas
+Accept: application/json
+Content-Type: application/json
+###
+
+// Create schema
+POST http://localhost:3030/schemas
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "Test",
+  "methods": [
+    "get",
+    "find"
+  ],
+  "created": true,
+  "updated": true,
+  "softDelete": true,
+  "user": true,
+  "fields": [
+    {
+      "name": "field1",
+      "type": "string",
+      "hidden": true,
+      "optional": false,
+      "array": false,
+      "readonly": false,
+      "queryable": true
+    },
+    {
+      "name": "field2",
+      "type": "number",
+      "hidden": false,
+      "optional": true,
+      "array": false,
+      "readonly": false,
+      "queryable": true
+    }
+  ],
+  "indexes": [
+    {
+      "name": "field1",
+      "order": 1,
+      "unique": true,
+      "sparse": false
+    }
+  ]
+}
+
+> {%
+  // client.log(response.body._id)
+  client.global.set("schemaId", response.body._id);
+%}
+###
+
+// Patch schema
+PATCH http://localhost:3030/schemas/{{schemaId}}
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "Test",
+  "methods": [
+    "get",
+    "find"
+  ],
+  "created": true,
+  "updated": true,
+  "softDelete": true,
+  "user": true,
+  "fields": [
+    {
+      "name": "field1",
+      "type": "boolean",
+      "hidden": true,
+      "optional": false,
+      "array": false,
+      "readonly": false,
+      "queryable": true
+    },
+    {
+      "name": "field2",
+      "type": "number",
+      "hidden": false,
+      "optional": true,
+      "array": false,
+      "readonly": false,
+      "queryable": true
+    }
+  ]
+}
+###

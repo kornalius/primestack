@@ -96,16 +96,30 @@ export interface CreateServiceMongo {
 }
 
 export interface CreateServiceOptions {
+  // TypeBox schema for the service
   schema: TObject
+  // hooks for the service
   hooks?: CreateServiceHooksMap
+  // pagination options for the service
   paginate?: PaginationOptions
+  // mongodb collection name to use
   collection?: string
+  // should the user be authenticated to access this service?
   authentication?: boolean
-  methods?: string[],
+  // supported method names for the service (ex: 'get', 'find', 'create', 'update', 'patch', 'remove')
+  methods?: string[]
+  // indexes to create
   indexes?: Index[]
+  // should we manage createdAt and createdBy fields automatically?
   created?: boolean
+  // should we manage updatedAt and updatedBy fields automatically?
   updated?: boolean
+  // should we assign the userId when creating
+  user?: boolean
+  // should we manage deletedAt and deletedBy fields automatically?
   softDelete?: boolean
+  // service validators
   validators?: CreateServiceValidators
+  // service resolvers
   resolvers?: CreateServiceResolvers
 }

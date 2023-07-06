@@ -1,7 +1,16 @@
 // For more information about this file see https://dove.feathersjs.com/guides/cli/validators.html
 import { keywordObjectId } from '@feathersjs/mongodb'
-import { Ajv, addFormats } from '@feathersjs/schema'
-import type { FormatsPluginOptions } from '@feathersjs/schema'
+import { Ajv, addFormats, FormatsPluginOptions } from '@feathersjs/schema'
+// eslint-disable-next-line import/no-cycle
+import { reservedFields } from './service'
+
+export const ajv = new Ajv({})
+
+export const availableFieldname = {
+  keyword: 'availableFieldname',
+  type: 'string',
+  validate: (schema: unknown, data: string): boolean => !reservedFields.includes(data),
+} as const
 
 const formats: FormatsPluginOptions = [
   'date-time',
@@ -28,7 +37,7 @@ const formats: FormatsPluginOptions = [
   'binary',
 ]
 
-export const dataValidator: Ajv = addFormats(new Ajv({}), formats)
+export const dataValidator: Ajv = addFormats(ajv, formats)
 
 export const queryValidator: Ajv = addFormats(
   new Ajv({
@@ -38,4 +47,6 @@ export const queryValidator: Ajv = addFormats(
 )
 
 dataValidator.addKeyword(keywordObjectId)
+dataValidator.addKeyword(availableFieldname)
+
 queryValidator.addKeyword(keywordObjectId)

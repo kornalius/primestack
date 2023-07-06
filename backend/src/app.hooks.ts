@@ -1,12 +1,17 @@
+import { countCalls } from './hooks/count-calls'
 import { logError } from './hooks/log-error'
 
 export default {
   around: {
-    all: [logError]
+    all: [
+      logError,
+    ],
   },
 
   before: {
-    all: [],
+    all: [
+      countCalls,
+    ],
     find: [],
     get: [],
     create: [],

@@ -52,7 +52,7 @@ export default (app: Application): Logger => {
           level,
           message,
           timestamp,
-          stack
+          stack,
         }) => {
           if (stack) {
             // print log trace

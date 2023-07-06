@@ -5,27 +5,35 @@ import { HookContext } from '@feathersjs/feathers'
 import { AnyData } from '@/shared/commons'
 import { passwordHash } from '@feathersjs/authentication-local'
 // eslint-disable-next-line import/no-cycle
-import { createService, MongoService } from '../../service'
+import { createService, MongoService } from '@/service'
 
 const path = 'users'
 
 class Service extends MongoService {}
 
-const service = createService('users', Service, {
-  collection: 'users',
-  schema: Type.Object(
+export const schema = Type.Object(
+  {
+    _id: Type.String({ objectid: true }),
+    email: Type.String({ format: 'email' }),
+    password: Type.Optional(Type.String()),
+    googleId: Type.Optional(Type.String()),
+    facebookId: Type.Optional(Type.String()),
+    twitterId: Type.Optional(Type.String()),
+    githubId: Type.Optional(Type.String()),
+    auth0Id: Type.Optional(Type.String())
+  },
+  { $id: 'User', additionalProperties: false }
+)
+
+const service = createService(path, Service, {
+  schema,
+  indexes: [
     {
-      id: Type.String({ objectid: true }),
-      email: Type.String({ format: 'email' }),
-      password: Type.Optional(Type.String()),
-      googleId: Type.Optional(Type.String()),
-      facebookId: Type.Optional(Type.String()),
-      twitterId: Type.Optional(Type.String()),
-      githubId: Type.Optional(Type.String()),
-      auth0Id: Type.Optional(Type.String())
-    },
-    { $id: 'User', additionalProperties: false }
-  ),
+      fields: { email: 1 },
+      unique: true,
+    }
+  ],
+  collection: 'users',
   methods: ['find', 'get', 'create', 'patch', 'remove'],
   validators: {
     data: ['email', 'password', 'googleId', 'facebookId', 'twitterId', 'githubId', 'auth0Id'],
@@ -44,7 +52,7 @@ const service = createService('users', Service, {
       },
     },
     query: {
-      id: async (value: AnyData, user: AnyData, context: HookContext) => {
+      _id: async (value: AnyData, user: AnyData, context: HookContext) => {
         if (context.params.user) {
           // eslint-disable-next-line no-underscore-dangle
           return context.params.user._id
@@ -53,12 +61,6 @@ const service = createService('users', Service, {
       }
     }
   },
-  indexes: [
-    {
-      fields: { email: 1 },
-      unique: true,
-    }
-  ],
   hooks: {
     around: {
       all: [],
