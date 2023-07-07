@@ -1,4 +1,4 @@
-import { AnyData } from '@/shared/commons'
+import { AnyData } from '@/shared/interfaces/commons'
 
 export const getEnv = (
   value?: AnyData | string | number | boolean | null,

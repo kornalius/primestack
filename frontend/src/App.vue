@@ -12,35 +12,47 @@
         />
 
         <q-toolbar-title>
-          <q-tabs align="left">
-            <q-route-tab to="/test" label="Test" />
-            <q-route-tab to="/page2" label="Page Two" />
-            <q-route-tab to="/page3" label="Page Three" />
-          </q-tabs>
+          <!--          <q-tabs align="left">-->
+          <!--            <q-route-tab to="/test" label="Test" />-->
+          <!--            <q-route-tab to="/page2" label="Page Two" />-->
+          <!--            <q-route-tab to="/page3" label="Page Three" />-->
+          <!--          </q-tabs>-->
         </q-toolbar-title>
 
-        <q-btn
-          v-if="false"
-          icon="mdi-menu"
-          aria-label="Menu"
-          flat
-          dense
-          round
-          @click="toggleRightDrawer"
-        />
+        <!--        <q-btn-->
+        <!--          v-if="false"-->
+        <!--          icon="mdi-menu"-->
+        <!--          aria-label="Menu"-->
+        <!--          flat-->
+        <!--          dense-->
+        <!--          round-->
+        <!--          @click="toggleRightDrawer"-->
+        <!--        />-->
       </q-toolbar>
     </q-header>
 
     <q-drawer
       class="bg-dark text-white"
       :model-value="leftDrawerOpen"
-      :width="200"
+      :width="250"
       side="left"
     >
       <q-list>
         <q-item-label class="row items-center" header>
           <q-icon name="mdi-chart-line-stacked" size="x-large" />
-          <span class="text-h6 q-ml-sm">PrimeStack</span>
+
+          <span class="text-h6 q-mx-sm">PrimeStack</span>
+
+          <span class="text-italic text-grey text-caption">v{{ version }}</span>
+
+          <!--          <q-btn-->
+          <!--            size="x-small"-->
+          <!--            flat-->
+          <!--            round-->
+          <!--            @click="refreshHealth"-->
+          <!--          >-->
+          <!--            <q-icon name="mdi-refresh" />-->
+          <!--          </q-btn>-->
         </q-item-label>
 
         <q-item-label header>
@@ -49,8 +61,8 @@
 
         <q-item
           class="Drawer__item"
-          tag="a"
-          href="/test"
+          tag="router-link"
+          to="/test"
           clickable
         >
           <q-item-section avatar>
@@ -64,32 +76,16 @@
       </q-list>
     </q-drawer>
 
-    <q-drawer
-      :model-value="rightDrawerOpen"
-      side="right"
-      bordered
-    >
-      <!-- drawer content -->
-    </q-drawer>
-
     <q-page-container>
       <snacks />
 
-      <q-page class="row q-ma-md">
+      <q-page class="q-ma-md">
         <router-view />
       </q-page>
     </q-page-container>
 
     <q-footer class="bg-dark text-white">
-      <q-toolbar>
-        <q-toolbar-title />
-        <div class="text-italic text-grey">
-          v{{ version }}
-        </div>
-        <q-btn flat round @click="refreshHealth">
-          <q-icon name="mdi-refresh" />
-        </q-btn>
-      </q-toolbar>
+      <q-toolbar />
     </q-footer>
   </q-layout>
 </template>
@@ -98,9 +94,9 @@
 import { onMounted, ref } from 'vue'
 import useSnacks from '@/features/Snacks/composites'
 import Snacks from '@/features/Snacks/components/Snacks.vue'
-import { useFeathers } from '@/composites/feathers'
+// import { useFeathers } from '@/composites/feathers'
 
-const { api } = useFeathers()
+// const { api } = useFeathers()
 
 const {
   pushError,
@@ -119,22 +115,17 @@ onMounted(() => {
 const version = import.meta.env.PACKAGE_VERSION
 
 const leftDrawerOpen = ref(true)
-const rightDrawerOpen = ref(false)
 
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
 
-function toggleRightDrawer() {
-  rightDrawerOpen.value = !rightDrawerOpen.value
-}
-
-function refreshHealth() {
-  api.service('health').get(0).then((result) => {
-    // eslint-disable-next-line no-console
-    console.log(result)
-  })
-}
+// function refreshHealth() {
+//   api.service('health').get(0).then((result) => {
+//     // eslint-disable-next-line no-console
+//     console.log(result)
+//   })
+// }
 </script>
 
 <style lang="sass">

@@ -2,7 +2,7 @@ import { authenticate } from '@feathersjs/authentication'
 import { Application } from '@feathersjs/koa'
 import { Type, Static } from '@feathersjs/typebox'
 import { HookContext } from '@feathersjs/feathers'
-import { AnyData } from '@/shared/commons'
+import { AnyData } from '@/shared/interfaces/commons'
 import { passwordHash } from '@feathersjs/authentication-local'
 // eslint-disable-next-line import/no-cycle
 import { createService, MongoService } from '@/service'

@@ -1,5 +1,9 @@
 import { useInstanceDefaults } from 'feathers-pinia'
-import { HealthInterface } from './interfaces'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { Static } from '@feathersjs/typebox'
+import { schema } from '@/shared/schemas/health'
+
+type HealthInterface = Static<typeof schema>
 
 export default {
   setupInstance: (data: HealthInterface): HealthInterface => (

@@ -1,5 +1,5 @@
 import { computed, ComputedRef } from 'vue'
-import { Snack } from './interfaces'
+import { Snack } from '@/shared/interfaces/snacks'
 import useSnackStore from './store'
 
 export default (): {

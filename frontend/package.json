@@ -26,6 +26,7 @@
     "@feathersjs/errors": "^5.0.6",
     "@feathersjs/feathers": "^5.0.6",
     "@feathersjs/socketio-client": "^5.0.6",
+    "@feathersjs/typebox": "^5.0.6",
     "@intlify/unplugin-vue-i18n": "^0.11.0",
     "@quasar/extras": "^1.16.4",
     "animate.css": "^4.1.1",

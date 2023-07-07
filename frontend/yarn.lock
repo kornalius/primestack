@@ -283,6 +283,14 @@
     encodeurl "^1.0.2"
     lodash "^4.17.21"
 
+"@feathersjs/typebox@^5.0.6":
+  version "5.0.6"
+  resolved "https://registry.yarnpkg.com/@feathersjs/typebox/-/typebox-5.0.6.tgz#152d43ea84fc051bc4458b2419e89b556be3fffa"
+  integrity sha512-jP8fIYeZaIPSlG1q8cSppGroY5+ZGYFeYmQsZ4E9/pQBuIB2AJkKF82OustZ7XWJtlv/paAjE1avhROyoE07dQ==
+  dependencies:
+    "@feathersjs/schema" "^5.0.6"
+    "@sinclair/typebox" "^0.25.0"
+
 "@humanwhocodes/config-array@^0.11.10":
   version "0.11.10"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.11.10.tgz#5a3ffe32cc9306365fb3fd572596cd602d5e12d2"
@@ -443,6 +451,11 @@
     "@types/estree" "^1.0.0"
     estree-walker "^2.0.2"
     picomatch "^2.3.1"
+
+"@sinclair/typebox@^0.25.0":
+  version "0.25.24"
+  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.25.24.tgz#8c7688559979f7079aacaf31aa881c3aa410b718"
+  integrity sha512-XJfwUVUKDHF5ugKwIcxEgc9k8b7HbznCp6eUfWgu710hMPNIO4aw4/zB5RogDQz8nd6gyCDpU9O/m6qYEWY6yQ==
 
 "@socket.io/component-emitter@~3.1.0":
   version "3.1.0"

@@ -1,9 +1,9 @@
 import { Application } from '@feathersjs/koa'
-import { Type } from '@feathersjs/typebox'
 import { Id, Params } from '@feathersjs/feathers'
-import { AnyData } from '@/shared/commons'
+import { AnyData } from '@/shared/interfaces/commons'
 import { totalCalls } from '@/hooks/count-calls'
 import { BaseService, createService } from '@/service'
+import { schema } from '@/shared/schemas/health'
 
 const path = 'health'
 
@@ -25,23 +25,7 @@ export default function (app: Application): void {
   startTime = Date.now()
 
   createService(path, Service, {
-    schema: Type.Object(
-      {
-        _id: Type.String({ objectid: true }),
-        version: Type.String(),
-        uptime: Type.Number(),
-        calls: Type.Object({
-          total: Type.Number(),
-          find: Type.Number(),
-          get: Type.Number(),
-          create: Type.Number(),
-          update: Type.Number(),
-          patch: Type.Number(),
-          remove: Type.Number(),
-        }),
-      },
-      { $id: 'Health', additionalProperties: false }
-    ),
+    schema,
     methods: ['get'],
   }).init(app, { app })
 }

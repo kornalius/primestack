@@ -1,5 +1,5 @@
 // import { useFeathers } from '@/composites/feathers'
-// import { AnyData } from '@/shared/commons'
+// import { AnyData } from '@/shared/interfaces/commons'
 
 // const { api } = useFeathers()
 

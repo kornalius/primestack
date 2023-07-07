@@ -5,7 +5,7 @@ import {
 import get from 'lodash/get'
 import isEqual from 'lodash/isEqual'
 import dayjs, { Dayjs } from 'dayjs'
-import { AnyData } from '@/shared/commons'
+import { AnyData } from '@/shared/interfaces/commons'
 
 // /**
 //  * Convert an array of values into options array to be used with comboboxes

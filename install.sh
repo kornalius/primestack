@@ -18,6 +18,15 @@ cd ../..
 
 echo
 echo "***********************************************"
+echo "Installing shared packages..."
+echo "***********************************************"
+cd shared || exit
+rm -rf node_modules
+yarn install --frozen-lockfile
+cd ..
+
+echo
+echo "***********************************************"
 echo "Installing backend packages..."
 echo "***********************************************"
 cd backend || exit

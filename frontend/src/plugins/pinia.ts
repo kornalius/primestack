@@ -1,9 +1,10 @@
 import { createPinia } from 'pinia'
 import { createPiniaClient } from 'feathers-pinia'
 import { feathersClient } from '@/feathers'
-import { AnyData } from '@/shared/commons'
+import { AnyData } from '@/shared/interfaces/commons'
 
 import health from '@/features/Health/service'
+import schemas from '@/features/Schemas/service'
 
 export const pinia = createPinia()
 
@@ -23,13 +24,13 @@ export const api = createPiniaClient(feathersClient, {
 
   setupInstance(data: AnyData): AnyData {
     return {
-      id: undefined,
-      created_at: undefined,
-      created_by: undefined,
-      updated_at: undefined,
-      updated_by: undefined,
-      deleted_at: undefined,
-      deleted_by: undefined,
+      _id: undefined,
+      createdAt: undefined,
+      createdBy: undefined,
+      updatedAt: undefined,
+      updatedBy: undefined,
+      deletedAt: undefined,
+      deletedBy: undefined,
       ...data,
     }
   },
@@ -41,5 +42,6 @@ export const api = createPiniaClient(feathersClient, {
 
   services: {
     health,
+    schemas,
   },
 })

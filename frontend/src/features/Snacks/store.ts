@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { v4 as uuidv4 } from 'uuid'
-import { Snack } from './interfaces'
+import { Snack } from '@/shared/interfaces/snacks'
 
 export default defineStore('snacks', () => {
   const snackStates = ref([])

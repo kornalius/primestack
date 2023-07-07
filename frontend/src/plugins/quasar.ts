@@ -1,10 +1,12 @@
 import { Quasar } from 'quasar'
 import '@quasar/extras/roboto-font-latin-ext/roboto-font-latin-ext.css'
+import iconSet from 'quasar/icon-set/mdi-v7'
 import '@quasar/extras/mdi-v7/mdi-v7.css'
 import 'quasar/src/css/index.sass'
 
 const Options = {
   plugins: {}, // import Quasar plugins and add here
+  iconSet,
   config: {
     // brand: {
     //   // primary: '#e46262',

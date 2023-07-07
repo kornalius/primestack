@@ -1,50 +1,16 @@
 import { Application } from '@feathersjs/koa'
-import { Type, StringEnum } from '@feathersjs/typebox'
 // eslint-disable-next-line import/no-cycle
 import { createService, MongoService } from '@/service'
+import { schema } from '@/shared/schemas/schema'
 
 const path = 'schemas'
 
 class Service extends MongoService {}
 
-export const supportedFieldTypes = ['string', 'number', 'boolean']
-
 export default function (app: Application): void {
   createService(path, Service, {
     collection: 'schemas',
-    schema: Type.Object(
-      {
-        _id: Type.String({ objectid: true }),
-        name: Type.String(),
-        methods: Type.Array(Type.String()),
-        created: Type.Boolean(),
-        updated: Type.Boolean(),
-        softDelete: Type.Boolean(),
-        user: Type.Boolean(),
-        fields: Type.Array(Type.Object(
-          {
-            name: Type.String({ availableFieldname: true }),
-            type: StringEnum(supportedFieldTypes),
-            hidden: Type.Boolean(),
-            array: Type.Boolean(),
-            optional: Type.Boolean(),
-            readonly: Type.Boolean(),
-            queryable: Type.Boolean(),
-          },
-          { additionalProperties: false }
-        )),
-        indexes: Type.Array(Type.Object(
-          {
-            name: Type.String({ availableFieldname: true }),
-            order: Type.Number({ minimum: -1, maximum: 1 }),
-            unique: Type.Boolean(),
-            sparse: Type.Boolean(),
-          },
-          { additionalProperties: false }
-        )),
-      },
-      { $id: 'Schema', additionalProperties: false }
-    ),
+    schema,
     indexes: [
       {
         fields: { name: 1 },

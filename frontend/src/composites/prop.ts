@@ -6,7 +6,7 @@ import {
 } from 'vue'
 import cloneDeep from 'lodash/cloneDeep'
 import isEqual from 'lodash/isEqual'
-import { AnyData } from '@/shared/commons'
+import { AnyData } from '@/shared/interfaces/commons'
 
 const cloneValue = (value: unknown): unknown => (
   Array.isArray(value) || typeof value === 'object'

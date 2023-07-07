@@ -1,23 +1,25 @@
 <template>
-  <transition
-    v-for="snack in snacks"
-    :key="snack"
-    enter-active-class="animate__animated animate__fadeIn"
-    leave-active-class="animate__animated animate__fadeOut"
-    appear
-  >
-    <q-banner :class="snackClass(snack)" inline-actions>
-      {{ snack.message }}
+  <div>
+    <transition
+      v-for="snack in snacks"
+      :key="snack"
+      enter-active-class="animate__animated animate__fadeIn"
+      leave-active-class="animate__animated animate__fadeOut"
+      appear
+    >
+      <q-banner :class="snackClass(snack)" inline-actions>
+        {{ snack.message }}
 
-      <template #action>
-        <q-btn
-          label="Dismiss"
-          flat
-          @click="removeSnack(snack.id)"
-        />
-      </template>
-    </q-banner>
-  </transition>
+        <template #action>
+          <q-btn
+            label="Dismiss"
+            flat
+            @click="removeSnack(snack.id)"
+          />
+        </template>
+      </q-banner>
+    </transition>
+  </div>
 </template>
 
 <script setup lang="ts">

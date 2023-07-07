@@ -1,4 +1,4 @@
-import { AnyData } from '@/shared/commons'
+import { AnyData } from './commons'
 
 enum SnackTypes {
   Success,
