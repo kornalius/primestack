@@ -4,55 +4,80 @@
       Test
     </div>
 
-    <q-drawer
-      :model-value="rightDrawerOpen"
-      side="right"
-      bordered
-    >
-      <!-- drawer content -->
-    </q-drawer>
+    <!--    <q-drawer-->
+    <!--      :model-value="rightDrawerOpen"-->
+    <!--      side="right"-->
+    <!--      bordered-->
+    <!--    >-->
+    <!--      &lt;!&ndash; drawer content &ndash;&gt;-->
+    <!--    </q-drawer>-->
 
-    <div v-if="valid">
-      Array is valid
-    </div>
-
-    <array-editor
-      v-model="testArray"
-      v-model:valid="valid"
-      class="q-mb-sm"
-      :add-function="addItem"
-      :remove-function="removeItem"
-      :height="300"
-      :min="1"
-      :max="3"
-      add-label="New"
-      clear-label="Clear"
-      clearable
-      reorderable
-      @clear="() => { testArray.length = 0 }"
+    <q-tabs
+      v-model="tab"
+      align="justify"
+      dense
+      narrow-indicator
     >
-      <template #default="{ value, hover }">
-        <div :style="{ background: hover ? 'whitesmoke' : '' }">
-          {{ value }}
+      <q-tab name="ArrayEditor" label="Array Editor" />
+      <q-tab name="PropertiesEditor" label="Properties Editor" />
+      <q-tab name="FormEditor" label="Form Editor" />
+    </q-tabs>
+
+    <q-tab-panels v-model="tab" animated>
+      <q-tab-panel name="ArrayEditor">
+        <array-editor
+          v-model="testArray"
+          v-model:valid="valid"
+          class="q-mb-sm"
+          :add-function="addItem"
+          :remove-function="removeItem"
+          :height="300"
+          :min="1"
+          :max="3"
+          add-label="New"
+          clear-label="Clear"
+          clearable
+          reorderable
+          @clear="() => { testArray.length = 0 }"
+        >
+          <template #default="{ value, hover }">
+            <div :style="{ background: hover ? 'whitesmoke' : '' }">
+              {{ value }}
+            </div>
+          </template>
+        </array-editor>
+
+        <div v-if="valid">
+          Array is valid
         </div>
-      </template>
-    </array-editor>
 
-    <pre>{{ testArray }}</pre>
+        <pre>{{ testArray }}</pre>
+      </q-tab-panel>
 
-    <property-editor :model-value="test" :schema="schema" />
+      <q-tab-panel name="PropertiesEditor">
+        <property-editor v-model="testProperties" :schema="schema" />
+
+        <pre>{{ testProperties }}</pre>
+      </q-tab-panel>
+
+      <q-tab-panel name="FormEditor">
+        <form-editor
+          v-model="testForm"
+          :components="components"
+        />
+      </q-tab-panel>
+    </q-tab-panels>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import PropertyEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import { Type } from '@feathersjs/typebox'
+import PropertyEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
+import FormEditor from '@/features/Form/components/FormEditor.vue'
 
-const rightDrawerOpen = ref(true)
-
-const test = ref({
+const testProperties = ref({
   string: '',
   number: 0,
   range: 5,
@@ -117,6 +142,8 @@ const schema = Type.Object({
   })),
 })
 
+const tab = ref('ArrayEditor')
+
 const testArray = ref(['item #1', 'item #2'])
 
 const addItem = (): unknown | undefined => {
@@ -132,5 +159,66 @@ const removeItem = (index): boolean => {
 
 const valid = ref(false)
 
-console.log(schema)
+/**
+ * Form
+ */
+
+const testForm = ref([])
+
+const components = ref([
+  {
+    type: 'text',
+    icon: 'mdi-format-text',
+    label: 'Text',
+    schema: Type.Object(
+      {
+        modelValue: Type.String(),
+        label: Type.String(),
+        disabled: Type.Boolean(),
+      },
+      { additionalProperties: false },
+    ),
+  },
+  {
+    type: 'checkbox',
+    icon: 'mdi-check',
+    label: 'Checkbox',
+    schema: Type.Object(
+      {
+        modelValue: Type.Boolean(),
+        label: Type.String(),
+        disabled: Type.Boolean(),
+      },
+      { additionalProperties: false },
+    ),
+  },
+  {
+    type: 'radio',
+    icon: 'mdi-radiobox-marked',
+    label: 'Radio',
+  },
+  {
+    type: 'date',
+    icon: 'mdi-calendar',
+    label: 'Date',
+  },
+  {
+    type: 'time',
+    icon: 'mdi-clock-outline',
+    label: 'Time',
+  },
+  {
+    type: 'select',
+    icon: 'mdi-form-dropdown',
+    label: 'Dropdown',
+    schema: Type.Object(
+      {
+        modelValue: Type.Boolean(),
+        label: Type.String(),
+        disabled: Type.Boolean(),
+      },
+      { additionalProperties: false },
+    ),
+  },
+])
 </script>

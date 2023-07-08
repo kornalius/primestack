@@ -87,7 +87,7 @@
                 size="x-small"
                 round
                 flat
-                @click="removeItem(value)"
+                @click="removeItem(values[index])"
               />
             </div>
           </div>
@@ -134,6 +134,7 @@
 import { computed, ref, watch } from 'vue'
 import draggable from 'vuedraggable'
 import { useModelValue } from '@/composites/prop'
+import { AnyData } from '@/shared/interfaces/commons'
 
 const props = defineProps<{
   modelValue: unknown[]
@@ -197,10 +198,11 @@ const emit = defineEmits<{
 
 const values = useModelValue(props, emit)
 
-const onChange = (evt: unknown) => {
+const onChange = (evt: AnyData) => {
   if (evt.moved) {
     emit('moved', evt.moved.oldIndex, evt.moved.newIndex)
   }
+  // eslint-disable-next-line no-console
   console.log(evt)
 }
 
@@ -222,11 +224,11 @@ const addItem = () => {
 }
 
 const removeItem = (value: unknown) => {
-  const idx = props.modelValue.indexOf(value)
+  const idx = values.value.indexOf(value)
   if (
     idx !== -1
-    && props.removeFunction(idx, value)
     && (!props.canRemove || props.canRemove(idx))
+    && props.removeFunction(idx, value)
   ) {
     emit('remove', idx, value)
   }
@@ -241,8 +243,8 @@ const clear = () => {
  */
 
 const isValid = computed(() => (
-  (props.min === 0 || props.modelValue.length >= props.min)
-  && (props.max === 0 || props.modelValue.length <= props.max)
+  (props.min === 0 || values.value.length >= props.min)
+  && (props.max === 0 || values.value.length <= props.max)
 ))
 
 watch(isValid, () => {

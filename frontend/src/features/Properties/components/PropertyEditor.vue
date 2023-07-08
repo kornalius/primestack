@@ -119,10 +119,15 @@
             :options="options"
             :option-label="optionLabel"
             :option-value="optionValue"
+            :autocomplete="optionLabel"
             :multiple="multiple"
             :use-chips="multiple"
             dense
             outlined
+            options-dense
+            map-options
+            emit-value
+            clearable
           />
 
           <q-input
@@ -187,6 +192,7 @@ import { TSchema } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
+import { defaultValueForSchema } from '@/utils/schemas'
 
 const props = defineProps<{
   modelValue: unknown
@@ -261,23 +267,8 @@ const arraySchemaIsObject = computed(() => (
   arraySchema.value.type === 'object'
 ))
 
-const defaultValueFor = (schema: TSchema): unknown => {
-  switch (schema?.type) {
-    case 'string': return ''
-    case 'number': return 0
-    case 'boolean': return false
-    case 'array': return []
-    case 'object':
-      return Object.keys(schema.properties)
-        .reduce((acc, k) => (
-          { ...acc, [k]: defaultValueFor(schema.properties[k]) }
-        ), {})
-    default: return ''
-  }
-}
-
 const addItem = (arr: unknown[]): unknown | undefined => {
-  const newValue = defaultValueFor(arraySchema.value)
+  const newValue = defaultValueForSchema(arraySchema.value)
   arr.push(newValue)
   return newValue
 }
