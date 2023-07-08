@@ -28,9 +28,9 @@
           <q-slider
             v-else-if="type === 'slider'"
             v-model="value"
-            :min="prop.minimum"
-            :max="prop.maximum"
-            :step="prop.step"
+            :min="schema.minimum"
+            :max="schema.maximum"
+            :step="schema.step"
             snap
             markers
             marker-labels
@@ -116,11 +116,11 @@
           <q-select
             v-if="type === 'select'"
             v-model="value"
-            :options="prop.options"
-            :option-label="prop.optionLabel"
-            :option-value="prop.optionValue"
-            :multiple="prop.multiple"
-            :use-chips="prop.multiple"
+            :options="options"
+            :option-label="optionLabel"
+            :option-value="optionValue"
+            :multiple="multiple"
+            :use-chips="multiple"
             dense
             outlined
           />
@@ -155,8 +155,9 @@
           <array-editor
             v-if="type === 'array'"
             v-model="value"
-            @add="() => value.push(defaultValueFor(schema.items))"
-            @remove="(index) => value.splice(index, 1)"
+            add-button="bottom"
+            :add-function="() => addItem(value)"
+            :remove-function="(index) => removeItem(value, index)"
           >
             <template #default="{ index }">
               <properties-editor
@@ -199,26 +200,28 @@ const emit = defineEmits()
 
 const value = useModelValue(props, emit)
 
-const prop = computed(() => {
+const options = computed((): unknown[] | undefined => {
   const p = props.schema
-  return {
-    type: p.type,
-    format: p.format,
-    minimum: p.minimum,
-    maximum: p.maximum,
-    step: p.step,
-    color: p.color,
-    options: p.options || p.items?.options,
-    optionValue: p.optionValue || p.items?.optionValue,
-    optionLabel: p.optionLabel || p.items?.optionLabel,
-    arrayType: p.items?.type,
-    multiple: p.type === 'array',
-    required: props.required,
-  }
+  return p.options || p.items?.options
+})
+
+const optionValue = computed((): string | undefined => {
+  const p = props.schema
+  return p.optionValue || p.items?.optionValue
+})
+
+const optionLabel = computed((): string | undefined => {
+  const p = props.schema
+  return p.optionLabel || p.items?.optionLabel
+})
+
+const multiple = computed((): boolean => {
+  const p = props.schema
+  return p.type === 'array'
 })
 
 const type = computed((): string => {
-  const p = prop.value
+  const p = props.schema
   if (p.type === 'number' && p.minimum !== undefined && p.maximum !== undefined) {
     return 'slider'
   }
@@ -231,7 +234,7 @@ const type = computed((): string => {
   if (p.type === 'string' && p.format === 'time') {
     return 'time'
   }
-  if (p.type === 'string' && Array.isArray(p.options)) {
+  if (p.type === 'string' && Array.isArray(options.value)) {
     return 'select'
   }
   if (p.type === 'string' && p.color) {
@@ -243,7 +246,7 @@ const type = computed((): string => {
   if (p.type === 'boolean') {
     return 'boolean'
   }
-  if (p.type === 'array' && p.arrayType === 'string' && Array.isArray(p.options)) {
+  if (p.type === 'array' && p.items?.type === 'string' && Array.isArray(options.value)) {
     return 'select'
   }
   if (p.type === 'array') {
@@ -255,7 +258,7 @@ const type = computed((): string => {
 const arraySchema = computed(() => props.schema.items)
 
 const arraySchemaIsObject = computed(() => (
-  props.schema.items.type === 'object'
+  arraySchema.value.type === 'object'
 ))
 
 const defaultValueFor = (schema: TSchema): unknown => {
@@ -273,5 +276,14 @@ const defaultValueFor = (schema: TSchema): unknown => {
   }
 }
 
-const defaultArrayValue = computed(() => defaultValueFor(props.schema.items))
+const addItem = (arr: unknown[]): unknown | undefined => {
+  const newValue = defaultValueFor(arraySchema.value)
+  arr.push(newValue)
+  return newValue
+}
+
+const removeItem = (arr: unknown[], index: number): boolean => {
+  arr.splice(index, 1)
+  return true
+}
 </script>

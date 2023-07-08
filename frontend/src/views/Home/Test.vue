@@ -12,13 +12,33 @@
       <!-- drawer content -->
     </q-drawer>
 
-    <array-editor v-model="testArray" @add="addItem" @remove="removeItem">
+    <div v-if="valid">
+      Array is valid
+    </div>
+
+    <array-editor
+      v-model="testArray"
+      v-model:valid="valid"
+      class="q-mb-sm"
+      :add-function="addItem"
+      :remove-function="removeItem"
+      :height="300"
+      :min="1"
+      :max="3"
+      add-label="New"
+      clear-label="Clear"
+      clearable
+      reorderable
+      @clear="() => { testArray.length = 0 }"
+    >
       <template #default="{ value, hover }">
         <div :style="{ background: hover ? 'whitesmoke' : '' }">
           {{ value }}
         </div>
       </template>
     </array-editor>
+
+    <pre>{{ testArray }}</pre>
 
     <property-editor :model-value="test" :schema="schema" />
   </div>
@@ -99,13 +119,18 @@ const schema = Type.Object({
 
 const testArray = ref(['item #1', 'item #2'])
 
-const addItem = () => {
-  testArray.value.push(`Item #${testArray.value.length + 1}`)
+const addItem = (): unknown | undefined => {
+  const newValue = `Item #${testArray.value.length + 1}`
+  testArray.value.push(newValue)
+  return newValue
 }
 
-const removeItem = (index) => {
+const removeItem = (index): boolean => {
   testArray.value.splice(index, 1)
+  return true
 }
+
+const valid = ref(false)
 
 console.log(schema)
 </script>
