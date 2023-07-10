@@ -28,7 +28,9 @@
         <array-editor
           v-model="testArray"
           v-model:valid="valid"
+          v-model:selection="selection"
           class="q-mb-sm"
+          :item-key="(value) => value as string"
           :add-function="addItem"
           :remove-function="removeItem"
           :height="300"
@@ -38,6 +40,8 @@
           clear-label="Clear"
           clearable
           reorderable
+          selectable
+          @select="onSelect"
           @clear="() => { testArray.length = 0 }"
         >
           <template #default="{ value, hover }">
@@ -50,6 +54,10 @@
         <div v-if="valid">
           Array is valid
         </div>
+
+        <div>Selection</div>
+
+        <pre>{{ selection }}</pre>
 
         <pre>{{ testArray }}</pre>
       </q-tab-panel>
@@ -153,13 +161,19 @@ const addItem = (): unknown | undefined => {
   return newValue
 }
 
-const removeItem = (index): boolean => {
+const removeItem = (value, index): boolean => {
   testArray.value.splice(index, 1)
   return true
 }
 
 const valid = ref(false)
 
+const selection = ref([])
+
+const onSelect = (value: unknown, selected: boolean) => {
+  // eslint-disable-next-line no-console
+  console.log('select', value, selected)
+}
 /**
  * Form
  */

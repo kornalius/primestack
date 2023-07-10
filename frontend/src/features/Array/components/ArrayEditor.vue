@@ -48,7 +48,7 @@
         easing="cubic-bezier(1, 0, 0, 1)"
         @change="onChange"
       >
-        <template #item="{ value, index }">
+        <template #item="{ element: value, index }">
           <div
             class="row items-center"
             style="min-height: 30px;"
@@ -65,16 +65,24 @@
               <q-icon class="drag-handle" name="mdi-drag" size="large" />
             </div>
 
+            <div
+              v-if="selectable && isItemSelectable(value)"
+              class="col-auto"
+            >
+              <q-checkbox
+                v-model="currentSelection"
+                :val="itemKeyFor(value)"
+              />
+            </div>
+
             <div class="col">
               <slot
-                v-bind="{
-                  value: values[index],
-                  index,
-                  hover: hover === index,
-                  disabled: (itemDisabled && itemDisabled(index as number)) || disabled,
-                }"
+                :value="values[index]"
+                :index="index"
+                :hover="hover === index"
+                :disabled="(itemDisabled && itemDisabled(index as number)) || disabled"
               >
-                <div>{{ value }}</div>
+                <div>{{ display(value) }}</div>
               </slot>
             </div>
 
@@ -133,7 +141,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import draggable from 'vuedraggable'
-import { useModelValue } from '@/composites/prop'
+import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { AnyData } from '@/shared/interfaces/commons'
 
 const props = defineProps<{
@@ -151,7 +159,7 @@ const props = defineProps<{
   // function to execute to add a new item to the array, return the value if successful
   addFunction: () => unknown | undefined
   // function to execute to remove an item from the array, return the true is successful
-  removeFunction: (index: number, value: unknown) => boolean
+  removeFunction: (value: unknown, index: number) => boolean
   // height in pixels of the component
   height?: number
   // disable all interactions
@@ -169,7 +177,7 @@ const props = defineProps<{
   // icon for the remove button
   removeIcon?: string
   // function called before removing item at index
-  canRemove?: (index: number) => boolean
+  canRemove?: (value: unknown) => boolean
   // minimum number of items the array must contain to be valid
   min?: number
   // maximum number of items the array must contain to be valid
@@ -177,9 +185,17 @@ const props = defineProps<{
   // can the items be re-ordered?
   reorderable?: boolean
   // can we reorder a specific item in the array?
-  canReorder?: (index: number) => boolean
+  canReorder?: (value: unknown) => boolean
   // field or function to identify an item key
   itemKey?: string | ((value: unknown) => string)
+  // make each item in the list selectable
+  selectable?: boolean
+  // can we select this specific item in the array?
+  canSelect?: (value: unknown) => boolean
+  // selections
+  selection?: unknown[]
+  // key to display in the list or a function that returns a string
+  displayValue?: ((value: unknown) => string) | string
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -188,7 +204,9 @@ const emit = defineEmits<{
   (e: 'remove', index: number, value: unknown): void,
   (e: 'clear'): void,
   (e: 'moved', oldIndex: number, newIndex: number): void,
+  (e: 'select', value: unknown, selected: boolean): void,
   (e: 'update:valid', isValid: boolean): void,
+  (e: 'update:selection', value: unknown[]): void,
   (e: 'update:model-value', value: unknown[]): void,
 }>()
 
@@ -202,12 +220,12 @@ const onChange = (evt: AnyData) => {
   if (evt.moved) {
     emit('moved', evt.moved.oldIndex, evt.moved.newIndex)
   }
-  // eslint-disable-next-line no-console
-  console.log(evt)
 }
 
 const itemKeyFor = (item: unknown): string => (
-  props.itemKey ? (props.itemKey as (item: unknown) => void)(item) : values.value.indexOf(item)
+  props.itemKey
+    ? (props.itemKey as (item: unknown) => void)(item)
+    : values.value.indexOf(item)
 )
 
 const hover = ref(-1)
@@ -227,8 +245,8 @@ const removeItem = (value: unknown) => {
   const idx = values.value.indexOf(value)
   if (
     idx !== -1
-    && (!props.canRemove || props.canRemove(idx))
-    && props.removeFunction(idx, value)
+    && (!props.canRemove || props.canRemove(value))
+    && props.removeFunction(value, idx)
   ) {
     emit('remove', idx, value)
   }
@@ -238,6 +256,15 @@ const clear = () => {
   emit('clear')
 }
 
+const display = (value: unknown): string => {
+  if (typeof props.displayValue === 'string') {
+    return value[props.displayValue] as string
+  }
+  if (typeof props.displayValue === 'function') {
+    return props.displayValue(value)
+  }
+  return value as string
+}
 /**
  * Array validity
  */
@@ -250,4 +277,28 @@ const isValid = computed(() => (
 watch(isValid, () => {
   emit('update:valid', isValid.value)
 }, { immediate: true })
+
+/**
+ * Selection
+ */
+
+const currentSelection = useSyncedProp(props, 'selection', emit)
+
+const isItemSelectable = (value: unknown): boolean => (
+  !props.canSelect || props.canSelect(value)
+)
+
+watch(currentSelection, (newValue, oldValue) => {
+  newValue.forEach((v) => {
+    if (!oldValue.includes(v)) {
+      emit('select', v, true)
+    }
+  })
+
+  oldValue.forEach((v) => {
+    if (!newValue.includes(v)) {
+      emit('select', v, false)
+    }
+  })
+})
 </script>
