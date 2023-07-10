@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Start All" type="CompoundRunConfigurationType">
+    <toRun name="MongoDB" type="docker-deploy" />
+    <toRun name="Backend" type="js.build_tools.npm" />
+    <toRun name="Frontend" type="js.build_tools.npm" />
+    <method v="2" />
+  </configuration>
+</component>

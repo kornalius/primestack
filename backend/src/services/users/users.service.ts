@@ -54,7 +54,6 @@ const service = createService(path, Service, {
     query: {
       _id: async (value: AnyData, user: AnyData, context: HookContext) => {
         if (context.params.user) {
-          // eslint-disable-next-line no-underscore-dangle
           return context.params.user._id
         }
         return value

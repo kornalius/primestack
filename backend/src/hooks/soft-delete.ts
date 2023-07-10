@@ -7,7 +7,6 @@ export const softDelete = async (context: HookContext) => {
   if (method === 'remove') {
     context.result = await service.patch(context.id, {
       deletedAt: Date.now(),
-      // eslint-disable-next-line no-underscore-dangle
       deletedBy: context.params?.user._id,
     }, params)
   }

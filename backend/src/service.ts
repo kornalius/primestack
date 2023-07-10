@@ -110,7 +110,6 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
     ? {
       userId: async (value: AnyData, record: AnyData, context: HookContext) => (
         // Associate the currently authenticated user
-        // eslint-disable-next-line no-underscore-dangle
         context.params?.user?._id
       ),
     } : {}
@@ -119,7 +118,6 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
     ? {
       userId: async (value: AnyData, query: AnyData, context: HookContext) => {
         if (context.params?.user) {
-          // eslint-disable-next-line no-underscore-dangle
           return context.params.user._id
         }
         return value
@@ -135,7 +133,6 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
     ? {
       createdAt: async () => Date.now(),
       createdBy: async (value: AnyData, record: AnyData, context: HookContext) => (
-        // eslint-disable-next-line no-underscore-dangle
         context.params?.user?._id
       ),
     } : {}
@@ -144,7 +141,6 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
     ? {
       updatedAt: async () => Date.now(),
       updatedBy: async (value: AnyData, record: AnyData, context: HookContext) => (
-        // eslint-disable-next-line no-underscore-dangle
         context.params?.user?._id
       ),
     } : {}

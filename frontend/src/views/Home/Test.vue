@@ -76,6 +76,7 @@ import { Type } from '@feathersjs/typebox'
 import PropertyEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import FormEditor from '@/features/Form/components/FormEditor.vue'
+import useFormElements from '@/features/Form/composites'
 
 const testProperties = ref({
   string: '',
@@ -165,60 +166,5 @@ const valid = ref(false)
 
 const testForm = ref([])
 
-const components = ref([
-  {
-    type: 'text',
-    icon: 'mdi-format-text',
-    label: 'Text',
-    schema: Type.Object(
-      {
-        modelValue: Type.String(),
-        label: Type.String(),
-        disabled: Type.Boolean(),
-      },
-      { additionalProperties: false },
-    ),
-  },
-  {
-    type: 'checkbox',
-    icon: 'mdi-check',
-    label: 'Checkbox',
-    schema: Type.Object(
-      {
-        modelValue: Type.Boolean(),
-        label: Type.String(),
-        disabled: Type.Boolean(),
-      },
-      { additionalProperties: false },
-    ),
-  },
-  {
-    type: 'radio',
-    icon: 'mdi-radiobox-marked',
-    label: 'Radio',
-  },
-  {
-    type: 'date',
-    icon: 'mdi-calendar',
-    label: 'Date',
-  },
-  {
-    type: 'time',
-    icon: 'mdi-clock-outline',
-    label: 'Time',
-  },
-  {
-    type: 'select',
-    icon: 'mdi-form-dropdown',
-    label: 'Dropdown',
-    schema: Type.Object(
-      {
-        modelValue: Type.Boolean(),
-        label: Type.String(),
-        disabled: Type.Boolean(),
-      },
-      { additionalProperties: false },
-    ),
-  },
-])
+const components = ref(useFormElements().components)
 </script>

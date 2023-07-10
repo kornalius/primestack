@@ -18,14 +18,12 @@
         </div>
 
         <div class="col">
-          <q-input
+          <input-field
             v-if="type === 'string'"
             v-model="value"
-            dense
-            outlined
           />
 
-          <q-slider
+          <slider-field
             v-else-if="type === 'slider'"
             v-model="value"
             :min="schema.minimum"
@@ -35,85 +33,33 @@
             markers
             marker-labels
             label
-            dense
-            outlined
           />
 
-          <q-input
+          <input-field
             v-else-if="type === 'number'"
             v-model="value"
             type="number"
-            dense
-            square
-            outlined
           />
 
-          <q-input
+          <date-field
             v-else-if="type === 'date'"
             v-model="value"
-            :rules="['date']"
-            mask="date"
             hide-bottom-space
-            dense
-            outlined
-          >
-            <template #append>
-              <q-icon class="cursor-pointer" name="mdi-calendar">
-                <q-popup-proxy transition-show="scale" transition-hide="scale" cover>
-                  <q-date v-model="value">
-                    <div class="row items-center justify-end">
-                      <q-btn
-                        label="Close"
-                        color="primary"
-                        flat
-                        v-close-popup
-                      />
-                    </div>
-                  </q-date>
-                </q-popup-proxy>
-              </q-icon>
-            </template>
-          </q-input>
+          />
 
-          <q-input
+          <time-field
             v-if="type === 'time'"
             v-model="value"
-            :rules="['time']"
-            mask="time"
             hide-bottom-space
-            dense
-            outlined
-          >
-            <template #append>
-              <q-icon class="cursor-pointer" name="mdi-clock-outline">
-                <q-popup-proxy
-                  transition-show="scale"
-                  transition-hide="scale"
-                  cover
-                >
-                  <q-time v-model="value">
-                    <div class="row items-center justify-end">
-                      <q-btn
-                        label="Close"
-                        color="primary"
-                        flat
-                        v-close-popup
-                      />
-                    </div>
-                  </q-time>
-                </q-popup-proxy>
-              </q-icon>
-            </template>
-          </q-input>
+          />
 
-          <q-checkbox
+          <checkbox-field
             v-if="type === 'boolean'"
             v-model="value"
             class="full-width"
-            dense
           />
 
-          <q-select
+          <select-field
             v-if="type === 'select'"
             v-model="value"
             :options="options"
@@ -122,40 +68,12 @@
             :autocomplete="optionLabel"
             :multiple="multiple"
             :use-chips="multiple"
-            dense
-            outlined
-            options-dense
-            map-options
-            emit-value
-            clearable
           />
 
-          <q-input
+          <color-field
             v-if="type === 'color'"
             v-model="value"
-            :style="{ backgroundColor: value }"
-            dense
-            outlined
-          >
-            <template #append>
-              <q-icon
-                class="cursor-pointer"
-                name="mdi-eyedropper-variant"
-              >
-                <q-popup-proxy
-                  transition-show="scale"
-                  transition-hide="scale"
-                  cover
-                >
-                  <q-color
-                    v-model="value"
-                    default-view="palette"
-                    no-header
-                  />
-                </q-popup-proxy>
-              </q-icon>
-            </template>
-          </q-input>
+          />
 
           <array-editor
             v-if="type === 'array'"
@@ -190,9 +108,16 @@
 import { computed } from 'vue'
 import { TSchema } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
+import { defaultValueForSchema } from '@/utils/schemas'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
-import { defaultValueForSchema } from '@/utils/schemas'
+import SelectField from '@/features/Fields/components/SelectField.vue'
+import CheckboxField from '@/features/Fields/components/CheckboxField.vue'
+import TimeField from '@/features/Fields/components/TimeField.vue'
+import DateField from '@/features/Fields/components/DateField.vue'
+import InputField from '@/features/Fields/components/InputField.vue'
+import ColorField from '@/features/Fields/components/ColorField.vue'
+import SliderField from '@/features/Fields/components/SliderField.vue'
 
 const props = defineProps<{
   modelValue: unknown

@@ -1,109 +1,167 @@
 <template>
-  <div :class="{ 'form-element': true, selected, preview }">
-    <div v-if="!preview" class="overlay" @click.stop="onClick" />
-
+  <div
+    :class="{ 'form-element': true, selected }"
+    @mouseover.stop="editor.hover(field._id)"
+    @mouseleave="editor.unhover()"
+    @focus.stop="editor.hover(field._id)"
+    @blur="editor.unhover()"
+  >
     <div
-      v-if="!preview"
-      class="form-element-header row items-center"
+      v-if="!editor.isDragging && editor.isHovered(field._id)"
+      class="action bg-grey-9 rounded-borders no-pointer-events"
+      style="left: 0; width: 18px;"
     >
-      <div class="col-auto q-ml-sm text-white">
-        <q-icon :name="fieldIcon" size="large" />
-      </div>
-
-      <div class="col q-ml-sm text-white">
-        {{ fieldLabel }}
-      </div>
-
-      <div class="col-auto">
-        <q-btn
-          class="trashcan"
-          icon="mdi-trash-can"
-          size="xx-small"
-          color="red-2"
-          round
-          flat
-        />
-      </div>
+      <q-icon :name="fieldIcon" color="white" size="xs" />
     </div>
 
-    <component
-      :is="componentForType[value.type]"
-      v-model="value.options.modelValue"
-      v-bind="value.options"
-      dense
+    <q-btn
+      v-if="isRow && !editor.isDragging && editor.isHovered(field._id)"
+      class="action"
+      style="right: 24px;"
+      icon="mdi-plus"
+      color="blue-4"
+      size="xs"
+      round
+      @click="onAddColumnClick"
     />
+
+    <q-btn
+      v-if="!editor.isDragging && editor.isHovered(field._id)"
+      class="action"
+      style="right: 0;"
+      icon="mdi-trash-can"
+      color="red-4"
+      size="xs"
+      round
+      @click="onRemoveClick"
+    />
+
+    <div class="element">
+      <form-element-row
+        v-if="isRow"
+        v-model="field"
+        :components="components"
+        :preview="preview"
+        :preview-form-data="previewFormData"
+        @remove="removeColumn"
+        @click="onColumnClick"
+      />
+
+      <component
+        :is="componentsForFieldType[field._type]"
+        v-else
+        v-model="field.modelValue"
+        v-bind="field"
+        dense
+      />
+
+      <div
+        v-if="!editor.isDragging"
+        class="overlay"
+        @click.stop="onClick"
+      />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { QCheckbox, QInput, QSelect } from 'quasar'
-import startCase from 'lodash/startCase'
-import { TFormField, TFormComponent } from '@/shared/interfaces/forms'
+import { v4 as uuidv4 } from 'uuid'
+import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
+import useFormElements from '@/features/Form/composites'
+import FormElementRow from '@/features/Form/components/FormElementRow.vue'
+import useFormEditoreditor from '@/features/Form/store'
 
 const props = defineProps<{
   modelValue: TFormField
   components: TFormComponent[]
   selected?: boolean
-  preview?: boolean
+  preview: boolean
+  previewFormData: Record<string, unknown>
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
-  (e: 'click', value: TFormField): void,
+  (e: 'click', value: string): void,
+  (e: 'remove', value: TFormField): void,
   (e: 'update:model-value', value: TFormField): void,
 }>()
 
-const value = useModelValue(props, emit)
+const { componentsForFieldType } = useFormElements()
 
-const componentForType = {
-  text: QInput,
-  checkbox: QCheckbox,
-  select: QSelect,
-}
+const field = useModelValue(props, emit)
+
+const editor = useFormEditoreditor()
 
 const onClick = () => {
-  if (!props.preview) {
-    emit('click', props.modelValue)
+  emit('click', props.modelValue._id)
+}
+
+const onColumnClick = (column: TFormColumn) => {
+  emit('click', column._id)
+}
+
+const onAddColumnClick = () => {
+  const col = {
+    _id: uuidv4(),
+    _type: 'col',
+    size: -1,
+    fields: [],
+  }
+  field.value.columns.push(col)
+}
+
+const onRemoveClick = () => {
+  emit('remove', props.modelValue)
+}
+
+const removeColumn = (column: TFormColumn) => {
+  const idx = field.value.columns.findIndex((c) => c._id === column._id)
+  if (idx !== -1) {
+    field.value.columns.splice(idx, 1)
   }
 }
 
 const component = computed(() => (
-  props.components.find((c) => c.type === props.modelValue.type)
+  // eslint-disable-next-line no-underscore-dangle
+  props.components.find((c) => c.type === props.modelValue._type)
 ))
 
-const fieldLabel = computed(() => startCase(props.modelValue.type))
-
 const fieldIcon = computed(() => component.value?.icon)
+
+const isRow = computed(() => component.value.type === 'row')
 </script>
 
 <style scoped lang="sass">
 .form-element
   position: relative
+  margin: 8px 0
+  width: 100%
+  border: 1px dashed $blue-grey-4
+  border-radius: 4px
 
-  &:not(.preview)
-    margin: 8px 0
-    padding: 8px
-    width: 100%
-    border: 1px dashed $blue-grey-5
-    border-radius: 4px
+  &:first-child
+    margin: 0
 
-  &.selected:not(.preview)
+  &.selected
     border: 2px solid $blue-grey-5
 
-  & .trashcan
-    z-index: 3
+.action
+  position: absolute
+  top: 0
+  z-index: 5
 
-.form-element-header
-  background: $grey-6
+.element
+  position: relative
+  cursor: default
 
 .overlay
   position: absolute
-  z-index: 2
   cursor: pointer
   left: 0
   top: 0
   width: 100%
   height: 100%
+
 </style>

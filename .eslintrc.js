@@ -9,6 +9,9 @@ module.exports = {
     'no-plusplus': ['error', {
       allowForLoopAfterthoughts: true,
     }],
+    'no-underscore-dangle': ['error', {
+      allow: ['_id', '__id', '__isTemp'],
+    }],
     'indent': ['error', 2, { SwitchCase: 1 }],
     'linebreak-style': ['error', 'unix'],
     'quotes': ['error', 'single'],
