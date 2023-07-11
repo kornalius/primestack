@@ -4,8 +4,6 @@
     v-bind="$attrs"
     :rules="['date']"
     mask="date"
-    dense
-    outlined
   >
     <template #append>
       <q-icon class="cursor-pointer" name="mdi-calendar">

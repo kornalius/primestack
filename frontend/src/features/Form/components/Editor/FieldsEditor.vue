@@ -41,7 +41,7 @@ import { AnyData } from '@/shared/interfaces/commons'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import FormDisplay from '@/features/Form/components/FormDisplay.vue'
 import FormElement from './FormElement.vue'
-import useFormEditor from '../store'
+import useFormEditor from '../../store'
 
 const props = defineProps<{
   modelValue: unknown[]
@@ -89,5 +89,5 @@ const onChange = (evt: AnyData) => {
 
 <style scoped lang="sass">
 .form-builder-container
-  min-height: 50px
+  min-height: 24px
 </style>

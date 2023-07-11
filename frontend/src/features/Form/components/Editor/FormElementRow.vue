@@ -3,7 +3,11 @@
     <div
       v-for="column in field.columns"
       :key="column._id"
-      :class="{ col: true, 'form-column': true, selected: editor.isSelected(column._id) }"
+      :class="{
+        [column.col !== '' && column.col !== undefined ? `col-${column.col}` : 'col']: true,
+        'form-column': true,
+        selected: editor.isSelected(column._id),
+      }"
       style="z-index: 1;"
       @mouseover.stop="editor.hover(column._id)"
       @mouseleave="editor.unhover()"
@@ -46,11 +50,11 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 import useFormEditoreditor from '@/features/Form/store'
-import FieldsEditor from '@/features/Form/components/FieldsEditor.vue'
-import { computed } from 'vue'
+import FieldsEditor from '@/features/Form/components/Editor/FieldsEditor.vue'
 
 const props = defineProps<{
   modelValue: TFormField
@@ -89,13 +93,12 @@ const onRemoveClick = (column: TFormColumn) => {
 <style scoped lang="sass">
 .form-row
   position: relative
-  min-height: 48px
+  min-height: 24px
 
 .form-column
   position: relative
   margin: 8px 4px
   padding: 8px 4px 4px 4px
-  width: 100%
   border: 1px dashed $blue-grey-5
   border-radius: 4px
 

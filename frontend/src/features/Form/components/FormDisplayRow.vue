@@ -1,5 +1,5 @@
 <template>
-  <div class="row">
+  <div class="row q-gutter-sm">
     <div
       v-for="column in columns"
       :key="column._id"

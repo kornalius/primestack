@@ -1,4 +1,5 @@
 import { TSchema } from '@feathersjs/typebox'
+import { AnyData } from './commons'
 
 export interface TFormComponent {
   // unique type for the component
@@ -13,6 +14,8 @@ export interface TFormComponent {
   hidden?: boolean
   // component properties schema
   schema: TSchema
+  // default values for properties
+  defaultValues: AnyData
 }
 
 export interface TFormColumn {

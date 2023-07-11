@@ -33,7 +33,7 @@
               align="left"
               dense
               flat
-              @click="onAddFieldClick(value.type)"
+              @click="onAddFieldClick(value)"
             />
           </template>
         </draggable>
@@ -92,7 +92,7 @@
       </div>
     </div>
 
-    <div class="Properties col-auto">
+    <div class="Properties col-auto overflow-auto" style="max-height: 500px">
       <div class="title">
         <span class="text-h6 text-white">Properties</span>
       </div>
@@ -113,7 +113,7 @@ import { TFormComponent } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 import { defaultValueForSchema } from '@/utils/schemas'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
-import FieldsEditor from '@/features/Form/components/FieldsEditor.vue'
+import FieldsEditor from '@/features/Form/components/Editor/FieldsEditor.vue'
 import useFormEditor from '@/features/Form/store'
 import useFormElements from '@/features/Form/composites'
 
@@ -172,8 +172,8 @@ watch(preview, () => {
     }, {})
 })
 
-const onAddFieldClick = (type: string) => {
-  const field = createFormField({ type } as TFormComponent, fields.value)
+const onAddFieldClick = (component: TFormComponent) => {
+  const field = createFormField(component, fields.value)
   fields.value.push(field)
   editor.select(field._id)
 }

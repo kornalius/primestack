@@ -83,7 +83,7 @@ import { ref } from 'vue'
 import { Type } from '@feathersjs/typebox'
 import PropertyEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
-import FormEditor from '@/features/Form/components/FormEditor.vue'
+import FormEditor from '@/features/Form/components/Editor/FormEditor.vue'
 import useFormElements from '@/features/Form/composites'
 
 const testProperties = ref({
@@ -98,6 +98,12 @@ const testProperties = ref({
   color: '',
   arrayOfString: [],
   arrayOfObject: [],
+  obj: {
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+  },
 })
 
 const schema = Type.Object({
@@ -149,7 +155,16 @@ const schema = Type.Object({
     string: Type.String(),
     check: Type.Boolean(),
   })),
+  obj: Type.Object({
+    top: Type.Number(),
+    left: Type.Number(),
+    bottom: Type.Number(),
+    right: Type.Number(),
+  }),
 })
+
+// eslint-disable-next-line no-console
+console.log(schema)
 
 const tab = ref('ArrayEditor')
 

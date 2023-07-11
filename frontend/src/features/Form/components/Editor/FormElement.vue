@@ -52,7 +52,17 @@
         v-else
         v-model="field.modelValue"
         v-bind="field"
-        dense
+        :style="{
+          paddingTop: field.padding?.top,
+          paddingLeft: field.padding?.left,
+          paddingBottom: field.padding?.bottom,
+          paddingRight: field.padding?.right,
+          marginTop: field.margin?.top,
+          marginLeft: field.margin?.left,
+          marginBottom: field.margin?.bottom,
+          marginRight: field.margin?.right,
+        }"
+        :hint="field.hint === '' ? undefined : field.hint"
       />
 
       <div
@@ -70,8 +80,9 @@ import { v4 as uuidv4 } from 'uuid'
 import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 import useFormElements from '@/features/Form/composites'
-import FormElementRow from '@/features/Form/components/FormElementRow.vue'
+import FormElementRow from '@/features/Form/components/Editor/FormElementRow.vue'
 import useFormEditoreditor from '@/features/Form/store'
+import { defaultValueForSchema } from '@/utils/schemas'
 
 const props = defineProps<{
   modelValue: TFormField
@@ -94,6 +105,11 @@ const field = useModelValue(props, emit)
 
 const editor = useFormEditoreditor()
 
+const component = computed(() => (
+  // eslint-disable-next-line no-underscore-dangle
+  props.components.find((c) => c.type === props.modelValue._type)
+))
+
 const onClick = () => {
   emit('click', props.modelValue._id)
 }
@@ -106,8 +122,13 @@ const onAddColumnClick = () => {
   const col = {
     _id: uuidv4(),
     _type: 'col',
-    size: -1,
+    columns: undefined,
     fields: [],
+    ...Object.keys(component.value.schema?.properties || {})
+      .reduce((acc, k) => (
+        { ...acc, [k]: defaultValueForSchema(component.value.schema.properties[k]) }
+      ), {}),
+    ...(component.value.defaultValues || {}),
   }
   field.value.columns.push(col)
 }
@@ -122,11 +143,6 @@ const removeColumn = (column: TFormColumn) => {
     field.value.columns.splice(idx, 1)
   }
 }
-
-const component = computed(() => (
-  // eslint-disable-next-line no-underscore-dangle
-  props.components.find((c) => c.type === props.modelValue._type)
-))
 
 const fieldIcon = computed(() => component.value?.icon)
 

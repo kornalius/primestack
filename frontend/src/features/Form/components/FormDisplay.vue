@@ -16,7 +16,17 @@
         v-else
         v-model="value[field.name]"
         v-bind="field"
-        dense
+        :style="{
+          paddingTop: field.padding?.top,
+          paddingLeft: field.padding?.left,
+          paddingBottom: field.padding?.bottom,
+          paddingRight: field.padding?.right,
+          marginTop: field.margin?.top,
+          marginLeft: field.margin?.left,
+          marginBottom: field.margin?.bottom,
+          marginRight: field.margin?.right,
+        }"
+        :hint="field.hint === '' ? undefined : field.hint"
       />
     </div>
   </div>

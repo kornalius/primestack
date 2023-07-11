@@ -4,8 +4,6 @@
     v-bind="$attrs"
     :rules="['time']"
     mask="time"
-    dense
-    outlined
   >
     <template #append>
       <q-icon class="cursor-pointer" name="mdi-clock-outline">
@@ -14,7 +12,10 @@
           transition-hide="scale"
           cover
         >
-          <q-time v-model="value">
+          <q-time
+            v-model="value"
+            v-bind="$attrs"
+          >
             <div class="row items-center justify-end">
               <q-btn
                 label="Close"

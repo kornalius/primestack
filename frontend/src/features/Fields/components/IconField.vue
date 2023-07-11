@@ -5,10 +5,6 @@
     :options="options"
     :input-debounce="0"
     use-input
-    dense
-    outlined
-    options-dense
-    clearable
     @filter="filterFn"
   >
     <template #no-option>

@@ -18,12 +18,14 @@
         </div>
 
         <div class="col">
-          <input-field
+          <q-input
             v-if="type === 'string'"
             v-model="value"
+            dense
+            outlined
           />
 
-          <slider-field
+          <q-slider
             v-else-if="type === 'slider'"
             v-model="value"
             :min="schema.minimum"
@@ -33,33 +35,39 @@
             markers
             marker-labels
             label
+            dense
           />
 
-          <input-field
+          <q-input
             v-else-if="type === 'number'"
             v-model="value"
             type="number"
+            dense
+            outlined
           />
 
           <date-field
             v-else-if="type === 'date'"
             v-model="value"
-            hide-bottom-space
+            dense
+            outlined
           />
 
           <time-field
             v-if="type === 'time'"
             v-model="value"
-            hide-bottom-space
+            dense
+            outlined
           />
 
-          <checkbox-field
+          <q-checkbox
             v-if="type === 'boolean'"
             v-model="value"
             class="full-width"
+            dense
           />
 
-          <select-field
+          <q-select
             v-if="type === 'select'"
             v-model="value"
             :options="options"
@@ -68,11 +76,35 @@
             :autocomplete="optionLabel"
             :multiple="multiple"
             :use-chips="multiple"
+            dense
+            emit-value
+            outlined
+            options-dense
+          />
+
+          <icon-field
+            v-if="type === 'icon'"
+            v-model="value"
+            dense
+            outlined
+            options-dense
+            clearable
           />
 
           <color-field
             v-if="type === 'color'"
             v-model="value"
+            :css-class-prefix="cssClassPrefix"
+            quasar-palette
+            dense
+            outlined
+          />
+
+          <properties-editor
+            v-if="type === 'object'"
+            v-model="value"
+            :schema="objectSchema"
+            flat
           />
 
           <array-editor
@@ -80,7 +112,7 @@
             v-model="value"
             add-button="bottom"
             :add-function="() => addItem(value)"
-            :remove-function="(index) => removeItem(value, index)"
+            :remove-function="(value: unknown, index: number) => removeItem(value, index)"
           >
             <template #default="{ index }">
               <properties-editor
@@ -111,13 +143,10 @@ import { useModelValue } from '@/composites/prop'
 import { defaultValueForSchema } from '@/utils/schemas'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
-import SelectField from '@/features/Fields/components/SelectField.vue'
-import CheckboxField from '@/features/Fields/components/CheckboxField.vue'
 import TimeField from '@/features/Fields/components/TimeField.vue'
 import DateField from '@/features/Fields/components/DateField.vue'
-import InputField from '@/features/Fields/components/InputField.vue'
 import ColorField from '@/features/Fields/components/ColorField.vue'
-import SliderField from '@/features/Fields/components/SliderField.vue'
+import IconField from '@/features/Fields/components/IconField.vue'
 
 const props = defineProps<{
   modelValue: unknown
@@ -133,6 +162,12 @@ const value = useModelValue(props, emit)
 
 const options = computed((): unknown[] | undefined => {
   const p = props.schema
+  if (p.enum) {
+    return p.enum.map((e) => ({ label: e, value: e }))
+  }
+  if (p.items?.enum) {
+    return p.items.enum.map((e) => ({ label: e, value: e }))
+  }
   return p.options || p.items?.options
 })
 
@@ -149,6 +184,11 @@ const optionLabel = computed((): string | undefined => {
 const multiple = computed((): boolean => {
   const p = props.schema
   return p.type === 'array'
+})
+
+const cssClassPrefix = computed((): 'text' | 'bg' => {
+  const p = props.schema
+  return p.text ? 'text' : 'bg'
 })
 
 const type = computed((): string => {
@@ -171,6 +211,12 @@ const type = computed((): string => {
   if (p.type === 'string' && p.color) {
     return 'color'
   }
+  if (p.type === 'string' && p.icon) {
+    return 'icon'
+  }
+  if (p.type === 'string' && p.enum) {
+    return 'select'
+  }
   if (p.type === 'string') {
     return 'string'
   }
@@ -183,10 +229,15 @@ const type = computed((): string => {
   if (p.type === 'array') {
     return 'array'
   }
+  if (p.type === 'object') {
+    return 'object'
+  }
   return 'string'
 })
 
 const arraySchema = computed(() => props.schema.items)
+
+const objectSchema = computed(() => props.schema)
 
 const arraySchemaIsObject = computed(() => (
   arraySchema.value.type === 'object'
