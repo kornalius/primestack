@@ -21,6 +21,7 @@
       <q-tab name="ArrayEditor" label="Array Editor" />
       <q-tab name="PropertiesEditor" label="Properties Editor" />
       <q-tab name="FormEditor" label="Form Editor" />
+      <q-tab name="QueryEditor" label="Query Editor" />
     </q-tabs>
 
     <q-tab-panels v-model="tab" animated>
@@ -129,6 +130,14 @@
           <pre>{{ previewFormData }}</pre>
         </div>
       </q-tab-panel>
+
+      <q-tab-panel name="QueryEditor">
+        <query-editor
+          v-model="query"
+          :fields="fields"
+          style="height: 500px;"
+        />
+      </q-tab-panel>
     </q-tab-panels>
   </div>
 </template>
@@ -143,6 +152,11 @@ import useFormElements from '@/features/Form/composites'
 import FormDisplay from '@/features/Form/components/FormDisplay.vue'
 import { defaultValueForSchema } from '@/utils/schemas'
 import { TFormField } from '@/shared/interfaces/forms'
+import QueryEditor from '@/features/Query/components/Editor/QueryEditor.vue'
+
+/**
+ * Properties
+ */
 
 const testProperties = ref({
   string: '',
@@ -229,6 +243,10 @@ console.log(schema)
 
 const tab = ref('ArrayEditor')
 
+/**
+ * Array
+ */
+
 const testArray = ref(['item #1', 'item #2'])
 
 const addItem = (): unknown | undefined => {
@@ -237,7 +255,7 @@ const addItem = (): unknown | undefined => {
   return newValue
 }
 
-const removeItem = (value, index): boolean => {
+const removeItem = (value: unknown, index: number): boolean => {
   testArray.value.splice(index, 1)
   return true
 }
@@ -250,6 +268,7 @@ const onSelect = (value: unknown, selected: boolean) => {
   // eslint-disable-next-line no-console
   console.log('select', value, selected)
 }
+
 /**
  * Form
  */
@@ -257,10 +276,6 @@ const onSelect = (value: unknown, selected: boolean) => {
 const testForm = ref([]) as Ref<TFormField[]>
 
 const components = ref(useFormElements().components)
-
-/**
- * Preview
- */
 
 const { flattenFields } = useFormElements()
 
@@ -279,6 +294,14 @@ watch(preview, () => {
       return acc
     }, {})
 })
+
+/**
+ * Query
+ */
+
+const query = ref([])
+
+const fields = ref([])
 </script>
 
 <style scoped lang="sass">

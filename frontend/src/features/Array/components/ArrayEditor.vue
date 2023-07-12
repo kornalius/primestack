@@ -12,7 +12,7 @@
           class="q-mr-sm"
           :label="clearLabel"
           :round="!clearLabel"
-          :disable="clearDisabled"
+          :disable="disable || clearDisable"
           :icon="clearIcon || 'mdi-notification-clear-all'"
           color="negative"
           size="x-small"
@@ -22,8 +22,8 @@
 
         <q-btn
           :label="addLabel"
+          :disable="disable || addDisable"
           :round="!addLabel"
-          :disable="addDisabled"
           :icon="addIcon || 'mdi-plus'"
           color="primary"
           size="x-small"
@@ -80,7 +80,7 @@
                 :value="values[index]"
                 :index="index"
                 :hover="hover === index"
-                :disabled="(itemDisabled && itemDisabled(index as number)) || disabled"
+                :disable="(itemDisable && itemDisable(index as number)) || disable"
               >
                 <div>{{ display(value) }}</div>
               </slot>
@@ -89,7 +89,7 @@
             <div class="col-auto q-ml-sm" style="width: 30px;">
               <q-btn
                 v-show="hover === index"
-                :disable="disabled"
+                :disable="disable || removeDisable"
                 :icon="removeIcon || 'mdi-trash-can-outline'"
                 color="negative"
                 size="x-small"
@@ -115,7 +115,7 @@
           class="q-mr-sm"
           :label="clearLabel"
           :round="!clearLabel"
-          :disable="clearDisabled"
+          :disable="disable || clearDisable"
           :icon="clearIcon || 'mdi-notification-clear-all'"
           color="negative"
           size="x-small"
@@ -126,7 +126,7 @@
         <q-btn
           :label="addLabel"
           :round="!addLabel"
-          :disable="addDisabled"
+          :disable="disable || addDisable"
           :icon="addIcon || 'mdi-plus'"
           color="primary"
           size="x-small"
@@ -148,8 +148,10 @@ const props = defineProps<{
   modelValue: unknown[]
   // synched value for validifity of the array
   valid?: boolean
-  // disabled the clear button
-  addDisabled?: boolean
+  // disable the clear button
+  addDisable?: boolean
+  // disable the remove button
+  removeDisable?: boolean
   // icon for the add button
   addIcon?: string
   // label for the add button
@@ -163,17 +165,17 @@ const props = defineProps<{
   // height in pixels of the component
   height?: number
   // disable all interactions
-  disabled?: boolean
+  disable?: boolean
   // add a button to clear all items
   clearable?: boolean
-  // disabled the clear button
-  clearDisabled?: boolean
+  // disable the clear button
+  clearDisable?: boolean
   // icon for the clear button
   clearIcon?: string
   // label for the clear button
   clearLabel?: string
   // function that returns if the item at index is disabled or not
-  itemDisabled?: (index: number) => boolean
+  itemDisable?: (index: number) => boolean
   // icon for the remove button
   removeIcon?: string
   // function called before removing item at index
