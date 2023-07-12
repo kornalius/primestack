@@ -40,15 +40,14 @@
       <form-element-row
         v-if="isRow"
         v-model="field"
+        class="bordered"
         :components="components"
-        :preview="preview"
-        :preview-form-data="previewFormData"
         @remove="removeColumn"
         @click="onColumnClick"
       />
 
       <component
-        :is="componentsForFieldType[field._type]"
+        :is="componentForType[field._type]"
         v-else
         v-model="field.modelValue"
         v-bind="field"
@@ -62,7 +61,6 @@
           marginBottom: field.margin?.bottom,
           marginRight: field.margin?.right,
         }"
-        :hint="field.hint === '' ? undefined : field.hint"
       />
 
       <div
@@ -88,8 +86,6 @@ const props = defineProps<{
   modelValue: TFormField
   components: TFormComponent[]
   selected?: boolean
-  preview: boolean
-  previewFormData: Record<string, unknown>
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -99,7 +95,7 @@ const emit = defineEmits<{
   (e: 'update:model-value', value: TFormField): void,
 }>()
 
-const { componentsForFieldType } = useFormElements()
+const { componentForType } = useFormElements()
 
 const field = useModelValue(props, emit)
 
@@ -154,14 +150,16 @@ const isRow = computed(() => component.value.type === 'row')
   position: relative
   margin: 8px 0
   width: 100%
-  border: 1px dashed $blue-grey-4
-  border-radius: 4px
 
   &:first-child
     margin: 0
 
   &.selected
     border: 2px solid $blue-grey-5
+
+.bordered
+  border: 1px dashed $blue-grey-4
+  border-radius: 4px
 
 .action
   position: absolute

@@ -9,13 +9,14 @@
         v-if="isRow(field)"
         v-model="value"
         :columns="field.columns"
+        :components="components"
       />
 
       <component
-        :is="componentsForFieldType[field._type]"
+        :is="componentForType[field._type]"
         v-else
         v-model="value[field.name]"
-        v-bind="field"
+        v-bind="fieldBinds(field, schemaForType(field))"
         :style="{
           paddingTop: field.padding?.top,
           paddingLeft: field.padding?.left,
@@ -26,14 +27,14 @@
           marginBottom: field.margin?.bottom,
           marginRight: field.margin?.right,
         }"
-        :hint="field.hint === '' ? undefined : field.hint"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { TFormField } from '@/shared/interfaces/forms'
+import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
+import { TSchema } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
 import useFormElements from '@/features/Form/composites'
 import FormDisplayRow from '@/features/Form/components/FormDisplayRow.vue'
@@ -41,6 +42,7 @@ import FormDisplayRow from '@/features/Form/components/FormDisplayRow.vue'
 const props = defineProps<{
   modelValue: Record<string, unknown>
   fields: TFormField[]
+  components: TFormComponent[]
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -48,10 +50,15 @@ const emit = defineEmits<{
   (e: 'update:model-value', value: Record<string, unknown>): void,
 }>()
 
-const { componentsForFieldType } = useFormElements()
+const { componentForType, fieldBinds } = useFormElements()
 
 const value = useModelValue(props, emit)
 
 // eslint-disable-next-line no-underscore-dangle
 const isRow = (field: TFormField): boolean => field._type === 'row'
+
+const schemaForType = (field: TFormField): TSchema | undefined => (
+  // eslint-disable-next-line no-underscore-dangle
+  props.components.find((c) => c.type === field._type)?.schema
+)
 </script>

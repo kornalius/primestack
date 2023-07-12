@@ -1,13 +1,6 @@
 <template>
   <div>
-    <form-display
-      v-if="preview"
-      v-model="formData"
-      :fields="fields"
-    />
-
     <draggable
-      v-else
       :list="fields"
       class="form-builder-container"
       :group="{ name: 'form-builder' }"
@@ -24,8 +17,6 @@
           v-model="fields[index]"
           :components="components"
           :selected="editor.isSelected(fields[index]._id)"
-          :preview="preview"
-          :preview-form-data="previewFormData"
           @click="editor.select"
           @remove="remove"
         />
@@ -38,16 +29,13 @@
 import draggable from 'vuedraggable'
 import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { AnyData } from '@/shared/interfaces/commons'
-import { useModelValue, useSyncedProp } from '@/composites/prop'
-import FormDisplay from '@/features/Form/components/FormDisplay.vue'
+import { useModelValue } from '@/composites/prop'
 import FormElement from './FormElement.vue'
 import useFormEditor from '../../store'
 
 const props = defineProps<{
   modelValue: unknown[]
   components: TFormComponent[]
-  preview: boolean
-  previewFormData: Record<string, unknown>
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -61,7 +49,6 @@ const emit = defineEmits<{
 }>()
 
 const fields = useModelValue(props, emit)
-const formData = useSyncedProp(props, 'previewFormData', emit)
 
 /**
  * Selection

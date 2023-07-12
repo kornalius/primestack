@@ -63,28 +63,86 @@
       </q-tab-panel>
 
       <q-tab-panel name="PropertiesEditor">
-        <property-editor v-model="testProperties" :schema="schema" />
+        <properties-editor
+          v-model="testProperties"
+          v-model:forced-types="forcedTypes"
+          :prop-name="''"
+          :schema="schema"
+        />
 
         <pre>{{ testProperties }}</pre>
+        <pre>{{ forcedTypes }}</pre>
       </q-tab-panel>
 
-      <q-tab-panel name="FormEditor">
+      <q-tab-panel name="FormEditor" class="q-pr-none">
+        <div class="row">
+          <div class="title q-mb-sm full-width">
+            <div class="row items-center">
+              <div class="col">
+                <span class="text-h6 text-white">Form</span>
+              </div>
+
+              <div class="col-auto">
+                <q-toggle
+                  v-model="preview"
+                  class="q-ml-sm text-white"
+                  label="Preview"
+                  left-label
+                  dense
+                />
+
+                <q-toggle
+                  v-model="showPreviewFormData"
+                  class="q-ml-sm text-white"
+                  :disable="!preview"
+                  label="Data"
+                  left-label
+                  dense
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <form-display
+          v-if="preview"
+          v-model="previewFormData"
+          :fields="testForm"
+          :components="components"
+        />
+
         <form-editor
+          v-else
           v-model="testForm"
           :components="components"
         />
+
+        <div v-if="preview && showPreviewFormData" class="q-mt-sm">
+          <div class="title q-mb-sm">
+            <div class="row items-center">
+              <div class="col">
+                <span class="text-h6 text-white">Data</span>
+              </div>
+            </div>
+          </div>
+
+          <pre>{{ previewFormData }}</pre>
+        </div>
       </q-tab-panel>
     </q-tab-panels>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { Ref, ref, watch } from 'vue'
 import { Type } from '@feathersjs/typebox'
-import PropertyEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import FormEditor from '@/features/Form/components/Editor/FormEditor.vue'
+import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import useFormElements from '@/features/Form/composites'
+import FormDisplay from '@/features/Form/components/FormDisplay.vue'
+import { defaultValueForSchema } from '@/utils/schemas'
+import { TFormField } from '@/shared/interfaces/forms'
 
 const testProperties = ref({
   string: '',
@@ -106,8 +164,10 @@ const testProperties = ref({
   },
 })
 
+const forcedTypes = ref({})
+
 const schema = Type.Object({
-  string: Type.String(),
+  string: Type.Union([Type.String(), Type.Number()]),
   number: Type.Number(),
   range: Type.Number({ minimum: 0, maximum: 10, step: 0.5 }),
   date: Type.String({ format: 'date' }),
@@ -150,12 +210,13 @@ const schema = Type.Object({
     optionLabel: 'label',
   })),
   color: Type.String({ color: true }),
-  arrayOfString: Type.Array(Type.String()),
+  arrayOfString: Type.Array(Type.Union([Type.String(), Type.Number()])),
   arrayOfObject: Type.Array(Type.Object({
-    string: Type.String(),
+    string: Type.Union([Type.String(), Type.Number()]),
     check: Type.Boolean(),
   })),
   obj: Type.Object({
+    string: Type.Union([Type.String(), Type.Number()]),
     top: Type.Number(),
     left: Type.Number(),
     bottom: Type.Number(),
@@ -193,7 +254,35 @@ const onSelect = (value: unknown, selected: boolean) => {
  * Form
  */
 
-const testForm = ref([])
+const testForm = ref([]) as Ref<TFormField[]>
 
 const components = ref(useFormElements().components)
+
+/**
+ * Preview
+ */
+
+const { flattenFields } = useFormElements()
+
+const preview = ref(false)
+const previewFormData = ref({})
+const showPreviewFormData = ref(false)
+
+watch(preview, () => {
+  previewFormData.value = flattenFields(testForm.value)
+    .reduce((acc, f) => {
+      // eslint-disable-next-line no-underscore-dangle
+      const comp = components.value.find((c) => c.type === f._type)
+      if (comp && !comp.nokey) {
+        return { ...acc, [f.name]: defaultValueForSchema(comp.schema.properties.modelValue) }
+      }
+      return acc
+    }, {})
+})
 </script>
+
+<style scoped lang="sass">
+.title
+  padding: 4px 8px
+  background: $grey-6
+</style>

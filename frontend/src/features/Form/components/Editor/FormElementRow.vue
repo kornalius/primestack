@@ -41,9 +41,7 @@
 
       <fields-editor
         v-model="column.fields"
-        :preview-form-data="previewFormData"
         :components="components"
-        :preview="preview"
       />
     </div>
   </div>
@@ -59,8 +57,6 @@ import FieldsEditor from '@/features/Form/components/Editor/FieldsEditor.vue'
 const props = defineProps<{
   modelValue: TFormField
   components: TFormComponent[]
-  preview: boolean
-  previewFormData: Record<string, unknown>
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits

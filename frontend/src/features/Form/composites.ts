@@ -1,6 +1,10 @@
 import { v4 as uuidv4 } from 'uuid'
 import startCase from 'lodash/startCase'
-import { TObject, Type, StringEnum } from '@feathersjs/typebox'
+import omit from 'lodash/omit'
+import { QCheckbox, QInput, QSelect } from 'quasar'
+import {
+  TObject, Type, StringEnum, TSchema,
+} from '@feathersjs/typebox'
 import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { defaultValueForSchema } from '@/utils/schemas'
 import DateField from '@/features/Fields/components/DateField.vue'
@@ -9,37 +13,37 @@ import ColorField from '@/features/Fields/components/ColorField.vue'
 import IconField from '@/features/Fields/components/IconField.vue'
 import FormElementRow from '@/features/Form/components/Editor/FormElementRow.vue'
 import { AnyData } from '@/shared/interfaces/commons'
-import { QCheckbox, QInput, QSelect } from 'quasar'
 
 export const commonProperties = {
   name: Type.Object({
     name: Type.String(),
-  }, { additionalProperties: false }),
+  }),
 
   state: Type.Object({
-    disabled: Type.Boolean(),
+    disable: Type.Boolean(),
     readonly: Type.Boolean(),
-  }, { additionalProperties: false }),
+  }),
 
   style: Type.Object({
     dense: Type.Boolean(),
+    hideBottomSpace: Type.Boolean(),
     padding: Type.Object({
       top: Type.String(),
       left: Type.String(),
       bottom: Type.String(),
       right: Type.String(),
-    }, { additionalProperties: false }),
+    }, { skip: true }),
     margin: Type.Object({
       top: Type.String(),
       left: Type.String(),
       bottom: Type.String(),
       right: Type.String(),
-    }, { additionalProperties: false }),
-  }, { additionalProperties: false }),
+    }, { skip: true }),
+  }),
 
   size: Type.Object({
     size: StringEnum(['xm', 'sm', 'md', 'lg', 'xl']),
-  }, { additionalProperties: false }),
+  }),
 }
 
 const newNameForField = (type: string, fields: AnyData[]): string => {
@@ -60,7 +64,6 @@ export const properties = (props: TObject[]) => Type.Intersect(
     commonProperties.name,
     ...props,
   ],
-  { additionalProperties: false },
 )
 
 const flattenFields = (fields: TFormField[]): (AnyData)[] => {
@@ -68,13 +71,14 @@ const flattenFields = (fields: TFormField[]): (AnyData)[] => {
 
   const flatten = (list: AnyData[]): void => {
     list.forEach((f) => {
+      flattended.push(f)
+
       if (f.columns) {
         flatten(f.columns)
       }
       if (f.fields) {
         flatten(f.fields)
       }
-      flattended.push(f)
     })
   }
 
@@ -83,8 +87,69 @@ const flattenFields = (fields: TFormField[]): (AnyData)[] => {
   return flattended
 }
 
+const optionsForSchema = (p: TSchema): unknown[] => {
+  if (p.enum) {
+    return p.enum.map((e) => ({ label: e, value: e }))
+  }
+  if (p.items?.enum) {
+    return p.items.enum.map((e) => ({ label: e, value: e }))
+  }
+  return p.options || p.items?.options
+}
+
+const getTypeFor = (p: TSchema, forcedType?: string): string => {
+  const options = optionsForSchema(p)
+
+  if (forcedType) {
+    return forcedType
+  }
+  if (p.type === 'number' && p.minimum !== undefined && p.maximum !== undefined) {
+    return 'slider'
+  }
+  if (p.type === 'number') {
+    return 'number'
+  }
+  if (p.type === 'string' && p.format === 'date') {
+    return 'date'
+  }
+  if (p.type === 'string' && p.format === 'time') {
+    return 'time'
+  }
+  if (p.type === 'string' && Array.isArray(options)) {
+    return 'select'
+  }
+  if (p.type === 'string' && p.color) {
+    return 'color'
+  }
+  if (p.type === 'string' && p.icon) {
+    return 'icon'
+  }
+  if (p.type === 'string' && p.enum) {
+    return 'select'
+  }
+  if (p.type === 'string') {
+    return 'string'
+  }
+  if (p.type === 'boolean') {
+    return 'boolean'
+  }
+  if (p.type === 'array' && p.items?.type === 'string' && Array.isArray(options)) {
+    return 'select'
+  }
+  if (p.type === 'array') {
+    return 'array'
+  }
+  if (p.type === 'object') {
+    return 'object'
+  }
+  if (p.anyOf) {
+    return getTypeFor(p.anyOf[0])
+  }
+  return 'string'
+}
+
 export default () => ({
-  componentsForFieldType: {
+  componentForType: {
     text: QInput,
     number: QInput,
     checkbox: QCheckbox,
@@ -111,10 +176,38 @@ export default () => ({
 
   flattenFields,
 
+  optionsForSchema,
+
+  getTypeFor,
+
+  fieldBinds: (field: TFormField, schema: TSchema): AnyData => {
+    const fieldsToOmit = [
+      '_id',
+      '_type',
+      'modelValue',
+      'fields',
+      'columns',
+    ]
+
+    const scanSchema = (s: TSchema): void => {
+      Object.keys(s.properties).forEach((k) => {
+        if (s.properties[k].skip) {
+          fieldsToOmit.push(k)
+        } else if (s.properties[k].type === 'object') {
+          scanSchema(s.properties[k])
+        }
+      })
+    }
+
+    scanSchema(schema)
+
+    return omit(field, fieldsToOmit)
+  },
+
   components: [
     {
       type: 'text',
-      icon: 'mdi-format-text',
+      icon: 'mdi-form-textbox',
       label: 'Text',
       schema: properties([
         commonProperties.style,
@@ -257,7 +350,7 @@ export default () => ({
     },
     {
       type: 'select',
-      icon: 'mdi-form-dropdown',
+      icon: 'mdi-form-select',
       label: 'Select',
       schema: properties([
         commonProperties.style,
@@ -314,8 +407,8 @@ export default () => ({
     },
     {
       type: 'icon',
-      icon: 'mdi-star-face',
-      label: 'Icon',
+      icon: 'mdi-form-select',
+      label: 'Icon Select',
       schema: properties([
         commonProperties.style,
         commonProperties.state,
@@ -389,7 +482,7 @@ export default () => ({
       label: 'Row',
       nokey: true,
       schema: properties([
-        Type.Omit(commonProperties.style, ['dense']),
+        Type.Omit(commonProperties.style, ['dense', 'hideBottomSpace']),
       ]),
     },
     {
@@ -399,7 +492,7 @@ export default () => ({
       nokey: true,
       hidden: true,
       schema: properties([
-        Type.Omit(commonProperties.style, ['dense']),
+        Type.Omit(commonProperties.style, ['dense', 'hideBottomSpace']),
         Type.Object({
           col: Type.String(),
         }, { additionalProperties: false }),

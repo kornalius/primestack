@@ -50,7 +50,7 @@
       >
         <template #item="{ element: value, index }">
           <div
-            class="row items-center"
+            class="row items-center line"
             style="min-height: 30px;"
             @mouseover="hover = index as number"
             @mouseleave="hover = -1"
@@ -201,7 +201,7 @@ const props = defineProps<{
 // eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'add', value: unknown): void,
-  (e: 'remove', index: number, value: unknown): void,
+  (e: 'remove', value: unknown, index: number): void,
   (e: 'clear'): void,
   (e: 'moved', oldIndex: number, newIndex: number): void,
   (e: 'select', value: unknown, selected: boolean): void,
@@ -248,7 +248,7 @@ const removeItem = (value: unknown) => {
     && (!props.canRemove || props.canRemove(value))
     && props.removeFunction(value, idx)
   ) {
-    emit('remove', idx, value)
+    emit('remove', value, idx)
   }
 }
 
@@ -302,3 +302,9 @@ watch(currentSelection, (newValue, oldValue) => {
   })
 })
 </script>
+
+<style scoped lang="sass">
+.line:not(:last-child)
+  margin-bottom: 4px
+  border-bottom: 1px solid lightgrey
+</style>

@@ -12,8 +12,32 @@
         >
           <div class="row justify-end">
             <div class="col-auto">
-              <span class="text-bold">{{ label }}</span>
+              <q-btn
+                v-if="multipleTypes"
+                class="q-ml-sm"
+                icon="mdi-tag-multiple"
+                color="grey-7"
+                size="sm"
+                flat
+                dense
+              >
+                <q-menu>
+                  <q-list dense>
+                    <q-item
+                      v-for="t in multipleTypes"
+                      :key="t"
+                      clickable
+                      v-close-popup
+                      @click="changeType(t)"
+                    >
+                      <q-item-section>{{ t }}</q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-menu>
+              </q-btn>
             </div>
+
+            <span class="text-bold">{{ label }}</span>
           </div>
         </div>
 
@@ -49,26 +73,28 @@
           <date-field
             v-else-if="type === 'date'"
             v-model="value"
+            hide-bottom-space
             dense
             outlined
           />
 
           <time-field
-            v-if="type === 'time'"
+            v-else-if="type === 'time'"
             v-model="value"
+            hide-bottom-space
             dense
             outlined
           />
 
           <q-checkbox
-            v-if="type === 'boolean'"
+            v-else-if="type === 'boolean'"
             v-model="value"
             class="full-width"
             dense
           />
 
           <q-select
-            v-if="type === 'select'"
+            v-else-if="type === 'select'"
             v-model="value"
             :options="options"
             :option-label="optionLabel"
@@ -83,7 +109,7 @@
           />
 
           <icon-field
-            v-if="type === 'icon'"
+            v-else-if="type === 'icon'"
             v-model="value"
             dense
             outlined
@@ -92,32 +118,35 @@
           />
 
           <color-field
-            v-if="type === 'color'"
+            v-else-if="type === 'color'"
             v-model="value"
-            :css-class-prefix="cssClassPrefix"
             quasar-palette
             dense
             outlined
           />
 
           <properties-editor
-            v-if="type === 'object'"
+            v-else-if="type === 'object'"
             v-model="value"
+            v-model:forced-types="currentForcedTypes"
+            :prop-name="propName"
             :schema="objectSchema"
             flat
           />
 
           <array-editor
-            v-if="type === 'array'"
+            v-else-if="type === 'array'"
             v-model="value"
             add-button="bottom"
             :add-function="() => addItem(value)"
-            :remove-function="(value: unknown, index: number) => removeItem(value, index)"
+            :remove-function="(v: unknown, idx: number) => removeItem(value, idx)"
           >
             <template #default="{ index }">
               <properties-editor
                 v-if="arraySchemaIsObject"
                 v-model="value[index]"
+                v-model:forced-types="currentForcedTypes"
+                :prop-name="subPropName(index)"
                 :schema="arraySchema"
                 flat
               />
@@ -125,6 +154,8 @@
               <property-editor
                 v-else
                 v-model="value[index]"
+                v-model:forced-types="currentForcedTypes"
+                :prop-name="subPropName(index)"
                 :schema="arraySchema"
                 :required="arraySchema.required"
               />
@@ -137,10 +168,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { TSchema } from '@feathersjs/typebox'
-import { useModelValue } from '@/composites/prop'
+import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { defaultValueForSchema } from '@/utils/schemas'
+import useFormElements from '@/features/Form/composites'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import TimeField from '@/features/Fields/components/TimeField.vue'
@@ -153,22 +185,26 @@ const props = defineProps<{
   schema: TSchema
   required?: boolean
   label?: string
+  // property name in the model for the property being edited
+  propName: string
+  // object that stores the forced types selected by the user
+  forcedTypes: Record<string, string>
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
-const emit = defineEmits()
+const emit = defineEmits<{
+  (e: 'update:forcedTypes', value: Record<string, string>): void,
+  (e: 'update:model-value', value: unknown): void,
+}>()
 
 const value = useModelValue(props, emit)
+const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
+
+const { getTypeFor, optionsForSchema } = useFormElements()
 
 const options = computed((): unknown[] | undefined => {
   const p = props.schema
-  if (p.enum) {
-    return p.enum.map((e) => ({ label: e, value: e }))
-  }
-  if (p.items?.enum) {
-    return p.items.enum.map((e) => ({ label: e, value: e }))
-  }
-  return p.options || p.items?.options
+  return optionsForSchema(p)
 })
 
 const optionValue = computed((): string | undefined => {
@@ -186,53 +222,28 @@ const multiple = computed((): boolean => {
   return p.type === 'array'
 })
 
-const cssClassPrefix = computed((): 'text' | 'bg' => {
-  const p = props.schema
-  return p.text ? 'text' : 'bg'
-})
-
 const type = computed((): string => {
   const p = props.schema
-  if (p.type === 'number' && p.minimum !== undefined && p.maximum !== undefined) {
-    return 'slider'
+  return getTypeFor(p, currentForcedTypes.value[props.propName])
+})
+
+const multipleTypes = computed((): string[] | undefined => {
+  const p = props.schema
+  if (p.anyOf) {
+    return p.anyOf.map((t) => t.type)
   }
-  if (p.type === 'number') {
-    return 'number'
+  return undefined
+})
+
+watch(value, () => {
+  // when the value changes to '' and its type is 'string', set it to undefined instead
+  if (value.value === '' && type.value === 'string') {
+    emit('update:model-value', undefined)
   }
-  if (p.type === 'string' && p.format === 'date') {
-    return 'date'
+  // when the input value is a string and the type needs to be a number
+  if (typeof value.value === 'string' && (type.value === 'number' || type.value === 'range')) {
+    emit('update:model-value', parseFloat(value.value) || 0)
   }
-  if (p.type === 'string' && p.format === 'time') {
-    return 'time'
-  }
-  if (p.type === 'string' && Array.isArray(options.value)) {
-    return 'select'
-  }
-  if (p.type === 'string' && p.color) {
-    return 'color'
-  }
-  if (p.type === 'string' && p.icon) {
-    return 'icon'
-  }
-  if (p.type === 'string' && p.enum) {
-    return 'select'
-  }
-  if (p.type === 'string') {
-    return 'string'
-  }
-  if (p.type === 'boolean') {
-    return 'boolean'
-  }
-  if (p.type === 'array' && p.items?.type === 'string' && Array.isArray(options.value)) {
-    return 'select'
-  }
-  if (p.type === 'array') {
-    return 'array'
-  }
-  if (p.type === 'object') {
-    return 'object'
-  }
-  return 'string'
 })
 
 const arraySchema = computed(() => props.schema.items)
@@ -240,7 +251,7 @@ const arraySchema = computed(() => props.schema.items)
 const objectSchema = computed(() => props.schema)
 
 const arraySchemaIsObject = computed(() => (
-  arraySchema.value.type === 'object'
+  getTypeFor(arraySchema.value, currentForcedTypes.value[props.propName]) === 'object'
 ))
 
 const addItem = (arr: unknown[]): unknown | undefined => {
@@ -253,4 +264,13 @@ const removeItem = (arr: unknown[], index: number): boolean => {
   arr.splice(index, 1)
   return true
 }
+
+const changeType = (t: string) => {
+  currentForcedTypes.value[props.propName] = t
+  emit('update:model-value', undefined)
+}
+
+const subPropName = (name: string | number) => (
+  props.propName ? `${props.propName}.${name.toString()}` : name.toString()
+)
 </script>

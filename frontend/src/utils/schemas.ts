@@ -1,8 +1,8 @@
 import { TSchema } from '@feathersjs/typebox'
 
-export const defaultValueForSchema = (schema: TSchema): unknown => {
-  switch (schema?.type) {
-    case 'string': return ''
+export const defaultValueForSchema = (schema: TSchema, forcedType?: string): unknown => {
+  switch (forcedType || schema?.type) {
+    case 'string': return undefined
     case 'number': return 0
     case 'boolean': return false
     case 'array': return []
@@ -11,6 +11,6 @@ export const defaultValueForSchema = (schema: TSchema): unknown => {
         .reduce((acc, k) => (
           { ...acc, [k]: defaultValueForSchema(schema.properties[k]) }
         ), {})
-    default: return ''
+    default: return undefined
   }
 }

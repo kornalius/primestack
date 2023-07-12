@@ -33,8 +33,7 @@ import { useModelValue } from '@/composites/prop'
 
 const props = defineProps<{
   modelValue: string | null | undefined
-  quasarPalette: boolean
-  cssClassPrefix: 'text' | 'bg'
+  quasarPalette?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -46,14 +45,6 @@ const value = useModelValue(props, emit)
 
 const { hexToRgb, textToRgb } = colors
 
-const styleColorName = computed(() => {
-  switch (props.cssClassPrefix) {
-    case 'text': return 'color'
-    case 'bg': return 'backgroundColor'
-    default: return 'color'
-  }
-})
-
 const quasar = computed(() => (
   Array.from(document.querySelectorAll('head style'))
     .filter((s) => s.dataset.viteDevId.endsWith('quasar/src/css/index.sass'))
@@ -61,10 +52,10 @@ const quasar = computed(() => (
 
 const quasarColors = computed(() => (
   Array.from(quasar.value?.[0].sheet.cssRules)
-    .filter((r: CSSStyleRule) => r.selectorText?.startsWith(`.${props.cssClassPrefix}-`))
+    .filter((r: CSSStyleRule) => r.selectorText?.startsWith('.text-'))
     .map((r: CSSStyleRule) => ({
-      name: r.selectorText.replace(`.${props.cssClassPrefix}-`, ''),
-      color: r.style[styleColorName.value],
+      name: r.selectorText.replace('.text-', ''),
+      color: r.style.color,
     }))
 ))
 
