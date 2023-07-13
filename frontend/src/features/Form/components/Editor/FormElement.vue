@@ -74,13 +74,13 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { v4 as uuidv4 } from 'uuid'
+import hexObjectId from 'hex-object-id'
 import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 import useFormElements from '@/features/Form/composites'
 import FormElementRow from '@/features/Form/components/Editor/FormElementRow.vue'
 import useFormEditoreditor from '@/features/Form/store'
-import { defaultValueForSchema } from '@/utils/schemas'
+import { useSchema } from '@/composites/schema'
 
 const props = defineProps<{
   modelValue: TFormField
@@ -94,6 +94,8 @@ const emit = defineEmits<{
   (e: 'remove', value: TFormField): void,
   (e: 'update:model-value', value: TFormField): void,
 }>()
+
+const { defaultValueForSchema } = useSchema()
 
 const { componentForType } = useFormElements()
 
@@ -116,7 +118,7 @@ const onColumnClick = (column: TFormColumn) => {
 
 const onAddColumnClick = () => {
   const col = {
-    _id: uuidv4(),
+    _id: hexObjectId(),
     _type: 'col',
     columns: undefined,
     fields: [],
@@ -155,7 +157,8 @@ const isRow = computed(() => component.value.type === 'row')
     margin: 0
 
   &.selected
-    border: 2px solid $blue-grey-5
+    border-radius: 4px
+    outline: 2px solid $blue-grey-5 !important
 
 .bordered
   border: 1px dashed $blue-grey-4

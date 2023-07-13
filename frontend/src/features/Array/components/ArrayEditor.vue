@@ -50,7 +50,8 @@
       >
         <template #item="{ element: value, index }">
           <div
-            class="row items-center line"
+            class="row items-center"
+            :class="{ line: !noSeparator }"
             style="min-height: 30px;"
             @mouseover="hover = index as number"
             @mouseleave="hover = -1"
@@ -198,6 +199,8 @@ const props = defineProps<{
   selection?: unknown[]
   // key to display in the list or a function that returns a string
   displayValue?: ((value: unknown) => string) | string
+  // remove the separator lines between the items
+  noSeparator?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits

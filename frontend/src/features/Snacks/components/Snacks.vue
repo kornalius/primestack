@@ -1,5 +1,9 @@
 <template>
-  <div>
+  <div
+    v-if="snacks.length"
+    class="q-mb-sm"
+    style="margin-top: -16px;"
+  >
     <transition
       v-for="snack in snacks"
       :key="snack"

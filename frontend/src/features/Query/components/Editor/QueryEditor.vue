@@ -1,17 +1,36 @@
 <template>
+  <div class="row">
+    <div class="col">
+      <q-select
+        v-model="query.schemaId"
+        :loading="isPending"
+        :options="schemas"
+        label="Select a schema..."
+        option-value="_id"
+        option-label="name"
+        options-dense
+        emit-value
+        map-options
+        dense
+        outlined
+      />
+    </div>
+  </div>
+
   <array-editor
-    v-model="value"
+    v-model="query.groups"
     add-button="bottom"
     :disable="disable"
     :add-function="addGroup"
     :remove-function="removeGroup"
+    no-separator
   >
     <template #default="{ index }">
       <div class="row">
-        <div class="col">
+        <div class="col q-ml-sm">
           <query-logical-operators
             v-if="!!index"
-            v-model="value[index].logicOp"
+            v-model="query.groups[index].logicOp"
             :disable="disable"
             color="negative"
           />
@@ -21,7 +40,7 @@
       <div class="row">
         <div class="col">
           <query-group-editor
-            v-model="value[index]"
+            v-model="query.groups[index]"
             :label="`Group ${index + 1}`"
             :disable="disable"
             :color="palette[index % palette.length]"
@@ -35,16 +54,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useModelValue } from '@/composites/prop'
 import { Query, QueryGroup, queryOperators } from '@/shared/interfaces/query'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import QueryGroupEditor from '@/features/Query/components/Editor/QueryGroup.vue'
 import QueryLogicalOperators from '@/features/Query/components/Editor/QueryLogicalOperators.vue'
+import { api } from '@/plugins/pinia'
 
 const props = defineProps<{
   modelValue: Query
-  fields: string[]
   disable?: boolean
 }>()
 
@@ -54,27 +73,57 @@ const emit = defineEmits<{
 }>()
 
 const palette = ref([
-  'bg-blue-5',
-  'bg-green-5',
-  'bg-grey-5',
-  'bg-purple-5',
-  'bg-orange-5',
-  'bg-teal-5',
-  'bg-pink-5',
+  'bg-purple-1',
+  'bg-green-1',
+  'bg-blue-1',
+  'bg-grey-1',
+  'bg-orange-1',
+  'bg-teal-1',
+  'bg-pink-1',
 ])
 
-const value = useModelValue(props, emit)
+const query = useModelValue(props, emit)
 
 const addGroup = () => {
   const group: QueryGroup = {
     criterias: [],
     logicOp: 'and',
   }
-  value.value.push(group)
+  query.value.groups.push(group)
 }
 
 const removeGroup = (val: unknown, index: number): boolean => {
-  value.value.splice(index, 1)
+  query.value.groups.splice(index, 1)
   return true
 }
+
+watch(query, () => {
+  if (query.value.groups.length === 0) {
+    addGroup()
+  }
+}, { immediate: true })
+
+/**
+ * Schemas
+ */
+
+const { data: schemas, isPending, find } = api.service('schemas').useFind({
+  query: {},
+})
+find()
+
+const fields = computed(() => {
+  if (query.value.schemaId) {
+    const schema = api.service('schemas').getFromStore(query.value.schemaId)
+    if (schema.value) {
+      return schema.value.fields
+    }
+  }
+  return []
+})
+
+watch(() => query.value.schemaId, () => {
+  query.value.groups = []
+  addGroup()
+})
 </script>

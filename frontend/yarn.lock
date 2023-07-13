@@ -913,6 +913,11 @@ array-buffer-byte-length@^1.0.0:
     call-bind "^1.0.2"
     is-array-buffer "^3.0.1"
 
+array-buffer-to-hex@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/array-buffer-to-hex/-/array-buffer-to-hex-1.0.0.tgz#9c76e53010ef7bf7bf8a27ebbb41d24e1d83edf4"
+  integrity sha512-arycdkxgK1cj6s03GDb96tlCxOl1n3kg9M2OHseUc6Pqyqp+lgfceFPmG507eI5V+oxOSEnlOw/dFc7LXBXF4Q==
+
 array-includes@^3.1.6:
   version "3.1.6"
   resolved "https://registry.yarnpkg.com/array-includes/-/array-includes-3.1.6.tgz#9e9e720e194f198266ba9e18c29e6a9b0e4b225f"
@@ -1114,6 +1119,13 @@ cross-spawn@^7.0.2, cross-spawn@^7.0.3:
     path-key "^3.1.0"
     shebang-command "^2.0.0"
     which "^2.0.1"
+
+crypto-random-hex@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/crypto-random-hex/-/crypto-random-hex-1.0.0.tgz#f15d4f4a8ce01e9d05e423390b3b98309c8e86de"
+  integrity sha512-1DuZQ03El13TRgfrqbbjW40Gvi4OKInny/Wxqj23/JMXe214C/3Tlz92bKXWDW3NZT5RjXUGdYW4qiIOUPf+cA==
+  dependencies:
+    array-buffer-to-hex "^1.0.0"
 
 cssesc@^3.0.0:
   version "3.0.0"
@@ -1987,6 +1999,13 @@ he@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
   integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
+
+hex-object-id@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/hex-object-id/-/hex-object-id-1.0.0.tgz#41a08050b8460f462bdc397b1d0557e8cd3a612d"
+  integrity sha512-1/j42a/l4EukOR5zrl5hCUwARA2mC+/IYYdXgZ+9xz/HYy94MctE3NZhjwrmthG2SCKuM4hw679QX/mUbetr4Q==
+  dependencies:
+    crypto-random-hex "^1.0.0"
 
 human-signals@^2.1.0:
   version "2.1.0"

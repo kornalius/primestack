@@ -1,22 +1,10 @@
 <template>
   <div>
-    <div class="text-h2 q-mb-md">
-      Test
-    </div>
-
-    <!--    <q-drawer-->
-    <!--      :model-value="rightDrawerOpen"-->
-    <!--      side="right"-->
-    <!--      bordered-->
-    <!--    >-->
-    <!--      &lt;!&ndash; drawer content &ndash;&gt;-->
-    <!--    </q-drawer>-->
-
     <q-tabs
       v-model="tab"
       align="justify"
-      dense
       narrow-indicator
+      dense
     >
       <q-tab name="ArrayEditor" label="Array Editor" />
       <q-tab name="PropertiesEditor" label="Properties Editor" />
@@ -132,27 +120,34 @@
       </q-tab-panel>
 
       <q-tab-panel name="QueryEditor">
-        <query-editor
-          v-model="query"
-          :fields="fields"
-          style="height: 500px;"
-        />
+        <div class="row">
+          <div class="col-8">
+            <query-editor v-model="query" />
+          </div>
+
+          <div class="col q-ml-md">
+            <pre>{{ mongoQuery }}</pre>
+          </div>
+        </div>
       </q-tab-panel>
     </q-tab-panels>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Ref, ref, watch } from 'vue'
+import {
+  computed, Ref, ref, watch,
+} from 'vue'
 import { Type } from '@feathersjs/typebox'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import FormEditor from '@/features/Form/components/Editor/FormEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import useFormElements from '@/features/Form/composites'
 import FormDisplay from '@/features/Form/components/FormDisplay.vue'
-import { defaultValueForSchema } from '@/utils/schemas'
 import { TFormField } from '@/shared/interfaces/forms'
 import QueryEditor from '@/features/Query/components/Editor/QueryEditor.vue'
+import { useSchema } from '@/composites/schema'
+import { useQuery } from '@/composites/query'
 
 /**
  * Properties
@@ -275,9 +270,11 @@ const onSelect = (value: unknown, selected: boolean) => {
 
 const testForm = ref([]) as Ref<TFormField[]>
 
-const components = ref(useFormElements().components)
+const { defaultValueForSchema } = useSchema()
 
-const { flattenFields } = useFormElements()
+const { components: comps, flattenFields } = useFormElements()
+
+const components = ref(comps)
 
 const preview = ref(false)
 const previewFormData = ref({})
@@ -299,9 +296,11 @@ watch(preview, () => {
  * Query
  */
 
-const query = ref([])
+const { queryToMongo } = useQuery()
 
-const fields = ref([])
+const query = ref({ groups: [] })
+
+const mongoQuery = computed(() => queryToMongo(query.value.groups))
 </script>
 
 <style scoped lang="sass">

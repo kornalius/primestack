@@ -105,7 +105,7 @@ const onRemoveClick = (column: TFormColumn) => {
     margin-right: 8px
 
   &.selected
-    border: 2px solid $blue-grey-5
+    outline: 2px solid $blue-grey-5 !important
 
 .action
   position: absolute

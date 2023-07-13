@@ -140,6 +140,7 @@
             add-button="bottom"
             :add-function="() => addItem(value)"
             :remove-function="(v: unknown, idx: number) => removeItem(value, idx)"
+            :no-separator="!arraySchemaIsObject"
           >
             <template #default="{ index }">
               <properties-editor
@@ -171,8 +172,7 @@
 import { computed, watch } from 'vue'
 import { TSchema } from '@feathersjs/typebox'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
-import { defaultValueForSchema } from '@/utils/schemas'
-import useFormElements from '@/features/Form/composites'
+import { useSchema } from '@/composites/schema'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import TimeField from '@/features/Fields/components/TimeField.vue'
@@ -200,7 +200,7 @@ const emit = defineEmits<{
 const value = useModelValue(props, emit)
 const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
 
-const { getTypeFor, optionsForSchema } = useFormElements()
+const { getTypeFor, optionsForSchema, defaultValueForSchema } = useSchema()
 
 const options = computed((): unknown[] | undefined => {
   const p = props.schema

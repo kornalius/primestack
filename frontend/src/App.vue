@@ -76,10 +76,10 @@
       </q-list>
     </q-drawer>
 
-    <q-page-container>
-      <snacks />
-
+    <q-page-container style="padding-bottom: 0 !important;">
       <q-page class="q-ma-md">
+        <snacks />
+
         <router-view />
       </q-page>
     </q-page-container>

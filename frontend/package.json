@@ -32,6 +32,7 @@
     "animate.css": "^4.1.1",
     "dayjs": "^1.11.8",
     "feathers-pinia": "^3.0.4",
+    "hex-object-id": "^1.0.0",
     "lodash": "^4.17.21",
     "pinia": "^2.1.4",
     "quasar": "^2.12.2",

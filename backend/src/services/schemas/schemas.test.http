@@ -21,7 +21,8 @@ Content-Type: application/json
   "user": true,
   "fields": [
     {
-      "name": "field1",
+      "_id": "64affb4f2a4bb338b8b71d8b",
+      "name": "stringField",
       "type": "string",
       "hidden": true,
       "optional": false,
@@ -30,8 +31,19 @@ Content-Type: application/json
       "queryable": true
     },
     {
-      "name": "field2",
+      "_id": "64affb63b22ee0db653cf294",
+      "name": "numberField",
       "type": "number",
+      "hidden": false,
+      "optional": true,
+      "array": false,
+      "readonly": false,
+      "queryable": true
+    },
+    {
+      "_id": "64b00979a16f8ec037f7e041",
+      "name": "booleanField",
+      "type": "boolean",
       "hidden": false,
       "optional": true,
       "array": false,
@@ -41,6 +53,7 @@ Content-Type: application/json
   ],
   "indexes": [
     {
+      "_id": "64affbcf36fd14263d91945e",
       "name": "field1",
       "order": 1,
       "unique": true,
@@ -72,7 +85,8 @@ Content-Type: application/json
   "user": true,
   "fields": [
     {
-      "name": "field1",
+      "_id": "64affb4f2a4bb338b8b71d8b",
+      "name": "stringField",
       "type": "boolean",
       "hidden": true,
       "optional": false,
@@ -81,8 +95,19 @@ Content-Type: application/json
       "queryable": true
     },
     {
-      "name": "field2",
+      "_id": "64affb63b22ee0db653cf294",
+      "name": "numberField",
       "type": "number",
+      "hidden": false,
+      "optional": true,
+      "array": false,
+      "readonly": false,
+      "queryable": true
+    },
+    {
+      "_id": "64b00979a16f8ec037f7e041",
+      "name": "booleanField",
+      "type": "boolean",
       "hidden": false,
       "optional": true,
       "array": false,

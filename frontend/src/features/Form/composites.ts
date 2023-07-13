@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid'
+import hexObjectId from 'hex-object-id'
 import startCase from 'lodash/startCase'
 import omit from 'lodash/omit'
 import { QCheckbox, QInput, QSelect } from 'quasar'
@@ -6,13 +6,15 @@ import {
   TObject, Type, StringEnum, TSchema,
 } from '@feathersjs/typebox'
 import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
-import { defaultValueForSchema } from '@/utils/schemas'
 import DateField from '@/features/Fields/components/DateField.vue'
 import TimeField from '@/features/Fields/components/TimeField.vue'
 import ColorField from '@/features/Fields/components/ColorField.vue'
 import IconField from '@/features/Fields/components/IconField.vue'
 import FormElementRow from '@/features/Form/components/Editor/FormElementRow.vue'
 import { AnyData } from '@/shared/interfaces/commons'
+import { useSchema } from '@/composites/schema'
+
+const { defaultValueForSchema } = useSchema()
 
 export const commonProperties = {
   name: Type.Object({
@@ -87,67 +89,6 @@ const flattenFields = (fields: TFormField[]): (AnyData)[] => {
   return flattended
 }
 
-const optionsForSchema = (p: TSchema): unknown[] => {
-  if (p.enum) {
-    return p.enum.map((e) => ({ label: e, value: e }))
-  }
-  if (p.items?.enum) {
-    return p.items.enum.map((e) => ({ label: e, value: e }))
-  }
-  return p.options || p.items?.options
-}
-
-const getTypeFor = (p: TSchema, forcedType?: string): string => {
-  const options = optionsForSchema(p)
-
-  if (forcedType) {
-    return forcedType
-  }
-  if (p.type === 'number' && p.minimum !== undefined && p.maximum !== undefined) {
-    return 'slider'
-  }
-  if (p.type === 'number') {
-    return 'number'
-  }
-  if (p.type === 'string' && p.format === 'date') {
-    return 'date'
-  }
-  if (p.type === 'string' && p.format === 'time') {
-    return 'time'
-  }
-  if (p.type === 'string' && Array.isArray(options)) {
-    return 'select'
-  }
-  if (p.type === 'string' && p.color) {
-    return 'color'
-  }
-  if (p.type === 'string' && p.icon) {
-    return 'icon'
-  }
-  if (p.type === 'string' && p.enum) {
-    return 'select'
-  }
-  if (p.type === 'string') {
-    return 'string'
-  }
-  if (p.type === 'boolean') {
-    return 'boolean'
-  }
-  if (p.type === 'array' && p.items?.type === 'string' && Array.isArray(options)) {
-    return 'select'
-  }
-  if (p.type === 'array') {
-    return 'array'
-  }
-  if (p.type === 'object') {
-    return 'object'
-  }
-  if (p.anyOf) {
-    return getTypeFor(p.anyOf[0])
-  }
-  return 'string'
-}
-
 export default () => ({
   componentForType: {
     text: QInput,
@@ -162,7 +103,7 @@ export default () => ({
   },
 
   createFormField: (component: TFormComponent, fields: TFormField[]): TFormField => ({
-    _id: uuidv4(),
+    _id: hexObjectId(),
     _type: component.type,
     columns: component.type === 'row' ? [] : undefined,
     fields: component.type === 'col' ? [] : undefined,
@@ -175,10 +116,6 @@ export default () => ({
   }),
 
   flattenFields,
-
-  optionsForSchema,
-
-  getTypeFor,
 
   fieldBinds: (field: TFormField, schema: TSchema): AnyData => {
     const fieldsToOmit = [

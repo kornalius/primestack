@@ -3,6 +3,7 @@
     v-model="value"
     v-bind="$attrs"
     :bg-color="value"
+    :style="{ backgroundColor: value }"
   >
     <template #append>
       <q-icon

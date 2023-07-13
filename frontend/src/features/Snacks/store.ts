@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import { v4 as uuidv4 } from 'uuid'
+import hexObjectId from 'hex-object-id'
 import { Snack } from '@/shared/interfaces/snacks'
 
 export default defineStore('snacks', () => {
@@ -12,7 +12,7 @@ export default defineStore('snacks', () => {
   const pushSnack = (payload: Snack): void => {
     snackStates.value.push({
       ...payload,
-      id: uuidv4(),
+      id: hexObjectId(),
     })
   }
 
@@ -20,7 +20,7 @@ export default defineStore('snacks', () => {
     snackStates.value.push({
       ...payload,
       level: 'Warning',
-      id: uuidv4(),
+      id: hexObjectId(),
     })
   }
 
@@ -28,7 +28,7 @@ export default defineStore('snacks', () => {
     snackStates.value.push({
       ...payload,
       level: 'Error',
-      id: uuidv4(),
+      id: hexObjectId(),
     })
   }
 
@@ -36,7 +36,7 @@ export default defineStore('snacks', () => {
     snackStates.value.push({
       ...payload,
       level: 'Info',
-      id: uuidv4(),
+      id: hexObjectId(),
     })
   }
 
@@ -44,7 +44,7 @@ export default defineStore('snacks', () => {
     snackStates.value.push({
       ...payload,
       level: 'Success',
-      id: uuidv4(),
+      id: hexObjectId(),
     })
   }
 

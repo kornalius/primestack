@@ -1,19 +1,13 @@
 <template>
   <div class="row">
     <div class="col">
-      <q-option-group v-model="value">
-        <q-radio
-          :disable="disable"
-          label="And"
-          val="and"
-        />
-
-        <q-radio
-          :disable="disable"
-          label="Or"
-          val="or"
-        />
-      </q-option-group>
+      <q-option-group
+        v-model="value"
+        class="text-caption"
+        :options="options"
+        dense
+        inline
+      />
     </div>
   </div>
 </template>
@@ -21,6 +15,7 @@
 <script setup lang="ts">
 import { useModelValue } from '@/composites/prop'
 import { QueryLogicalOp } from '@/shared/interfaces/query'
+import { computed } from 'vue'
 
 const props = defineProps<{
   modelValue: QueryLogicalOp
@@ -33,4 +28,15 @@ const emit = defineEmits<{
 }>()
 
 const value = useModelValue(props, emit)
+
+const options = computed(() => ([
+  {
+    label: 'And',
+    value: 'and',
+  },
+  {
+    label: 'Or',
+    value: 'or',
+  },
+]))
 </script>

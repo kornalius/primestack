@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import { Static } from '@feathersjs/typebox'
-import { v4 as uuidv4 } from 'uuid'
+import hexObjectId from 'hex-object-id'
 import { useModelValue } from '@/composites/prop'
 import { schema, schemaField } from '@/shared/schemas/schema'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
@@ -39,7 +39,7 @@ const value = useModelValue(props, emit)
 
 const addField = () => {
   const field: SchemaField = {
-    _id: uuidv4(),
+    _id: hexObjectId(),
     name: '',
     type: 'string',
     array: false,

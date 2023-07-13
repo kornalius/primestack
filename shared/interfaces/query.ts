@@ -5,9 +5,9 @@ export interface Query {
 
 export type QueryLogicalOp = 'and' | 'or'
 
-export const queryOperators = ['===', '!==', '<=', '>=', '<', '>', 'like']
+export const queryOperators = ['=', '!=', '<=', '>=', '<', '>', 'like']
 
-export type QueryOperator = '===' | '!==' | '<=' | '>=' | '<' | '>' | 'like'
+export type QueryOperator = '=' | '!=' | '<=' | '>=' | '<' | '>' | 'like'
 
 export interface QueryGroup {
   criterias: QueryCriteria[]
