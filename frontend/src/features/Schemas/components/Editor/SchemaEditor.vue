@@ -2,13 +2,16 @@
   <div>
     <schema-info v-model="value" />
 
+    <section-title title="FIELDS" />
+
     <array-editor
       v-model="value.fields"
       :add-function="addField"
       :remove-function="removeField"
+      add-button="bottom"
     >
-      <template #default="{ value: field }">
-        <schema-field-editor v-model="field" />
+      <template #default="{ index }">
+        <schema-field-editor v-model="value.fields[index]" />
       </template>
     </array-editor>
   </div>
@@ -22,6 +25,7 @@ import { schema, schemaField } from '@/shared/schemas/schema'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import SchemaInfo from '@/features/Schemas/components/Editor/SchemaInfo.vue'
 import SchemaFieldEditor from '@/features/Schemas/components/Editor/SchemaField.vue'
+import SectionTitle from '@/features/Fields/components/SectionTitle.vue'
 
 type Schema = Static<typeof schema>
 type SchemaField = Static<typeof schemaField>

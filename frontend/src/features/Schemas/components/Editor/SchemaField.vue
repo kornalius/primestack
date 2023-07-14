@@ -1,5 +1,5 @@
 <template>
-  <div class="row">
+  <div class="row q-gutter-sm items-center">
     <div class="col-3">
       <q-input
         v-model="value.name"
@@ -17,7 +17,17 @@
         options-dense
         dense
         outlined
-      />
+      >
+        <template #option="{ opt, itemProps }">
+          <q-item class="items-center" v-bind="itemProps">
+            <q-item-section avatar>
+              <q-icon :name="iconForType(opt)" size="xs" color="grey-7" />
+            </q-item-section>
+
+            {{ opt }}
+          </q-item>
+        </template>
+      </q-select>
     </div>
 
     <div class="col">
@@ -66,6 +76,7 @@
 import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
 import { schemaField, supportedFieldTypes } from '@/shared/schemas/schema'
+import { useSchema } from '@/composites/schema'
 
 type SchemaField = Static<typeof schemaField>
 
@@ -79,4 +90,11 @@ const emit = defineEmits<{
 }>()
 
 const value = useModelValue(props, emit)
+
+const { iconForType } = useSchema()
 </script>
+
+<style scoped lang="sass">
+.q-item__section--avatar
+  min-width: unset
+</style>

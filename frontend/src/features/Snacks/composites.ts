@@ -51,8 +51,8 @@ export default (): {
       switch (snack.level) {
         case 'Info': return 'bg-info text-white'
         case 'Success': return 'bg-positive text-white'
-        case 'Error': return 'bg-negative text-white'
-        case 'Warning': return 'bg-warning text-dark'
+        case 'Error': return 'bg-negative'
+        case 'Warning': return 'bg-warning'
         default:
           return 'bg-primary text-white'
       }

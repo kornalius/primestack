@@ -89,7 +89,7 @@ const onRemoveClick = (column: TFormColumn) => {
 <style scoped lang="sass">
 .form-row
   position: relative
-  min-height: 24px
+  min-height: 40px
 
 .form-column
   position: relative

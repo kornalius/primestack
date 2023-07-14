@@ -213,7 +213,6 @@ export default () => ({
         }, { additionalProperties: false }),
       ]),
       defaultValues: {
-        dense: true,
       },
     },
     {

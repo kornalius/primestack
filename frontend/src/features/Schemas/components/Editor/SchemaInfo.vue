@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="row">
+    <div class="row q-gutter-sm q-my-sm items-center">
       <div class="col-4">
         <q-input
           v-model="value.name"
@@ -35,7 +35,7 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="row q-my-sm q-mb-md">
       <div class="col">
         <q-select
           v-model="value.methods"
@@ -43,7 +43,6 @@
           :options="['get', 'find', 'create', 'patch', 'remove']"
           multiple
           options-dense
-          hide-selected
           dense
           outlined
         />

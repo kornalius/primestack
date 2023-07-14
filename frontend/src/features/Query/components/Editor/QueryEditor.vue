@@ -20,32 +20,32 @@
   <array-editor
     v-model="query.groups"
     add-button="bottom"
-    :disable="disable"
+    :disable="disable || !query.schemaId"
     :add-function="addGroup"
     :remove-function="removeGroup"
     no-separator
   >
     <template #default="{ index }">
       <div class="row">
-        <div class="col q-ml-sm">
-          <query-logical-operators
-            v-if="!!index"
-            v-model="query.groups[index].logicOp"
-            :disable="disable"
-            color="negative"
+        <div class="col">
+          <query-group-editor
+            v-model="query.groups[index]"
+            :label="`Group ${index + 1}`"
+            :disable="disable || !query.schemaId"
+            :color="palette[index % palette.length]"
+            :fields="fields"
+            :operators="queryOperators"
           />
         </div>
       </div>
 
       <div class="row">
-        <div class="col">
-          <query-group-editor
-            v-model="query.groups[index]"
-            :label="`Group ${index + 1}`"
-            :disable="disable"
-            :color="palette[index % palette.length]"
-            :fields="fields"
-            :operators="queryOperators"
+        <div class="col q-ml-sm">
+          <query-logical-operators
+            v-if="index < query.groups.length - 1"
+            v-model="query.groups[index].logicOp"
+            :disable="disable || !query.schemaId"
+            color="negative"
           />
         </div>
       </div>

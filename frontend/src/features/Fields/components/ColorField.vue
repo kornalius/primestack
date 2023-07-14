@@ -67,14 +67,14 @@ const palette = computed(() => (
 ))
 
 watch(value, () => {
-  if (value.value.startsWith('rgb(')) {
+  if (value.value?.startsWith('rgb(')) {
     const rgb = textToRgb(value.value)
     const rgbText = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`
     const color = quasarColors.value.find((c) => c.color === rgbText)
     if (color) {
       emit('update:model-value', color.name)
     }
-  } else if (value.value.startsWith('#')) {
+  } else if (value.value?.startsWith('#')) {
     const rgb = hexToRgb(value.value)
     const rgbText = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`
     const color = quasarColors.value.find((c) => c.color === rgbText)

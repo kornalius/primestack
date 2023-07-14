@@ -1,5 +1,5 @@
 <template>
-  <q-card class="q-ma-sm" outlined>
+  <q-card class="q-my-sm" outlined>
     <div :class="['row', 'title', color]">
       <div class="col text-subtitle1">
         {{ label }}
@@ -18,18 +18,6 @@
             no-separator
           >
             <template #default="{ index }">
-              <div
-                v-if="!!index"
-                class="row"
-              >
-                <div class="col">
-                  <query-logical-operators
-                    v-model="value.criterias[index].logicOp"
-                    :disable="disable"
-                  />
-                </div>
-              </div>
-
               <div class="row q-my-sm">
                 <div class="col">
                   <query-criteria-editor
@@ -37,6 +25,18 @@
                     :disable="disable"
                     :fields="fields"
                     :operators="operators"
+                  />
+                </div>
+              </div>
+
+              <div
+                v-if="index < value.criterias.length - 1"
+                class="row"
+              >
+                <div class="col">
+                  <query-logical-operators
+                    v-model="value.criterias[index].logicOp"
+                    :disable="disable"
                   />
                 </div>
               </div>

@@ -128,7 +128,7 @@ function toggleLeftDrawer() {
 // }
 </script>
 
-<style lang="sass">
+<style scoped lang="sass">
 .Drawer__item
   line-height: 24px
   border-radius: 0 24px 24px 0

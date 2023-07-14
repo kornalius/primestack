@@ -2,7 +2,7 @@
   <div
     v-for="field in fields"
     :key="field._id"
-    class="row q-my-sm"
+    class="row q-mb-sm"
   >
     <div class="col">
       <form-display-row

@@ -43,11 +43,16 @@ const queryToMongo = (q: QueryGroup[]): AnyData => {
       $or: [],
     }
 
-    criterias.forEach((c) => {
+    let prevLogicOp
+    criterias.forEach((c, index) => {
       const crit = reduceCriteria(c)
       if (crit) {
-        expr[`$${c.logicOp}`].push(crit)
+        const l = index === criterias.length - 1
+          ? (prevLogicOp || c.logicOp)
+          : c.logicOp
+        expr[`$${l}`].push(crit)
       }
+      prevLogicOp = c.logicOp
     })
 
     return cleanExpr(expr)
@@ -59,15 +64,20 @@ const queryToMongo = (q: QueryGroup[]): AnyData => {
       $or: [],
     }
 
-    groups.forEach((g) => {
+    let prevLogicOp
+    groups.forEach((g, index) => {
       const crits = reduceCriterias(g.criterias)
       if (Object.keys(crits).length) {
-        if (g.logicOp === 'and') {
+        const l = index === groups.length - 1
+          ? (prevLogicOp || g.logicOp)
+          : g.logicOp
+        if (l === 'and') {
           expr.$and = [...expr.$and, crits]
         }
-        if (g.logicOp === 'or' && crits) {
+        if (l === 'or' && crits) {
           expr.$or = [...expr.$or, crits]
         }
+        prevLogicOp = g.logicOp
       }
     })
 

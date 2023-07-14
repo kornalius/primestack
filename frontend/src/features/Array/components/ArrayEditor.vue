@@ -92,7 +92,7 @@
                 v-show="hover === index"
                 :disable="disable || removeDisable"
                 :icon="removeIcon || 'mdi-trash-can-outline'"
-                color="negative"
+                color="red-6"
                 size="x-small"
                 round
                 flat

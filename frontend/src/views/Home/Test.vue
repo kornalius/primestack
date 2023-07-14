@@ -10,6 +10,7 @@
       <q-tab name="PropertiesEditor" label="Properties Editor" />
       <q-tab name="FormEditor" label="Form Editor" />
       <q-tab name="QueryEditor" label="Query Editor" />
+      <q-tab name="SchemaEditor" label="Schema Editor" />
     </q-tabs>
 
     <q-tab-panels v-model="tab" animated>
@@ -130,6 +131,14 @@
           </div>
         </div>
       </q-tab-panel>
+
+      <q-tab-panel name="SchemaEditor">
+        <div class="row">
+          <div class="col">
+            <schema-editor v-model="schemas[0]" />
+          </div>
+        </div>
+      </q-tab-panel>
     </q-tab-panels>
   </div>
 </template>
@@ -148,6 +157,8 @@ import { TFormField } from '@/shared/interfaces/forms'
 import QueryEditor from '@/features/Query/components/Editor/QueryEditor.vue'
 import { useSchema } from '@/composites/schema'
 import { useQuery } from '@/composites/query'
+import { api } from '@/plugins/pinia'
+import SchemaEditor from '@/features/Schemas/components/Editor/SchemaEditor.vue'
 
 /**
  * Properties
@@ -301,6 +312,16 @@ const { queryToMongo } = useQuery()
 const query = ref({ groups: [] })
 
 const mongoQuery = computed(() => queryToMongo(query.value.groups))
+
+/**
+ * Schema
+ */
+
+const { data: schemas, find } = api.service('schemas').useFind({
+  query: {},
+})
+find()
+
 </script>
 
 <style scoped lang="sass">
