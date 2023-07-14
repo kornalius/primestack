@@ -52,7 +52,7 @@
 
         <q-input
           v-else-if="fieldType === 'number'"
-          v-model="field.value"
+          v-model.number="field.value"
           type="number"
           label="Value"
           dense
@@ -108,12 +108,6 @@ const showValue = computed(() => selectedField.value)
 watch(() => field.value.fieldId, () => {
   field.value.value = defaultValueForSchema({ type: fieldType.value } as TSchema)
 }, { immediate: true })
-
-watch(() => field.value.value, () => {
-  if (fieldType.value === 'number' && typeof field.value.value === 'string') {
-    field.value.value = parseFloat(field.value.value)
-  }
-})
 </script>
 
 <style scoped lang="sass">

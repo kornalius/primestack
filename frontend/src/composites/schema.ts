@@ -16,7 +16,7 @@ const getTypeFor = (p: TSchema, forcedType?: string): string => {
   if (forcedType) {
     return forcedType
   }
-  if (p.type === 'number' && p.minimum !== undefined && p.maximum !== undefined) {
+  if (p.type === 'number' && p.slider) {
     return 'slider'
   }
   if (p.type === 'number') {

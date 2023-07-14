@@ -13,6 +13,7 @@
       :schema="schema.properties[name]"
       :required="schema.required.includes(name)"
       :label="startCase(name)"
+      :embed-label="embedLabel"
     />
   </q-list>
 </template>
@@ -28,6 +29,8 @@ const props = defineProps<{
   modelValue: Record<string, unknown>
   schema: TSchema
   flat?: boolean
+  // embed the label inside the input
+  embedLabel?: boolean
   // property name in the model for the property being edited
   propName: string
   // object that stores the forced types selected by the user

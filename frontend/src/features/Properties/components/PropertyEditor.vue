@@ -6,7 +6,7 @@
         :class="{ 'items-center': type !== 'array' }"
       >
         <div
-          v-if="label"
+          v-if="label && !embedLabel"
           class="col-4 q-mr-md"
           :class="{ 'q-mt-sm': type === 'array' }"
         >
@@ -45,15 +45,16 @@
           <q-input
             v-if="type === 'string'"
             v-model="value"
+            :label="embedLabel ? label : undefined"
             dense
             outlined
           />
 
           <q-slider
             v-else-if="type === 'slider'"
-            v-model="value"
-            :min="schema.minimum"
-            :max="schema.maximum"
+            v-model.number="value"
+            :min="schema.min"
+            :max="schema.max"
             :step="schema.step"
             snap
             markers
@@ -64,7 +65,11 @@
 
           <q-input
             v-else-if="type === 'number'"
-            v-model="value"
+            v-model.number="value"
+            :label="embedLabel ? label : undefined"
+            :step="schema.step || 1"
+            :min="schema.min"
+            :max="schema.max"
             type="number"
             dense
             outlined
@@ -73,6 +78,7 @@
           <date-field
             v-else-if="type === 'date'"
             v-model="value"
+            :label="embedLabel ? label : undefined"
             hide-bottom-space
             dense
             outlined
@@ -81,6 +87,7 @@
           <time-field
             v-else-if="type === 'time'"
             v-model="value"
+            :label="embedLabel ? label : undefined"
             hide-bottom-space
             dense
             outlined
@@ -90,12 +97,14 @@
             v-else-if="type === 'boolean'"
             v-model="value"
             class="full-width"
+            :label="embedLabel ? label : undefined"
             dense
           />
 
           <q-select
             v-else-if="type === 'select'"
             v-model="value"
+            :label="embedLabel ? label : undefined"
             :options="options"
             :option-label="optionLabel"
             :option-value="optionValue"
@@ -111,6 +120,7 @@
           <icon-field
             v-else-if="type === 'icon'"
             v-model="value"
+            :label="embedLabel ? label : undefined"
             dense
             outlined
             options-dense
@@ -120,6 +130,7 @@
           <color-field
             v-else-if="type === 'color'"
             v-model="value"
+            :label="embedLabel ? label : undefined"
             quasar-palette
             dense
             outlined
@@ -131,6 +142,7 @@
             v-model:forced-types="currentForcedTypes"
             :prop-name="propName"
             :schema="objectSchema"
+            embed-label
             flat
           />
 
@@ -149,6 +161,7 @@
                 v-model:forced-types="currentForcedTypes"
                 :prop-name="subPropName(index)"
                 :schema="arraySchema"
+                embed-label
                 flat
               />
 
@@ -159,6 +172,7 @@
                 :prop-name="subPropName(index)"
                 :schema="arraySchema"
                 :required="arraySchema.required"
+                embed-label
               />
             </template>
           </array-editor>
@@ -185,6 +199,8 @@ const props = defineProps<{
   schema: TSchema
   required?: boolean
   label?: string
+  // embed the label inside the input
+  embedLabel?: boolean
   // property name in the model for the property being edited
   propName: string
   // object that stores the forced types selected by the user
@@ -239,10 +255,6 @@ watch(value, () => {
   // when the value changes to '' and its type is 'string', set it to undefined instead
   if (value.value === '' && type.value === 'string') {
     emit('update:model-value', undefined)
-  }
-  // when the input value is a string and the type needs to be a number
-  if (typeof value.value === 'string' && (type.value === 'number' || type.value === 'range')) {
-    emit('update:model-value', parseFloat(value.value) || 0)
   }
 })
 

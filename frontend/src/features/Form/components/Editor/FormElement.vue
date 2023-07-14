@@ -50,7 +50,7 @@
         :is="componentForType[field._type]"
         v-else
         v-model="field.modelValue"
-        v-bind="field"
+        v-bind="fieldBinds(field, schemaForType(field))"
         :style="{
           paddingTop: field.padding?.top,
           paddingLeft: field.padding?.left,
@@ -60,6 +60,7 @@
           marginLeft: field.margin?.left,
           marginBottom: field.margin?.bottom,
           marginRight: field.margin?.right,
+          ...(component.editStyles || {}),
         }"
       />
 
@@ -81,6 +82,7 @@ import useFormElements from '@/features/Form/composites'
 import FormElementRow from '@/features/Form/components/Editor/FormElementRow.vue'
 import useFormEditoreditor from '@/features/Form/store'
 import { useSchema } from '@/composites/schema'
+import { TSchema } from '@feathersjs/typebox'
 
 const props = defineProps<{
   modelValue: TFormField
@@ -97,7 +99,7 @@ const emit = defineEmits<{
 
 const { defaultValueForSchema } = useSchema()
 
-const { componentForType } = useFormElements()
+const { componentForType, fieldBinds } = useFormElements()
 
 const field = useModelValue(props, emit)
 
@@ -107,6 +109,11 @@ const component = computed(() => (
   // eslint-disable-next-line no-underscore-dangle
   props.components.find((c) => c.type === props.modelValue._type)
 ))
+
+const schemaForType = (f: TFormField): TSchema | undefined => (
+  // eslint-disable-next-line no-underscore-dangle
+  props.components.find((c) => c.type === f._type)?.schema
+)
 
 const onClick = () => {
   emit('click', props.modelValue._id)

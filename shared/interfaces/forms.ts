@@ -15,7 +15,9 @@ export interface TFormComponent {
   // component properties schema
   schema: TSchema
   // default values for properties
-  defaultValues: AnyData
+  defaultValues?: AnyData
+  // edit mode styles to add to component
+  editStyles?: AnyData
 }
 
 export interface TFormColumn {

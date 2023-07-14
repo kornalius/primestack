@@ -189,7 +189,12 @@ const forcedTypes = ref({})
 const schema = Type.Object({
   string: Type.Union([Type.String(), Type.Number()]),
   number: Type.Number(),
-  range: Type.Number({ minimum: 0, maximum: 10, step: 0.5 }),
+  range: Type.Number({
+    slider: true,
+    min: 0,
+    max: 10,
+    step: 0.5,
+  }),
   date: Type.String({ format: 'date' }),
   time: Type.String({ format: 'time' }),
   boolean: Type.Boolean(),
