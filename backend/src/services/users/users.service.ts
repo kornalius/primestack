@@ -8,6 +8,7 @@ import { passwordHash } from '@feathersjs/authentication-local'
 import { createService, MongoService } from '@/service'
 
 const path = 'users'
+const collection = 'users'
 
 class Service extends MongoService {}
 
@@ -26,6 +27,7 @@ export const schema = Type.Object(
 )
 
 const service = createService(path, Service, {
+  collection,
   schema,
   indexes: [
     {
@@ -33,7 +35,6 @@ const service = createService(path, Service, {
       unique: true,
     }
   ],
-  collection: 'users',
   methods: ['find', 'get', 'create', 'patch', 'remove'],
   validators: {
     data: ['email', 'password', 'googleId', 'facebookId', 'twitterId', 'githubId', 'auth0Id'],

@@ -3,6 +3,8 @@ import { info } from '@/logger'
 import health from './health/health.service'
 import users from './users/users.service'
 import schemas from './schemas/schemas.service'
+import menus from './menus/menus.service'
+import forms from './forms/forms.service'
 
 export default function (app: Application): void {
   info('    - Health Check')
@@ -13,4 +15,10 @@ export default function (app: Application): void {
 
   info('    - Schemas')
   app.configure(schemas)
+
+  info('    - Menus')
+  app.configure(menus)
+
+  info('    - Forms')
+  app.configure(forms)
 }
