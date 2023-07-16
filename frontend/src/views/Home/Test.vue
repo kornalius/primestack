@@ -11,6 +11,7 @@
       <q-tab name="FormEditor" label="Form Editor" />
       <q-tab name="QueryEditor" label="Query Editor" />
       <q-tab name="SchemaEditor" label="Schema Editor" />
+      <q-tab name="MenuEditor" label="Menu Editor" />
     </q-tabs>
 
     <q-tab-panels v-model="tab" animated>
@@ -31,7 +32,6 @@
           clearable
           reorderable
           selectable
-          @select="onSelect"
           @clear="() => { testArray.length = 0 }"
         >
           <template #default="{ value, hover }">
@@ -139,6 +139,17 @@
           </div>
         </div>
       </q-tab-panel>
+
+      <q-tab-panel name="MenuEditor">
+        <div
+          v-if="menu"
+          class="row"
+        >
+          <div class="col">
+            <menus-editor v-model="menu.list" />
+          </div>
+        </div>
+      </q-tab-panel>
     </q-tab-panels>
   </div>
 </template>
@@ -148,17 +159,18 @@ import {
   computed, Ref, ref, watch,
 } from 'vue'
 import { Type } from '@feathersjs/typebox'
-import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
-import FormEditor from '@/features/Form/components/Editor/FormEditor.vue'
-import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
-import useFormElements from '@/features/Form/composites'
-import FormDisplay from '@/features/Form/components/FormDisplay.vue'
+import useFormElements from '@/features/Forms/composites'
 import { TFormField } from '@/shared/interfaces/forms'
-import QueryEditor from '@/features/Query/components/Editor/QueryEditor.vue'
 import { useSchema } from '@/composites/schema'
 import { useQuery } from '@/composites/query'
 import { api } from '@/plugins/pinia'
+import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
+import FormEditor from '@/features/Forms/components/Editor/FormEditor.vue'
+import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
+import FormDisplay from '@/features/Forms/components/FormDisplay.vue'
+import QueryEditor from '@/features/Query/components/Editor/QueryEditor.vue'
 import SchemaEditor from '@/features/Schemas/components/Editor/SchemaEditor.vue'
+import MenusEditor from '@/features/Menus/components/MenusEditor.vue'
 
 /**
  * Properties
@@ -249,9 +261,6 @@ const schema = Type.Object({
   }),
 })
 
-// eslint-disable-next-line no-console
-console.log(schema)
-
 const tab = ref('ArrayEditor')
 
 /**
@@ -274,11 +283,6 @@ const removeItem = (value: unknown, index: number): boolean => {
 const valid = ref(false)
 
 const selection = ref([])
-
-const onSelect = (value: unknown, selected: boolean) => {
-  // eslint-disable-next-line no-console
-  console.log('select', value, selected)
-}
 
 /**
  * Form
@@ -322,11 +326,21 @@ const mongoQuery = computed(() => queryToMongo(query.value.groups))
  * Schema
  */
 
-const { data: schemas, find } = api.service('schemas').useFind({
+const { data: schemas, find: findSchemas } = api.service('schemas').useFind({
   query: {},
 })
-find()
+findSchemas()
 
+/**
+ * Menus
+ */
+
+const { data: menus, find: findMenus } = api.service('menus').useFind({
+  query: {},
+})
+findMenus()
+
+const menu = computed(() => menus.value?.[0])
 </script>
 
 <style scoped lang="sass">

@@ -65,9 +65,9 @@ import draggable from 'vuedraggable'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
-import FieldsEditor from '@/features/Form/components/Editor/FieldsEditor.vue'
-import useFormEditor from '@/features/Form/store'
-import useFormElements from '@/features/Form/composites'
+import useFormEditor from '../../store'
+import useFormElements from '../../composites'
+import FieldsEditor from './FieldsEditor.vue'
 
 const props = defineProps<{
   modelValue: unknown[]

@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import { TFormColumn, TFormComponent } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
-import FormDisplay from '@/features/Form/components/FormDisplay.vue'
+import FormDisplay from './FormDisplay.vue'
 
 const props = defineProps<{
   modelValue: Record<string, unknown>

@@ -31,6 +31,7 @@ export const fieldSchema = Type.Object(
 export const schema = Type.Object(
   {
     _id: Type.String({ objectid: true }),
+    userId: Type.Optional(Type.String({ objectid: true })),
     name: Type.String(),
     schemaId: Type.Optional(Type.String({ objectid: true })),
     data: Type.Optional(Type.String()),

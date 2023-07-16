@@ -15,7 +15,7 @@
       </q-item>
     </template>
 
-    <template #option="{ opt, itemProps }: { opt: string }">
+    <template #option="{ opt, itemProps }">
       <q-item
         class="q-px-none"
         v-bind="itemProps"
@@ -27,21 +27,21 @@
 
         <q-item-section>
           <q-item-label>
-            {{ opt.replace(/^mdi-/, '') }}
+            {{ (opt as string).replace(/^mdi-/, '') }}
           </q-item-label>
         </q-item-section>
       </q-item>
     </template>
 
-    <template #selected-item="{ opt }: { opt: string }">
+    <template #selected-item="{ opt }">
       <q-item class="q-px-none" dense>
         <q-item-section class="q-pr-none items-center" avatar>
           <q-icon :name="opt" color="grey-9" size="sm" />
         </q-item-section>
 
-        <q-item-section>
+        <q-item-section v-if="!noLabel">
           <q-item-label>
-            {{ opt.replace(/^mdi-/, '') }}
+            {{ (opt as string).replace(/^mdi-/, '') }}
           </q-item-label>
         </q-item-section>
       </q-item>
@@ -56,7 +56,9 @@ import { ref } from 'vue'
 
 const props = defineProps<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  modelValue: any;
+  modelValue: any
+  // don't display the icon label in result
+  noLabel?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits

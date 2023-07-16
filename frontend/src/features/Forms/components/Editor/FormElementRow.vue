@@ -51,8 +51,8 @@
 import { computed } from 'vue'
 import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
-import useFormEditoreditor from '@/features/Form/store'
-import FieldsEditor from '@/features/Form/components/Editor/FieldsEditor.vue'
+import useFormEditoreditor from '../../store'
+import FieldsEditor from './FieldsEditor.vue'
 
 const props = defineProps<{
   modelValue: TFormField

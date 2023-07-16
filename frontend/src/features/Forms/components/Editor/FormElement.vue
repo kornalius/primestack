@@ -76,13 +76,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import hexObjectId from 'hex-object-id'
+import { TSchema } from '@feathersjs/typebox'
 import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
-import useFormElements from '@/features/Form/composites'
-import FormElementRow from '@/features/Form/components/Editor/FormElementRow.vue'
-import useFormEditoreditor from '@/features/Form/store'
 import { useSchema } from '@/composites/schema'
-import { TSchema } from '@feathersjs/typebox'
+import useFormElements from '../../composites'
+import useFormEditoreditor from '../../store'
+import FormElementRow from './FormElementRow.vue'
 
 const props = defineProps<{
   modelValue: TFormField

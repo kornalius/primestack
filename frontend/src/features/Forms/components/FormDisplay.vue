@@ -36,8 +36,8 @@
 import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { TSchema } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
-import useFormElements from '@/features/Form/composites'
-import FormDisplayRow from '@/features/Form/components/FormDisplayRow.vue'
+import useFormElements from '../composites'
+import FormDisplayRow from './FormDisplayRow.vue'
 
 const props = defineProps<{
   modelValue: Record<string, unknown>

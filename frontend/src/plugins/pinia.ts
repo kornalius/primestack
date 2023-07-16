@@ -5,6 +5,8 @@ import { AnyData } from '@/shared/interfaces/commons'
 
 import health from '@/features/Health/service'
 import schemas from '@/features/Schemas/service'
+import menus from '@/features/Menus/service'
+import forms from '@/features/Forms/service'
 
 export const pinia = createPinia()
 
@@ -43,5 +45,7 @@ export const api = createPiniaClient(feathersClient, {
   services: {
     health,
     schemas,
+    menus,
+    forms,
   },
 })

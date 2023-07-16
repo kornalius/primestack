@@ -2,15 +2,6 @@
   <q-layout view="lHh LpR lFf">
     <q-header class="bg-dark text-white">
       <q-toolbar>
-        <q-btn
-          icon="mdi-menu"
-          aria-label="Menu"
-          flat
-          dense
-          round
-          @click="toggleLeftDrawer"
-        />
-
         <q-toolbar-title>
           <!--          <q-tabs align="left">-->
           <!--            <q-route-tab to="/test" label="Test" />-->
@@ -33,17 +24,45 @@
 
     <q-drawer
       class="bg-dark text-white"
-      :model-value="leftDrawerOpen"
-      :width="250"
+      :model-value="true"
+      :width="leftDrawerExpanded ? 250 : 50"
       side="left"
     >
       <q-list>
-        <q-item-label class="row items-center" header>
-          <q-icon name="mdi-chart-line-stacked" size="x-large" />
+        <q-item-label
+          class="Drawer__title row items-center"
+          :class="{ leftDrawerExpanded }"
+          header
+        >
+          <q-icon
+            v-if="leftDrawerExpanded"
+            name="mdi-chart-line-stacked"
+            size="sm"
+          />
 
-          <span class="text-h6 q-mx-sm">PrimeStack</span>
+          <span
+            v-if="leftDrawerExpanded"
+            class="text-h6 q-mx-sm"
+          >
+            PrimeStack
+          </span>
 
-          <span class="text-italic text-grey text-caption">v{{ version }}</span>
+          <span
+            v-if="leftDrawerExpanded"
+            class="text-italic text-grey text-caption q-mr-sm"
+          >
+            v{{ version }}
+          </span>
+
+          <q-btn
+            class="Drawer__toggle self-end"
+            :icon="leftDrawerExpanded ? 'mdi-arrow-collapse-left' : 'mdi-arrow-expand-right'"
+            aria-label="Menu"
+            flat
+            dense
+            round
+            @click="toggleLeftDrawer"
+          />
 
           <!--          <q-btn-->
           <!--            size="x-small"-->
@@ -55,12 +74,37 @@
           <!--          </q-btn>-->
         </q-item-label>
 
-        <q-item-label header>
-          Links
-        </q-item-label>
+        <div v-if="menu">
+          <q-item
+            v-for="m in menu.list"
+            :key="m._id"
+            class="Drawer__item"
+            :class="{ leftDrawerExpanded }"
+            tag="router-link"
+            to="/test"
+            clickable
+          >
+            <q-item-section avatar>
+              <q-icon :name="m.icon" :color="m.color" />
+            </q-item-section>
+
+            <q-item-section v-if="leftDrawerExpanded">
+              <q-item-label :class="{ [`text-${m.color}`]: true }">
+                {{ m.label }}
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+        </div>
+
+        <q-item v-else>
+          <q-item-section>
+            <q-skeleton type="rect" />
+          </q-item-section>
+        </q-item>
 
         <q-item
           class="Drawer__item"
+          :class="{ leftDrawerExpanded }"
           tag="router-link"
           to="/test"
           clickable
@@ -69,8 +113,8 @@
             <q-icon name="mdi-cloud-braces" />
           </q-item-section>
 
-          <q-item-section>
-            <q-item-label>Title</q-item-label>
+          <q-item-section v-if="leftDrawerExpanded">
+            <q-item-label>Test Section</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -91,12 +135,10 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import useSnacks from '@/features/Snacks/composites'
 import Snacks from '@/features/Snacks/components/Snacks.vue'
-// import { useFeathers } from '@/composites/feathers'
-
-// const { api } = useFeathers()
+import { api } from '@/plugins/pinia'
 
 const {
   pushError,
@@ -114,10 +156,10 @@ onMounted(() => {
 
 const version = import.meta.env.PACKAGE_VERSION
 
-const leftDrawerOpen = ref(true)
+const leftDrawerExpanded = ref(true)
 
 function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value
+  leftDrawerExpanded.value = !leftDrawerExpanded.value
 }
 
 // function refreshHealth() {
@@ -126,14 +168,34 @@ function toggleLeftDrawer() {
 //     console.log(result)
 //   })
 // }
+
+const { data: menus, find } = api.service('menus').useFind({
+  query: {},
+})
+find()
+
+const menu = computed(() => menus.value?.[0])
 </script>
 
 <style scoped lang="sass">
 .Drawer__item
   line-height: 24px
   border-radius: 0 24px 24px 0
-  margin-right: 12px
+  margin-right: 8px
+  color: $blue-1
+
+  &:not(.leftDrawerExpanded)
+    padding-left: 4px
 
   .q-item__section--avatar
-    padding-left: 12px
+    width: 24px
+    min-width: unset
+    margin-right: 8px
+
+.Drawer__title
+  padding-right: 0
+  padding-bottom: 8px
+
+  &:not(.leftDrawerExpanded)
+    padding-left: 4px
 </style>

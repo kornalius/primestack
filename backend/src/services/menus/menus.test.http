@@ -10,23 +10,27 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "label": "Test 1",
-  "icon": "mdi-archive-cog",
-  "color": "red-3",
-  "tabs": [
+  "list": [
     {
-      "_id": "64b4049c8a7de5f30a638852",
-      "label": "Tab 1",
+      "label": "Test 1",
       "icon": "mdi-archive-cog",
       "color": "red-3",
-      "formId": "64b410a0a8e639dab4e3e541"
-    },
-    {
-      "_id": "64b404bbc0bab3cd5e013ae0",
-      "label": "Tab 2",
-      "icon": "mdi-archive-edit",
-      "color": "orange-3",
-      "formId": "64b410a0a8e639dab4e3e541"
+      "tabs": [
+        {
+          "_id": "64b4049c8a7de5f30a638852",
+          "label": "Tab 1",
+          "icon": "mdi-archive-cog",
+          "color": "red-3",
+          "formId": "64b410a0a8e639dab4e3e541"
+        },
+        {
+          "_id": "64b404bbc0bab3cd5e013ae0",
+          "label": "Tab 2",
+          "icon": "mdi-archive-edit",
+          "color": "orange-3",
+          "formId": "64b410a0a8e639dab4e3e541"
+        }
+      ]
     }
   ]
 }

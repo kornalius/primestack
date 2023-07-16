@@ -22,9 +22,9 @@ import DateField from '@/features/Fields/components/DateField.vue'
 import TimeField from '@/features/Fields/components/TimeField.vue'
 import ColorField from '@/features/Fields/components/ColorField.vue'
 import IconField from '@/features/Fields/components/IconField.vue'
-import FormElementRow from '@/features/Form/components/Editor/FormElementRow.vue'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useSchema } from '@/composites/schema'
+import FormElementRow from './components/Editor/FormElementRow.vue'
 
 const { defaultValueForSchema } = useSchema()
 

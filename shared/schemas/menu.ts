@@ -16,12 +16,18 @@ export const tabSchema = Type.Object(
 export const schema = Type.Object(
   {
     _id: Type.String({ objectid: true }),
-    label: Type.String(),
-    icon: Type.String(),
-    color: Type.Optional(Type.String()),
-    href: Type.Optional(Type.String()),
-    target: Type.Optional(StringEnum(targetValues)),
-    tabs: Type.Array(tabSchema),
+    userId: Type.Optional(Type.String({ objectid: true })),
+    list: Type.Array(Type.Object(
+      {
+        label: Type.String(),
+        icon: Type.String(),
+        color: Type.Optional(Type.String()),
+        href: Type.Optional(Type.String()),
+        target: Type.Optional(StringEnum(targetValues)),
+        tabs: Type.Array(tabSchema),
+      },
+      { additionalProperties: false }
+    )),
   },
   { $id: 'Menu', additionalProperties: false },
 )
