@@ -15,10 +15,10 @@
         dense
         outlined
       >
-        <template #option="{ opt, itemProps }: { opt: SchemaField }">
+        <template #option="{ opt, itemProps }">
           <q-item class="items-center" v-bind="itemProps">
             <q-item-section avatar>
-              <q-icon :name="iconForType(opt.type as string)" size="xs" color="grey-7" />
+              <q-icon :name="iconForType(opt.type)" size="xs" color="grey-7" />
             </q-item-section>
 
             {{ opt.name }}
@@ -74,15 +74,15 @@ import { computed, watch } from 'vue'
 import { Static, TSchema } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
 import { QueryCriteria } from '@/shared/interfaces/query'
-import { schemaField } from '@/shared/schemas/schema'
+import { fieldSchema } from '@/shared/schemas/schema'
 import { useSchema } from '@/composites/schema'
 
-type SchemaField = Static<typeof schemaField>
+type FieldSchema = Static<typeof fieldSchema>
 
 const props = defineProps<{
   modelValue: QueryCriteria
   disable?: boolean
-  fields: SchemaField[]
+  fields: FieldSchema[]
   operators: string[]
 }>()
 

@@ -2,7 +2,7 @@ import { Type, StringEnum} from '@feathersjs/typebox'
 
 export const supportedFieldTypes = ['string', 'number', 'boolean']
 
-export const schemaField = Type.Object(
+export const fieldSchema = Type.Object(
   {
     _id: Type.String({ objectid: true }),
     name: Type.String({ availableFieldname: true }),
@@ -16,7 +16,18 @@ export const schemaField = Type.Object(
   { additionalProperties: false },
 )
 
-export const schema = Type.Object(
+export const indexSchema = Type.Object(
+  {
+    _id: Type.String({ objectid: true }),
+    name: Type.String({ availableFieldname: true }),
+    order: Type.Number({ minimum: -1, maximum: 1 }),
+    unique: Type.Boolean(),
+    sparse: Type.Boolean(),
+  },
+  { additionalProperties: false },
+)
+
+export const schemaSchema = Type.Object(
   {
     _id: Type.String({ objectid: true }),
     name: Type.String(),
@@ -24,19 +35,18 @@ export const schema = Type.Object(
     created: Type.Boolean(),
     updated: Type.Boolean(),
     softDelete: Type.Boolean(),
-    userId: Type.String({ objectid: true }),
     user: Type.Boolean(),
-    fields: Type.Array(schemaField),
-    indexes: Type.Array(Type.Object(
-      {
-        _id: Type.String({ objectid: true }),
-        name: Type.String({ availableFieldname: true }),
-        order: Type.Number({ minimum: -1, maximum: 1 }),
-        unique: Type.Boolean(),
-        sparse: Type.Boolean(),
-      },
-      { additionalProperties: false },
-    )),
+    fields: Type.Array(fieldSchema),
+    indexes: Type.Array(indexSchema),
+  },
+  { additionalProperties: false },
+)
+
+export const schema = Type.Object(
+  {
+    _id: Type.String({ objectid: true }),
+    userId: Type.Optional(Type.String({ objectid: true })),
+    list: Type.Array(schemaSchema),
   },
   { $id: 'Schema', additionalProperties: false },
 )

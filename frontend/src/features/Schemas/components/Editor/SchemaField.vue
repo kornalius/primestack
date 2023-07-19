@@ -76,10 +76,10 @@
 <script setup lang="ts">
 import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
-import { schemaField, supportedFieldTypes } from '@/shared/schemas/schema'
+import { fieldSchema, supportedFieldTypes } from '@/shared/schemas/schema'
 import { useSchema } from '@/composites/schema'
 
-type SchemaField = Static<typeof schemaField>
+type SchemaField = Static<typeof fieldSchema>
 
 const props = defineProps<{
   modelValue: SchemaField

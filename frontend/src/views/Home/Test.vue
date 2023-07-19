@@ -77,7 +77,7 @@
       <q-tab-panel name="SchemaEditor">
         <div class="row">
           <div class="col">
-            <schema-editor v-model="schemas[0]" />
+            <schema-editor v-model="userSchema.list[0]" />
           </div>
         </div>
       </q-tab-panel>
@@ -223,11 +223,11 @@ const mongoQuery = computed(() => queryToMongo(query.value.groups))
  * Schema
  */
 
-const { data: schemas, find: findSchemas } = api.service('schemas').useFind({
+const { data: schemas } = api.service('schemas').useFind({
   query: {},
 })
-findSchemas()
 
+const userSchema = computed(() => schemas.value?.[0])
 </script>
 
 <style scoped lang="sass">

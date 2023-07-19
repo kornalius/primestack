@@ -56,9 +56,9 @@ import { QueryCriteria, QueryGroup } from '@/shared/interfaces/query'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import QueryCriteriaEditor from '@/features/Query/components/Editor/QueryCriteria.vue'
 import QueryLogicalOperators from '@/features/Query/components/Editor/QueryLogicalOperators.vue'
-import { schemaField } from '@/shared/schemas/schema'
+import { fieldSchema } from '@/shared/schemas/schema'
 
-type SchemaField = Static<typeof schemaField>
+type SchemaField = Static<typeof fieldSchema>
 
 const props = defineProps<{
   modelValue: QueryGroup

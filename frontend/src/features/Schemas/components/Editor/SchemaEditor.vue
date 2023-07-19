@@ -21,14 +21,14 @@
 import { Static } from '@feathersjs/typebox'
 import hexObjectId from 'hex-object-id'
 import { useModelValue } from '@/composites/prop'
-import { schema, schemaField } from '@/shared/schemas/schema'
+import { schema, fieldSchema } from '@/shared/schemas/schema'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import SchemaInfo from '@/features/Schemas/components/Editor/SchemaInfo.vue'
 import SchemaFieldEditor from '@/features/Schemas/components/Editor/SchemaField.vue'
 import SectionTitle from '@/features/Fields/components/SectionTitle.vue'
 
 type Schema = Static<typeof schema>
-type SchemaField = Static<typeof schemaField>
+type SchemaField = Static<typeof fieldSchema>
 
 const props = defineProps<{
   modelValue: Schema

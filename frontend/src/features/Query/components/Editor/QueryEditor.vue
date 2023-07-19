@@ -107,20 +107,17 @@ watch(query, () => {
  * Schemas
  */
 
-const { data: schemas, isPending, find } = api.service('schemas').useFind({
+const { data: schemas, isPending } = api.service('schemas').useFind({
   query: {},
 })
-find()
 
-const fields = computed(() => {
-  if (query.value.schemaId) {
-    const schema = api.service('schemas').getFromStore(query.value.schemaId)
-    if (schema.value) {
-      return schema.value.fields
-    }
-  }
-  return []
-})
+const userSchema = computed(() => schemas.value?.[0])
+
+const querySchema = computed(() => (
+  userSchema.value?.list.find((s) => s._id === query.value.schemaId)
+))
+
+const fields = computed(() => querySchema.value?.fields || [])
 
 watch(() => query.value.schemaId, () => {
   query.value.groups = []
