@@ -2,13 +2,13 @@
   <div>
     <schema-info v-model="value" />
 
-    <section-title title="FIELDS" />
+    <section-title class="q-mb-md" title="FIELDS" />
 
     <array-editor
       v-model="value.fields"
       :add-function="addField"
       :remove-function="removeField"
-      add-button="bottom"
+      add-button="end"
     >
       <template #default="{ index }">
         <schema-field-editor v-model="value.fields[index]" />

@@ -8,10 +8,8 @@
     >
       <q-tab name="ArrayEditor" label="Array Editor" />
       <q-tab name="PropertiesEditor" label="Properties Editor" />
-      <q-tab name="FormEditor" label="Form Editor" />
       <q-tab name="QueryEditor" label="Query Editor" />
       <q-tab name="SchemaEditor" label="Schema Editor" />
-      <q-tab name="MenuEditor" label="Menu Editor" />
     </q-tabs>
 
     <q-tab-panels v-model="tab" animated>
@@ -64,62 +62,6 @@
         <pre>{{ forcedTypes }}</pre>
       </q-tab-panel>
 
-      <q-tab-panel name="FormEditor" class="q-pr-none">
-        <div class="row">
-          <div class="title q-mb-sm full-width">
-            <div class="row items-center">
-              <div class="col">
-                <span class="text-h6 text-white">Form</span>
-              </div>
-
-              <div class="col-auto">
-                <q-toggle
-                  v-model="preview"
-                  class="q-ml-sm text-white"
-                  label="Preview"
-                  left-label
-                  dense
-                />
-
-                <q-toggle
-                  v-model="showPreviewFormData"
-                  class="q-ml-sm text-white"
-                  :disable="!preview"
-                  label="Data"
-                  left-label
-                  dense
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <form-display
-          v-if="preview"
-          v-model="previewFormData"
-          :fields="testForm"
-          :components="components"
-        />
-
-        <form-editor
-          v-else
-          v-model="testForm"
-          :components="components"
-        />
-
-        <div v-if="preview && showPreviewFormData" class="q-mt-sm">
-          <div class="title q-mb-sm">
-            <div class="row items-center">
-              <div class="col">
-                <span class="text-h6 text-white">Data</span>
-              </div>
-            </div>
-          </div>
-
-          <pre>{{ previewFormData }}</pre>
-        </div>
-      </q-tab-panel>
-
       <q-tab-panel name="QueryEditor">
         <div class="row">
           <div class="col-8">
@@ -139,38 +81,21 @@
           </div>
         </div>
       </q-tab-panel>
-
-      <q-tab-panel name="MenuEditor">
-        <div
-          v-if="menu"
-          class="row"
-        >
-          <div class="col">
-            <menus-editor v-model="menu.list" />
-          </div>
-        </div>
-      </q-tab-panel>
     </q-tab-panels>
   </div>
 </template>
 
 <script setup lang="ts">
 import {
-  computed, Ref, ref, watch,
+  computed, ref,
 } from 'vue'
 import { Type } from '@feathersjs/typebox'
-import useFormElements from '@/features/Forms/composites'
-import { TFormField } from '@/shared/interfaces/forms'
-import { useSchema } from '@/composites/schema'
 import { useQuery } from '@/composites/query'
 import { api } from '@/plugins/pinia'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
-import FormEditor from '@/features/Forms/components/Editor/FormEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
-import FormDisplay from '@/features/Forms/components/FormDisplay.vue'
 import QueryEditor from '@/features/Query/components/Editor/QueryEditor.vue'
 import SchemaEditor from '@/features/Schemas/components/Editor/SchemaEditor.vue'
-import MenusEditor from '@/features/Menus/components/MenusEditor.vue'
 
 /**
  * Properties
@@ -285,34 +210,6 @@ const valid = ref(false)
 const selection = ref([])
 
 /**
- * Form
- */
-
-const testForm = ref([]) as Ref<TFormField[]>
-
-const { defaultValueForSchema } = useSchema()
-
-const { components: comps, flattenFields } = useFormElements()
-
-const components = ref(comps)
-
-const preview = ref(false)
-const previewFormData = ref({})
-const showPreviewFormData = ref(false)
-
-watch(preview, () => {
-  previewFormData.value = flattenFields(testForm.value)
-    .reduce((acc, f) => {
-      // eslint-disable-next-line no-underscore-dangle
-      const comp = components.value.find((c) => c.type === f._type)
-      if (comp && !comp.nokey) {
-        return { ...acc, [f.name]: defaultValueForSchema(comp.schema.properties.modelValue) }
-      }
-      return acc
-    }, {})
-})
-
-/**
  * Query
  */
 
@@ -331,16 +228,6 @@ const { data: schemas, find: findSchemas } = api.service('schemas').useFind({
 })
 findSchemas()
 
-/**
- * Menus
- */
-
-const { data: menus, find: findMenus } = api.service('menus').useFind({
-  query: {},
-})
-findMenus()
-
-const menu = computed(() => menus.value?.[0])
 </script>
 
 <style scoped lang="sass">

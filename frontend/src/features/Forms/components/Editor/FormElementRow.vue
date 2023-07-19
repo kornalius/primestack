@@ -51,7 +51,7 @@
 import { computed } from 'vue'
 import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
-import useFormEditoreditor from '../../store'
+import useAppEditor from '@/features/App/store'
 import FieldsEditor from './FieldsEditor.vue'
 
 const props = defineProps<{
@@ -75,7 +75,7 @@ const columnIcon = computed(() => props.components.find((c) => c.type === 'col')
  * Selection
  */
 
-const editor = useFormEditoreditor()
+const editor = useAppEditor()
 
 const onClick = (column: TFormColumn) => {
   emit('click', column)

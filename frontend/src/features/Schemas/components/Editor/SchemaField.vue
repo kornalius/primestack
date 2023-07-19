@@ -4,6 +4,7 @@
       <q-input
         v-model="value.name"
         label="Fieldname"
+        input-class="text-bold"
         dense
         outlined
       />

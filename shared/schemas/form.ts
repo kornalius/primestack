@@ -15,7 +15,7 @@ export const columnSchema = Type.Recursive((self) => Type.Object(
       { additionalProperties: true },
     )),
   },
-  { $id: 'Column', additionalProperties: true },
+  { additionalProperties: true },
 ))
 
 export const fieldSchema = Type.Object(
@@ -25,17 +25,24 @@ export const fieldSchema = Type.Object(
     name: Type.String(),
     columns: Type.Optional(Type.Array(columnSchema)),
   },
-  { $id: 'Field', additionalProperties: true },
+  { additionalProperties: true },
+)
+
+export const formSchema = Type.Object(
+  {
+    name: Type.String(),
+    schemaId: Type.Optional(Type.String({ objectid: true })),
+    data: Type.Optional(Type.String()),
+    fields: Type.Array(fieldSchema),
+  },
+  { additionalProperties: true },
 )
 
 export const schema = Type.Object(
   {
     _id: Type.String({ objectid: true }),
     userId: Type.Optional(Type.String({ objectid: true })),
-    name: Type.String(),
-    schemaId: Type.Optional(Type.String({ objectid: true })),
-    data: Type.Optional(Type.String()),
-    fields: Type.Array(fieldSchema),
+    list: Type.Array(formSchema),
   },
   { $id: 'Form', additionalProperties: false },
 )

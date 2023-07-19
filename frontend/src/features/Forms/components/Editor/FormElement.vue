@@ -80,8 +80,8 @@ import { TSchema } from '@feathersjs/typebox'
 import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 import { useSchema } from '@/composites/schema'
+import useAppEditor from '@/features/App/store'
 import useFormElements from '../../composites'
-import useFormEditoreditor from '../../store'
 import FormElementRow from './FormElementRow.vue'
 
 const props = defineProps<{
@@ -103,7 +103,7 @@ const { componentForType, fieldBinds } = useFormElements()
 
 const field = useModelValue(props, emit)
 
-const editor = useFormEditoreditor()
+const editor = useAppEditor()
 
 const component = computed(() => (
   // eslint-disable-next-line no-underscore-dangle

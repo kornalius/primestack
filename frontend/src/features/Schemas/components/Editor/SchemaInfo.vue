@@ -5,6 +5,7 @@
         <q-input
           v-model="value.name"
           label="Schema name"
+          input-class="text-bold"
           dense
           outlined
         />

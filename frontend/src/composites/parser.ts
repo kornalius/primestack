@@ -3,9 +3,9 @@ import dayjs from 'dayjs'
 type ParserFunction = { (string: string): string | null }
 
 const patterns = {
-  uuid: {
-    string: '[\\dA-F]{8}-[\\dA-F]{4}-[1-5][\\dA-F]{3}-[89AB][\\dA-F]{3}-[\\dA-F]{12}',
-    regex: /^[\dA-F]{8}-[\dA-F]{4}-[1-5][\dA-F]{3}-[89AB][\dA-F]{3}-[\dA-F]{12}$/gi,
+  mongoId: {
+    string: '[a-f\\d]{24}',
+    regex: /^[a-f\d]{24}$/gi,
   },
   phone: {
     string: '(\\d{3})\\s\\d{3}-\\d{4}',
@@ -16,16 +16,15 @@ const patterns = {
     regex: /^\d{3}\s\d{3}\s\d{3}$/g,
   },
   alphaAndDiacritic: {
+    string: '[a-zA-Z\\u00C0-\\u017F]+',
     regex: /^[a-zA-Z\u00C0-\u017F]+$/g,
   },
   numeric: {
+    string: '\\d+',
     regex: /^\d+$/g,
   },
-  searchTab: {
-    string: '^0{8}',
-    regex: /^0{8}/,
-  },
   email: {
+    string: '([a-zA-Z\\d_.-])+@(([a-zA-Z\\d-])+\\.)+([a-zA-Z\\d]{2,4})+',
     regex: /^([a-zA-Z\d_.-])+@(([a-zA-Z\d-])+\.)+([a-zA-Z\d]{2,4})+$/g,
   },
 }
@@ -118,7 +117,7 @@ export const sin = (str: string | null | number): string | null => {
  *
  * @returns {boolean}
  */
-export const uuid = (str: string): string | null => str?.match(patterns.uuid.regex)?.[0] || null
+export const mongoId = (str: string): string | null => str?.match(patterns.mongoId.regex)?.[0] || null
 
 /**
  * Checks if a string matches an email
@@ -155,7 +154,7 @@ export const useParser = (): {
   alpha: ParserFunction
   phone: ParserFunction
   sin: ParserFunction
-  uuid: ParserFunction
+  mongoId: ParserFunction
   unaccented: ParserFunction
   email: ParserFunction
   birthday: ParserFunction
@@ -164,7 +163,7 @@ export const useParser = (): {
   alpha,
   phone,
   sin,
-  uuid,
+  mongoId,
   unaccented,
   email,
   birthday,

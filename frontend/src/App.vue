@@ -1,24 +1,42 @@
 <template>
   <q-layout view="lHh LpR lFf">
-    <q-header class="bg-dark text-white">
+    <q-header
+      class="bg-dark text-white"
+      :style="{ backgroundColor: editor.active ? '#401a00 !important' : '' }"
+    >
       <q-toolbar>
         <q-toolbar-title>
-          <!--          <q-tabs align="left">-->
-          <!--            <q-route-tab to="/test" label="Test" />-->
-          <!--            <q-route-tab to="/page2" label="Page Two" />-->
-          <!--            <q-route-tab to="/page3" label="Page Three" />-->
-          <!--          </q-tabs>-->
+          <tabs-editor
+            v-if="editor.active && selectedMenuObject"
+            v-model="selectedMenuObject.tabs"
+            :menu="selectedMenuObject"
+          />
+
+          <q-tabs
+            v-else
+            align="left"
+            inline-label
+            dense
+          >
+            <q-route-tab
+              v-for="t in routeTabs"
+              :key="t._id"
+              :name="t._id"
+              :label="t.label"
+              :icon="t.icon"
+              :content-class="`text-${t.color}`"
+              :to="menuTabUrl(routeMenu._id, t._id)"
+            />
+          </q-tabs>
         </q-toolbar-title>
 
-        <!--        <q-btn-->
-        <!--          v-if="false"-->
-        <!--          icon="mdi-menu"-->
-        <!--          aria-label="Menu"-->
-        <!--          flat-->
-        <!--          dense-->
-        <!--          round-->
-        <!--          @click="toggleRightDrawer"-->
-        <!--        />-->
+        <q-toggle
+          v-model="currentEditmode"
+          label="Edit"
+          color="orange-4"
+          left-label
+          keep-color
+        />
       </q-toolbar>
     </q-header>
 
@@ -29,100 +47,107 @@
       side="left"
     >
       <q-list>
-        <q-item-label
-          class="Drawer__title row items-center"
+        <q-item
+          class="Drawer__item q-pr-none"
           :class="{ leftDrawerExpanded }"
-          header
         >
-          <q-icon
+          <q-item-section
             v-if="leftDrawerExpanded"
-            name="mdi-chart-line-stacked"
-            size="sm"
-          />
-
-          <span
-            v-if="leftDrawerExpanded"
-            class="text-h6 q-mx-sm"
+            avatar
           >
-            PrimeStack
-          </span>
+            <q-icon
+              name="mdi-chart-line-stacked"
+              size="sm"
+            />
+          </q-item-section>
 
-          <span
-            v-if="leftDrawerExpanded"
-            class="text-italic text-grey text-caption q-mr-sm"
-          >
-            v{{ version }}
-          </span>
-
-          <q-btn
-            class="Drawer__toggle self-end"
-            :icon="leftDrawerExpanded ? 'mdi-arrow-collapse-left' : 'mdi-arrow-expand-right'"
-            aria-label="Menu"
-            flat
-            dense
-            round
-            @click="toggleLeftDrawer"
-          />
-
-          <!--          <q-btn-->
-          <!--            size="x-small"-->
-          <!--            flat-->
-          <!--            round-->
-          <!--            @click="refreshHealth"-->
-          <!--          >-->
-          <!--            <q-icon name="mdi-refresh" />-->
-          <!--          </q-btn>-->
-        </q-item-label>
-
-        <div v-if="menu">
-          <q-item
-            v-for="m in menu.list"
-            :key="m._id"
-            class="Drawer__item"
+          <q-item-label
+            class="Drawer__title row items-center q-gutter-sm"
             :class="{ leftDrawerExpanded }"
-            tag="router-link"
-            to="/test"
-            clickable
+            header
           >
-            <q-item-section avatar>
-              <q-icon :name="m.icon" :color="m.color" />
-            </q-item-section>
+            <div
+              v-if="leftDrawerExpanded"
+              class="col-auto"
+            >
+              <span class="text-h6">
+                PrimeStack
+              </span>
+            </div>
 
-            <q-item-section v-if="leftDrawerExpanded">
-              <q-item-label :class="{ [`text-${m.color}`]: true }">
-                {{ m.label }}
-              </q-item-label>
+            <div
+              v-if="leftDrawerExpanded"
+              class="col"
+            >
+              <span class="text-italic text-grey text-caption">
+                v{{ version }}
+              </span>
+            </div>
+
+            <div
+              v-if="!editor.active"
+              class="col-auto"
+            >
+              <q-btn
+                class="Drawer__toggle"
+                :icon="leftDrawerExpanded ? 'mdi-arrow-collapse-left' : 'mdi-arrow-expand-right'"
+                aria-label="Menu"
+                size="sm"
+                flat
+                dense
+                round
+                @click="toggleLeftDrawer"
+              />
+            </div>
+          </q-item-label>
+        </q-item>
+
+        <div v-if="userMenu">
+          <menus-editor
+            v-if="editor.active"
+            v-model="userMenu.list"
+          />
+
+          <div v-else>
+            <q-item
+              v-for="m in userMenu.list"
+              :key="m._id"
+              class="Drawer__item"
+              :class="{ leftDrawerExpanded }"
+              :name="m._id"
+              tag="router-link"
+              :to="m.href || menuUrl(m._id)"
+              :target="m.target"
+              clickable
+            >
+              <q-item-section avatar>
+                <q-icon :name="m.icon" :color="m.color" />
+              </q-item-section>
+
+              <q-item-section v-if="leftDrawerExpanded">
+                <q-item-label :class="{ [`text-${m.color}`]: true }">
+                  {{ m.label }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </div>
+        </div>
+
+        <div v-else>
+          <q-item v-for="i in 5" :key="i">
+            <q-item-section>
+              <q-skeleton type="rect" />
             </q-item-section>
           </q-item>
         </div>
-
-        <q-item v-else>
-          <q-item-section>
-            <q-skeleton type="rect" />
-          </q-item-section>
-        </q-item>
-
-        <q-item
-          class="Drawer__item"
-          :class="{ leftDrawerExpanded }"
-          tag="router-link"
-          to="/test"
-          clickable
-        >
-          <q-item-section avatar>
-            <q-icon name="mdi-cloud-braces" />
-          </q-item-section>
-
-          <q-item-section v-if="leftDrawerExpanded">
-            <q-item-label>Test Section</q-item-label>
-          </q-item-section>
-        </q-item>
       </q-list>
     </q-drawer>
 
+    <app-properties :components="components" />
+
     <q-page-container style="padding-bottom: 0 !important;">
       <q-page class="q-ma-md">
-        <snacks />
+        <snacks-display />
 
         <router-view />
       </q-page>
@@ -135,23 +160,27 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import {
+  computed, onMounted, ref, watch,
+} from 'vue'
+import { useRoute } from 'vue-router'
 import useSnacks from '@/features/Snacks/composites'
-import Snacks from '@/features/Snacks/components/Snacks.vue'
+import SnacksDisplay from '@/features/Snacks/components/Snacks.vue'
 import { api } from '@/plugins/pinia'
+import useAppEditor from '@/features/App/store'
+import useFormElements from '@/features/Forms/composites'
+import TabsEditor from '@/features/App/components/TabsEditor.vue'
+import MenusEditor from '@/features/App/components/MenusEditor.vue'
+import AppProperties from '@/features/App/components/AppProperties.vue'
+import { useUrl } from '@/composites/url'
 
-const {
-  pushError,
-  pushWarn,
-  pushInfo,
-  pushSuccess,
-} = useSnacks()
+const snacks = useSnacks()
 
 onMounted(() => {
-  pushError('Error, this is an error')
-  pushWarn('Warning, this is a warning')
-  pushInfo('Info, this is an info')
-  pushSuccess('Success, this is a success')
+  snacks.pushError('Error, this is an error')
+  snacks.pushWarn('Warning, this is a warning')
+  snacks.pushInfo('Info, this is an info')
+  snacks.pushSuccess('Success, this is a success')
 })
 
 const version = import.meta.env.PACKAGE_VERSION
@@ -162,6 +191,40 @@ function toggleLeftDrawer() {
   leftDrawerExpanded.value = !leftDrawerExpanded.value
 }
 
+const editor = useAppEditor()
+
+const currentEditmode = ref(false)
+
+watch(currentEditmode, () => {
+  if (currentEditmode.value) {
+    editor.startEdit()
+  } else {
+    editor.endEdit()
+  }
+})
+
+const { data: menus, find: findMenus } = api.service('menus').useFind({
+  query: {},
+})
+findMenus()
+
+const userMenu = computed(() => menus.value?.[0])
+
+const selectedMenuObject = computed(() => (
+  userMenu.value?.list.find((m) => m._id === editor.selectedMenu)
+))
+
+watch(() => editor.active, () => {
+  if (editor.active) {
+    leftDrawerExpanded.value = true
+  }
+  editor.unselectMenu()
+})
+
+const { components: comps } = useFormElements()
+
+const components = ref(comps)
+
 // function refreshHealth() {
 //   api.service('health').get(0).then((result) => {
 //     // eslint-disable-next-line no-console
@@ -169,33 +232,23 @@ function toggleLeftDrawer() {
 //   })
 // }
 
-const { data: menus, find } = api.service('menus').useFind({
+const { find: findSchemas } = api.service('schemas').useFind({
   query: {},
 })
-find()
+findSchemas()
 
-const menu = computed(() => menus.value?.[0])
+const { find: findForms } = api.service('forms').useFind({
+  query: {},
+})
+findForms()
+
+const route = useRoute()
+
+const { menuUrl, menuTabUrl } = useUrl()
+
+const routeMenu = computed(() => (
+  userMenu.value?.list.find((m) => m._id === route.params.menuId)
+))
+
+const routeTabs = computed(() => routeMenu.value?.tabs)
 </script>
-
-<style scoped lang="sass">
-.Drawer__item
-  line-height: 24px
-  border-radius: 0 24px 24px 0
-  margin-right: 8px
-  color: $blue-1
-
-  &:not(.leftDrawerExpanded)
-    padding-left: 4px
-
-  .q-item__section--avatar
-    width: 24px
-    min-width: unset
-    margin-right: 8px
-
-.Drawer__title
-  padding-right: 0
-  padding-bottom: 8px
-
-  &:not(.leftDrawerExpanded)
-    padding-left: 4px
-</style>

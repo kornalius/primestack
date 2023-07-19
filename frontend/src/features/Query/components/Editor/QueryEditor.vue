@@ -19,7 +19,7 @@
 
   <array-editor
     v-model="query.groups"
-    add-button="bottom"
+    add-button="end"
     :disable="disable || !query.schemaId"
     :add-function="addGroup"
     :remove-function="removeGroup"

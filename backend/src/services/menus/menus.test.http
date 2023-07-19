@@ -12,9 +12,11 @@ Content-Type: application/json
 {
   "list": [
     {
+      "_id": "64b5955ef3555ebcce00fee2",
       "label": "Test 1",
       "icon": "mdi-archive-cog",
       "color": "red-3",
+      "target": "_self",
       "tabs": [
         {
           "_id": "64b4049c8a7de5f30a638852",

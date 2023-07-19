@@ -1,3 +1,4 @@
+import omit from 'lodash/omit'
 import { TSchema } from '@feathersjs/typebox'
 
 const optionsForSchema = (p: TSchema): unknown[] => {
@@ -85,9 +86,15 @@ export const defaultValueForSchema = (schema: TSchema, forcedType?: string): unk
   }
 }
 
+export const omitFields = (schema: TSchema, fields: string[]): TSchema => ({
+  ...schema,
+  properties: omit(schema.properties, fields),
+})
+
 export const useSchema = () => ({
   optionsForSchema,
   getTypeFor,
   iconForType,
   defaultValueForSchema,
+  omitFields,
 })

@@ -1,44 +1,29 @@
 <template>
-  <q-item class="q-px-none" dense>
+  <q-item
+    v-if="nonExpandable"
+    style="padding: 2px 0 !important;"
+    dense
+  >
     <q-item-section>
       <div
-        class="row"
-        :class="{ 'items-center': type !== 'array' }"
+        :class="{
+          label: true,
+          row: true,
+          'q-pr-sm': true,
+          'items-center': true,
+        }"
       >
         <div
           v-if="label && !embedLabel"
-          class="col-4 q-mr-md"
+          class="col-auto q-mr-md"
           :class="{ 'q-mt-sm': type === 'array' }"
+          style="width: 125px;"
         >
-          <div class="row justify-end">
-            <div class="col-auto">
-              <q-btn
-                v-if="multipleTypes"
-                class="q-ml-sm"
-                icon="mdi-tag-multiple"
-                color="grey-7"
-                size="sm"
-                flat
-                dense
-              >
-                <q-menu>
-                  <q-list dense>
-                    <q-item
-                      v-for="t in multipleTypes"
-                      :key="t"
-                      clickable
-                      v-close-popup
-                      @click="changeType(t)"
-                    >
-                      <q-item-section>{{ t }}</q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-menu>
-              </q-btn>
-            </div>
-
-            <span class="text-bold">{{ label }}</span>
-          </div>
+          <property-label
+            :multiple-types="multipleTypes"
+            :label="label"
+            @change-type="changeType"
+          />
         </div>
 
         <div class="col">
@@ -135,9 +120,51 @@
             dense
             outlined
           />
+        </div>
+      </div>
+    </q-item-section>
+  </q-item>
 
+  <q-expansion-item
+    v-else
+    header-class="q-pa-none"
+    expand-separator
+  >
+    <template #header>
+      <div class="label row q-pr-sm full-width items-center">
+        <div
+          v-if="label && !embedLabel"
+          class="col-auto q-mr-md"
+          style="width: 125px;"
+        >
+          <property-label
+            :multiple-types="multipleTypes"
+            :label="label"
+            :embed-label="embedLabel"
+            @change-type="changeType"
+          />
+        </div>
+      </div>
+    </template>
+
+    <template #default>
+      <div
+        :class="{
+          label: true,
+          row: true,
+          'items-center': type !== 'array',
+        }"
+      >
+        <div
+          v-if="label && !embedLabel"
+          class="col-auto q-mr-md"
+          :class="{ 'q-mt-sm': type === 'array' }"
+          style="width: 125px;"
+        />
+
+        <div class="col">
           <properties-editor
-            v-else-if="type === 'object'"
+            v-if="type === 'object' && typeof value === 'object'"
             v-model="value"
             v-model:forced-types="currentForcedTypes"
             :prop-name="propName"
@@ -147,9 +174,9 @@
           />
 
           <array-editor
-            v-else-if="type === 'array'"
+            v-else-if="type === 'array' && Array.isArray(value)"
             v-model="value"
-            add-button="bottom"
+            add-button="end"
             :add-function="() => addItem(value)"
             :remove-function="(v: unknown, idx: number) => removeItem(value, idx)"
             :no-separator="!arraySchemaIsObject"
@@ -178,8 +205,8 @@
           </array-editor>
         </div>
       </div>
-    </q-item-section>
-  </q-item>
+    </template>
+  </q-expansion-item>
 </template>
 
 <script setup lang="ts">
@@ -193,6 +220,7 @@ import TimeField from '@/features/Fields/components/TimeField.vue'
 import DateField from '@/features/Fields/components/DateField.vue'
 import ColorField from '@/features/Fields/components/ColorField.vue'
 import IconField from '@/features/Fields/components/IconField.vue'
+import PropertyLabel from '@/features/Properties/components/PropertyLabel.vue'
 
 const props = defineProps<{
   modelValue: unknown
@@ -285,4 +313,11 @@ const changeType = (t: string) => {
 const subPropName = (name: string | number) => (
   props.propName ? `${props.propName}.${name.toString()}` : name.toString()
 )
+
+const nonExpandable = computed(() => !['object', 'array'].includes(type.value))
 </script>
+
+<style scoped lang="sass">
+.label
+  min-height: 40px
+</style>

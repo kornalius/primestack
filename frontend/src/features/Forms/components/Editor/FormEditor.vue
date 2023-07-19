@@ -1,71 +1,71 @@
 <template>
-  <div class="row">
-    <div class="Components overflow-auto">
-      <div class="fit">
-        <q-list class="Drawer" dense>
-          <draggable
-            :list="visibleComponents"
-            :item-key="(value) => visibleComponents.indexOf(value)"
-            :clone="cloneComponent"
-            :group="{
-              name: 'form-builder',
-              pull: 'clone',
-              put: false,
-            }"
-            filter=".overlay"
-            :sort="false"
-            @start="editor.setDragging(true)"
-            @end="editor.setDragging(false)"
-          >
-            <template #item="{ element: value }">
-              <q-btn
-                v-if="value.type !== ''"
-                class="form-component q-mx-sm"
-                :icon="value.icon"
-                :label="value.label"
-                type="button"
-                size="12px"
-                align="left"
-                dense
-                flat
-                @click="onAddFieldClick(value)"
-              />
-            </template>
-          </draggable>
-        </q-list>
-      </div>
-    </div>
-
-    <div class="col q-px-md" @click="editor.unselectAll()">
-      <fields-editor
-        v-model="fields"
-        :components="components"
-      />
-    </div>
-
+  <q-layout
+    view="hHh lpr lFr"
+    style="height: 600px;"
+    container
+  >
     <q-drawer
       :model-value="true"
-      :width="400"
-      side="right"
+      class="q-pa-sm"
+      :width="180"
+      side="left"
+      behavior="desktop"
+      show-if-above
+      bordered
     >
-      <properties-editor
-        v-if="selectedField"
-        v-model="selectedField"
-        v-model:forced-types="forcedTypes"
-        :prop-name="''"
-        :schema="selectedComponent.schema"
-      />
+      <q-list class="Drawer" dense>
+        <draggable
+          :list="visibleComponents"
+          :item-key="(value) => visibleComponents.indexOf(value)"
+          :clone="cloneComponent"
+          :group="{
+            name: 'form-builder',
+            pull: 'clone',
+            put: false,
+          }"
+          filter=".overlay"
+          :sort="false"
+          @start="editor.setDragging(true)"
+          @end="editor.setDragging(false)"
+        >
+          <template #item="{ element: value }">
+            <q-btn
+              v-if="value.type !== ''"
+              class="form-component q-mx-sm"
+              :icon="value.icon"
+              :label="value.label"
+              type="button"
+              size="12px"
+              align="left"
+              dense
+              flat
+              @click="onAddFieldClick(value)"
+            />
+          </template>
+        </draggable>
+      </q-list>
     </q-drawer>
-  </div>
+
+    <q-page-container>
+      <q-page
+        class="q-px-md q-pt-sm"
+        @click="editor.unselectAll()"
+      >
+        <fields-editor
+          v-model="fields"
+          :components="components"
+        />
+      </q-page>
+    </q-page-container>
+  </q-layout>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import draggable from 'vuedraggable'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
-import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
-import useFormEditor from '../../store'
+import useAppEditor from '@/features/App/store'
 import useFormElements from '../../composites'
 import FieldsEditor from './FieldsEditor.vue'
 
@@ -84,9 +84,7 @@ const emit = defineEmits<{
 
 const fields = useModelValue(props, emit)
 
-const forcedTypes = ref({})
-
-const { createFormField, flattenFields } = useFormElements()
+const { createFormField } = useFormElements()
 
 const visibleComponents = computed(() => props.components.filter((c) => !c.hidden))
 
@@ -94,16 +92,7 @@ const visibleComponents = computed(() => props.components.filter((c) => !c.hidde
  * Selection
  */
 
-const editor = useFormEditor()
-
-const selectedField = computed(() => (
-  flattenFields(fields.value).find((f) => f._id === editor.selected)
-))
-
-const selectedComponent = computed(() => (
-  // eslint-disable-next-line no-underscore-dangle
-  props.components.find((c) => c.type === selectedField.value?._type)
-))
+const editor = useAppEditor()
 
 const onAddFieldClick = (component: TFormComponent) => {
   const field = createFormField(component, fields.value)
@@ -116,14 +105,14 @@ const cloneComponent = (component: TFormComponent) => createFormField(component,
 
 <style scoped lang="sass">
 .Components
-  width: 290px
+  width: 100px
   border-right: 1px solid $grey-3
+
+.form-component
+  width: 90%
+  height: 30px
 
 .Properties
   width: 400px
   border-left: 1px solid $grey-3
-
-.form-component
-  width: 125px
-  height: 30px
 </style>

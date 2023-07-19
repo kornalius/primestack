@@ -3,6 +3,7 @@ import { usePatterns } from '@/composites/parser'
 
 import Home from './home'
 import Login from './login'
+import Menu from './menu'
 
 const patterns = usePatterns()
 
@@ -19,6 +20,7 @@ const routes = [
   },
   ...Login(lazyLoad, patterns),
   ...Home(lazyLoad, patterns),
+  ...Menu(lazyLoad, patterns),
   // Always leave this as last one,
   // but you can also remove it
   {

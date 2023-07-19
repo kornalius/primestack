@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import startCase from 'lodash/startCase'
 import { TSchema } from '@feathersjs/typebox'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
@@ -28,13 +28,14 @@ import PropertyEditor from '@/features/Properties/components/PropertyEditor.vue'
 const props = defineProps<{
   modelValue: Record<string, unknown>
   schema: TSchema
+  // remove cells borders
   flat?: boolean
   // embed the label inside the input
   embedLabel?: boolean
   // property name in the model for the property being edited
   propName: string
   // object that stores the forced types selected by the user
-  forcedTypes: Record<string, string>
+  forcedTypes?: Record<string, string>
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -44,7 +45,9 @@ const emit = defineEmits<{
 }>()
 
 const value = useModelValue(props, emit)
-const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
+const currentForcedTypes = props.forcedTypes
+  ? useSyncedProp(props, 'forcedTypes', emit)
+  : ref({})
 
 const names = computed(() => Object.keys(props.schema.properties))
 

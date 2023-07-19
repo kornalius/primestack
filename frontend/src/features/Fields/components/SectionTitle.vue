@@ -1,5 +1,5 @@
 <template>
-  <q-item class="bg-grey-4 items-center q-mb-md" dense>
+  <q-item class="bg-grey-4 items-center" dense>
     <q-item-section v-if="icon" avatar>
       <q-icon :name="icon" />
     </q-item-section>
@@ -15,8 +15,4 @@ defineProps<{
   title: string
   icon?: string
 }>()
-
 </script>
-
-<style scoped lang="sass">
-</style>

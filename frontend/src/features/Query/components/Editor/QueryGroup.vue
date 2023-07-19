@@ -11,7 +11,7 @@
         <div class="col">
           <array-editor
             v-model="value.criterias"
-            add-button="bottom"
+            add-button="end"
             :disable="disable"
             :add-function="addCriteria"
             :remove-function="removeCriteria"

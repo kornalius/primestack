@@ -30,8 +30,8 @@ import draggable from 'vuedraggable'
 import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useModelValue } from '@/composites/prop'
+import useAppEditor from '@/features/App/store'
 import FormElement from './FormElement.vue'
-import useFormEditor from '../../store'
 
 const props = defineProps<{
   modelValue: unknown[]
@@ -54,7 +54,7 @@ const fields = useModelValue(props, emit)
  * Selection
  */
 
-const editor = useFormEditor()
+const editor = useAppEditor()
 
 const remove = (field: TFormField) => {
   const idx = fields.value.findIndex((v) => v._id === field._id)

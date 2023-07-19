@@ -4,7 +4,9 @@ import { Ajv, addFormats, FormatsPluginOptions } from '@feathersjs/schema'
 // eslint-disable-next-line import/no-cycle
 import { reservedFields } from './service'
 
-export const ajv = new Ajv({})
+export const ajv = new Ajv({
+  strictSchema: false,
+})
 
 export const availableFieldname = {
   keyword: 'availableFieldname',

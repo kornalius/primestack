@@ -961,7 +961,6 @@ const flattenFields = (fields: TFormField[]): (AnyData)[] => {
 }
 
 export default () => ({
-
   createFormField: (component: TFormComponent, fields: TFormField[]): TFormField => ({
     _id: hexObjectId(),
     _type: component.type,

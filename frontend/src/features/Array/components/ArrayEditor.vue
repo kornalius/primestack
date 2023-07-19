@@ -1,8 +1,18 @@
 <template>
-  <div>
+  <div
+    :class="{
+      row: horizontal,
+      'items-center': horizontal,
+    }"
+  >
     <div
-      v-if="addButton === 'top' || addButton === undefined"
-      class="column items-end q-my-sm"
+      v-if="addButton === 'start' || addButton === undefined"
+      :class="{
+        column: !horizontal,
+        'items-end': !horizontal,
+        'q-my-sm': !horizontal,
+        'inline-block': horizontal,
+      }"
     >
       <div class="col">
         <slot name="actions" />
@@ -33,7 +43,15 @@
       </div>
     </div>
 
-    <div :style="{ height: height ? `${height}px` : '', overflowY: 'auto' }">
+    <div
+      :class="{ 'inline-block': horizontal }"
+      :style="{
+        width: width ? `${width}px` : '',
+        height: height ? `${height}px` : '',
+        overflowX: horizontal ? 'auto' : '',
+        overflowY: !horizontal ? 'auto' : '',
+      }"
+    >
       <draggable
         v-model="values"
         :item-key="itemKeyFor"
@@ -50,8 +68,13 @@
       >
         <template #item="{ element: value, index }">
           <div
-            class="row items-center"
-            :class="{ line: !noSeparator }"
+            class="items-center"
+            :class="{
+              row: !horizontal,
+              'inline-block': horizontal,
+              vline: !horizontal && !noSeparator,
+              hline: horizontal && !noSeparator,
+            }"
             style="min-height: 30px;"
             @mouseover="hover = index as number"
             @mouseleave="hover = -1"
@@ -60,7 +83,8 @@
           >
             <div
               v-if="reorderable"
-              class="col-auto q-mr-sm"
+              class="q-mr-sm"
+              :class="{ 'col-auto': !horizontal, 'inline-block': horizontal }"
               style="cursor: move; padding-bottom: 4px;"
             >
               <q-icon class="drag-handle" name="mdi-drag" size="large" />
@@ -68,7 +92,7 @@
 
             <div
               v-if="selectable && isItemSelectable(value)"
-              class="col-auto"
+              :class="{ 'col-auto': !horizontal, 'inline-block': horizontal }"
             >
               <q-checkbox
                 v-model="currentSelection"
@@ -76,7 +100,9 @@
               />
             </div>
 
-            <div class="col">
+            <div
+              :class="{ col: !horizontal, 'inline-block': horizontal }"
+            >
               <slot
                 :value="values[index]"
                 :index="index"
@@ -87,7 +113,11 @@
               </slot>
             </div>
 
-            <div class="col-auto q-ml-sm" style="width: 30px;">
+            <div
+              class="q-ml-sm"
+              :class="{ 'col-auto': !horizontal, 'inline-block': horizontal }"
+              style="width: 30px;"
+            >
               <q-btn
                 v-show="hover === index"
                 :disable="disable || removeDisable"
@@ -105,10 +135,16 @@
     </div>
 
     <div
-      v-if="addButton === 'bottom'"
-      class="column items-end q-my-sm"
+      v-if="addButton === 'end'"
+      :class="{
+        column: !horizontal,
+        'items-end': !horizontal,
+        'q-my-sm': !horizontal,
+        'inline-block': horizontal,
+        'full-height': horizontal,
+      }"
     >
-      <div class="col">
+      <div :class="{ col: !horizontal, 'inline-block': horizontal }">
         <slot name="actions" />
 
         <q-btn
@@ -158,11 +194,13 @@ const props = defineProps<{
   // label for the add button
   addLabel?: string
   // position of the add button
-  addButton?: 'top' | 'bottom'
+  addButton?: 'start' | 'end'
   // function to execute to add a new item to the array, return the value if successful
   addFunction: () => unknown | undefined
   // function to execute to remove an item from the array, return the true is successful
   removeFunction: (value: unknown, index: number) => boolean
+  // width in pixels of the component
+  width?: number
   // height in pixels of the component
   height?: number
   // disable all interactions
@@ -201,6 +239,8 @@ const props = defineProps<{
   displayValue?: ((value: unknown) => string) | string
   // remove the separator lines between the items
   noSeparator?: boolean
+  // align items horizontally
+  horizontal?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -309,7 +349,11 @@ watch(currentSelection, (newValue, oldValue) => {
 </script>
 
 <style scoped lang="sass">
-.line:not(:last-child)
+.vline:not(:last-child)
   margin-bottom: 4px
   border-bottom: 1px solid lightgrey
+
+.hline:not(:last-child)
+  margin-right: 4px
+  border-right: 1px solid lightgrey
 </style>

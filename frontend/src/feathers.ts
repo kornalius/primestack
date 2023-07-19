@@ -2,7 +2,6 @@ import { feathers, HookContext } from '@feathersjs/feathers'
 import { stripSlashes } from '@feathersjs/commons'
 import socketio from '@feathersjs/socketio-client'
 import io from 'socket.io-client'
-import { GeneralError, NotFound } from '@feathersjs/errors'
 import useSnacks from '@/features/Snacks/composites'
 import { getEnv } from './utils/variables'
 
@@ -94,41 +93,20 @@ const errorHandler = (context: HookContext): HookContext => {
   //   return context
   // }
 
-  const pushSnack = (err) => {
-    snacks.push({
-      ...err,
-      level: 'Error',
-    })
-  }
-
   if (error) {
     if (!error.code) {
-      pushSnack({
-        ...context,
-        error: new GeneralError('server error'),
-      })
+      snacks.pushError('Server error')
       return context
     }
 
-    let err
-    let message = ''
-
     switch (error.code) {
       case 408:
-        message = 'Server timeout!'
-        err = new GeneralError(message)
-        break
-
-      case 404:
-        message = `Could not ${error.hook?.method} resource with ID ${error.hook?.id}`
-        err = new NotFound(message)
+        snacks.pushError('Server timeout')
         break
 
       default:
-        err = new GeneralError(error)
+        snacks.pushError(error.message)
     }
-
-    pushSnack(err)
   }
 
   return context
