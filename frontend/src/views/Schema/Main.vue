@@ -102,8 +102,9 @@ const schemaColumns = ref([
   {
     name: 'methods',
     label: 'Methods',
+    align: 'left',
     field: 'methods',
-    format: (val) => val.methods?.join(','),
+    format: (val) => val.join(', '),
   },
   {
     name: 'fields',
@@ -141,17 +142,30 @@ const fieldColumns = ref([
   {
     name: 'optional',
     label: 'Optional',
+    align: 'center',
     field: 'optional',
+    format: (val) => (val ? '\u2714' : ''),
   },
   {
     name: 'hidden',
     label: 'Hidden',
+    align: 'center',
     field: 'hidden',
+    format: (val) => (val ? '\u2714' : ''),
   },
   {
     name: 'array',
     label: 'Array',
+    align: 'center',
     field: 'array',
+    format: (val) => (val ? '\u2714' : ''),
+  },
+  {
+    name: 'queryable',
+    label: 'Queryable',
+    align: 'center',
+    field: 'queryable',
+    format: (val) => (val ? '\u2714' : ''),
   },
 ])
 </script>
