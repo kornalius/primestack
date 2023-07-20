@@ -79,8 +79,8 @@ import hexObjectId from 'hex-object-id'
 import { TSchema } from '@feathersjs/typebox'
 import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
-import { useSchema } from '@/composites/schema'
 import useAppEditor from '@/features/App/store'
+import { defaultValueForSchema } from '@/shared/schema'
 import useFormElements from '../../composites'
 import FormElementRow from './FormElementRow.vue'
 
@@ -96,8 +96,6 @@ const emit = defineEmits<{
   (e: 'remove', value: TFormField): void,
   (e: 'update:model-value', value: TFormField): void,
 }>()
-
-const { defaultValueForSchema } = useSchema()
 
 const { componentForType, fieldBinds } = useFormElements()
 

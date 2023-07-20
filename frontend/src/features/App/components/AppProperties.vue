@@ -4,18 +4,44 @@
     :width="400"
     side="right"
   >
+    <section-title
+      title="Property Editor"
+      class="text-bold"
+      color="blue-grey-4"
+    />
+
     <properties-editor
       v-if="showFieldProperties"
       v-model="selectedField"
       v-model:forced-types="forcedTypes"
       :prop-name="''"
       :schema="selectedComponent.schema"
+      :categories="selectedComponent.categories"
+    />
+
+    <properties-editor
+      v-else-if="showSchemaProperties"
+      v-model="selectedSchema"
+      v-model:forced-types="forcedTypes"
+      :prop-name="''"
+      :schema="selectedSchemaSchema"
+      :categories="selectedSchemaSchema.categories"
+    />
+
+    <properties-editor
+      v-else-if="showSchemaFieldProperties"
+      v-model="selectedSchemaField"
+      v-model:forced-types="forcedTypes"
+      :prop-name="''"
+      :schema="selectedSchemaFieldSchema"
+      :categories="selectedSchemaFieldSchema.categories"
     />
 
     <template v-else>
       <section-title
         v-if="showMenuProperties"
         title="Menu"
+        icon="mdi-menu"
       />
 
       <properties-editor
@@ -23,11 +49,13 @@
         v-model="selectedMenuObject"
         :prop-name="''"
         :schema="selectedMenuSchema"
+        :categories="selectedMenuSchema.categories"
       />
 
       <section-title
         v-if="showTabProperties"
         title="Tab"
+        icon="mdi-tab"
       />
 
       <properties-editor
@@ -35,11 +63,13 @@
         v-model="selectedMenuObject.tabs[selectedTabIndex]"
         :prop-name="''"
         :schema="selectedTabSchema"
+        :categories="selectedTabSchema.categories"
       />
 
       <section-title
         v-if="showFormProperties"
         title="Form"
+        icon="mdi-window-maximize"
       />
 
       <properties-editor
@@ -47,6 +77,7 @@
         v-model="form"
         :prop-name="''"
         :schema="filteredFormSchema"
+        :categories="filteredFormSchema.categories"
       />
     </template>
   </q-drawer>
@@ -62,11 +93,14 @@ import { TFormComponent } from '@/shared/interfaces/forms'
 import SectionTitle from '@/features/Fields/components/SectionTitle.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import { formSchema } from '@/shared/schemas/form'
-import { omitFields } from '@/composites/schema'
+import { schemaSchema, fieldSchema } from '@/shared/schemas/schema'
+import { omitFields } from '@/shared/schema'
 
 const props = defineProps<{
   components?: TFormComponent[]
 }>()
+
+const forcedTypes = ref({})
 
 const editor = useAppEditor()
 
@@ -87,7 +121,7 @@ const selectedMenuObject = computed(() => (
 
 const selectedMenuSchema = computed(() => (
   editor.selectedMenu
-    ? omitFields(menuSchema, ['tabs', '_id'])
+    ? menuSchema
     : undefined
 ))
 
@@ -105,7 +139,7 @@ const selectedTabIndex = computed(() => (
 
 const selectedTabSchema = computed(() => (
   editor.selectedTab
-    ? omitFields(tabSchema, ['_id'])
+    ? tabSchema
     : undefined
 ))
 
@@ -116,8 +150,6 @@ const showTabProperties = computed(() => (
 /**
  * Form
  */
-
-const forcedTypes = ref({})
 
 const { flattenFields } = useFormElements()
 
@@ -153,6 +185,44 @@ const showFieldProperties = computed(() => (
 ))
 
 const filteredFormSchema = computed(() => (
-  omitFields(formSchema, ['_id', 'fields'])
+  formSchema
+))
+
+/**
+ * Schema
+ */
+
+const { data: schemas } = api.service('schemas').useFind({
+  query: {},
+})
+
+const userSchema = computed(() => schemas.value?.[0])
+
+const selectedSchema = computed(() => (
+  userSchema.value?.list.find((s) => s._id === editor.selectedSchema)
+))
+
+const selectedSchemaField = computed(() => (
+  selectedSchema.value?.fields.find((f) => f._id === editor.selectedSchemaField)
+))
+
+const showSchemaProperties = computed(() => (
+  editor.selectedSchema && !editor.selectedSchemaField
+))
+
+const showSchemaFieldProperties = computed(() => (
+  editor.selectedSchema && editor.selectedSchemaField
+))
+
+const selectedSchemaSchema = computed(() => (
+  editor.selectedSchema
+    ? omitFields(schemaSchema, ['_id', 'fields', 'indexes'])
+    : undefined
+))
+
+const selectedSchemaFieldSchema = computed(() => (
+  editor.selectedSchemaField
+    ? omitFields(fieldSchema, ['_id'])
+    : undefined
 ))
 </script>

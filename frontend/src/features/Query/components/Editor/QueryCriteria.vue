@@ -75,7 +75,7 @@ import { Static, TSchema } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
 import { QueryCriteria } from '@/shared/interfaces/query'
 import { fieldSchema } from '@/shared/schemas/schema'
-import { useSchema } from '@/composites/schema'
+import { iconForType, defaultValueForSchema } from '@/shared/schema'
 
 type FieldSchema = Static<typeof fieldSchema>
 
@@ -85,8 +85,6 @@ const props = defineProps<{
   fields: FieldSchema[]
   operators: string[]
 }>()
-
-const { iconForType, defaultValueForSchema } = useSchema()
 
 // eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{

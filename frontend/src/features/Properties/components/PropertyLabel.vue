@@ -26,7 +26,7 @@
       </q-btn>
     </div>
 
-    <span class="text-bold">{{ label }}</span>
+    <span class="text-bold">{{ label }}:</span>
   </div>
 </template>
 

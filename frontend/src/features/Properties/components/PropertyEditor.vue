@@ -97,7 +97,9 @@
             :multiple="multiple"
             :use-chips="multiple"
             dense
+            clearable
             emit-value
+            map-options
             outlined
             options-dense
           />
@@ -119,6 +121,19 @@
             quasar-palette
             dense
             outlined
+          />
+
+          <entity-select
+            v-else-if="type === 'objectid'"
+            v-model="value"
+            :service="schema.service"
+            :query="schema.query"
+            dense
+            clearable
+            outlined
+            options-dense
+            create-new
+            @create="createNewObject"
           />
         </div>
       </div>
@@ -213,7 +228,7 @@
 import { computed, watch } from 'vue'
 import { TSchema } from '@feathersjs/typebox'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
-import { useSchema } from '@/composites/schema'
+import { getTypeFor, optionsForSchema, defaultValueForSchema } from '@/shared/schema'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import TimeField from '@/features/Fields/components/TimeField.vue'
@@ -221,6 +236,7 @@ import DateField from '@/features/Fields/components/DateField.vue'
 import ColorField from '@/features/Fields/components/ColorField.vue'
 import IconField from '@/features/Fields/components/IconField.vue'
 import PropertyLabel from '@/features/Properties/components/PropertyLabel.vue'
+import EntitySelect from '@/features/Fields/components/EntitySelect.vue'
 
 const props = defineProps<{
   modelValue: unknown
@@ -242,9 +258,8 @@ const emit = defineEmits<{
 }>()
 
 const value = useModelValue(props, emit)
-const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
 
-const { getTypeFor, optionsForSchema, defaultValueForSchema } = useSchema()
+const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
 
 const options = computed((): unknown[] | undefined => {
   const p = props.schema
@@ -315,6 +330,14 @@ const subPropName = (name: string | number) => (
 )
 
 const nonExpandable = computed(() => !['object', 'array'].includes(type.value))
+
+/**
+ * Create a new service entity
+ */
+const createNewObject = () => {
+  // eslint-disable-next-line no-console
+  console.log(props.schema)
+}
 </script>
 
 <style scoped lang="sass">

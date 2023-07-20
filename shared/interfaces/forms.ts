@@ -1,6 +1,11 @@
 import { TSchema } from '@feathersjs/typebox'
 import { AnyData } from './commons'
 
+export interface TFormFieldCategory {
+  icon: string
+  names: string[]
+}
+
 export interface TFormComponent {
   // unique type for the component
   type: string
@@ -18,6 +23,8 @@ export interface TFormComponent {
   defaultValues?: AnyData
   // edit mode styles to add to component
   editStyles?: AnyData
+  // split schema keys into different categories and order items in the properties list
+  categories?: Record<string, TFormFieldCategory>
 }
 
 export interface TFormColumn {

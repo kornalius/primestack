@@ -1,4 +1,5 @@
 import { Type } from '@feathersjs/typebox'
+import { contentIcon, modelIcon } from '../icons'
 
 export const columnSchema = Type.Recursive((self) => Type.Object(
   {
@@ -31,11 +32,28 @@ export const fieldSchema = Type.Object(
 export const formSchema = Type.Object(
   {
     name: Type.String(),
-    schemaId: Type.Optional(Type.String({ objectid: true })),
+    schemaId: Type.Optional(Type.String({ objectid: true, service: 'schemas' })),
     data: Type.Optional(Type.String()),
     fields: Type.Array(fieldSchema),
   },
-  { additionalProperties: true },
+  {
+    additionalProperties: true,
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+        ],
+      },
+      model: {
+        icon: modelIcon,
+        names: [
+          'schemaId',
+          'data',
+        ],
+      },
+    },
+  },
 )
 
 export const schema = Type.Object(

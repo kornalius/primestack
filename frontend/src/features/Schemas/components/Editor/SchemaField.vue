@@ -77,7 +77,7 @@
 import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
 import { fieldSchema, supportedFieldTypes } from '@/shared/schemas/schema'
-import { useSchema } from '@/composites/schema'
+import { iconForType } from '@/shared/schema'
 
 type SchemaField = Static<typeof fieldSchema>
 
@@ -91,8 +91,6 @@ const emit = defineEmits<{
 }>()
 
 const value = useModelValue(props, emit)
-
-const { iconForType } = useSchema()
 </script>
 
 <style scoped lang="sass">

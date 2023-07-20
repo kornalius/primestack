@@ -6,6 +6,8 @@ export default defineStore('app-editor', () => {
     active: false,
     selectedMenu: undefined,
     selectedTab: undefined,
+    selectedSchema: undefined,
+    selectedSchemaField: undefined,
     selected: undefined,
     hovered: undefined,
     dragging: false,
@@ -17,6 +19,8 @@ export default defineStore('app-editor', () => {
   const formId = computed(() => states.value.formId)
   const selectedMenu = computed(() => states.value.selectedMenu)
   const selectedTab = computed(() => states.value.selectedTab)
+  const selectedSchema = computed(() => states.value.selectedSchema)
+  const selectedSchemaField = computed(() => states.value.selectedSchemaField)
 
   const setFormId = (id: string): void => {
     states.value.formId = id
@@ -86,6 +90,30 @@ export default defineStore('app-editor', () => {
     unselectTab()
   }
 
+  const selectSchema = (id: string): void => {
+    states.value.selectedSchema = id
+  }
+
+  const unselectSchema = (): void => {
+    states.value.selectedSchema = undefined
+  }
+
+  const isSchemaSelected = (id: string): boolean => (
+    states.value.selectedSchema === id
+  )
+
+  const selectSchemaField = (id: string): void => {
+    states.value.selectedSchemaField = id
+  }
+
+  const unselectSchemaField = (): void => {
+    states.value.selectedSchemaField = undefined
+  }
+
+  const isSchemaFieldSelected = (id: string): boolean => (
+    states.value.selectedSchemaField === id
+  )
+
   const startEdit = (): void => {
     states.value.active = true
   }
@@ -98,7 +126,11 @@ export default defineStore('app-editor', () => {
   return {
     states,
     active,
+    selectedMenu,
+    selectedTab,
     selected,
+    selectedSchema,
+    selectedSchemaField,
     formId,
     select,
     unselect,
@@ -110,8 +142,6 @@ export default defineStore('app-editor', () => {
     isHovered,
     isDragging,
     setDragging,
-    selectedMenu,
-    selectedTab,
     selectMenu,
     unselectMenu,
     isMenuSelected,
@@ -121,5 +151,11 @@ export default defineStore('app-editor', () => {
     startEdit,
     endEdit,
     setFormId,
+    selectSchema,
+    unselectSchema,
+    isSchemaSelected,
+    selectSchemaField,
+    unselectSchemaField,
+    isSchemaFieldSelected,
   }
 })

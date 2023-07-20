@@ -18,15 +18,14 @@ import {
   TObject, Type, StringEnum, TSchema,
 } from '@feathersjs/typebox'
 import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
+import { defaultValueForSchema } from '@/shared/schema'
+import { AnyData } from '@/shared/interfaces/commons'
+import { contentIcon, modelIcon, styleIcon } from '@/shared/icons'
 import DateField from '@/features/Fields/components/DateField.vue'
 import TimeField from '@/features/Fields/components/TimeField.vue'
 import ColorField from '@/features/Fields/components/ColorField.vue'
 import IconField from '@/features/Fields/components/IconField.vue'
-import { AnyData } from '@/shared/interfaces/commons'
-import { useSchema } from '@/composites/schema'
 import FormElementRow from './components/Editor/FormElementRow.vue'
-
-const { defaultValueForSchema } = useSchema()
 
 const sizeEnum = StringEnum(['xs', 'sm', 'md', 'lg', 'xl'])
 
@@ -151,6 +150,56 @@ const components = [
       dense: true,
       outlined: true,
     },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'disable',
+          'readonly',
+          'label',
+          'hint',
+          'prefix',
+          'suffix',
+          'loading',
+          'counter',
+        ],
+      },
+      model: {
+        icon: modelIcon,
+        names: [
+          'type',
+          'modelValue',
+          'clearable',
+          'mask',
+          'fillMask',
+          'unmaskedValue',
+          'maxLength',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'dense',
+          'color',
+          'bgColor',
+          'labelColor',
+          'stackLabel',
+          'hideBottomSpace',
+          'itemAligned',
+          'hideHint',
+          'autogrow',
+          'filled',
+          'outlined',
+          'square',
+          'borderless',
+          'standout',
+          'rounded',
+          'padding',
+          'margin',
+        ],
+      },
+    },
   },
   {
     type: 'checkbox',
@@ -171,6 +220,36 @@ const components = [
     ]),
     defaultValues: {
     },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'disable',
+          'readonly',
+          'label',
+          'leftLabel',
+          'checkedIcon',
+          'uncheckedIcon',
+        ],
+      },
+      model: {
+        icon: modelIcon,
+        names: [
+          'modelValue',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'dense',
+          'color',
+          'keepColor',
+          'padding',
+          'margin',
+        ],
+      },
+    },
   },
   {
     type: 'toggle',
@@ -190,6 +269,38 @@ const components = [
       commonProperties.style,
     ]),
     defaultValues: {
+    },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'disable',
+          'readonly',
+          'label',
+          'leftLabel',
+          'checkedIcon',
+          'uncheckedIcon',
+        ],
+      },
+      model: {
+        icon: modelIcon,
+        names: [
+          'modelValue',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'dense',
+          'color',
+          'iconColor',
+          'keepColor',
+          'size',
+          'padding',
+          'margin',
+        ],
+      },
     },
   },
   {
@@ -215,6 +326,37 @@ const components = [
       commonProperties.style,
     ]),
     defaultValues: {
+    },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'disable',
+          'readonly',
+          'noCaps',
+          'noWrap',
+        ],
+      },
+      model: {
+        icon: modelIcon,
+        names: [
+          'modelValue',
+          'clearable',
+          'options',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'dense',
+          'spread',
+          'stack',
+          'stretch',
+          'padding',
+          'margin',
+        ],
+      },
     },
   },
   {
@@ -243,6 +385,36 @@ const components = [
     },
     editStyles: {
       minHeight: '40px',
+    },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'disable',
+          'readonly',
+        ],
+      },
+      model: {
+        icon: modelIcon,
+        names: [
+          'type',
+          'modelValue',
+          'options',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'dense',
+          'color',
+          'keepColor',
+          'leftLabel',
+          'inline',
+          'padding',
+          'margin',
+        ],
+      },
     },
   },
   {
@@ -290,6 +462,54 @@ const components = [
     defaultValues: {
       align: 'center',
     },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'disable',
+          'readonly',
+          'label',
+          'icon',
+          'align',
+          'noCaps',
+          'noWrap',
+          'to',
+          'target',
+          'replace',
+          'loading',
+        ],
+      },
+      model: {
+        icon: modelIcon,
+        names: [
+          'modelValue',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'dense',
+          'size',
+          'color',
+          'textColor',
+          'stack',
+          'stretch',
+          'round',
+          'rounded',
+          'glossy',
+          'outline',
+          'flat',
+          'push',
+          'square',
+          'unelevated',
+          'fab',
+          'fabMini',
+          'padding',
+          'margin',
+        ],
+      },
+    },
   },
   {
     type: 'date',
@@ -333,6 +553,54 @@ const components = [
       defaultView: 'Calendar',
       hideBottomSpace: true,
     },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'disable',
+          'readonly',
+          'title',
+          'subTitle',
+          'calendar',
+          'defaultView',
+          'defaultYearMonth',
+          'yearsInMonthView',
+          'firstDayOfWeek',
+          'navigationMinYearMonth',
+          'navigationMaxYearMonth',
+        ],
+      },
+      model: {
+        icon: modelIcon,
+        names: [
+          'modelValue',
+          'emitImmediately',
+          'noUnset',
+          'mask',
+          'multiple',
+          'range',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'dense',
+          'todayBtn',
+          'landscape',
+          'outlined',
+          'minimal',
+          'color',
+          'textColor',
+          'square',
+          'flat',
+          'bordered',
+          'hideBottomSpace',
+          'padding',
+          'margin',
+        ],
+      },
+    },
   },
   {
     type: 'time',
@@ -362,6 +630,43 @@ const components = [
       outlined: true,
       calendar: 'gregorian',
       hideBottomSpace: true,
+    },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'disable',
+          'readonly',
+          'calendar',
+        ],
+      },
+      model: {
+        icon: modelIcon,
+        names: [
+          'modelValue',
+          'mask',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'dense',
+          'nowBtn',
+          'withSeconds',
+          'landscape',
+          'outlined',
+          'minimal',
+          'color',
+          'textColor',
+          'square',
+          'flat',
+          'bordered',
+          'hideBottomSpace',
+          'padding',
+          'margin',
+        ],
+      },
     },
   },
   {
@@ -421,6 +726,63 @@ const components = [
       optionDisable: 'disable',
       optionsDense: true,
     },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'disable',
+          'readonly',
+          'label',
+          'prefix',
+          'suffix',
+          'hint',
+          'tableColspan',
+          'loading',
+        ],
+      },
+      model: {
+        icon: modelIcon,
+        names: [
+          'modelValue',
+          'multiple',
+          'emitValue',
+          'displayValue',
+          'maxValues',
+          'clearable',
+          'useInput',
+          'optionLabel',
+          'optionValue',
+          'optionDisable',
+          'options',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'dense',
+          'labelColor',
+          'color',
+          'bgColor',
+          'stackLabel',
+          'hideHint',
+          'noErrorIcon',
+          'hideSelected',
+          'useChips',
+          'filled',
+          'outlined',
+          'square',
+          'borderless',
+          'standout',
+          'rounded',
+          'itemAligned',
+          'hideBottomSpace',
+          'virtualScrollHorizontal',
+          'padding',
+          'margin',
+        ],
+      },
+    },
   },
   {
     type: 'iconSelect',
@@ -466,6 +828,63 @@ const components = [
       emitValue: true,
       useInput: true,
     },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'disable',
+          'readonly',
+          'label',
+          'hint',
+          'prefix',
+          'suffix',
+          'tableColspan',
+          'loading',
+        ],
+      },
+      model: {
+        icon: modelIcon,
+        names: [
+          'modelValue',
+          'clearable',
+          'multiple',
+          'emitValue',
+          'displayValue',
+          'maxValues',
+          'useInput',
+          'optionLabel',
+          'optionValue',
+          'optionDisable',
+          'options',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'dense',
+          'labelColor',
+          'color',
+          'bgColor',
+          'stackLabel',
+          'hideHint',
+          'noErrorIcon',
+          'hideSelected',
+          'useChips',
+          'filled',
+          'outlined',
+          'square',
+          'borderless',
+          'standout',
+          'rounded',
+          'itemAligned',
+          'hideBottomSpace',
+          'virtualScrollHorizontal',
+          'padding',
+          'margin',
+        ],
+      },
+    },
   },
   {
     type: 'chip',
@@ -490,6 +909,40 @@ const components = [
     ]),
     defaultValues: {
     },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'disable',
+          'readonly',
+          'label',
+          'icon',
+          'selected',
+          'clickable',
+          'removable',
+        ],
+      },
+      model: {
+        icon: modelIcon,
+        names: [
+          'modelValue',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'dense',
+          'size',
+          'color',
+          'textColor',
+          'square',
+          'outline',
+          'padding',
+          'margin',
+        ],
+      },
+    },
   },
   {
     type: 'icon',
@@ -507,6 +960,28 @@ const components = [
       commonProperties.style,
     ]),
     defaultValues: {
+    },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'disable',
+          'readonly',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'dense',
+          'size',
+          'color',
+          'left',
+          'right',
+          'padding',
+          'margin',
+        ],
+      },
     },
   },
   {
@@ -563,6 +1038,46 @@ const components = [
       referrerpolicy: 'strict-origin-when-cross-origin',
       fit: 'cover',
     },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'disable',
+          'readonly',
+          'src',
+          'srcset',
+          'alt',
+          'placeholderSrc',
+          'loading',
+          'crossorigin',
+          'decoding',
+          'reffererpolicy',
+          'fetchpriority',
+          'draggable',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'dense',
+          'size',
+          'width',
+          'height',
+          'fit',
+          'position',
+          'ratio',
+          'sizes',
+          'noSpinner',
+          'noNativeMenu',
+          'noTransition',
+          'spinnerColor',
+          'spinnerSize',
+          'padding',
+          'margin',
+        ],
+      },
+    },
   },
   {
     type: 'video',
@@ -593,6 +1108,27 @@ const components = [
       fetchpriority: 'auto',
       referrerpolicy: 'strict-origin-when-cross-origin',
     },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'title',
+          'src',
+          'fetchpriority',
+          'reffererpolicy',
+          'loading',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'ratio',
+          'padding',
+          'margin',
+        ],
+      },
+    },
   },
   {
     type: 'knob',
@@ -621,6 +1157,45 @@ const components = [
       commonProperties.style,
     ]),
     defaultValues: {
+    },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'disable',
+          'readonly',
+          'angle',
+          'instantFeedback',
+          'showValue',
+        ],
+      },
+      model: {
+        icon: modelIcon,
+        names: [
+          'modelValue',
+          'reverse',
+          'min',
+          'max',
+          'innerMin',
+          'innerMax',
+          'step',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'dense',
+          'size',
+          'color',
+          'centerColor',
+          'trackColor',
+          'fontSize',
+          'thickness',
+          'padding',
+          'margin',
+        ],
+      },
     },
   },
   {
@@ -654,6 +1229,44 @@ const components = [
       indeterminate: true,
       thickness: 0.2,
     },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'disable',
+          'readonly',
+          'angle',
+          'instantFeedback',
+          'showValue',
+        ],
+      },
+      model: {
+        icon: modelIcon,
+        names: [
+          'modelValue',
+          'reverse',
+          'indeterminate',
+          'min',
+          'max',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'dense',
+          'size',
+          'color',
+          'centerColor',
+          'trackColor',
+          'thickness',
+          'fontSize',
+          'animationSpeed',
+          'padding',
+          'margin',
+        ],
+      },
+    },
   },
   {
     type: 'spinner',
@@ -670,6 +1283,25 @@ const components = [
     defaultValues: {
       color: 'primary',
       thickness: 5,
+    },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'dense',
+          'size',
+          'color',
+          'thickness',
+          'padding',
+          'margin',
+        ],
+      },
     },
   },
   {
@@ -698,6 +1330,40 @@ const components = [
       outlined: true,
       defaultView: 'palette',
       formatModel: 'auto',
+    },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'disable',
+          'readonly',
+          'defaultView',
+        ],
+      },
+      model: {
+        icon: modelIcon,
+        names: [
+          'modelValue',
+          'defaultValue',
+          'formatModel',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'dense',
+          'noHeader',
+          'noHeaderTabs',
+          'noFooter',
+          'square',
+          'flat',
+          'bordered',
+          'hideBottomSpace',
+          'padding',
+          'margin',
+        ],
+      },
     },
   },
   {
@@ -738,6 +1404,51 @@ const components = [
       snap: true,
       max: 10,
       innerMax: 10,
+    },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'disable',
+          'readonly',
+          'label',
+          'markers',
+        ],
+      },
+      model: {
+        icon: modelIcon,
+        names: [
+          'modelValue',
+          'min',
+          'max',
+          'innerMin',
+          'innerMax',
+          'step',
+          'snap',
+          'reverse',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'dense',
+          'vertical',
+          'labelAlways',
+          'switchLabelSide',
+          'switchMarkerLabelSide',
+          'thumbSize',
+          'trackSize',
+          'markerLabels',
+          'labelColor',
+          'labelTextColor',
+          'thumbColor',
+          'innerTrackColor',
+          'selectionColor',
+          'padding',
+          'margin',
+        ],
+      },
     },
   },
   {
@@ -788,6 +1499,58 @@ const components = [
       innerMax: 10,
       labelAlways: true,
     },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'disable',
+          'readonly',
+          'reverse',
+          'markers',
+        ],
+      },
+      model: {
+        icon: modelIcon,
+        names: [
+          'modelValue',
+          'min',
+          'max',
+          'innerMin',
+          'innerMax',
+          'step',
+          'snap',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'dense',
+          'labelColor',
+          'labelTextColor',
+          'leftLabelColor',
+          'leftLabelTextColor',
+          'rightLabelColor',
+          'rightLabelTextColor',
+          'labelAlways',
+          'switchLabelSide',
+          'switchMarkerLabelSide',
+          'vertical',
+          'markerLabels',
+          'dragRange',
+          'dragOnlyRange',
+          'selectionColor',
+          'trackSize',
+          'trackColor',
+          'thumbSize',
+          'thumbColor',
+          'leftThumbColor',
+          'rightThumbColor',
+          'padding',
+          'margin',
+        ],
+      },
+    },
   },
   {
     type: 'rating',
@@ -817,7 +1580,39 @@ const components = [
       iconHalf: 'mdi-star-half-full',
       max: 5,
       size: 'sm',
-      noDimming: true,
+    },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'disable',
+          'readonly',
+          'icon',
+          'iconSelected',
+          'iconHalf',
+        ],
+      },
+      model: {
+        icon: modelIcon,
+        names: [
+          'modelValue',
+          'max',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'size',
+          'color',
+          'colorSelected',
+          'colorHalf',
+          'noReset',
+          'noDimming',
+          'padding',
+          'margin',
+        ],
+      },
     },
   },
   {
@@ -834,6 +1629,25 @@ const components = [
       Type.Omit(commonProperties.style, ['dense']),
     ]),
     defaultValues: {
+    },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'color',
+          'vertical',
+          'spaced',
+          'inset',
+          'padding',
+          'margin',
+        ],
+      },
     },
   },
   {
@@ -879,6 +1693,31 @@ const components = [
     ]),
     defaultValues: {
     },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'disable',
+          'readonly',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'size',
+          'type',
+          'width',
+          'height',
+          'animation',
+          'animationSpeed',
+          'square',
+          'bordered',
+          'padding',
+          'margin',
+        ],
+      },
+    },
   },
   {
     type: 'space',
@@ -896,6 +1735,21 @@ const components = [
     schema: properties([
       Type.Omit(commonProperties.style, ['dense']),
     ]),
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'padding',
+          'margin',
+        ],
+      },
+    },
   },
   {
     type: 'col',
@@ -923,6 +1777,29 @@ const components = [
       }),
       Type.Omit(commonProperties.style, ['dense']),
     ]),
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'col',
+        ],
+      },
+      model: {
+        icon: modelIcon,
+        names: [
+          'modelValue',
+          'max',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'padding',
+          'margin',
+        ],
+      },
+    },
   },
 ] as TFormComponent[]
 

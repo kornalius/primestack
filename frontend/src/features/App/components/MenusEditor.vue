@@ -72,6 +72,6 @@ const removeMenu = (v: Menu, index: number): boolean => {
 }
 
 onMounted(() => {
-  editor.selectMenu(menus.value?.[0]._id)
+  editor.selectMenu(menus.value?.[0]?._id)
 })
 </script>

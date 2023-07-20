@@ -35,14 +35,12 @@
 
     <template #selected-item="{ opt }">
       <q-item class="q-px-none" dense>
-        <q-item-section class="q-pr-none items-center" avatar>
-          <q-icon :name="opt" color="grey-9" size="sm" />
-        </q-item-section>
+        <q-tooltip :delay="500">
+          {{ (opt as string).replace(/^mdi-/, '') }}
+        </q-tooltip>
 
-        <q-item-section v-if="!noLabel">
-          <q-item-label>
-            {{ (opt as string).replace(/^mdi-/, '') }}
-          </q-item-label>
+        <q-item-section>
+          <q-icon :name="opt" color="grey-9" size="sm" />
         </q-item-section>
       </q-item>
     </template>

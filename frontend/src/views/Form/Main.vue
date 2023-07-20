@@ -68,12 +68,12 @@
 import {
   computed, onBeforeUnmount, ref, watch,
 } from 'vue'
-import { useSchema } from '@/composites/schema'
 import useFormElements from '@/features/Forms/composites'
 import FormEditor from '@/features/Forms/components/Editor/FormEditor.vue'
 import FormDisplay from '@/features/Forms/components/FormDisplay.vue'
 import { api } from '@/plugins/pinia'
 import useAppEditor from '@/features/App/store'
+import { defaultValueForSchema } from '@/shared/schema'
 
 const props = defineProps<{
   menuId: string
@@ -112,8 +112,6 @@ watch(form, () => {
     editor.setFormId(form.value._id)
   }
 }, { immediate: true })
-
-const { defaultValueForSchema } = useSchema()
 
 const { components: comps, flattenFields } = useFormElements()
 

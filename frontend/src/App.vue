@@ -103,6 +103,26 @@
         </q-item>
 
         <div v-if="userMenu">
+          <q-item
+            v-if="editor.active"
+            class="Drawer__item"
+            :class="{ leftDrawerExpanded, selected: $route.path === schemasUrl() }"
+            :to="schemasUrl()"
+            name="schemas"
+            tag="router-link"
+            clickable
+          >
+            <q-item-section avatar>
+              <q-icon name="mdi-database-cog" />
+            </q-item-section>
+
+            <q-item-section v-if="leftDrawerExpanded">
+              <q-item-label>
+                Schemas
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+
           <menus-editor
             v-if="editor.active"
             v-model="userMenu.list"
@@ -244,7 +264,7 @@ findForms()
 
 const route = useRoute()
 
-const { menuUrl, menuTabUrl } = useUrl()
+const { menuUrl, menuTabUrl, schemasUrl } = useUrl()
 
 const routeMenu = computed(() => (
   userMenu.value?.list.find((m) => m._id === route.params.menuId)

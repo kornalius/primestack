@@ -105,7 +105,7 @@ const { menuTabUrl } = useUrl()
 
 onMounted(() => {
   setTimeout(() => {
-    router.push(menuTabUrl(props.menu._id, tabs.value?.[0]._id))
+    router.push(menuTabUrl(props.menu._id, tabs.value?.[0]?._id))
   }, 100)
 })
 </script>

@@ -1,6 +1,47 @@
 import { Type, StringEnum} from '@feathersjs/typebox'
+import { contentIcon, modelIcon } from '../icons'
 
-export const supportedFieldTypes = ['string', 'number', 'boolean']
+export const supportedFieldTypes = [
+  'string',
+  'number',
+  'boolean',
+  'color',
+  'icon',
+  'objectid',
+]
+
+export const supportedStringFormats = [
+  'date-time',
+  'date',
+  'time',
+  'email',
+  'hostname',
+  'ipv4',
+  'ipv6',
+  'uri',
+  'uri-reference',
+  'uri-template',
+  'uuid',
+  'json-pointer',
+  'relative-json-pointer',
+  'regex',
+  'duration',
+  'byte',
+  'int32',
+  'int64',
+  'float',
+  'double',
+  'password',
+  'binary',
+]
+
+export const supportedMethods = [
+  'get',
+  'find',
+  'create',
+  'patch',
+  'remove',
+]
 
 export const fieldSchema = Type.Object(
   {
@@ -12,8 +53,59 @@ export const fieldSchema = Type.Object(
     optional: Type.Boolean(),
     readonly: Type.Boolean(),
     queryable: Type.Boolean(),
+    slider: Type.Optional(Type.Boolean()),
+    format: Type.Optional(StringEnum(supportedStringFormats)),
+    multipleOf: Type.Optional(Type.Number()),
+    min: Type.Optional(Type.Number()),
+    exclusiveMin: Type.Optional(Type.Number()),
+    max: Type.Optional(Type.Number()),
+    exclusiveMax: Type.Optional(Type.Number()),
+    dateMin: Type.Optional(Type.String()),
+    dateExclusiveMin: Type.Optional(Type.String()),
+    dateMax: Type.Optional(Type.String()),
+    dateExclusiveMax: Type.Optional(Type.String()),
+    pattern: Type.Optional(Type.String()),
+    options: Type.Optional(Type.Array(
+      Type.Object({
+        label: Type.String(),
+        value: Type.String(),
+      }))
+    ),
   },
-  { additionalProperties: false },
+  {
+    additionalProperties: false,
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'type',
+          'queryable',
+          'slider',
+          'options',
+        ],
+      },
+      model: {
+        icon: modelIcon,
+        names: [
+          'format',
+          'array',
+          'optional',
+          'readonly',
+          'multipleOf',
+          'min',
+          'exclusiveMin',
+          'max',
+          'exclusiveMax',
+          'dateMin',
+          'dateExclusiveMin',
+          'dateMax',
+          'dateExclusiveMax',
+          'pattern',
+        ],
+      },
+    },
+  },
 )
 
 export const indexSchema = Type.Object(
@@ -24,14 +116,27 @@ export const indexSchema = Type.Object(
     unique: Type.Boolean(),
     sparse: Type.Boolean(),
   },
-  { additionalProperties: false },
+  {
+    additionalProperties: false,
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'order',
+          'unique',
+          'sparse',
+        ],
+      },
+    },
+  },
 )
 
 export const schemaSchema = Type.Object(
   {
     _id: Type.String({ objectid: true }),
     name: Type.String(),
-    methods: Type.Array(Type.String()),
+    methods: Type.Array(StringEnum(supportedMethods)),
     created: Type.Boolean(),
     updated: Type.Boolean(),
     softDelete: Type.Boolean(),
@@ -39,7 +144,22 @@ export const schemaSchema = Type.Object(
     fields: Type.Array(fieldSchema),
     indexes: Type.Array(indexSchema),
   },
-  { additionalProperties: false },
+  {
+    additionalProperties: false,
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'methods',
+          'created',
+          'updated',
+          'softDelete',
+          'user',
+        ],
+      },
+    },
+  },
 )
 
 export const schema = Type.Object(

@@ -3,12 +3,19 @@
     v-model="value"
     v-bind="$attrs"
     :bg-color="value"
-    :style="{ backgroundColor: value }"
+    :input-style="{
+      color: 'rgb(255, 255, 255)',
+      mixBlendMode: 'difference',
+    }"
   >
     <template #append>
       <q-icon
         class="cursor-pointer"
         name="mdi-eyedropper-variant"
+        :style="{
+          color: 'rgb(255, 255, 255)',
+          mixBlendMode: 'difference',
+        }"
       >
         <q-popup-proxy
           transition-show="scale"
@@ -20,6 +27,7 @@
             default-view="palette"
             :palette="palette"
             no-header
+            v-close-popup
           />
         </q-popup-proxy>
       </q-icon>
@@ -58,6 +66,7 @@ const quasarColors = computed(() => (
       name: r.selectorText.replace('.text-', ''),
       color: r.style.color,
     }))
+    .sort()
 ))
 
 const palette = computed(() => (

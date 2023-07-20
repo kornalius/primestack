@@ -14,4 +14,6 @@ export const useUrl = () => ({
     }
     return `/${u.join('/')}`
   },
+
+  schemasUrl: (): string => '/schemas',
 })
