@@ -18,6 +18,7 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string => {
   if (forcedType) {
     return forcedType
   }
+
   if (p.type === 'number' && p.slider) {
     return 'slider'
   }
@@ -72,7 +73,18 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string => {
   if (p.anyOf) {
     return getTypeFor(p.anyOf[0])
   }
+
   return 'string'
+}
+
+export const columnAlignmentFor = (type: string): string => {
+  if (type === 'boolean') {
+    return 'center'
+  }
+  if (type === 'number') {
+    return 'right'
+  }
+  return 'left'
 }
 
 export const defaultValueForSchema = (schema: TSchema, forcedType?: string): unknown => {

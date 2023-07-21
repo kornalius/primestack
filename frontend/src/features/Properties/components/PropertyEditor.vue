@@ -1,6 +1,34 @@
 <template>
+  <div
+    v-if="horizontal && label && !embedLabel"
+    class="col-auto q-mr-md"
+    :class="{ 'q-mt-sm': type === 'array' }"
+    style="width: 125px;"
+  >
+    <property-label
+      :multiple-types="multipleTypes"
+      :label="label"
+      @change-type="changeType"
+    />
+  </div>
+
+  <div
+    v-if="horizontal"
+    class="col"
+  >
+    <schema-field
+      v-model="value"
+      v-model:forced-types="currentForcedTypes"
+      :schema="schema"
+      :key-name="propName"
+      :label="label"
+      :embed-label="embedLabel"
+      property
+    />
+  </div>
+
   <q-item
-    v-if="nonExpandable"
+    v-else-if="nonExpandable"
     style="padding: 2px 0 !important;"
     dense
   >
@@ -27,157 +55,14 @@
         </div>
 
         <div class="col">
-          <q-input
-            v-if="type === 'string'"
+          <schema-field
             v-model="value"
-            :label="embedLabel ? label : undefined"
-            dense
-            outlined
-          >
-            <template #append>
-              <q-btn
-                size="sm"
-                dense
-                flat
-              >
-                <q-icon name="mdi-pencil" />
-
-                <q-popup-edit
-                  v-model="value"
-                  :title="label"
-                  auto-save
-                  v-slot="scope"
-                >
-                  <json-editor v-model="scope.value" />
-                </q-popup-edit>
-              </q-btn>
-            </template>
-          </q-input>
-
-          <div v-if="type === 'json'">
-            <span class="no-wrap ellipsis cursor-pointer">
-              {{ value }}
-            </span>
-
-            <q-popup-edit
-              v-model="value"
-              :title="label"
-              auto-save
-              v-slot="scope"
-            >
-              <json-editor v-model="scope.value" lang-json />
-            </q-popup-edit>
-          </div>
-
-          <q-slider
-            v-else-if="type === 'slider'"
-            v-model.number="value"
-            :min="schema.min"
-            :max="schema.max"
-            :step="schema.step"
-            snap
-            markers
-            marker-labels
-            label
-            dense
-          />
-
-          <q-input
-            v-else-if="type === 'number'"
-            v-model.number="value"
-            :label="embedLabel ? label : undefined"
-            :step="schema.step || 1"
-            :min="schema.min"
-            :max="schema.max"
-            type="number"
-            dense
-            outlined
-          />
-
-          <date-field
-            v-else-if="type === 'date'"
-            v-model="value"
-            :label="embedLabel ? label : undefined"
-            hide-bottom-space
-            dense
-            outlined
-          />
-
-          <time-field
-            v-else-if="type === 'time'"
-            v-model="value"
-            :label="embedLabel ? label : undefined"
-            hide-bottom-space
-            dense
-            outlined
-          />
-
-          <q-checkbox
-            v-else-if="type === 'boolean'"
-            v-model="value"
-            class="full-width"
-            :label="embedLabel ? label : undefined"
-            dense
-          />
-
-          <q-select
-            v-else-if="type === 'select'"
-            v-model="value"
-            :label="embedLabel ? label : undefined"
-            :options="options"
-            :option-label="optionLabel"
-            :option-value="optionValue"
-            :autocomplete="optionLabel"
-            :multiple="multiple"
-            :use-chips="multiple"
-            dense
-            clearable
-            emit-value
-            map-options
-            outlined
-            options-dense
-          />
-
-          <icon-field
-            v-else-if="type === 'icon'"
-            v-model="value"
-            :label="embedLabel ? label : undefined"
-            dense
-            outlined
-            options-dense
-            clearable
-          />
-
-          <color-field
-            v-else-if="type === 'color'"
-            v-model="value"
-            :label="embedLabel ? label : undefined"
-            quasar-palette
-            dense
-            outlined
-          />
-
-          <entity-select
-            v-else-if="type === 'objectid'"
-            v-model="value"
-            :service="schema.service"
-            :query="schema.query"
-            dense
-            clearable
-            outlined
-            options-dense
-            create-new
-            @create="createNewObject"
-          />
-
-          <padding-editor
-            v-else-if="type === 'padding' && value"
-            v-model="value"
-          />
-
-          <margin-editor
-            v-else-if="type === 'margin' && value"
-            v-model="value"
+            v-model:forced-types="currentForcedTypes"
+            :schema="schema"
+            :key-name="propName"
+            :label="label"
+            :embed-label="embedLabel"
+            property
           />
         </div>
       </div>
@@ -271,47 +156,15 @@
         />
 
         <div class="col">
-          <properties-editor
-            v-if="type === 'object' && typeof value === 'object'"
+          <schema-field
             v-model="value"
             v-model:forced-types="currentForcedTypes"
-            :prop-name="propName"
-            :schema="objectSchema"
+            :schema="schema"
+            :key-name="propName"
+            :label="label"
             embed-label
-            flat
+            property
           />
-
-          <array-editor
-            v-else-if="type === 'array' && Array.isArray(value)"
-            v-model="value"
-            add-button="end"
-            :add-function="() => addItem(value)"
-            :remove-function="(v: unknown, idx: number) => removeItem(value, idx)"
-            :no-separator="!arraySchemaIsObject"
-            reorderable
-          >
-            <template #default="{ index }">
-              <properties-editor
-                v-if="arraySchemaIsObject"
-                v-model="value[index]"
-                v-model:forced-types="currentForcedTypes"
-                :prop-name="subPropName(index)"
-                :schema="arraySchema"
-                embed-label
-                flat
-              />
-
-              <property-editor
-                v-else
-                v-model="value[index]"
-                v-model:forced-types="currentForcedTypes"
-                :prop-name="subPropName(index)"
-                :schema="arraySchema"
-                :required="arraySchema.required"
-                embed-label
-              />
-            </template>
-          </array-editor>
         </div>
       </div>
     </template>
@@ -322,18 +175,11 @@
 import { computed, watch } from 'vue'
 import { TSchema } from '@feathersjs/typebox'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
-import { getTypeFor, optionsForSchema, defaultValueForSchema } from '@/shared/schema'
+import { getTypeFor, defaultValueForSchema } from '@/shared/schema'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
-import TimeField from '@/features/Fields/components/TimeField.vue'
-import DateField from '@/features/Fields/components/DateField.vue'
-import ColorField from '@/features/Fields/components/ColorField.vue'
-import IconField from '@/features/Fields/components/IconField.vue'
 import PropertyLabel from '@/features/Properties/components/PropertyLabel.vue'
-import EntitySelect from '@/features/Fields/components/EntitySelect.vue'
-import JsonEditor from '@/features/Fields/components/CodeEditor.vue'
-import PaddingEditor from '@/features/Fields/components/PaddingEditor.vue'
-import MarginEditor from '@/features/Fields/components/MarginEditor.vue'
+import SchemaField from '@/features/Properties/components/SchemaField.vue'
 
 const props = defineProps<{
   modelValue: unknown
@@ -345,7 +191,8 @@ const props = defineProps<{
   // property name in the model for the property being edited
   propName: string
   // object that stores the forced types selected by the user
-  forcedTypes: Record<string, string>
+  forcedTypes?: Record<string, string>
+  horizontal?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -358,29 +205,9 @@ const value = useModelValue(props, emit)
 
 const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
 
-const options = computed((): unknown[] | undefined => {
-  const p = props.schema
-  return optionsForSchema(p)
-})
-
-const optionValue = computed((): string | undefined => {
-  const p = props.schema
-  return p.optionValue || p.items?.optionValue
-})
-
-const optionLabel = computed((): string | undefined => {
-  const p = props.schema
-  return p.optionLabel || p.items?.optionLabel
-})
-
-const multiple = computed((): boolean => {
-  const p = props.schema
-  return p.type === 'array'
-})
-
 const type = computed((): string => {
   const p = props.schema
-  return getTypeFor(p, currentForcedTypes.value[props.propName])
+  return getTypeFor(p, currentForcedTypes.value?.[props.propName])
 })
 
 const multipleTypes = computed((): string[] | undefined => {
@@ -399,8 +226,6 @@ watch(value, () => {
 })
 
 const arraySchema = computed(() => props.schema.items)
-
-const objectSchema = computed(() => props.schema)
 
 const arraySchemaIsObject = computed(() => (
   getTypeFor(arraySchema.value, currentForcedTypes.value[props.propName]) === 'object'
@@ -427,14 +252,6 @@ const subPropName = (name: string | number) => (
 )
 
 const nonExpandable = computed(() => !['object', 'array'].includes(type.value))
-
-/**
- * Create a new service entity
- */
-const createNewObject = () => {
-  // eslint-disable-next-line no-console
-  console.log(props.schema)
-}
 </script>
 
 <style scoped lang="sass">

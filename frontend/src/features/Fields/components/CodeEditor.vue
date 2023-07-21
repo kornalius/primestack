@@ -1,8 +1,7 @@
 <template>
   <codemirror
     v-model="value"
-    style="width: 600px; height: 400px;"
-    :autofocus="true"
+    v-bind="$attrs"
     :tab-size="2"
     :extensions="extensions"
     @ready="handleReady"

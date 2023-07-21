@@ -21,6 +21,11 @@ const cloneValue = (value: unknown): unknown => (
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const useProp = (props: AnyData, name: string): Ref => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (!(props as any)[name]) {
+    return ref()
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const r = ref(cloneValue((props as any)[name]))
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,6 +49,11 @@ export const useSyncedProp = (
   name: string,
   emit: (e: string, ...args) => void,
 ): Ref => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (!(props as any)[name]) {
+    return ref()
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const r = ref(cloneValue((props as any)[name]))
 

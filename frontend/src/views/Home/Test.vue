@@ -10,6 +10,7 @@
       <q-tab name="PropertiesEditor" label="Properties Editor" />
       <q-tab name="QueryEditor" label="Query Editor" />
       <q-tab name="SchemaEditor" label="Schema Editor" />
+      <q-tab name="Table" label="Table" />
     </q-tabs>
 
     <q-tab-panels v-model="tab" animated>
@@ -81,6 +82,26 @@
           </div>
         </div>
       </q-tab-panel>
+
+      <q-tab-panel name="Table">
+        <div class="row">
+          <div class="col">
+            <schema-table
+              class="my-sticky-dynamic"
+              :schema="schema"
+              :rows="rows"
+              :virtual-scroll-slice-size="10"
+              :virtual-scroll-item-size="48"
+              :virtual-scroll-sticky-size-start="48"
+              :rows-per-page-options="[0]"
+              row-key="_id"
+              virtual-scroll
+              flat
+              bordered
+            />
+          </div>
+        </div>
+      </q-tab-panel>
     </q-tab-panels>
   </div>
 </template>
@@ -89,6 +110,7 @@
 import {
   computed, ref,
 } from 'vue'
+import hexObjectId from 'hex-object-id'
 import { Type } from '@feathersjs/typebox'
 import { useQuery } from '@/composites/query'
 import { api } from '@/plugins/pinia'
@@ -96,6 +118,7 @@ import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import QueryEditor from '@/features/Query/components/Editor/QueryEditor.vue'
 import SchemaEditor from '@/features/Schemas/components/Editor/SchemaEditor.vue'
+import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
 
 /**
  * Properties
@@ -228,10 +251,72 @@ const { data: schemas } = api.service('schemas').useFind({
 })
 
 const userSchema = computed(() => schemas.value?.[0])
+
+/**
+ * Table
+ */
+
+const rows = ref([])
+
+for (let i = 0; i < 1000; i++) {
+  rows.value.push(
+    {
+      _id: hexObjectId(),
+      string: `Test #${i}`,
+      number: i,
+      range: 2.5,
+      date: '2023/07/07',
+      time: '10:23',
+      boolean: true,
+      select: 'QC',
+      multipleSelect: ['QC', 'ON'],
+      color: 'red-3',
+      arrayOfString: ['hello', 'world'],
+      arrayOfObject: [{ string: 'string', check: true }, { string: 'string2', check: false }],
+      obj: {
+        string: 'string',
+        top: 10,
+        left: 20,
+        bottom: 30,
+        right: 40,
+      },
+    },
+  )
+}
 </script>
 
 <style scoped lang="sass">
 .title
   padding: 4px 8px
   background: $grey-6
+</style>
+
+<style lang="sass">
+.my-sticky-dynamic
+  /* height or max-height is important */
+  height: 410px
+
+  .q-table__top,
+  .q-table__bottom,
+  thead tr:first-child th /* bg color is important for th; just specify one */
+    background-color: white
+    z-index: 2
+
+  thead tr th
+    position: sticky
+    z-index: 1
+
+  /* this will be the loading indicator */
+  thead tr:last-child th
+    /* height of all previous header rows */
+    top: 48px
+
+  thead tr:first-child th
+    top: 0
+
+  /* prevent scrolling behind sticky top row on focus */
+  tbody
+    /* height of all previous header rows */
+    scroll-margin-top: 48px
+
 </style>

@@ -15,7 +15,26 @@
     />
   </q-tabs>
 
+  <div
+    v-if="horizontal"
+    class="row q-gutter-sm items-center"
+  >
+    <property-editor
+      v-for="name in names"
+      :key="name"
+      v-model="value[name]"
+      v-model:forced-types="currentForcedTypes"
+      :prop-name="subPropName(name)"
+      :schema="schema.properties[name]"
+      :required="schema.required.includes(name)"
+      :label="startCase(name)"
+      :embed-label="embedLabel"
+      horizontal
+    />
+  </div>
+
   <q-list
+    v-else
     :bordered="!flat"
     :separator="!flat"
     dense
@@ -55,6 +74,7 @@ const props = defineProps<{
   forcedTypes?: Record<string, string>
   // split schema keys into different categories and order items in the properties list
   categories?: Record<string, TFormFieldCategory>
+  horizontal?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
