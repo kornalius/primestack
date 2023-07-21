@@ -129,7 +129,7 @@ const defaultValues = computed(() => flattenFields(fields.value)
 
 const formData = ref({
   ...defaultValues.value,
-  ...(JSON.parse(form.value?.data || '{}')),
+  ...(form.value?.data || {}),
 })
 
 const preview = ref(false)
@@ -139,7 +139,7 @@ const showPreviewFormData = ref(false)
 watch(preview, () => {
   previewFormData.value = {
     ...defaultValues.value,
-    ...(JSON.parse(form.value?.data || '{}')),
+    ...(form.value?.data || {}),
   }
 })
 

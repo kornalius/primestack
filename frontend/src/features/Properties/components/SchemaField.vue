@@ -132,20 +132,21 @@
 
   <div
     v-if="type === 'json'"
-    class="ellipsis overflow-hidden"
+    class="ellipsis overflow-hidden cursor-pointer"
   >
-    <span class="no-wrap cursor-pointer">
-      {{ value }}
+    <span class="no-wrap">
+      {{ JSON.stringify(value) || '&nbsp;' }}
     </span>
 
     <q-popup-edit
       v-model="value"
       :title="label"
       auto-save
-      v-slot="scope"
+      @before-show="tempJson = JSON.stringify(value, undefined, 2)"
+      @before-hide="value = JSON.parse(tempJson)"
     >
       <code-editor
-        v-model="scope.value"
+        v-model="tempJson"
         style="width: 600px; height: 400px;"
         lang-json
         autofocus
@@ -175,11 +176,11 @@
 
   <div
     v-else-if="type === 'object' && typeof value === 'object' && !property"
-    class="overflow-hidden ellipsis"
+    class="overflow-hidden ellipsis cursor-pointer"
     style="max-width: 150px;"
   >
-    <span class="no-wrap cursor-pointer">
-      {{ JSON.stringify(value) }}
+    <span class="no-wrap">
+      {{ JSON.stringify(value) || '&nbsp;' }}
     </span>
 
     <q-popup-edit
@@ -233,11 +234,11 @@
 
   <div
     v-else-if="type === 'array' && Array.isArray(value) && !property"
-    class="overflow-hidden ellipsis"
+    class="overflow-hidden ellipsis cursor-pointer"
     style="max-width: 150px;"
   >
-    <span class="no-wrap cursor-pointer">
-      {{ JSON.stringify(value) }}
+    <span class="no-wrap">
+      {{ JSON.stringify(value) || '&nbsp;' }}
     </span>
 
     <q-popup-edit
@@ -283,7 +284,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { TSchema } from '@feathersjs/typebox'
 import { defaultValueForSchema, getTypeFor, optionsForSchema } from '@/shared/schema'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
@@ -374,4 +375,6 @@ const removeItem = (arr: unknown[], index: number): boolean => {
   arr.splice(index, 1)
   return true
 }
+
+const tempJson = ref()
 </script>

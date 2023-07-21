@@ -83,7 +83,7 @@
         >
           <q-btn
             v-if="type === 'array' && Array.isArray(value)"
-            style="position: absolute; left: 8px;"
+            style="position: absolute; left: 8px; top: 14px;"
             size="sm"
             dense
             flat
@@ -100,6 +100,7 @@
                 v-model="scope.value"
                 style="min-width: 600px; min-height: 400px;"
                 add-button="end"
+                add-label="Click here to add a new item"
                 :add-function="() => addItem(scope.value)"
                 :remove-function="(v: unknown, idx: number) => removeItem(scope.value, idx)"
                 :no-separator="!arraySchemaIsObject"

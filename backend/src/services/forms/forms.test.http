@@ -14,7 +14,10 @@ Content-Type: application/json
     {
       "_id": "64b410a0a8e639dab4e3e541",
       "name": "Form 1",
-      "data": "{ \"name\": \"Bob Cashflow\", \"active\": true }",
+      "data": {
+        "name": "Bob Cashflow",
+        "active": true
+      },
       "fields": [
         {
           "_id": "64b40e66fd77c9b5d159bc6c",

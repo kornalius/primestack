@@ -28,9 +28,6 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string => {
   if (p.type === 'string' && p.objectid === true) {
     return 'objectid'
   }
-  if (p.type === 'string' && p.json === true) {
-    return 'json'
-  }
   if (p.type === 'string' && p.format === 'date') {
     return 'date'
   }
@@ -55,11 +52,17 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string => {
   if (p.type === 'boolean') {
     return 'boolean'
   }
+  if (p.type === 'array' && p.json === true) {
+    return 'json'
+  }
   if (p.type === 'array' && p.items?.type === 'string' && (Array.isArray(options) || p.enum)) {
     return 'select'
   }
   if (p.type === 'array') {
     return 'array'
+  }
+  if (p.type === 'object' && p.json === true) {
+    return 'json'
   }
   if (p.type === 'object' && p.padding) {
     return 'padding'

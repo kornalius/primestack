@@ -1,5 +1,8 @@
 <template>
-  <div class="row justify-end">
+  <div
+    class="row justify-end"
+    style="max-height: 40px; overflow-y: hidden;"
+  >
     <div class="col-auto">
       <q-btn
         v-if="multipleTypes"
@@ -26,7 +29,15 @@
       </q-btn>
     </div>
 
-    <span class="text-bold">{{ label }}:</span>
+    <span
+      class="text-bold"
+      style="margin-left: 36px; text-align: end; cursor: default;"
+    >
+      <q-tooltip :delay="500">
+        {{ label }}
+      </q-tooltip>
+      {{ label }}:
+    </span>
   </div>
 </template>
 

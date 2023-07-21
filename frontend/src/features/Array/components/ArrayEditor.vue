@@ -25,7 +25,7 @@
           :disable="disable || clearDisable"
           :icon="clearIcon || 'mdi-notification-clear-all'"
           color="negative"
-          size="x-small"
+          size="sm"
           flat
           @click="clear"
         />
@@ -34,9 +34,10 @@
           :label="addLabel"
           :disable="disable || addDisable"
           :round="!addLabel"
-          :icon="addIcon || 'mdi-plus'"
+          :icon-right="addLabel ? (addIcon || 'mdi-plus') : undefined"
+          :icon="!addLabel ? (addIcon || 'mdi-plus') : undefined"
           color="primary"
-          size="x-small"
+          size="sm"
           flat
           @click="addItem"
         />
@@ -155,7 +156,7 @@
           :disable="disable || clearDisable"
           :icon="clearIcon || 'mdi-notification-clear-all'"
           color="negative"
-          size="x-small"
+          size="sm"
           flat
           @click="clear"
         />
@@ -164,9 +165,10 @@
           :label="addLabel"
           :round="!addLabel"
           :disable="disable || addDisable"
-          :icon="addIcon || 'mdi-plus'"
+          :icon-right="addLabel ? (addIcon || 'mdi-plus') : undefined"
+          :icon="!addLabel ? (addIcon || 'mdi-plus') : undefined"
+          size="sm"
           color="primary"
-          size="x-small"
           flat
           @click="addItem"
         />
