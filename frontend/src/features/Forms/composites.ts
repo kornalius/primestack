@@ -46,13 +46,13 @@ export const commonProperties = {
       left: Type.String(),
       bottom: Type.String(),
       right: Type.String(),
-    }, { skip: true }),
+    }, { skip: true, padding: true }),
     margin: Type.Object({
       top: Type.String(),
       left: Type.String(),
       bottom: Type.String(),
       right: Type.String(),
-    }, { skip: true }),
+    }, { skip: true, margin: true }),
   }),
 
   size: Type.Object({
@@ -279,8 +279,6 @@ const components = [
           'readonly',
           'label',
           'leftLabel',
-          'checkedIcon',
-          'uncheckedIcon',
         ],
       },
       model: {

@@ -27,6 +27,9 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string => {
   if (p.type === 'string' && p.objectid === true) {
     return 'objectid'
   }
+  if (p.type === 'string' && p.json === true) {
+    return 'json'
+  }
   if (p.type === 'string' && p.format === 'date') {
     return 'date'
   }
@@ -56,6 +59,12 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string => {
   }
   if (p.type === 'array') {
     return 'array'
+  }
+  if (p.type === 'object' && p.padding) {
+    return 'padding'
+  }
+  if (p.type === 'object' && p.margin) {
+    return 'margin'
   }
   if (p.type === 'object') {
     return 'object'

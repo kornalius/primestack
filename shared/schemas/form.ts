@@ -33,7 +33,7 @@ export const formSchema = Type.Object(
   {
     name: Type.String(),
     schemaId: Type.Optional(Type.String({ objectid: true, service: 'schemas' })),
-    data: Type.Optional(Type.String()),
+    data: Type.Optional(Type.String({ json: true })),
     fields: Type.Array(fieldSchema),
   },
   {

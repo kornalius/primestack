@@ -33,7 +33,41 @@
             :label="embedLabel ? label : undefined"
             dense
             outlined
-          />
+          >
+            <template #append>
+              <q-btn
+                size="sm"
+                dense
+                flat
+              >
+                <q-icon name="mdi-pencil" />
+
+                <q-popup-edit
+                  v-model="value"
+                  :title="label"
+                  auto-save
+                  v-slot="scope"
+                >
+                  <json-editor v-model="scope.value" />
+                </q-popup-edit>
+              </q-btn>
+            </template>
+          </q-input>
+
+          <div v-if="type === 'json'">
+            <span class="no-wrap ellipsis cursor-pointer">
+              {{ value }}
+            </span>
+
+            <q-popup-edit
+              v-model="value"
+              :title="label"
+              auto-save
+              v-slot="scope"
+            >
+              <json-editor v-model="scope.value" lang-json />
+            </q-popup-edit>
+          </div>
 
           <q-slider
             v-else-if="type === 'slider'"
@@ -135,6 +169,16 @@
             create-new
             @create="createNewObject"
           />
+
+          <padding-editor
+            v-else-if="type === 'padding' && value"
+            v-model="value"
+          />
+
+          <margin-editor
+            v-else-if="type === 'margin' && value"
+            v-model="value"
+          />
         </div>
       </div>
     </q-item-section>
@@ -152,6 +196,55 @@
           class="col-auto q-mr-md"
           style="width: 125px;"
         >
+          <q-btn
+            v-if="type === 'array' && Array.isArray(value)"
+            style="position: absolute; left: 8px;"
+            size="sm"
+            dense
+            flat
+          >
+            <q-icon name="mdi-pencil" />
+
+            <q-popup-edit
+              v-model="value"
+              :title="label"
+              auto-save
+              v-slot="scope"
+            >
+              <array-editor
+                v-model="scope.value"
+                style="min-width: 600px; min-height: 400px;"
+                add-button="end"
+                :add-function="() => addItem(scope.value)"
+                :remove-function="(v: unknown, idx: number) => removeItem(scope.value, idx)"
+                :no-separator="!arraySchemaIsObject"
+                reorderable
+              >
+                <template #default="{ index }">
+                  <properties-editor
+                    v-if="arraySchemaIsObject"
+                    v-model="scope.value[index]"
+                    v-model:forced-types="currentForcedTypes"
+                    :prop-name="subPropName(index)"
+                    :schema="arraySchema"
+                    embed-label
+                    flat
+                  />
+
+                  <property-editor
+                    v-else
+                    v-model="scope.value[index]"
+                    v-model:forced-types="currentForcedTypes"
+                    :prop-name="subPropName(index)"
+                    :schema="arraySchema"
+                    :required="arraySchema.required"
+                    embed-label
+                  />
+                </template>
+              </array-editor>
+            </q-popup-edit>
+          </q-btn>
+
           <property-label
             :multiple-types="multipleTypes"
             :label="label"
@@ -195,6 +288,7 @@
             :add-function="() => addItem(value)"
             :remove-function="(v: unknown, idx: number) => removeItem(value, idx)"
             :no-separator="!arraySchemaIsObject"
+            reorderable
           >
             <template #default="{ index }">
               <properties-editor
@@ -237,6 +331,9 @@ import ColorField from '@/features/Fields/components/ColorField.vue'
 import IconField from '@/features/Fields/components/IconField.vue'
 import PropertyLabel from '@/features/Properties/components/PropertyLabel.vue'
 import EntitySelect from '@/features/Fields/components/EntitySelect.vue'
+import JsonEditor from '@/features/Fields/components/CodeEditor.vue'
+import PaddingEditor from '@/features/Fields/components/PaddingEditor.vue'
+import MarginEditor from '@/features/Fields/components/MarginEditor.vue'
 
 const props = defineProps<{
   modelValue: unknown
