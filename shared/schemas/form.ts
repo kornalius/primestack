@@ -6,12 +6,12 @@ export const columnSchema = Type.Recursive((self) => Type.Object(
     _id: Type.String({ objectid: true }),
     _type: Type.String(),
     size: Type.Optional(Type.Number()),
-    fields: Type.Array(Type.Object(
+    _fields: Type.Array(Type.Object(
       {
         _id: Type.String({ objectid: true }),
         _type: Type.String(),
         name: Type.String(),
-        columns: Type.Optional(Type.Array(self)),
+        _columns: Type.Optional(Type.Array(self)),
       },
       { additionalProperties: true },
     )),
@@ -24,7 +24,7 @@ export const fieldSchema = Type.Object(
     _id: Type.String({ objectid: true }),
     _type: Type.String(),
     name: Type.String(),
-    columns: Type.Optional(Type.Array(columnSchema)),
+    _columns: Type.Optional(Type.Array(columnSchema)),
   },
   { additionalProperties: true },
 )
@@ -34,7 +34,7 @@ export const formSchema = Type.Object(
     name: Type.String(),
     schemaId: Type.Optional(Type.String({ objectid: true, service: 'schemas' })),
     data: Type.Optional(Type.Object({}, { json: true })),
-    fields: Type.Array(fieldSchema),
+    _fields: Type.Array(fieldSchema),
   },
   {
     additionalProperties: true,

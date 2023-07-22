@@ -7,7 +7,7 @@
     >
       <form-display
         v-model="value"
-        :fields="column.fields"
+        :fields="column._fields"
         :components="components"
       />
     </div>

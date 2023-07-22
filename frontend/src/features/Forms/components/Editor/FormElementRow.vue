@@ -1,7 +1,7 @@
 <template>
   <div class="row form-row">
     <div
-      v-for="column in field.columns"
+      v-for="column in field._columns"
       :key="column._id"
       :class="{
         [column.col !== '' && column.col !== undefined ? `col-${column.col}` : 'col']: true,
@@ -40,7 +40,7 @@
       />
 
       <fields-editor
-        v-model="column.fields"
+        v-model="column._fields"
         :components="components"
       />
     </div>

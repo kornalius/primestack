@@ -46,27 +46,27 @@
         @click="onColumnClick"
       />
 
+      <table-editor
+        v-else-if="field._type === 'table'"
+        v-model="field.modelValue"
+        v-model:columns="field.columns"
+        v-model:visible-columns="field.visibleColumns"
+        v-bind="fieldBinds(field, schemaForType(field))"
+        :style="style"
+      />
+
       <component
         :is="componentForType[field._type]"
         v-else
         v-model="field.modelValue"
         v-bind="fieldBinds(field, schemaForType(field))"
-        :style="{
-          paddingTop: field.padding?.top,
-          paddingLeft: field.padding?.left,
-          paddingBottom: field.padding?.bottom,
-          paddingRight: field.padding?.right,
-          marginTop: field.margin?.top,
-          marginLeft: field.margin?.left,
-          marginBottom: field.margin?.bottom,
-          marginRight: field.margin?.right,
-          ...(component.editStyles || {}),
-        }"
+        :style="style"
       />
 
       <div
         v-if="!editor.isDragging"
         class="overlay"
+        :style="{ top: component.type === 'table' ? '48px' : undefined }"
         @click.stop="onClick"
       />
     </div>
@@ -81,6 +81,7 @@ import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/for
 import { useModelValue } from '@/composites/prop'
 import useAppEditor from '@/features/App/store'
 import { defaultValueForSchema } from '@/shared/schema'
+import TableEditor from '@/features/Forms/components/Editor/TableEditor.vue'
 import useFormElements from '../../composites'
 import FormElementRow from './FormElementRow.vue'
 
@@ -125,15 +126,16 @@ const onAddColumnClick = () => {
   const col = {
     _id: hexObjectId(),
     _type: 'col',
-    columns: undefined,
-    fields: [],
+    _columns: undefined,
+    _fields: [],
     ...Object.keys(component.value.schema?.properties || {})
       .reduce((acc, k) => (
         { ...acc, [k]: defaultValueForSchema(component.value.schema.properties[k]) }
       ), {}),
     ...(component.value.defaultValues || {}),
   }
-  field.value.columns.push(col)
+  // eslint-disable-next-line no-underscore-dangle
+  field.value._columns.push(col)
 }
 
 const onRemoveClick = () => {
@@ -141,15 +143,29 @@ const onRemoveClick = () => {
 }
 
 const removeColumn = (column: TFormColumn) => {
-  const idx = field.value.columns.findIndex((c) => c._id === column._id)
+  // eslint-disable-next-line no-underscore-dangle
+  const idx = field.value._columns.findIndex((c) => c._id === column._id)
   if (idx !== -1) {
-    field.value.columns.splice(idx, 1)
+    // eslint-disable-next-line no-underscore-dangle
+    field.value._columns.splice(idx, 1)
   }
 }
 
 const fieldIcon = computed(() => component.value?.icon)
 
 const isRow = computed(() => component.value.type === 'row')
+
+const style = computed(() => ({
+  paddingTop: field.value.padding?.top,
+  paddingLeft: field.value.padding?.left,
+  paddingBottom: field.value.padding?.bottom,
+  paddingRight: field.value.padding?.right,
+  marginTop: field.value.margin?.top,
+  marginLeft: field.value.margin?.left,
+  marginBottom: field.value.margin?.bottom,
+  marginRight: field.value.margin?.right,
+  ...(component.value.editStyles || {}),
+}))
 </script>
 
 <style scoped lang="sass">
@@ -183,7 +199,7 @@ const isRow = computed(() => component.value.type === 'row')
   cursor: pointer
   left: 0
   top: 0
-  width: 100%
-  height: 100%
+  right: 0
+  bottom: 0
 
 </style>

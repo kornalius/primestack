@@ -108,7 +108,8 @@ const fields = ref([])
 
 watch(form, () => {
   if (form.value) {
-    fields.value = form.value.fields
+    // eslint-disable-next-line no-underscore-dangle
+    fields.value = form.value._fields || []
     editor.setFormId(form.value._id)
   }
 }, { immediate: true })

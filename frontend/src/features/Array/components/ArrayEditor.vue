@@ -124,7 +124,7 @@
                 :disable="disable || removeDisable"
                 :icon="removeIcon || 'mdi-trash-can-outline'"
                 color="red-6"
-                size="x-small"
+                size="sm"
                 round
                 flat
                 @click="removeItem(values[index])"

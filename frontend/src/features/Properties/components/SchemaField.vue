@@ -7,9 +7,7 @@
     dense
   >
     <template #append>
-      <q-btn size="sm" dense flat>
-        <q-icon name="mdi-pencil" />
-
+      <q-icon class="cursor-pointer" name="mdi-pencil" size="small">
         <q-popup-edit
           v-model="value"
           :title="label"
@@ -25,7 +23,7 @@
             dense
           />
         </q-popup-edit>
-      </q-btn>
+      </q-icon>
     </template>
   </q-input>
 
@@ -170,6 +168,7 @@
     v-model:forced-types="currentForcedTypes"
     :prop-name="keyName"
     :schema="objectSchema"
+    :horizontal="objectIsHorizontal"
     embed-label
     flat
   />
@@ -194,6 +193,7 @@
         v-model:forced-types="currentForcedTypes"
         :prop-name="keyName"
         :schema="objectSchema"
+        :horizontal="objectIsHorizontalPopup"
         embed-label
         flat
       />
@@ -216,6 +216,7 @@
         v-model:forced-types="currentForcedTypes"
         :prop-name="subPropName(index)"
         :schema="arraySchema"
+        :horizontal="arrayIsHorizontal"
         embed-label
         flat
       />
@@ -263,7 +264,7 @@
             v-model:forced-types="currentForcedTypes"
             :prop-name="subPropName(index)"
             :schema="arraySchema"
-            horizontal
+            :horizontal="arrayIsHorizontalPopup"
             embed-label
             flat
           />
@@ -360,6 +361,14 @@ const objectSchema = computed(() => props.schema)
 const arraySchemaIsObject = computed(() => (
   getTypeFor(arraySchema.value, currentForcedTypes.value?.[props.keyName]) === 'object'
 ))
+
+const arrayIsHorizontal = computed(() => arraySchema.value?.horizontal)
+
+const arrayIsHorizontalPopup = computed(() => arraySchema.value?.horizontalPopup)
+
+const objectIsHorizontal = computed(() => objectSchema.value?.horizontal)
+
+const objectIsHorizontalPopup = computed(() => objectSchema.value?.horizontalPopup)
 
 const subPropName = (name: string | number) => (
   props.keyName ? `${props.keyName}.${name.toString()}` : name.toString()

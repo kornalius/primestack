@@ -25,13 +25,17 @@ export interface TFormComponent {
   editStyles?: AnyData
   // split schema keys into different categories and order items in the properties list
   categories?: Record<string, TFormFieldCategory>
+  // use an horizontal layout for properties
+  horizontal?: boolean
+  // use an horizontal layout for properties in a popup editing
+  horizontalPopup?: boolean
 }
 
 export interface TFormColumn {
   _id: string
   _type: string
   size: number
-  fields: TFormField[]
+  _fields: TFormField[]
   [k: string]: unknown
 }
 
@@ -39,6 +43,6 @@ export interface TFormField {
   _id: string
   _type: string
   name: string
-  columns?: TFormColumn[]
+  _columns?: TFormColumn[]
   [k: string]: unknown
 }

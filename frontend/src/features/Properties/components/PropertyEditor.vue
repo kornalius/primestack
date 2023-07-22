@@ -85,8 +85,10 @@
             v-if="type === 'array' && Array.isArray(value)"
             style="position: absolute; left: 8px; top: 14px;"
             size="sm"
+            color="grey-7"
             dense
             flat
+            @click.stop=""
           >
             <q-icon name="mdi-pencil" />
 
@@ -113,6 +115,7 @@
                     v-model:forced-types="currentForcedTypes"
                     :prop-name="subPropName(index)"
                     :schema="arraySchema"
+                    :horizontal="arrayIsHorizontalPopup"
                     embed-label
                     flat
                   />
@@ -227,6 +230,8 @@ watch(value, () => {
 })
 
 const arraySchema = computed(() => props.schema.items)
+
+const arrayIsHorizontalPopup = computed(() => arraySchema.value?.horizontalPopup)
 
 const arraySchemaIsObject = computed(() => (
   getTypeFor(arraySchema.value, currentForcedTypes.value[props.propName]) === 'object'

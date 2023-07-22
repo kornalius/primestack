@@ -320,7 +320,7 @@ const components = [
           label: Type.String(),
           value: Type.String(),
           icon: Type.String({ icon: true }),
-        })),
+        }, { horizontalPopup: true })),
       }),
       commonProperties.style,
     ]),
@@ -375,7 +375,7 @@ const components = [
           label: Type.String(),
           value: Type.String(),
           disable: Type.Boolean(),
-        })),
+        }, { horizontalPopup: true })),
       }),
       commonProperties.style,
     ]),
@@ -695,7 +695,7 @@ const components = [
         options: Type.Array(Type.Object({
           label: Type.String(),
           value: Type.String(),
-        })),
+        }, { horizontalPopup: true })),
         optionLabel: Type.String(),
         optionValue: Type.String(),
         optionDisable: Type.String(),
@@ -744,16 +744,16 @@ const components = [
         icon: modelIcon,
         names: [
           'modelValue',
+          'options',
+          'optionLabel',
+          'optionValue',
+          'optionDisable',
           'multiple',
           'emitValue',
           'displayValue',
           'maxValues',
           'clearable',
           'useInput',
-          'optionLabel',
-          'optionValue',
-          'optionDisable',
-          'options',
         ],
       },
       style: {
@@ -1817,7 +1817,7 @@ const components = [
           align: StringEnum(['left', 'center', 'right']),
           sortable: Type.Boolean(),
           sortOrder: StringEnum(['ad', 'da']),
-        })),
+        }, { horizontalPopup: true })),
         visibleColumns: Type.Array(Type.String()),
         title: Type.String(),
         hideHeader: Type.Boolean(),
@@ -1868,6 +1868,24 @@ const components = [
       virtualScrollSliceRatioBefore: 1,
       virtualScrollSliceRatioAfter: 1,
       virtualScrollItemSize: 48,
+      columns: [
+        {
+          name: 'name',
+          label: 'Name',
+          field: 'name',
+          align: 'left',
+        },
+        {
+          name: 'age',
+          label: 'Age',
+          field: 'age',
+          align: 'left',
+        },
+      ],
+      visibleColumns: ['name', 'age'],
+      rows: [
+        { name: 'Alain', age: 49 },
+      ],
     },
     categories: {
       content: {
@@ -1947,11 +1965,16 @@ const flattenFields = (fields: TFormField[]): (AnyData)[] => {
     list.forEach((f) => {
       flattended.push(f)
 
-      if (f.columns) {
-        flatten(f.columns)
+      // eslint-disable-next-line no-underscore-dangle
+      const flds = f._fields
+      // eslint-disable-next-line no-underscore-dangle
+      const cols = f._columns
+
+      if (cols) {
+        flatten(cols)
       }
-      if (f.fields) {
-        flatten(f.fields)
+      if (flds) {
+        flatten(flds)
       }
     })
   }
@@ -1965,8 +1988,8 @@ export default () => ({
   createFormField: (component: TFormComponent, fields: TFormField[]): TFormField => ({
     _id: hexObjectId(),
     _type: component.type,
-    columns: component.type === 'row' ? [] : undefined,
-    fields: component.type === 'col' ? [] : undefined,
+    _columns: component.type === 'row' ? [] : undefined,
+    _fields: component.type === 'col' ? [] : undefined,
     ...Object.keys(component.schema?.properties || {})
       .reduce((acc, k) => (
         { ...acc, [k]: defaultValueForSchema(component.schema.properties[k]) }
@@ -1981,9 +2004,9 @@ export default () => ({
     const fieldsToOmit = [
       '_id',
       '_type',
+      '_fields',
+      '_columns',
       'modelValue',
-      'fields',
-      'columns',
     ]
 
     const scanSchema = (s: TSchema): void => {

@@ -18,18 +18,18 @@ Content-Type: application/json
         "name": "Bob Cashflow",
         "active": true
       },
-      "fields": [
+      "_fields": [
         {
           "_id": "64b40e66fd77c9b5d159bc6c",
           "_type": "row",
           "name": "row1",
-          "columns": [
+          "_columns": [
             {
               "_id": "64b40e6b4ab865f040a443fb",
               "_type": "col",
               "name": "col1",
               "size": 6,
-              "fields": [
+              "_fields": [
                 {
                   "_id": "64b40d6aec6b76cac94a91e3",
                   "_type": "text",
@@ -45,7 +45,7 @@ Content-Type: application/json
               "_type": "col",
               "name": "col2",
               "size": 6,
-              "fields": [
+              "_fields": [
                 {
                   "_id": "64b40d708822f84e00862cc9",
                   "_type": "checkbox",

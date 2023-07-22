@@ -8,7 +8,7 @@
       <form-display-row
         v-if="isRow(field)"
         v-model="value"
-        :columns="field.columns"
+        :columns="field._columns"
         :components="components"
       />
 

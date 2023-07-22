@@ -90,11 +90,11 @@ import useAppEditor from '@/features/App/store'
 import useFormElements from '@/features/Forms/composites'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import SectionTitle from '@/features/Fields/components/SectionTitle.vue'
-import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import { formSchema } from '@/shared/schemas/form'
 import { schemaSchema, fieldSchema } from '@/shared/schemas/schema'
 import { omitFields } from '@/shared/schema'
+import SectionTitle from '@/features/Fields/components/SectionTitle.vue'
+import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 
 const props = defineProps<{
   components?: TFormComponent[]
@@ -165,7 +165,8 @@ const fields = ref([])
 
 watch(form, () => {
   if (form.value) {
-    fields.value = form.value.fields
+    // eslint-disable-next-line no-underscore-dangle
+    fields.value = form.value._fields
   }
 }, { immediate: true })
 
