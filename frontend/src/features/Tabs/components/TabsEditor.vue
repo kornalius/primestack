@@ -37,10 +37,10 @@ import { Static } from '@feathersjs/typebox'
 import hexObjectId from 'hex-object-id'
 import { useModelValue } from '@/composites/prop'
 import { tabSchema, menuSchema } from '@/shared/schemas/menu'
-import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import useAppEditor from '@/features/App/store'
 import { useUrl } from '@/composites/url'
-import { api } from '@/plugins/pinia'
+import { useFeathers } from '@/composites/feathers'
+import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 
 type Menu = Static<typeof menuSchema>
 type Tab = Static<typeof tabSchema>
@@ -54,6 +54,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'update:model-value', value: Tab[]): void,
 }>()
+
+const { api } = useFeathers()
 
 const tabs = useModelValue(props, emit)
 

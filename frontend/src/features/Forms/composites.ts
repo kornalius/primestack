@@ -11,7 +11,7 @@ import {
   QOptionGroup,
   QRange, QRating,
   QSelect, QSeparator, QSkeleton,
-  QSlider, QSpace, QSpinnerIos, QTable,
+  QSlider, QSpace, QSpinnerIos,
   QToggle, QVideo,
 } from 'quasar'
 import {
@@ -25,6 +25,7 @@ import DateField from '@/features/Fields/components/DateField.vue'
 import TimeField from '@/features/Fields/components/TimeField.vue'
 import ColorField from '@/features/Fields/components/ColorField.vue'
 import IconField from '@/features/Fields/components/IconField.vue'
+import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
 import FormElementRow from './components/Editor/FormElementRow.vue'
 
 const sizeEnum = StringEnum(['xs', 'sm', 'md', 'lg', 'xl'])
@@ -87,7 +88,7 @@ const componentForType = {
   space: QSpace,
   spinner: QSpinnerIos,
   video: QVideo,
-  table: QTable,
+  table: SchemaTable,
 }
 
 export const properties = (props: TObject[]) => Type.Intersect(
@@ -1858,6 +1859,8 @@ const components = [
         virtualScrollStickySizeStart: Type.Number(),
         virtualScrollStickySizeEnd: Type.Number(),
         tableColspan: Type.Number(),
+        schemaId: Type.String({ objectid: true, schemaid: true }),
+        query: Type.Object({}, { query: true }),
       }),
       commonProperties.style,
     ]),
@@ -1897,6 +1900,8 @@ const components = [
           'rowKey',
           'columns',
           'visibleColumns',
+          'schemaId',
+          'query',
           'selection',
           'filter',
           'noDataLabel',

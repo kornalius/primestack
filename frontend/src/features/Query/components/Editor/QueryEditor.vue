@@ -1,76 +1,83 @@
 <template>
-  <div class="row">
-    <div class="col">
-      <q-select
-        v-model="query.schemaId"
-        :loading="isPending"
-        :options="schemas"
-        label="Select a schema..."
-        option-value="_id"
-        option-label="name"
-        options-dense
-        emit-value
-        map-options
-        dense
-        outlined
-      />
+  <div v-bind="$attrs">
+    <div
+      v-if="!hideSchema"
+      class="row q-ma-sm"
+    >
+      <div class="col">
+        <schema-select
+          v-model="currentSchemaId"
+          label="Select a schema..."
+          options-dense
+          dense
+          outlined
+        />
+      </div>
     </div>
+
+    <array-editor
+      v-model="query.groups"
+      add-button="end"
+      :disable="disable || !currentSchemaId"
+      :add-function="addGroup"
+      :remove-function="removeGroup"
+      no-separator
+    >
+      <template #default="{ index }">
+        <div class="row">
+          <div class="col">
+            <query-group-editor
+              v-model="query.groups[index]"
+              :label="`Group ${index + 1}`"
+              :disable="disable || !currentSchemaId"
+              :color="palette[index % palette.length]"
+              :fields="fields"
+              :operators="queryOperators"
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col q-ml-sm">
+            <query-logical-operators
+              v-if="index < query.groups.length - 1"
+              v-model="query.groups[index].logicOp"
+              :disable="disable || !currentSchemaId"
+              color="negative"
+            />
+          </div>
+        </div>
+      </template>
+    </array-editor>
   </div>
-
-  <array-editor
-    v-model="query.groups"
-    add-button="end"
-    :disable="disable || !query.schemaId"
-    :add-function="addGroup"
-    :remove-function="removeGroup"
-    no-separator
-  >
-    <template #default="{ index }">
-      <div class="row">
-        <div class="col">
-          <query-group-editor
-            v-model="query.groups[index]"
-            :label="`Group ${index + 1}`"
-            :disable="disable || !query.schemaId"
-            :color="palette[index % palette.length]"
-            :fields="fields"
-            :operators="queryOperators"
-          />
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col q-ml-sm">
-          <query-logical-operators
-            v-if="index < query.groups.length - 1"
-            v-model="query.groups[index].logicOp"
-            :disable="disable || !query.schemaId"
-            color="negative"
-          />
-        </div>
-      </div>
-    </template>
-  </array-editor>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { useModelValue } from '@/composites/prop'
+import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { Query, QueryGroup, queryOperators } from '@/shared/interfaces/query'
+import { useFeathers } from '@/composites/feathers'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import QueryGroupEditor from '@/features/Query/components/Editor/QueryGroup.vue'
 import QueryLogicalOperators from '@/features/Query/components/Editor/QueryLogicalOperators.vue'
-import { api } from '@/plugins/pinia'
+import SchemaSelect from '@/features/Fields/components/SchemaSelect.vue'
 
 const props = defineProps<{
   modelValue: Query
+  // override the query schemaId
+  schemaId?: string
   disable?: boolean
+  // hide the schema selector
+  hideSchema?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
+  (e: 'update:schemaId', value: string): void,
   (e: 'update:model-value', value: Query): void,
 }>()
+
+const { api } = useFeathers()
 
 const palette = ref([
   'bg-purple-1',
@@ -83,6 +90,8 @@ const palette = ref([
 ])
 
 const query = useModelValue(props, emit)
+
+const currentSchemaId = useSyncedProp(props, 'schemaId', emit)
 
 const addGroup = () => {
   const group: QueryGroup = {
@@ -98,16 +107,29 @@ const removeGroup = (val: unknown, index: number): boolean => {
 }
 
 watch(query, () => {
+  if (!Array.isArray(query.value.groups)) {
+    query.value.groups = []
+  }
   if (query.value.groups.length === 0) {
     addGroup()
   }
 }, { immediate: true })
 
+watch(() => props.schemaId, () => {
+  if (props.schemaId) {
+    query.value.schemaId = props.schemaId
+  }
+}, { immediate: true })
+
+watch(currentSchemaId, () => {
+  query.value.schemaId = currentSchemaId.value
+})
+
 /**
  * Schemas
  */
 
-const { data: schemas, isPending } = api.service('schemas').useFind({
+const { data: schemas } = api.service('schemas').useFind({
   query: {},
 })
 

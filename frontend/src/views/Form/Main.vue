@@ -69,11 +69,11 @@ import {
   computed, onBeforeUnmount, ref, watch,
 } from 'vue'
 import useFormElements from '@/features/Forms/composites'
-import FormEditor from '@/features/Forms/components/Editor/FormEditor.vue'
-import FormDisplay from '@/features/Forms/components/FormDisplay.vue'
-import { api } from '@/plugins/pinia'
 import useAppEditor from '@/features/App/store'
 import { defaultValueForSchema } from '@/shared/schema'
+import { useFeathers } from '@/composites/feathers'
+import FormEditor from '@/features/Forms/components/Editor/FormEditor.vue'
+import FormDisplay from '@/features/Forms/components/FormDisplay.vue'
 
 const props = defineProps<{
   menuId: string
@@ -81,6 +81,8 @@ const props = defineProps<{
   id?: string
   create?: boolean
 }>()
+
+const { api } = useFeathers()
 
 const editor = useAppEditor()
 

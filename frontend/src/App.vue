@@ -186,13 +186,15 @@ import {
 import { useRoute } from 'vue-router'
 import useSnacks from '@/features/Snacks/composites'
 import SnacksDisplay from '@/features/Snacks/components/Snacks.vue'
-import { api } from '@/plugins/pinia'
 import useAppEditor from '@/features/App/store'
 import useFormElements from '@/features/Forms/composites'
 import TabsEditor from '@/features/Tabs/components/TabsEditor.vue'
 import MenusEditor from '@/features/Menus/components/MenusEditor.vue'
 import AppProperties from '@/features/App/components/AppProperties.vue'
 import { useUrl } from '@/composites/url'
+import { useFeathers } from '@/composites/feathers'
+
+const { api } = useFeathers()
 
 const snacks = useSnacks()
 

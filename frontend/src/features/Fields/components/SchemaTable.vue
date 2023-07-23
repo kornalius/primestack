@@ -2,16 +2,22 @@
   <q-table
     v-model:selected="selected"
     v-bind="$attrs"
+    :rows="data as any"
     :columns="columns as any"
   >
-    <template #body-cell="{ col, row }">
-      <q-td>
+    <template #body-cell="p">
+      <q-td :props="p">
         <schema-field
-          v-model="row[(col as any).field]"
-          :schema="schema((col as any).field)"
-          :key-name="(col as any).field"
-          :label="(col as any).label"
+          v-if="schemaSchema(p.col.field)"
+          v-model="p.row[p.col.field]"
+          :parent="p.row"
+          :schema="schemaSchema(p.col.field)"
+          :key-name="p.col.field"
+          :label="p.col.label"
         />
+        <span v-else>
+          {{ p.value }}
+        </span>
       </q-td>
     </template>
 
@@ -22,25 +28,33 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useAttrs } from 'vue'
+import {
+  computed, ref, useAttrs, watch,
+} from 'vue'
 import startCase from 'lodash/startCase'
 import { TSchema } from '@feathersjs/typebox'
 import { useSyncedProp } from '@/composites/prop'
 import { columnAlignmentFor, getTypeFor } from '@/shared/schema'
+import { AnyData } from '@/shared/interfaces/commons'
+import { useFeathers } from '@/composites/feathers'
 import SchemaField from '@/features/Properties/components/SchemaField.vue'
 
 const attrs = useAttrs()
 
 const props = defineProps<{
-  schema: TSchema
+  schema?: TSchema
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   selected?: any[]
+  query?: AnyData
+  schemaId?: string
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'update:model-value', value: string | null | undefined): void,
 }>()
+
+const { api } = useFeathers()
 
 const selected = useSyncedProp(props, 'selected', emit)
 
@@ -64,5 +78,21 @@ const columns = computed(() => {
   return cols
 })
 
-const schema = (name: string) => props.schema.properties[name]
+let data
+
+watch([
+  () => attrs.rows,
+  () => props.schemaId,
+  () => props.query,
+], () => {
+  if (api.services[props.schemaId]) {
+    const u = api.service(props.schemaId).useFind({ query: props.query || {} })
+    u.find()
+    data = u.data
+    return
+  }
+  data = ref(attrs.rows)
+}, { immediate: true, deep: true })
+
+const schemaSchema = (name: string) => props.schema?.properties[name]
 </script>

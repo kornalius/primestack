@@ -115,11 +115,22 @@
     dense
   />
 
-  <entity-select
+  <service-select
     v-else-if="type === 'objectid'"
     v-model="value"
     :service="schema.service"
     :query="schema.query"
+    :outlined="property"
+    dense
+    clearable
+    options-dense
+    create-new
+    @create="$emit('create-new')"
+  />
+
+  <schema-select
+    v-else-if="type === 'schemaid'"
+    v-model="value"
     :outlined="property"
     dense
     clearable
@@ -133,7 +144,7 @@
     class="ellipsis overflow-hidden cursor-pointer"
   >
     <span class="no-wrap">
-      {{ JSON.stringify(value) || '&nbsp;' }}
+      {{ jsonValue }}
     </span>
 
     <q-popup-edit
@@ -176,10 +187,13 @@
   <div
     v-else-if="type === 'object' && typeof value === 'object' && !property"
     class="overflow-hidden ellipsis cursor-pointer"
-    style="max-width: 150px;"
+    style="max-width: 230px;"
   >
     <span class="no-wrap">
-      {{ JSON.stringify(value) || '&nbsp;' }}
+      <q-tooltip :delay="500">
+        {{ jsonValue }}
+      </q-tooltip>
+      {{ jsonValue }}
     </span>
 
     <q-popup-edit
@@ -225,6 +239,7 @@
         v-else
         v-model="value[index]"
         v-model:forced-types="currentForcedTypes"
+        :parent="value"
         :prop-name="subPropName(index)"
         :schema="arraySchema"
         :required="arraySchema.required"
@@ -234,12 +249,44 @@
   </array-editor>
 
   <div
-    v-else-if="type === 'array' && Array.isArray(value) && !property"
+    v-else-if="type === 'query' && typeof value === 'object' && property"
     class="overflow-hidden ellipsis cursor-pointer"
-    style="max-width: 150px;"
+    style="max-width: 230px;"
   >
     <span class="no-wrap">
-      {{ JSON.stringify(value) || '&nbsp;' }}
+      <q-tooltip :delay="500">
+        {{ queryValue }}
+      </q-tooltip>
+
+      {{ queryValue }}
+    </span>
+
+    <q-popup-edit
+      v-model="value"
+      :title="label"
+      auto-save
+      v-slot="scope"
+    >
+      <query-editor
+        v-model="scope.value"
+        style="min-width: 600px; min-height: 400px;"
+        :schema-id="parent.schemaId"
+        :hide-schema="!!parent.schemaId"
+      />
+    </q-popup-edit>
+  </div>
+
+  <div
+    v-else-if="type === 'array' && Array.isArray(value) && !property"
+    class="overflow-hidden ellipsis cursor-pointer"
+    style="max-width: 230px;"
+  >
+    <span class="no-wrap">
+      <q-tooltip :delay="500">
+        {{ jsonValue }}
+      </q-tooltip>
+
+      {{ jsonValue }}
     </span>
 
     <q-popup-edit
@@ -273,6 +320,7 @@
             v-else
             v-model="scope.value[index]"
             v-model:forced-types="currentForcedTypes"
+            :parent="scope.value"
             :prop-name="subPropName(index)"
             :schema="arraySchema"
             :required="arraySchema.required"
@@ -289,8 +337,9 @@ import { computed, ref } from 'vue'
 import { TSchema } from '@feathersjs/typebox'
 import { defaultValueForSchema, getTypeFor, optionsForSchema } from '@/shared/schema'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
+import { useQuery } from '@/features/Query/composites'
+import { useFeathers } from '@/composites/feathers'
 import PaddingEditor from '@/features/Fields/components/PaddingEditor.vue'
-import EntitySelect from '@/features/Fields/components/EntitySelect.vue'
 import MarginEditor from '@/features/Fields/components/MarginEditor.vue'
 import IconField from '@/features/Fields/components/IconField.vue'
 import ColorField from '@/features/Fields/components/ColorField.vue'
@@ -300,13 +349,18 @@ import TimeField from '@/features/Fields/components/TimeField.vue'
 import PropertyEditor from '@/features/Properties/components/PropertyEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
+import QueryEditor from '@/features/Query/components/Editor/QueryEditor.vue'
+import SchemaSelect from '@/features/Fields/components/SchemaSelect.vue'
+import ServiceSelect from '@/features/Fields/components/ServiceSelect.vue'
 
 const props = defineProps<{
   modelValue: unknown
-  // complex UI for PropertyEditor mainly
-  property?: boolean
+  // parent object containing the modelValue
+  parent: unknown
   // schema to use
   schema: TSchema
+  // complex UI for PropertyEditor mainly
+  property?: boolean
   required?: boolean
   // label
   label?: string
@@ -326,6 +380,8 @@ const emit = defineEmits<{
 }>()
 
 const value = useModelValue(props, emit)
+
+const { queryToString } = useQuery()
 
 const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
 
@@ -386,4 +442,30 @@ const removeItem = (arr: unknown[], index: number): boolean => {
 }
 
 const tempJson = ref()
+
+const { api } = useFeathers()
+
+const { data: schemas } = api.service('schemas').useFind({
+  query: {},
+})
+
+const userSchema = computed(() => schemas.value?.[0])
+
+const querySchema = computed(() => (
+  userSchema.value?.list.find((s) => s._id === props.parent?.schemaId)
+))
+
+const queryValue = computed(() => (
+  type.value === 'query' && typeof value.value === 'object' && props.property
+    ? queryToString(value.value, querySchema.value) || '&nbsp;'
+    : '&nbsp;'
+))
+
+const jsonValue = computed(() => (
+  (type.value === 'object' && typeof value.value === 'object' && !props.property)
+  || (type.value === 'array' && Array.isArray(value.value) && !props.property)
+  || (type.value === 'json')
+    ? JSON.stringify(value.value) || '&nbsp;'
+    : '&nbsp;'
+))
 </script>

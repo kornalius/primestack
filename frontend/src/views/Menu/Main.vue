@@ -7,12 +7,14 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { api } from '@/plugins/pinia'
 import { useUrl } from '@/composites/url'
+import { useFeathers } from '@/composites/feathers'
 
 const props = defineProps<{
   menuId: string
 }>()
+
+const { api } = useFeathers()
 
 const router = useRouter()
 

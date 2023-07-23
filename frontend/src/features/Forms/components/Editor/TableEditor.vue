@@ -1,5 +1,5 @@
 <template>
-  <q-table
+  <schema-table
     v-model:selected="selected"
     v-bind="$attrs"
     :columns="cols"
@@ -55,15 +55,16 @@
         @click.stop="addColumn"
       />
     </template>
-  </q-table>
+  </schema-table>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import draggable from 'vuedraggable'
+import startCase from 'lodash/startCase'
 import { useSyncedProp } from '@/composites/prop'
 import useAppEditor from '@/features/App/store'
-import startCase from 'lodash/startCase'
-import { ref } from 'vue'
+import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
 
 const props = defineProps<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

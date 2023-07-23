@@ -42,13 +42,15 @@
 import {
   computed, onBeforeUnmount, onMounted, ref, watch,
 } from 'vue'
-import { api } from '@/plugins/pinia'
 import useAppEditor from '@/features/App/store'
+import { useFeathers } from '@/composites/feathers'
 
 const props = defineProps<{
   id?: string
   create?: boolean
 }>()
+
+const { api } = useFeathers()
 
 const editor = useAppEditor()
 

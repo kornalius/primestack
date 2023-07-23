@@ -112,8 +112,8 @@ import {
 } from 'vue'
 import hexObjectId from 'hex-object-id'
 import { Type } from '@feathersjs/typebox'
-import { useQuery } from '@/composites/query'
-import { api } from '@/plugins/pinia'
+import { useQuery } from '@/features/Query/composites'
+import { useFeathers } from '@/composites/feathers'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import QueryEditor from '@/features/Query/components/Editor/QueryEditor.vue'
@@ -143,6 +143,8 @@ const testProperties = ref({
     right: 0,
   },
 })
+
+const { api } = useFeathers()
 
 const forcedTypes = ref({})
 

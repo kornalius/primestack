@@ -85,7 +85,6 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { api } from '@/plugins/pinia'
 import useAppEditor from '@/features/App/store'
 import useFormElements from '@/features/Forms/composites'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
@@ -93,12 +92,15 @@ import { TFormComponent } from '@/shared/interfaces/forms'
 import { formSchema } from '@/shared/schemas/form'
 import { schemaSchema, fieldSchema } from '@/shared/schemas/schema'
 import { omitFields } from '@/shared/schema'
+import { useFeathers } from '@/composites/feathers'
 import SectionTitle from '@/features/Fields/components/SectionTitle.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 
 const props = defineProps<{
   components?: TFormComponent[]
 }>()
+
+const { api } = useFeathers()
 
 const forcedTypes = ref({})
 

@@ -1,30 +1,16 @@
 <template>
   <div class="row items-center q-gutter-sm">
     <div class="col-4">
-      <q-select
+      <schema-field-select
         v-model="field.fieldId"
         :disable="disable"
-        :options="fields"
+        :fields="fields"
         label="Fieldname"
-        option-value="_id"
-        option-label="name"
         options-dense
         clearable
-        emit-value
-        map-options
         dense
         outlined
-      >
-        <template #option="{ opt, itemProps }">
-          <q-item class="items-center" v-bind="itemProps">
-            <q-item-section avatar>
-              <q-icon :name="iconForType(opt.type)" size="xs" color="grey-7" />
-            </q-item-section>
-
-            {{ opt.name }}
-          </q-item>
-        </template>
-      </q-select>
+      />
     </div>
 
     <div class="col-2">
@@ -73,9 +59,10 @@
 import { computed, watch } from 'vue'
 import { Static, TSchema } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
-import { QueryCriteria } from '@/shared/interfaces/query'
 import { fieldSchema } from '@/shared/schemas/schema'
-import { iconForType, defaultValueForSchema } from '@/shared/schema'
+import { defaultValueForSchema } from '@/shared/schema'
+import { QueryCriteria } from '@/shared/interfaces/query'
+import SchemaFieldSelect from '@/features/Fields/components/SchemaFieldSelect.vue'
 
 type FieldSchema = Static<typeof fieldSchema>
 
@@ -104,7 +91,9 @@ const showOps = computed(() => selectedField.value && fieldType.value !== 'boole
 const showValue = computed(() => selectedField.value)
 
 watch(() => field.value.fieldId, () => {
-  field.value.value = defaultValueForSchema({ type: fieldType.value } as TSchema)
+  if (!field.value.value) {
+    field.value.value = defaultValueForSchema({ type: fieldType.value } as TSchema)
+  }
 }, { immediate: true })
 </script>
 

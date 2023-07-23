@@ -1,5 +1,9 @@
-import { QueryCriteria, QueryGroup } from '@/shared/interfaces/query'
+import { Static } from '@feathersjs/typebox'
+import { Query, QueryCriteria, QueryGroup } from '@/shared/interfaces/query'
 import { AnyData } from '@/shared/interfaces/commons'
+import { schemaSchema } from '@/shared/schemas/schema'
+
+type Schema = Static<typeof schemaSchema>
 
 const mongoOperators = {
   '=': '$eq',
@@ -87,6 +91,42 @@ const queryToMongo = (q: QueryGroup[]): AnyData => {
   return reduceGroups(q)
 }
 
+const queryToString = (query: Query, schema: Schema): string => {
+  let r = []
+
+  const convertCriterias = (criterias: QueryCriteria[]): string[] => {
+    const cr = []
+    criterias.forEach((c, index) => {
+      const n = schema?.fields.find((f) => f._id === c.fieldId)?.name
+      cr.push(n || 'N/A')
+      cr.push(` ${c.op} `)
+      cr.push(JSON.stringify(c.value))
+      if (c.logicOp === 'and' && index < criterias.length - 1) {
+        cr.push(' AND ')
+      } else if (c.logicOp === 'or' && index < criterias.length - 1) {
+        cr.push(' OR ')
+      }
+    })
+    return cr
+  }
+
+  const convertGroup = (g: QueryGroup): string[] => (
+    ['(', ...convertCriterias(g.criterias), ')']
+  )
+
+  query.groups?.forEach((g, index) => {
+    r = r.concat(convertGroup(g))
+    if (g.logicOp === 'and' && index < query.groups.length - 1) {
+      r.push(' AND ')
+    } else if (g.logicOp === 'or' && index < query.groups.length - 1) {
+      r.push(' OR ')
+    }
+  })
+
+  return r.length ? r.join('') : undefined
+}
+
 export const useQuery = () => ({
   queryToMongo,
+  queryToString,
 })

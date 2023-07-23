@@ -46,7 +46,7 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue'
 import { useModelValue } from '@/composites/prop'
-import { api } from '@/plugins/pinia'
+import { useFeathers } from '@/composites/feathers'
 import { AnyData } from '@/shared/interfaces/commons'
 
 const props = defineProps<{
@@ -64,6 +64,8 @@ const emit = defineEmits<{
 }>()
 
 const value = useModelValue(props, emit)
+
+const { api } = useFeathers()
 
 const { data: schemas } = api.service('schemas').useFind({ query: {} })
 const { data: forms } = api.service('forms').useFind({ query: {} })

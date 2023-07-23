@@ -19,6 +19,7 @@
     <schema-field
       v-model="value"
       v-model:forced-types="currentForcedTypes"
+      :parent="parent"
       :schema="schema"
       :key-name="propName"
       :label="label"
@@ -58,6 +59,7 @@
           <schema-field
             v-model="value"
             v-model:forced-types="currentForcedTypes"
+            :parent="parent"
             :schema="schema"
             :key-name="propName"
             :label="label"
@@ -124,6 +126,7 @@
                     v-else
                     v-model="scope.value[index]"
                     v-model:forced-types="currentForcedTypes"
+                    v-model:parent="scope.value"
                     :prop-name="subPropName(index)"
                     :schema="arraySchema"
                     :required="arraySchema.required"
@@ -163,6 +166,7 @@
           <schema-field
             v-model="value"
             v-model:forced-types="currentForcedTypes"
+            :parent="parent"
             :schema="schema"
             :key-name="propName"
             :label="label"
@@ -187,6 +191,8 @@ import SchemaField from '@/features/Properties/components/SchemaField.vue'
 
 const props = defineProps<{
   modelValue: unknown
+  // parent object containing the modelValue
+  parent: unknown
   schema: TSchema
   required?: boolean
   label?: string
@@ -196,6 +202,7 @@ const props = defineProps<{
   propName: string
   // object that stores the forced types selected by the user
   forcedTypes?: Record<string, string>
+  // use an horizontal layout to display the properties
   horizontal?: boolean
 }>()
 

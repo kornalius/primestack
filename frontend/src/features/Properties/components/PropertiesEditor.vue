@@ -24,6 +24,7 @@
       :key="name"
       v-model="value[name]"
       v-model:forced-types="currentForcedTypes"
+      v-model:parent="value"
       :prop-name="subPropName(name)"
       :schema="schema.properties[name]"
       :required="schema.required.includes(name)"
@@ -44,6 +45,7 @@
       :key="name"
       v-model="value[name]"
       v-model:forced-types="currentForcedTypes"
+      v-model:parent="value"
       :prop-name="subPropName(name)"
       :schema="schema.properties[name]"
       :required="schema.required.includes(name)"
@@ -63,6 +65,7 @@ import { TFormFieldCategory } from '@/shared/interfaces/forms'
 
 const props = defineProps<{
   modelValue: Record<string, unknown>
+  // schema to extract property definitions from
   schema: TSchema
   // remove cells borders
   flat?: boolean
@@ -74,6 +77,7 @@ const props = defineProps<{
   forcedTypes?: Record<string, string>
   // split schema keys into different categories and order items in the properties list
   categories?: Record<string, TFormFieldCategory>
+  // use an horizontal layout to display the properties
   horizontal?: boolean
 }>()
 

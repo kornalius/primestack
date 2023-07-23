@@ -25,6 +25,9 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string => {
   if (p.type === 'number') {
     return 'number'
   }
+  if (p.type === 'string' && p.objectid === true && p.schemaid === true) {
+    return 'schemaid'
+  }
   if (p.type === 'string' && p.objectid === true) {
     return 'objectid'
   }
@@ -60,6 +63,9 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string => {
   }
   if (p.type === 'array') {
     return 'array'
+  }
+  if (p.type === 'object' && p.query === true) {
+    return 'query'
   }
   if (p.type === 'object' && p.json === true) {
     return 'json'
@@ -123,6 +129,7 @@ export const iconForType = (type: string): string => {
     case 'array': return 'mdi-code-array'
     case 'objectid': return 'mdi-identifier'
     case 'object': return 'mdi-code-json'
+    case 'query': return 'mdi-filter'
     default: return 'mdi-help'
   }
 }
