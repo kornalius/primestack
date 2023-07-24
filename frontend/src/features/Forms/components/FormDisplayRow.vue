@@ -3,7 +3,7 @@
     <div
       v-for="column in columns"
       :key="column._id"
-      class="col"
+      :class="{ [colName(column)]: true }"
     >
       <form-display
         v-model="value"
@@ -31,4 +31,11 @@ const emit = defineEmits<{
 }>()
 
 const value = useModelValue(props, emit)
+
+const colName = (column: TFormColumn): string => {
+  if (column.col === undefined || column.col === null || column.col === '') {
+    return 'col'
+  }
+  return `col-${column.col}`
+}
 </script>

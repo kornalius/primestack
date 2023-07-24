@@ -26,6 +26,7 @@ import TimeField from '@/features/Fields/components/TimeField.vue'
 import ColorField from '@/features/Fields/components/ColorField.vue'
 import IconField from '@/features/Fields/components/IconField.vue'
 import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
+import LabelField from '@/features/Fields/components/LabelField.vue'
 import FormElementRow from './components/Editor/FormElementRow.vue'
 
 const sizeString = Type.String({
@@ -99,6 +100,7 @@ const componentForType = {
   spinner: QSpinnerIos,
   video: QVideo,
   table: SchemaTable,
+  label: LabelField,
 }
 
 export const properties = (props: TObject[]) => Type.Intersect(
@@ -109,6 +111,141 @@ export const properties = (props: TObject[]) => Type.Intersect(
 )
 
 const components = [
+  {
+    type: 'label',
+    icon: 'mdi-format-color-text',
+    label: 'Label',
+    schema: properties([
+      commonProperties.state,
+      Type.Object({
+        modelValue: Type.String(),
+        format: Type.String({
+          options: [
+            { value: 'overline', icon: 'mdi-format-overline' },
+            { value: 'title', icon: 'mdi-format-title' },
+            { value: 'subtitle', icon: 'mdi-subtitles' },
+            { value: 'caption', icon: 'mdi-closed-caption' },
+          ],
+          toggles: true,
+          clearable: true,
+        }),
+        heading: Type.String({
+          options: [
+            { value: 'h1', icon: 'mdi-format-header-1' },
+            { value: 'h2', icon: 'mdi-format-header-2' },
+            { value: 'h3', icon: 'mdi-format-header-3' },
+            { value: 'h4', icon: 'mdi-format-header-4' },
+            { value: 'h5', icon: 'mdi-format-header-5' },
+            { value: 'h6', icon: 'mdi-format-header-6' },
+          ],
+          toggles: true,
+          clearable: true,
+        }),
+        styling: Type.String({
+          options: [
+            { value: 'bold', icon: 'mdi-format-bold' },
+            { value: 'italic', icon: 'mdi-format-italic' },
+            { value: 'strike', icon: 'mdi-format-strikethrough' },
+          ],
+          toggles: true,
+          clearable: true,
+        }),
+        casing: Type.String({
+          options: [
+            { value: 'uppercase', icon: 'mdi-format-letter-case-upper' },
+            { value: 'lowercase', icon: 'mdi-format-letter-case-lower' },
+            { value: 'capitalize', icon: 'mdi-format-letter-case' },
+          ],
+          toggles: true,
+          clearable: true,
+        }),
+      }),
+      Type.Omit(commonProperties.style, ['dense']),
+    ]),
+    categories: {
+      model: {
+        icon: modelIcon,
+        names: [
+          'modelValue',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'format',
+          'heading',
+          'styling',
+          'casing',
+          'padding',
+          'margin',
+        ],
+      },
+    },
+  },
+  {
+    type: 'row',
+    icon: 'mdi-view-column-outline',
+    label: 'Row',
+    nokey: true,
+    schema: properties([
+      Type.Omit(commonProperties.style, ['dense']),
+    ]),
+    categories: {
+      style: {
+        icon: styleIcon,
+        names: [
+          'padding',
+          'margin',
+        ],
+      },
+    },
+  },
+  {
+    type: 'col',
+    icon: 'mdi-table-column',
+    label: 'Column',
+    nokey: true,
+    hidden: true,
+    schema: properties([
+      Type.Object({
+        col: Type.String({
+          options: [
+            { label: '1', value: '1' },
+            { label: '2', value: '2' },
+            { label: '3', value: '3' },
+            { label: '4', value: '4' },
+            { label: '5', value: '5' },
+            { label: '6', value: '6' },
+            { label: '7', value: '7' },
+            { label: '8', value: '8' },
+            { label: '9', value: '9' },
+            { label: '10', value: '10' },
+            { label: '11', value: '11' },
+            { label: '12', value: '12' },
+            { label: 'A', value: 'auto' },
+          ],
+          toggles: true,
+          clearable: true,
+        }),
+      }),
+      Type.Omit(commonProperties.style, ['dense']),
+    ]),
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'col',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'padding',
+          'margin',
+        ],
+      },
+    },
+  },
   {
     type: 'text',
     icon: 'mdi-form-textbox',
@@ -1739,86 +1876,11 @@ const components = [
     },
   },
   {
-    type: 'row',
-    icon: 'mdi-view-column-outline',
-    label: 'Row',
-    nokey: true,
-    schema: properties([
-      Type.Omit(commonProperties.style, ['dense']),
-    ]),
-    categories: {
-      content: {
-        icon: contentIcon,
-        names: [
-          'name',
-        ],
-      },
-      style: {
-        icon: styleIcon,
-        names: [
-          'padding',
-          'margin',
-        ],
-      },
-    },
-  },
-  {
-    type: 'col',
-    icon: 'mdi-table-column',
-    label: 'Column',
-    nokey: true,
-    hidden: true,
-    schema: properties([
-      Type.Object({
-        col: Type.String({
-          options: [
-            { label: '1', value: '1' },
-            { label: '2', value: '2' },
-            { label: '3', value: '3' },
-            { label: '4', value: '4' },
-            { label: '5', value: '5' },
-            { label: '6', value: '6' },
-            { label: '7', value: '7' },
-            { label: '8', value: '8' },
-            { label: '9', value: '9' },
-            { label: '10', value: '10' },
-            { label: '11', value: '11' },
-            { label: '12', value: '12' },
-            { label: 'A', value: 'auto' },
-          ],
-          toggles: true,
-        }),
-      }),
-      Type.Omit(commonProperties.style, ['dense']),
-    ]),
-    categories: {
-      content: {
-        icon: contentIcon,
-        names: [
-          'name',
-          'col',
-        ],
-      },
-      model: {
-        icon: modelIcon,
-        names: [
-          'modelValue',
-        ],
-      },
-      style: {
-        icon: styleIcon,
-        names: [
-          'padding',
-          'margin',
-        ],
-      },
-    },
-  },
-  {
     type: 'table',
     icon: 'mdi-table',
     label: 'Table',
     schema: properties([
+      commonProperties.state,
       Type.Object({
         noRouteFullscreenExit: Type.Boolean(),
         grid: Type.Boolean(),
@@ -1954,6 +2016,8 @@ const components = [
         icon: styleIcon,
         names: [
           'dense',
+          'disabled',
+          'readonly',
           'color',
           'separator',
           'expanded',

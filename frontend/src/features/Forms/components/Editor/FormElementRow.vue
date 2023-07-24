@@ -4,7 +4,7 @@
       v-for="column in field._columns"
       :key="column._id"
       :class="{
-        [column.col !== '' && column.col !== undefined ? `col-${column.col}` : 'col']: true,
+        [colName(column)]: true,
         'form-column': true,
         selected: editor.isSelected(column._id),
       }"
@@ -70,6 +70,13 @@ const emit = defineEmits<{
 const field = useModelValue(props, emit)
 
 const columnIcon = computed(() => props.components.find((c) => c.type === 'col').icon)
+
+const colName = (column: TFormColumn): string => {
+  if (column.col === undefined || column.col === null || column.col === '') {
+    return 'col'
+  }
+  return `col-${column.col}`
+}
 
 /**
  * Selection

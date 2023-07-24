@@ -102,6 +102,8 @@
     :label="embedLabel ? label : undefined"
     :options="toggleOptions"
     :clearable="clearableToggle"
+    spread
+    stretch
     unelevated
     dense
   />

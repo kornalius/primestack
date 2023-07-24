@@ -76,11 +76,14 @@ const value = useModelValue(props, emit)
 .margin
   border: 1px solid $grey-9
   background: $grey-2
+  background: $orange-1
+  border-radius: 4px
+  padding: 4px
 
 .field
   width: 78px
 
 .middle
   margin: 4px
-  background: $grey-5
+  background: $orange-3
 </style>

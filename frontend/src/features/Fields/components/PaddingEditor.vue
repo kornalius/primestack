@@ -75,12 +75,14 @@ const value = useModelValue(props, emit)
 <style scoped lang="sass">
 .padding
   border: 1px solid $grey-9
-  background: $grey-2
+  background: $blue-grey-2
+  border-radius: 4px
+  padding: 4px
 
 .field
   width: 78px
 
 .middle
   margin: 4px
-  background: $grey-5
+  background: $blue-grey-4
 </style>
