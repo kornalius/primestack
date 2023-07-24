@@ -32,7 +32,7 @@ export const fieldSchema = Type.Object(
 export const formSchema = Type.Object(
   {
     name: Type.String(),
-    schemaId: Type.Optional(Type.String({ objectid: true, service: 'schemas' })),
+    tableId: Type.Optional(Type.String({ objectid: true, tableid: true })),
     data: Type.Optional(Type.Object({}, { json: true })),
     _fields: Type.Array(fieldSchema),
   },
@@ -48,7 +48,7 @@ export const formSchema = Type.Object(
       model: {
         icon: modelIcon,
         names: [
-          'schemaId',
+          'tableId',
           'data',
         ],
       },

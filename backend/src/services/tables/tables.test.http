@@ -1,11 +1,11 @@
-// List schemas
-GET http://localhost:3030/schemas
+// List tables
+GET http://localhost:3030/tables
 Accept: application/json
 Content-Type: application/json
 ###
 
-// Create schema
-POST http://localhost:3030/schemas
+// Create table
+POST http://localhost:3030/tables
 Accept: application/json
 Content-Type: application/json
 
@@ -69,12 +69,12 @@ Content-Type: application/json
 
 > {%
   // client.log(response.body._id)
-  client.global.set("schemaId", response.body._id);
+  client.global.set("tableId", response.body._id);
 %}
 ###
 
-// Patch schema
-PATCH http://localhost:3030/schemas/{{schemaId}}
+// Patch table
+PATCH http://localhost:3030/tables/{{tableId}}
 Accept: application/json
 Content-Type: application/json
 

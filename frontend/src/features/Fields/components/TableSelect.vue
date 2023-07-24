@@ -3,7 +3,7 @@
     v-model="value"
     v-bind="$attrs"
     :loading="isPending"
-    :options="userSchemas"
+    :options="userTables"
     option-value="_id"
     option-label="name"
     emit-value
@@ -51,11 +51,9 @@ const value = useModelValue(props, emit)
 
 const { api } = useFeathers()
 
-const { data: schemas, isPending } = api.service('schemas').useFind({
+const { data: tables, isPending } = api.service('tables').useFind({
   query: {},
 })
 
-const userSchema = computed(() => schemas.value?.[0])
-
-const userSchemas = computed(() => userSchema.value?.list)
+const userTables = computed(() => tables.value?.[0]?.list)
 </script>

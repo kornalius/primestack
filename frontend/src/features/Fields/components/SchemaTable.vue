@@ -46,7 +46,7 @@ const props = defineProps<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   selected?: any[]
   query?: AnyData
-  schemaId?: string
+  tableId?: string
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -82,11 +82,11 @@ let data
 
 watch([
   () => attrs.rows,
-  () => props.schemaId,
+  () => props.tableId,
   () => props.query,
 ], () => {
-  if (api.services[props.schemaId]) {
-    const u = api.service(props.schemaId).useFind({ query: props.query || {} })
+  if (api.services[props.tableId]) {
+    const u = api.service(props.tableId).useFind({ query: props.query || {} })
     u.find()
     data = u.data
     return

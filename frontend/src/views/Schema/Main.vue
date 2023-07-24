@@ -2,9 +2,9 @@
   <div class="row">
     <div class="col">
       <q-table
-        v-model:selected="selectedSchema"
+        v-model:selected="selectedTable"
         style="height: 600px"
-        :rows="userSchemas"
+        :rows="userTables"
         :columns="schemaColumns as any"
         :rows-per-page-options="[0]"
         title="Schemas"
@@ -14,15 +14,15 @@
         bordered
         dense
         flat
-        @row-click="toggleSchemaSelection"
+        @row-click="toggleTableSelection"
       />
     </div>
 
-    <div v-if="selectedSchema.length > 0" class="col">
+    <div v-if="selectedTable.length > 0" class="col">
       <q-table
-        v-model:selected="selectedSchemaField"
+        v-model:selected="selectedTableField"
         style="height: 600px"
-        :rows="schemaFields"
+        :rows="tableFields"
         :columns="fieldColumns as any"
         :rows-per-page-options="[0]"
         title="Fields"
@@ -32,7 +32,7 @@
         bordered
         dense
         flat
-        @row-click="toggleSchemaFieldSelection"
+        @row-click="toggleTableFieldSelection"
       />
     </div>
   </div>
@@ -60,36 +60,36 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  editor.unselectSchemaField()
-  editor.unselectSchema()
+  editor.unselectTableField()
+  editor.unselectTable()
 })
 
-const { data: schemas } = api.service('schemas').useFind({
+const { data: tables } = api.service('tables').useFind({
   query: {},
 })
 
-const userSchemas = computed(() => schemas.value?.[0]?.list)
+const userTables = computed(() => tables.value?.[0]?.list)
 
-const selectedSchema = ref([])
+const selectedTable = ref([])
 
-const selectedSchemaField = ref([])
+const selectedTableField = ref([])
 
 watch(() => props.id, () => {
   if (props.id) {
-    selectedSchema.value = [userSchemas.value?.find((s) => s._id === props.id)]
+    selectedTable.value = [userTables.value?.find((s) => s._id === props.id)]
   }
 }, { immediate: true })
 
-watch(selectedSchema, () => {
-  editor.selectSchema(selectedSchema.value?.[0]?._id)
+watch(selectedTable, () => {
+  editor.selectTable(selectedTable.value?.[0]?._id)
 })
 
-watch(selectedSchemaField, () => {
-  editor.selectSchemaField(selectedSchemaField.value?.[0]?._id)
+watch(selectedTableField, () => {
+  editor.selectTableField(selectedTableField.value?.[0]?._id)
 })
 
-const schemaFields = computed(() => (
-  selectedSchema.value?.[0]?.fields || []
+const tableFields = computed(() => (
+  selectedTable.value?.[0]?.fields || []
 ))
 
 const schemaColumns = ref([
@@ -117,13 +117,13 @@ const schemaColumns = ref([
   },
 ])
 
-const toggleSchemaSelection = (evt, row) => {
-  selectedSchemaField.value = []
-  selectedSchema.value = [row]
+const toggleTableSelection = (evt, row) => {
+  selectedTableField.value = []
+  selectedTable.value = [row]
 }
 
-const toggleSchemaFieldSelection = (evt, row) => {
-  selectedSchemaField.value = [row]
+const toggleTableFieldSelection = (evt, row) => {
+  selectedTableField.value = [row]
 }
 
 const fieldColumns = ref([

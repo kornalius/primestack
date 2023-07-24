@@ -202,4 +202,6 @@ const style = computed(() => ({
   right: 0
   bottom: 0
 
+.q-skeleton--anim-wave
+  z-index: 0 !important
 </style>

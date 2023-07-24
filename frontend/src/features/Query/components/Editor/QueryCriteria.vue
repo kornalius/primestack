@@ -1,7 +1,7 @@
 <template>
   <div class="row items-center q-gutter-sm">
     <div class="col-4">
-      <schema-field-select
+      <table-field-select
         v-model="field.fieldId"
         :disable="disable"
         :fields="fields"
@@ -59,17 +59,17 @@
 import { computed, watch } from 'vue'
 import { Static, TSchema } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
-import { fieldSchema } from '@/shared/schemas/schema'
+import { tableFieldSchema } from '@/shared/schemas/table'
 import { defaultValueForSchema } from '@/shared/schema'
 import { QueryCriteria } from '@/shared/interfaces/query'
-import SchemaFieldSelect from '@/features/Fields/components/SchemaFieldSelect.vue'
+import TableFieldSelect from '@/features/Fields/components/TableFieldSelect.vue'
 
-type FieldSchema = Static<typeof fieldSchema>
+type TableFieldSchema = Static<typeof tableFieldSchema>
 
 const props = defineProps<{
   modelValue: QueryCriteria
   disable?: boolean
-  fields: FieldSchema[]
+  fields: TableFieldSchema[]
   operators: string[]
 }>()
 

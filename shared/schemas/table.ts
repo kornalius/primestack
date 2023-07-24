@@ -1,4 +1,4 @@
-import { Type, StringEnum} from '@feathersjs/typebox'
+import { Type, StringEnum } from '@feathersjs/typebox'
 import { contentIcon, modelIcon } from '../icons'
 
 export const supportedFieldTypes = [
@@ -43,7 +43,7 @@ export const supportedMethods = [
   'remove',
 ]
 
-export const fieldSchema = Type.Object(
+export const tableFieldSchema = Type.Object(
   {
     _id: Type.String({ objectid: true }),
     name: Type.String({ availableFieldname: true }),
@@ -69,8 +69,8 @@ export const fieldSchema = Type.Object(
       Type.Object({
         label: Type.String(),
         value: Type.String(),
-      }))
-    ),
+      })
+    )),
   },
   {
     additionalProperties: false,
@@ -108,7 +108,7 @@ export const fieldSchema = Type.Object(
   },
 )
 
-export const indexSchema = Type.Object(
+export const tableIndexSchema = Type.Object(
   {
     _id: Type.String({ objectid: true }),
     name: Type.String({ availableFieldname: true }),
@@ -132,7 +132,7 @@ export const indexSchema = Type.Object(
   },
 )
 
-export const schemaSchema = Type.Object(
+export const tableSchema = Type.Object(
   {
     _id: Type.String({ objectid: true }),
     name: Type.String(),
@@ -141,8 +141,8 @@ export const schemaSchema = Type.Object(
     updated: Type.Boolean(),
     softDelete: Type.Boolean(),
     user: Type.Boolean(),
-    fields: Type.Array(fieldSchema),
-    indexes: Type.Array(indexSchema),
+    fields: Type.Array(tableFieldSchema),
+    indexes: Type.Array(tableIndexSchema),
   },
   {
     additionalProperties: false,
@@ -166,7 +166,7 @@ export const schema = Type.Object(
   {
     _id: Type.String({ objectid: true }),
     userId: Type.Optional(Type.String({ objectid: true })),
-    list: Type.Array(schemaSchema),
+    list: Type.Array(tableSchema),
   },
-  { $id: 'Schema', additionalProperties: false },
+  { $id: 'Table', additionalProperties: false },
 )

@@ -55,7 +55,7 @@
 <script setup lang="ts">
 import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
-import { schema } from '@/shared/schemas/schema'
+import { schema } from '@/shared/schemas/table'
 
 type Schema = Static<typeof schema>
 

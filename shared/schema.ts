@@ -1,13 +1,13 @@
 import { Static, TSchema, Type } from '@feathersjs/typebox'
 import omit from 'lodash/omit'
-import { fieldSchema } from './schemas/schema'
+import { tableFieldSchema } from './schemas/table'
 
 export const optionsForSchema = (p: TSchema): unknown[] => {
   if (p.enum) {
-    return p.enum.map((e) => ({ label: e, value: e }))
+    return p.enum.map((e: string) => ({ label: e, value: e }))
   }
   if (p.items?.enum) {
-    return p.items.enum.map((e) => ({ label: e, value: e }))
+    return p.items.enum.map((e: string) => ({ label: e, value: e }))
   }
   return p.options || p.items?.options
 }
@@ -25,8 +25,8 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string => {
   if (p.type === 'number') {
     return 'number'
   }
-  if (p.type === 'string' && p.objectid === true && p.schemaid === true) {
-    return 'schemaid'
+  if (p.type === 'string' && p.objectid === true && p.tableid === true) {
+    return 'tableid'
   }
   if (p.type === 'string' && p.objectid === true) {
     return 'objectid'
@@ -134,14 +134,14 @@ export const iconForType = (type: string): string => {
   }
 }
 
-type TField = Static<typeof fieldSchema>
+type TableFieldSchema = Static<typeof tableFieldSchema>
 
-export const fieldToSchema = (field: TField): TSchema => {
+export const fieldToSchema = (field: TableFieldSchema): TSchema => {
   if (field.array) {
     const a = Type.Array(fieldToSchema({
       ...field,
       array: false,
-    } as TField))
+    } as TableFieldSchema))
     if (field.optional) {
       return Type.Optional(a)
     }
@@ -150,6 +150,7 @@ export const fieldToSchema = (field: TField): TSchema => {
 
   switch (field.type) {
     case 'string':
+      // eslint-disable-next-line no-case-declarations
       const s = Type.String({
         format: field.format,
         minLength: field.min,
@@ -162,6 +163,7 @@ export const fieldToSchema = (field: TField): TSchema => {
       return s
 
     case 'number':
+      // eslint-disable-next-line no-case-declarations
       const n = Type.Number({
         slider: field.slider,
         minimum: field.min,
@@ -175,6 +177,7 @@ export const fieldToSchema = (field: TField): TSchema => {
       return n
 
     case 'date':
+      // eslint-disable-next-line no-case-declarations
       const d = Type.String({
         format: 'date',
         formatMinimum: field.dateMin,
@@ -188,6 +191,7 @@ export const fieldToSchema = (field: TField): TSchema => {
       return d
 
     case 'time':
+      // eslint-disable-next-line no-case-declarations
       const t = Type.String({
         format: 'time',
         formatMinimum: field.dateMin,
@@ -201,6 +205,7 @@ export const fieldToSchema = (field: TField): TSchema => {
       return t
 
     case 'color':
+      // eslint-disable-next-line no-case-declarations
       const c = Type.String({
         color: true,
       })
@@ -210,6 +215,7 @@ export const fieldToSchema = (field: TField): TSchema => {
       return c
 
     case 'icon':
+      // eslint-disable-next-line no-case-declarations
       const i = Type.String({
         icon: true,
       })
@@ -219,6 +225,7 @@ export const fieldToSchema = (field: TField): TSchema => {
       return i
 
     case 'select':
+      // eslint-disable-next-line no-case-declarations
       const e = Type.String({
         options: field.options,
       })
@@ -226,10 +233,16 @@ export const fieldToSchema = (field: TField): TSchema => {
         return Type.Optional(e)
       }
       return e
+
+    default:
+      if (field.optional) {
+        return Type.Optional(Type.String())
+      }
+      return Type.String()
   }
 }
 
-export const fieldsToSchema = (fields: TField[]): TSchema => {
+export const fieldsToSchema = (fields: TableFieldSchema[]): TSchema => {
   return Type.Object(fields.reduce((acc, f) => ({
     ...acc,
     [f.name]: fieldToSchema(f),

@@ -67,11 +67,11 @@ const value = useModelValue(props, emit)
 
 const { api } = useFeathers()
 
-const { data: schemas } = api.service('schemas').useFind({ query: {} })
+const { data: tables } = api.service('tables').useFind({ query: {} })
 const { data: forms } = api.service('forms').useFind({ query: {} })
 const { data: menus } = api.service('menus').useFind({ query: {} })
 
-const userSchema = computed(() => schemas.value?.[0])
+const userTable = computed(() => tables.value?.[0])
 const userForm = computed(() => forms.value?.[0])
 const userMenu = computed(() => menus.value?.[0])
 
@@ -79,8 +79,8 @@ let data
 
 const entities = computed(() => {
   switch (props.service) {
-    case 'schemas':
-      return userSchema.value?.list.map((s) => ({
+    case 'tables':
+      return userTable.value?.list.map((s) => ({
         label: s.name,
         value: s._id,
       }))
@@ -100,7 +100,7 @@ const entities = computed(() => {
 })
 
 watch(() => props.service, () => {
-  if (props.service && !['schemas', 'menus', 'forms'].includes(props.service)) {
+  if (props.service && !['tables', 'menus', 'forms'].includes(props.service)) {
     const { data: c, find: findEntities } = api.service(props.service).useFind({
       query: props.query || {},
     })

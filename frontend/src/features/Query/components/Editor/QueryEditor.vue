@@ -1,13 +1,13 @@
 <template>
   <div v-bind="$attrs">
     <div
-      v-if="!hideSchema"
+      v-if="!hideTableSelect"
       class="row q-ma-sm"
     >
       <div class="col">
-        <schema-select
+        <table-select
           v-model="currentSchemaId"
-          label="Select a schema..."
+          label="Select a table..."
           options-dense
           dense
           outlined
@@ -60,20 +60,20 @@ import { useFeathers } from '@/composites/feathers'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import QueryGroupEditor from '@/features/Query/components/Editor/QueryGroup.vue'
 import QueryLogicalOperators from '@/features/Query/components/Editor/QueryLogicalOperators.vue'
-import SchemaSelect from '@/features/Fields/components/SchemaSelect.vue'
+import TableSelect from '@/features/Fields/components/TableSelect.vue'
 
 const props = defineProps<{
   modelValue: Query
-  // override the query schemaId
-  schemaId?: string
+  // override the query tableId
+  tableId?: string
   disable?: boolean
-  // hide the schema selector
-  hideSchema?: boolean
+  // hide the table selector
+  hideTableSelect?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
-  (e: 'update:schemaId', value: string): void,
+  (e: 'update:tableId', value: string): void,
   (e: 'update:model-value', value: Query): void,
 }>()
 
@@ -91,7 +91,7 @@ const palette = ref([
 
 const query = useModelValue(props, emit)
 
-const currentSchemaId = useSyncedProp(props, 'schemaId', emit)
+const currentSchemaId = useSyncedProp(props, 'tableId', emit)
 
 const addGroup = () => {
   const group: QueryGroup = {
@@ -115,33 +115,31 @@ watch(query, () => {
   }
 }, { immediate: true })
 
-watch(() => props.schemaId, () => {
-  if (props.schemaId) {
-    query.value.schemaId = props.schemaId
+watch(() => props.tableId, () => {
+  if (props.tableId) {
+    query.value.tableId = props.tableId
   }
 }, { immediate: true })
 
 watch(currentSchemaId, () => {
-  query.value.schemaId = currentSchemaId.value
+  query.value.tableId = currentSchemaId.value
 })
 
 /**
  * Schemas
  */
 
-const { data: schemas } = api.service('schemas').useFind({
+const { data: tables } = api.service('tables').useFind({
   query: {},
 })
 
-const userSchema = computed(() => schemas.value?.[0])
-
-const querySchema = computed(() => (
-  userSchema.value?.list.find((s) => s._id === query.value.schemaId)
+const table = computed(() => (
+  tables.value?.[0]?.list.find((s) => s._id === query.value.tableId)
 ))
 
-const fields = computed(() => querySchema.value?.fields || [])
+const fields = computed(() => table.value?.fields || [])
 
-watch(() => query.value.schemaId, () => {
+watch(() => query.value.tableId, () => {
   query.value.groups = []
   addGroup()
 })

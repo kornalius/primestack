@@ -128,8 +128,8 @@
     @create="$emit('create-new')"
   />
 
-  <schema-select
-    v-else-if="type === 'schemaid'"
+  <table-select
+    v-else-if="type === 'tableid'"
     v-model="value"
     :outlined="property"
     dense
@@ -270,8 +270,8 @@
       <query-editor
         v-model="scope.value"
         style="min-width: 600px; min-height: 400px;"
-        :schema-id="parent.schemaId"
-        :hide-schema="!!parent.schemaId"
+        :table-id="parent.tableId"
+        :hide-table-select="!!parent.tableId"
       />
     </q-popup-edit>
   </div>
@@ -350,14 +350,14 @@ import PropertyEditor from '@/features/Properties/components/PropertyEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import QueryEditor from '@/features/Query/components/Editor/QueryEditor.vue'
-import SchemaSelect from '@/features/Fields/components/SchemaSelect.vue'
+import TableSelect from '@/features/Fields/components/TableSelect.vue'
 import ServiceSelect from '@/features/Fields/components/ServiceSelect.vue'
 
 const props = defineProps<{
   modelValue: unknown
   // parent object containing the modelValue
   parent: unknown
-  // schema to use
+  // table to use
   schema: TSchema
   // complex UI for PropertyEditor mainly
   property?: boolean
@@ -445,19 +445,17 @@ const tempJson = ref()
 
 const { api } = useFeathers()
 
-const { data: schemas } = api.service('schemas').useFind({
+const { data: tables } = api.service('tables').useFind({
   query: {},
 })
 
-const userSchema = computed(() => schemas.value?.[0])
-
-const querySchema = computed(() => (
-  userSchema.value?.list.find((s) => s._id === props.parent?.schemaId)
+const table = computed(() => (
+  tables.value?.[0]?.list.find((s) => s._id === props.parent?.tableId)
 ))
 
 const queryValue = computed(() => (
   type.value === 'query' && typeof value.value === 'object' && props.property
-    ? queryToString(value.value, querySchema.value) || '&nbsp;'
+    ? queryToString(value.value, table.value) || '&nbsp;'
     : '&nbsp;'
 ))
 

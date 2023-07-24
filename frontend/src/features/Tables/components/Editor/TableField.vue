@@ -76,18 +76,18 @@
 <script setup lang="ts">
 import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
-import { fieldSchema, supportedFieldTypes } from '@/shared/schemas/schema'
+import { tableFieldSchema, supportedFieldTypes } from '@/shared/schemas/table'
 import { iconForType } from '@/shared/schema'
 
-type SchemaField = Static<typeof fieldSchema>
+type TableField = Static<typeof tableFieldSchema>
 
 const props = defineProps<{
-  modelValue: SchemaField
+  modelValue: TableField
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
-  (e: 'update:model-value', value: SchemaField): void,
+  (e: 'update:model-value', value: TableField): void,
 }>()
 
 const value = useModelValue(props, emit)

@@ -4,7 +4,7 @@ import { feathersClient } from '@/feathers'
 import { AnyData } from '@/shared/interfaces/commons'
 
 import health from '@/features/Health/service'
-import schemas from '@/features/Schemas/service'
+import tables from '@/features/Tables/service'
 import menus from '@/features/Menus/service'
 import forms from '@/features/Forms/service'
 
@@ -44,7 +44,7 @@ export const api = createPiniaClient(feathersClient, {
 
   services: {
     health,
-    schemas,
+    tables,
     menus,
     forms,
   },

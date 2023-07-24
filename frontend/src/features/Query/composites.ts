@@ -1,9 +1,9 @@
 import { Static } from '@feathersjs/typebox'
 import { Query, QueryCriteria, QueryGroup } from '@/shared/interfaces/query'
 import { AnyData } from '@/shared/interfaces/commons'
-import { schemaSchema } from '@/shared/schemas/schema'
+import { tableSchema } from '@/shared/schemas/table'
 
-type Schema = Static<typeof schemaSchema>
+type TableSchema = Static<typeof tableSchema>
 
 const mongoOperators = {
   '=': '$eq',
@@ -91,7 +91,7 @@ const queryToMongo = (q: QueryGroup[]): AnyData => {
   return reduceGroups(q)
 }
 
-const queryToString = (query: Query, schema: Schema): string => {
+const queryToString = (query: Query, schema: TableSchema): string => {
   let r = []
 
   const convertCriterias = (criterias: QueryCriteria[]): string[] => {

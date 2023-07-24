@@ -2,7 +2,7 @@ import { Application } from '@/declarations'
 import { info } from '@/logger'
 import health from './health/health.service'
 import users from './users/users.service'
-import schemas from './schemas/schemas.service'
+import tables from './tables/tables.service'
 import menus from './menus/menus.service'
 import forms from './forms/forms.service'
 
@@ -13,8 +13,8 @@ export default function (app: Application): void {
   info('    - Users')
   app.configure(users)
 
-  info('    - Schemas')
-  app.configure(schemas)
+  info('    - Tables')
+  app.configure(tables)
 
   info('    - Menus')
   app.configure(menus)

@@ -8,7 +8,7 @@ export default {
   setupInstance: (data: FormInterface): FormInterface => (
     useInstanceDefaults({
       name: undefined,
-      schemaId: undefined,
+      tableId: undefined,
       data: undefined,
       fields: [],
     }, data)

@@ -254,10 +254,10 @@ const components = ref(comps)
 //   })
 // }
 
-const { find: findSchemas } = api.service('schemas').useFind({
+const { find: findTables } = api.service('tables').useFind({
   query: {},
 })
-findSchemas()
+findTables()
 
 const { find: findForms } = api.service('forms').useFind({
   query: {},

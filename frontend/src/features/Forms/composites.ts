@@ -1692,12 +1692,14 @@ const components = [
       Type.Omit(commonProperties.style, ['dense']),
     ]),
     defaultValues: {
+      type: 'rect',
     },
     categories: {
       content: {
         icon: contentIcon,
         names: [
           'name',
+          'type',
           'disable',
           'readonly',
         ],
@@ -1706,7 +1708,6 @@ const components = [
         icon: styleIcon,
         names: [
           'size',
-          'type',
           'width',
           'height',
           'animation',
@@ -1859,7 +1860,7 @@ const components = [
         virtualScrollStickySizeStart: Type.Number(),
         virtualScrollStickySizeEnd: Type.Number(),
         tableColspan: Type.Number(),
-        schemaId: Type.String({ objectid: true, schemaid: true }),
+        tableId: Type.String({ objectid: true, tableid: true }),
         query: Type.Object({}, { query: true }),
       }),
       commonProperties.style,
@@ -1900,7 +1901,7 @@ const components = [
           'rowKey',
           'columns',
           'visibleColumns',
-          'schemaId',
+          'tableId',
           'query',
           'selection',
           'filter',

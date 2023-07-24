@@ -47,14 +47,14 @@ import { Static } from '@feathersjs/typebox'
 import { useFeathers } from '@/composites/feathers'
 import { useModelValue } from '@/composites/prop'
 import { iconForType } from '@/shared/schema'
-import { fieldSchema } from '@/shared/schemas/schema'
+import { tableFieldSchema } from '@/shared/schemas/table'
 
-type FieldSchema = Static<typeof fieldSchema>
+type TableFieldSchema = Static<typeof tableFieldSchema>
 
 const props = defineProps<{
   modelValue: string | null | undefined
-  schemaId?: string
-  fields?: FieldSchema[]
+  tableId?: string
+  fields?: TableFieldSchema[]
   createNew?: boolean
   createLabel?: string
 }>()
@@ -69,17 +69,15 @@ const value = useModelValue(props, emit)
 
 const { api } = useFeathers()
 
-const { data: schemas, isPending } = api.service('schemas').useFind({
+const { data: tables, isPending } = api.service('tables').useFind({
   query: {},
 })
 
-const userSchema = computed(() => schemas.value?.[0])
-
-const schema = computed(() => (
-  userSchema.value?.list.find((s) => s._id === props.schemaId)
+const table = computed(() => (
+  tables.value?.[0]?.list.find((s) => s._id === props.tableId)
 ))
 
 const options = computed(() => (
-  props.fields ? props.fields : schema.value?.fields
+  props.fields ? props.fields : table.value?.fields
 ))
 </script>

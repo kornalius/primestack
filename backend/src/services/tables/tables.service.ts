@@ -1,10 +1,10 @@
 import { Application } from '@feathersjs/koa'
 // eslint-disable-next-line import/no-cycle
 import { createService, MongoService } from '@/service'
-import { schema } from '@/shared/schemas/schema'
+import { schema } from '@/shared/schemas/table'
 
-const path = 'schemas'
-const collection = 'schemas'
+const path = 'tables'
+const collection = 'tables'
 
 class Service extends MongoService {}
 

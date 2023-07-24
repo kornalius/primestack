@@ -21,16 +21,16 @@
 
     <properties-editor
       v-else-if="showSchemaProperties"
-      v-model="selectedSchema"
+      v-model="selectedTable"
       v-model:forced-types="forcedTypes"
       :prop-name="''"
-      :schema="selectedSchemaSchema"
-      :categories="selectedSchemaSchema.categories"
+      :schema="selectedTableSchema"
+      :categories="selectedTableSchema.categories"
     />
 
     <properties-editor
       v-else-if="showSchemaFieldProperties"
-      v-model="selectedSchemaField"
+      v-model="selectedTableField"
       v-model:forced-types="forcedTypes"
       :prop-name="''"
       :schema="selectedSchemaFieldSchema"
@@ -90,7 +90,7 @@ import useFormElements from '@/features/Forms/composites'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { formSchema } from '@/shared/schemas/form'
-import { schemaSchema, fieldSchema } from '@/shared/schemas/schema'
+import { tableSchema, tableFieldSchema } from '@/shared/schemas/table'
 import { omitFields } from '@/shared/schema'
 import { useFeathers } from '@/composites/feathers'
 import SectionTitle from '@/features/Fields/components/SectionTitle.vue'
@@ -195,37 +195,35 @@ const filteredFormSchema = computed(() => (
  * Schema
  */
 
-const { data: schemas } = api.service('schemas').useFind({
+const { data: tables } = api.service('tables').useFind({
   query: {},
 })
 
-const userSchema = computed(() => schemas.value?.[0])
-
-const selectedSchema = computed(() => (
-  userSchema.value?.list.find((s) => s._id === editor.selectedSchema)
+const selectedTable = computed(() => (
+  tables.value?.[0]?.list.find((s) => s._id === editor.selectedTable)
 ))
 
-const selectedSchemaField = computed(() => (
-  selectedSchema.value?.fields.find((f) => f._id === editor.selectedSchemaField)
+const selectedTableField = computed(() => (
+  selectedTable.value?.fields.find((f) => f._id === editor.selectedTableField)
 ))
 
 const showSchemaProperties = computed(() => (
-  editor.selectedSchema && !editor.selectedSchemaField
+  editor.selectedTable && !editor.selectedTableField
 ))
 
 const showSchemaFieldProperties = computed(() => (
-  editor.selectedSchema && editor.selectedSchemaField
+  editor.selectedTable && editor.selectedTableField
 ))
 
-const selectedSchemaSchema = computed(() => (
-  editor.selectedSchema
-    ? omitFields(schemaSchema, ['_id', 'fields', 'indexes'])
+const selectedTableSchema = computed(() => (
+  editor.selectedTable
+    ? omitFields(tableSchema, ['_id', 'fields', 'indexes'])
     : undefined
 ))
 
 const selectedSchemaFieldSchema = computed(() => (
-  editor.selectedSchemaField
-    ? omitFields(fieldSchema, ['_id'])
+  editor.selectedTableField
+    ? omitFields(tableFieldSchema, ['_id'])
     : undefined
 ))
 </script>

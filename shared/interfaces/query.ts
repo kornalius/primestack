@@ -1,5 +1,6 @@
 export interface Query {
-  schemaId: string
+  tableId: string
+  // eslint-disable-next-line no-use-before-define
   groups: QueryGroup[]
 }
 
@@ -10,6 +11,7 @@ export const queryOperators = ['=', '!=', '<=', '>=', '<', '>', 'like']
 export type QueryOperator = '=' | '!=' | '<=' | '>=' | '<' | '>' | 'like'
 
 export interface QueryGroup {
+  // eslint-disable-next-line no-use-before-define
   criterias: QueryCriteria[]
   logicOp: QueryLogicalOp
 }

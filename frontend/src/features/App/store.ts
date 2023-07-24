@@ -6,8 +6,8 @@ export default defineStore('app-editor', () => {
     active: false,
     selectedMenu: undefined,
     selectedTab: undefined,
-    selectedSchema: undefined,
-    selectedSchemaField: undefined,
+    selectedTable: undefined,
+    selectedTableField: undefined,
     selected: undefined,
     hovered: undefined,
     dragging: false,
@@ -19,8 +19,8 @@ export default defineStore('app-editor', () => {
   const formId = computed(() => states.value.formId)
   const selectedMenu = computed(() => states.value.selectedMenu)
   const selectedTab = computed(() => states.value.selectedTab)
-  const selectedSchema = computed(() => states.value.selectedSchema)
-  const selectedSchemaField = computed(() => states.value.selectedSchemaField)
+  const selectedTable = computed(() => states.value.selectedTable)
+  const selectedTableField = computed(() => states.value.selectedTableField)
 
   const setFormId = (id: string): void => {
     states.value.formId = id
@@ -90,28 +90,28 @@ export default defineStore('app-editor', () => {
     unselectTab()
   }
 
-  const selectSchema = (id: string): void => {
-    states.value.selectedSchema = id
+  const selectTable = (id: string): void => {
+    states.value.selectedTable = id
   }
 
-  const unselectSchema = (): void => {
-    states.value.selectedSchema = undefined
+  const unselectTable = (): void => {
+    states.value.selectedTable = undefined
   }
 
-  const isSchemaSelected = (id: string): boolean => (
-    states.value.selectedSchema === id
+  const isTableSelected = (id: string): boolean => (
+    states.value.selectedTable === id
   )
 
-  const selectSchemaField = (id: string): void => {
-    states.value.selectedSchemaField = id
+  const selectTableField = (id: string): void => {
+    states.value.selectedTableField = id
   }
 
-  const unselectSchemaField = (): void => {
-    states.value.selectedSchemaField = undefined
+  const unselectTableField = (): void => {
+    states.value.selectedTableField = undefined
   }
 
-  const isSchemaFieldSelected = (id: string): boolean => (
-    states.value.selectedSchemaField === id
+  const isTableFieldSelected = (id: string): boolean => (
+    states.value.selectedTableField === id
   )
 
   const startEdit = (): void => {
@@ -129,8 +129,8 @@ export default defineStore('app-editor', () => {
     selectedMenu,
     selectedTab,
     selected,
-    selectedSchema,
-    selectedSchemaField,
+    selectedTable,
+    selectedTableField,
     formId,
     select,
     unselect,
@@ -151,11 +151,11 @@ export default defineStore('app-editor', () => {
     startEdit,
     endEdit,
     setFormId,
-    selectSchema,
-    unselectSchema,
-    isSchemaSelected,
-    selectSchemaField,
-    unselectSchemaField,
-    isSchemaFieldSelected,
+    selectTable,
+    unselectTable,
+    isTableSelected,
+    selectTableField,
+    unselectTableField,
+    isTableFieldSelected,
   }
 })

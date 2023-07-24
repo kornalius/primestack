@@ -78,7 +78,7 @@
       <q-tab-panel name="SchemaEditor">
         <div class="row">
           <div class="col">
-            <schema-editor v-model="userSchema.list[0]" />
+            <schema-editor v-model="userTable.list[0]" />
           </div>
         </div>
       </q-tab-panel>
@@ -117,7 +117,7 @@ import { useFeathers } from '@/composites/feathers'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import QueryEditor from '@/features/Query/components/Editor/QueryEditor.vue'
-import SchemaEditor from '@/features/Schemas/components/Editor/SchemaEditor.vue'
+import SchemaEditor from '@/features/Tables/components/Editor/TableEditor.vue'
 import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
 
 /**
@@ -248,11 +248,11 @@ const mongoQuery = computed(() => queryToMongo(query.value.groups))
  * Schema
  */
 
-const { data: schemas } = api.service('schemas').useFind({
+const { data: tables } = api.service('tables').useFind({
   query: {},
 })
 
-const userSchema = computed(() => schemas.value?.[0])
+const userTable = computed(() => tables.value?.[0])
 
 /**
  * Table

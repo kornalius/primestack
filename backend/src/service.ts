@@ -421,7 +421,11 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
             .then((db: Db) => db.collection(collection))
             .then(async (collection: Collection) => {
               if (options.indexes) {
-                await collection.dropIndexes()
+                try {
+                  await collection.dropIndexes()
+                } catch (e) {
+                  //
+                }
                 options.indexes.forEach((index) => {
                   collection.createIndex(index.fields, omit(index, ['fields']))
                     // eslint-disable-next-line @typescript-eslint/no-empty-function
