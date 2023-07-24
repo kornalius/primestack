@@ -28,7 +28,17 @@ import IconField from '@/features/Fields/components/IconField.vue'
 import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
 import FormElementRow from './components/Editor/FormElementRow.vue'
 
-const sizeEnum = StringEnum(['xs', 'sm', 'md', 'lg', 'xl'])
+const sizeString = Type.String({
+  options: [
+    { value: 'xs', icon: 'mdi-size-xs' },
+    { value: 'sm', icon: 'mdi-size-s' },
+    { value: 'md', icon: 'mdi-size-m' },
+    { value: 'lg', icon: 'mdi-size-l' },
+    { value: 'xl', icon: 'mdi-size-xl' },
+  ],
+  toggles: true,
+  clearable: true,
+})
 
 export const commonProperties = {
   name: Type.Object({
@@ -57,7 +67,7 @@ export const commonProperties = {
   }),
 
   size: Type.Object({
-    size: sizeEnum,
+    size: sizeString,
   }),
 }
 
@@ -1027,7 +1037,7 @@ const components = [
           'scale-down',
         ]),
         spinnerColor: Type.String({ color: true }),
-        spinnerSize: sizeEnum,
+        spinnerSize: sizeString,
       }),
       commonProperties.style,
     ]),
@@ -1386,8 +1396,8 @@ const components = [
         labelAlways: Type.Boolean(),
         switchLabelSide: Type.Boolean(),
         switchMarkerLabelSide: Type.Boolean(),
-        thumbSize: sizeEnum,
-        trackSize: sizeEnum,
+        thumbSize: sizeString,
+        trackSize: sizeString,
         markers: Type.Union([Type.Boolean(), Type.Number()]),
         markerLabels: Type.Boolean(),
         color: Type.String({ color: true }),
@@ -1476,8 +1486,8 @@ const components = [
         rightLabelValue: Type.String(),
         switchLabelSide: Type.Boolean(),
         switchMarkerLabelSide: Type.Boolean(),
-        thumbSize: sizeEnum,
-        trackSize: sizeEnum,
+        thumbSize: sizeString,
+        trackSize: sizeString,
         labelColor: Type.String({ color: true }),
         labelTextColor: Type.String({ color: true }),
         trackColor: Type.String({ color: true }),
@@ -1760,21 +1770,24 @@ const components = [
     hidden: true,
     schema: properties([
       Type.Object({
-        col: StringEnum([
-          '1',
-          '2',
-          '3',
-          '4',
-          '5',
-          '6',
-          '7',
-          '8',
-          '9',
-          '10',
-          '11',
-          '12',
-          'auto',
-        ]),
+        col: Type.String({
+          options: [
+            { label: '1', value: '1' },
+            { label: '2', value: '2' },
+            { label: '3', value: '3' },
+            { label: '4', value: '4' },
+            { label: '5', value: '5' },
+            { label: '6', value: '6' },
+            { label: '7', value: '7' },
+            { label: '8', value: '8' },
+            { label: '9', value: '9' },
+            { label: '10', value: '10' },
+            { label: '11', value: '11' },
+            { label: '12', value: '12' },
+            { label: 'A', value: 'auto' },
+          ],
+          toggles: true,
+        }),
       }),
       Type.Omit(commonProperties.style, ['dense']),
     ]),
@@ -1816,9 +1829,22 @@ const components = [
           label: Type.String(),
           field: Type.String(),
           required: Type.Boolean(),
-          align: StringEnum(['left', 'center', 'right']),
+          align: Type.String({
+            options: [
+              { value: 'left', icon: 'mdi-format-align-left' },
+              { value: 'center', icon: 'mdi-format-align-center' },
+              { value: 'right', icon: 'mdi-format-align-right' },
+            ],
+            toggles: true,
+          }),
           sortable: Type.Boolean(),
-          sortOrder: StringEnum(['ad', 'da']),
+          sortOrder: Type.String({
+            options: [
+              { value: 'ad', icon: 'mdi-sort-alphabetical-ascending' },
+              { value: 'da', icon: 'mdi-sort-alphabetical-descending' },
+            ],
+            toggles: true,
+          }),
         }, { horizontalPopup: true })),
         visibleColumns: Type.Array(Type.String()),
         title: Type.String(),

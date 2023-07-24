@@ -16,7 +16,7 @@
     v-if="horizontal"
     class="col"
   >
-    <schema-field
+    <property-schema-field
       v-model="value"
       v-model:forced-types="currentForcedTypes"
       :parent="parent"
@@ -56,7 +56,7 @@
         </div>
 
         <div class="col">
-          <schema-field
+          <property-schema-field
             v-model="value"
             v-model:forced-types="currentForcedTypes"
             :parent="parent"
@@ -163,7 +163,7 @@
         />
 
         <div class="col">
-          <schema-field
+          <property-schema-field
             v-model="value"
             v-model:forced-types="currentForcedTypes"
             :parent="parent"
@@ -187,7 +187,7 @@ import { getTypeFor, defaultValueForSchema } from '@/shared/schema'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import PropertyLabel from '@/features/Properties/components/PropertyLabel.vue'
-import SchemaField from '@/features/Properties/components/SchemaField.vue'
+import PropertySchemaField from '@/features/Properties/components/PropertySchemaField.vue'
 
 const props = defineProps<{
   modelValue: unknown

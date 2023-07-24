@@ -7,7 +7,7 @@
   >
     <template #body-cell="p">
       <q-td :props="p">
-        <schema-field
+        <property-schema-field
           v-if="schemaSchema(p.col.field)"
           v-model="p.row[p.col.field]"
           :parent="p.row"
@@ -37,7 +37,7 @@ import { useSyncedProp } from '@/composites/prop'
 import { columnAlignmentFor, getTypeFor } from '@/shared/schema'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useFeathers } from '@/composites/feathers'
-import SchemaField from '@/features/Properties/components/SchemaField.vue'
+import PropertySchemaField from '@/features/Properties/components/PropertySchemaField.vue'
 
 const attrs = useAttrs()
 

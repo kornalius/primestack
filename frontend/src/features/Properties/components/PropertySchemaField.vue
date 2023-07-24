@@ -96,6 +96,16 @@
     options-dense
   />
 
+  <q-btn-toggle
+    v-else-if="type === 'toggles'"
+    v-model="value"
+    :label="embedLabel ? label : undefined"
+    :options="toggleOptions"
+    :clearable="clearableToggle"
+    unelevated
+    dense
+  />
+
   <icon-field
     v-else-if="type === 'icon'"
     v-model="value"
@@ -393,6 +403,43 @@ const type = computed((): string => {
 const options = computed((): unknown[] | undefined => {
   const p = props.schema
   return optionsForSchema(p)
+})
+
+interface ToggleOption {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  attrs?: any
+  /**
+   * Label of option button; Use this prop and/or 'icon', but at least one is required
+   */
+  label?: string
+  /**
+   * Icon of option button; Use this prop and/or 'label', but at least one is required
+   */
+  icon?: string
+  /**
+   * Value of the option that will be used by component model
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  value: any
+  /**
+   * Slot name to use for this button content; Useful for customizing content or even add tooltips
+   */
+  slot?: string
+  /**
+   * Any other QBtn props (including class and style)
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [props: string]: any | undefined
+}
+
+const toggleOptions = computed((): ToggleOption[] => {
+  const p = props.schema
+  return p.options
+})
+
+const clearableToggle = computed((): boolean | undefined => {
+  const p = props.schema
+  return p.clearable
 })
 
 const optionValue = computed((): string | undefined => {

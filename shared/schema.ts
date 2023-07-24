@@ -37,6 +37,9 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string => {
   if (p.type === 'string' && p.format === 'time') {
     return 'time'
   }
+  if (p.type === 'string' && Array.isArray(options) && p.toggles === true) {
+    return 'toggles'
+  }
   if (p.type === 'string' && Array.isArray(options)) {
     return 'select'
   }
