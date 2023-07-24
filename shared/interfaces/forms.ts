@@ -29,6 +29,8 @@ export interface TFormComponent {
   horizontal?: boolean
   // use an horizontal layout for properties in a popup editing
   horizontalPopup?: boolean
+  // can you desactivate the drag & drop to play with the component?
+  interactable?: boolean
 }
 
 export interface TFormColumn {

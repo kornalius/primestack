@@ -17,12 +17,23 @@
     <q-btn
       v-if="isRow && !editor.isDragging && editor.isHovered(field._id)"
       class="action"
-      style="right: 24px;"
+      style="right: 26px;"
       icon="mdi-plus"
       color="blue-4"
       size="xs"
       round
       @click="onAddColumnClick"
+    />
+
+    <q-btn
+      v-else-if="interactable && !editor.isDragging && editor.isHovered(field._id)"
+      class="action"
+      style="right: 26px;"
+      :icon="activeInteractable ? 'mdi-cursor-pointer' : 'mdi-cursor-move'"
+      color="green-4"
+      size="xs"
+      round
+      @click="toggleInteractable"
     />
 
     <q-btn
@@ -64,7 +75,7 @@
       />
 
       <div
-        v-if="!editor.isDragging"
+        v-if="!editor.isDragging && !activeInteractable"
         class="overlay"
         :style="{ top: component.type === 'table' ? '48px' : undefined }"
         @click.stop="onClick"
@@ -74,7 +85,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import hexObjectId from 'hex-object-id'
 import { TSchema } from '@feathersjs/typebox'
 import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
@@ -166,6 +177,14 @@ const style = computed(() => ({
   marginRight: field.value.margin?.right,
   ...(component.value.editStyles || {}),
 }))
+
+const interactable = computed(() => component.value.interactable || false)
+
+const activeInteractable = ref(false)
+
+const toggleInteractable = () => {
+  activeInteractable.value = !activeInteractable.value
+}
 </script>
 
 <style scoped lang="sass">

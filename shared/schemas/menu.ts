@@ -1,5 +1,5 @@
-import { Type, StringEnum} from '@feathersjs/typebox'
-import { contentIcon, modelIcon, styleIcon } from '../icons'
+import { Type, StringEnum } from '@feathersjs/typebox'
+import { contentIcon } from '../icons'
 
 export const targetValues = ['_blank', '_self', '_parent', '_top']
 
@@ -17,22 +17,12 @@ export const tabSchema = Type.Object(
       content: {
         icon: contentIcon,
         names: [
+          'formId',
           'label',
           'icon',
-        ],
-      },
-      model: {
-        icon: modelIcon,
-        names: [
-          'formId',
-        ],
-      },
-      style: {
-        icon: styleIcon,
-        names: [
           'color',
-        ]
-      }
+        ],
+      },
     },
   },
 )
@@ -42,7 +32,7 @@ export const menuSchema = Type.Object(
     _id: Type.String({ objectid: true }),
     label: Type.String(),
     icon: Type.String({ icon: true }),
-    color: Type.Optional(Type.String( { color: true })),
+    color: Type.Optional(Type.String({ color: true })),
     href: Type.Optional(Type.String()),
     target: Type.Optional(StringEnum(targetValues)),
     tabs: Type.Array(tabSchema),
@@ -60,7 +50,7 @@ export const menuSchema = Type.Object(
         ],
       },
     },
-  }
+  },
 )
 
 export const schema = Type.Object(

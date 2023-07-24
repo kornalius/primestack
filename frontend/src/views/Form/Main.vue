@@ -74,6 +74,8 @@ import { defaultValueForSchema } from '@/shared/schema'
 import { useFeathers } from '@/composites/feathers'
 import FormEditor from '@/features/Forms/components/Editor/FormEditor.vue'
 import FormDisplay from '@/features/Forms/components/FormDisplay.vue'
+import { TFormColumn, TFormField } from '@/shared/interfaces/forms'
+import { AnyData } from '@/shared/interfaces/commons'
 
 const props = defineProps<{
   menuId: string
@@ -130,8 +132,31 @@ const defaultValues = computed(() => flattenFields(fields.value)
     return acc
   }, {}))
 
+const formModelValues = computed(() => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let convertColumn = (col: TFormColumn): AnyData => ({})
+
+  const convertField = (field: TFormField): AnyData => {
+    // eslint-disable-next-line no-underscore-dangle
+    if (field._columns) {
+      // eslint-disable-next-line no-underscore-dangle
+      return field._columns.reduce((acc, col) => ({ ...acc, ...convertColumn(col) }), {})
+    }
+    return { [field.name]: field.modelValue }
+  }
+
+  convertColumn = (col: TFormColumn): AnyData => (
+    // eslint-disable-next-line no-underscore-dangle
+    col._fields?.reduce((acc, f) => ({ ...acc, ...convertField(f) }), {})
+  )
+
+  // eslint-disable-next-line no-underscore-dangle
+  return form.value._fields?.reduce((acc, f) => ({ ...acc, ...convertField(f) }), {})
+})
+
 const formData = ref({
   ...defaultValues.value,
+  ...(formModelValues.value || {}),
   ...(form.value?.data || {}),
 })
 
@@ -142,6 +167,7 @@ const showPreviewFormData = ref(false)
 watch(preview, () => {
   previewFormData.value = {
     ...defaultValues.value,
+    ...(formModelValues.value || {}),
     ...(form.value?.data || {}),
   }
 })

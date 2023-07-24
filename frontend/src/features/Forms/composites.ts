@@ -27,6 +27,7 @@ import ColorField from '@/features/Fields/components/ColorField.vue'
 import IconField from '@/features/Fields/components/IconField.vue'
 import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
 import LabelField from '@/features/Fields/components/LabelField.vue'
+import Editor from '@/features/Fields/components/Editor.vue'
 import FormElementRow from './components/Editor/FormElementRow.vue'
 
 const sizeString = Type.String({
@@ -101,6 +102,7 @@ const componentForType = {
   video: QVideo,
   table: SchemaTable,
   label: LabelField,
+  paragraph: Editor,
 }
 
 export const properties = (props: TObject[]) => Type.Intersect(
@@ -163,8 +165,8 @@ const components = [
       Type.Omit(commonProperties.style, ['dense']),
     ]),
     categories: {
-      model: {
-        icon: modelIcon,
+      content: {
+        icon: contentIcon,
         names: [
           'modelValue',
         ],
@@ -374,18 +376,13 @@ const components = [
         icon: contentIcon,
         names: [
           'name',
+          'modelValue',
           'disable',
           'readonly',
           'label',
           'leftLabel',
           'checkedIcon',
           'uncheckedIcon',
-        ],
-      },
-      model: {
-        icon: modelIcon,
-        names: [
-          'modelValue',
         ],
       },
       style: {
@@ -424,16 +421,11 @@ const components = [
         icon: contentIcon,
         names: [
           'name',
+          'modelValue',
           'disable',
           'readonly',
           'label',
           'leftLabel',
-        ],
-      },
-      model: {
-        icon: modelIcon,
-        names: [
-          'modelValue',
         ],
       },
       style: {
@@ -479,18 +471,13 @@ const components = [
         icon: contentIcon,
         names: [
           'name',
+          'modelValue',
+          'clearable',
+          'options',
           'disable',
           'readonly',
           'noCaps',
           'noWrap',
-        ],
-      },
-      model: {
-        icon: modelIcon,
-        names: [
-          'modelValue',
-          'clearable',
-          'options',
         ],
       },
       style: {
@@ -538,16 +525,11 @@ const components = [
         icon: contentIcon,
         names: [
           'name',
-          'disable',
-          'readonly',
-        ],
-      },
-      model: {
-        icon: modelIcon,
-        names: [
           'type',
           'modelValue',
           'options',
+          'disable',
+          'readonly',
         ],
       },
       style: {
@@ -614,6 +596,7 @@ const components = [
         icon: contentIcon,
         names: [
           'name',
+          'modelValue',
           'disable',
           'readonly',
           'label',
@@ -625,12 +608,6 @@ const components = [
           'target',
           'replace',
           'loading',
-        ],
-      },
-      model: {
-        icon: modelIcon,
-        names: [
-          'modelValue',
         ],
       },
       style: {
@@ -652,6 +629,89 @@ const components = [
           'unelevated',
           'fab',
           'fabMini',
+          'padding',
+          'margin',
+        ],
+      },
+    },
+  },
+  {
+    type: 'paragraph',
+    icon: 'mdi-text-box-edit-outline',
+    label: 'Paragraph',
+    interactable: true,
+    schema: properties([
+      commonProperties.state,
+      Type.Object({
+        modelValue: Type.String(),
+        placeholder: Type.String(),
+        noRouteFullscreenExit: Type.Boolean(),
+        square: Type.Boolean(),
+        flat: Type.Boolean(),
+        dense: Type.Boolean(),
+        toolbarOutline: Type.Boolean(),
+        toolbarPush: Type.Boolean(),
+        toolbarRounded: Type.Boolean(),
+        minHeight: Type.String(),
+        maxHeight: Type.String(),
+        definitions: Type.Array(Type.Object({
+          commandName: Type.String(),
+          label: Type.String(),
+          tip: Type.String(),
+          icon: Type.String({ icon: true }),
+          key: Type.Number(),
+        })),
+        toolbar: Type.Array(Type.Array(Type.String())),
+        toolbarColor: Type.String({ color: true }),
+        toolbarTextColor: Type.String({ color: true }),
+        toolbarToggleColor: Type.String({ color: true }),
+        toolbarBg: Type.String({ color: true }),
+      }),
+      commonProperties.style,
+    ]),
+    defaultValues: {
+      paragraphTag: 'div',
+      modelValue: '',
+      toolbar: [
+        ['left', 'center', 'right', 'justify'],
+        ['bold', 'italic', 'underline', 'strike'],
+        ['undo', 'redo'],
+      ],
+    },
+    categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+          'modelValue',
+          'noRouteFullscreenExit',
+          'placeholder',
+          'minHeight',
+          'maxHeight',
+          'disable',
+          'readonly',
+        ],
+      },
+      toolbar: {
+        icon: 'mdi-gesture-tap-button',
+        names: [
+          'definitions',
+          'toolbar',
+          'toolbarOutline',
+          'toolbarPush',
+          'toolbarRounded',
+          'toolbarColor',
+          'toolbarTextColor',
+          'toolbarToggleColor',
+          'toolbarBg',
+        ],
+      },
+      style: {
+        icon: styleIcon,
+        names: [
+          'square',
+          'flat',
+          'dense',
           'padding',
           'margin',
         ],
@@ -783,16 +843,11 @@ const components = [
         icon: contentIcon,
         names: [
           'name',
+          'modelValue',
+          'mask',
           'disable',
           'readonly',
           'calendar',
-        ],
-      },
-      model: {
-        icon: modelIcon,
-        names: [
-          'modelValue',
-          'mask',
         ],
       },
       style: {
@@ -1061,6 +1116,7 @@ const components = [
         icon: contentIcon,
         names: [
           'name',
+          'modelValue',
           'disable',
           'readonly',
           'label',
@@ -1068,12 +1124,6 @@ const components = [
           'selected',
           'clickable',
           'removable',
-        ],
-      },
-      model: {
-        icon: modelIcon,
-        names: [
-          'modelValue',
         ],
       },
       style: {
@@ -1483,17 +1533,12 @@ const components = [
         icon: contentIcon,
         names: [
           'name',
-          'disable',
-          'readonly',
-          'defaultView',
-        ],
-      },
-      model: {
-        icon: modelIcon,
-        names: [
           'modelValue',
           'defaultValue',
           'formatModel',
+          'disable',
+          'readonly',
+          'defaultView',
         ],
       },
       style: {
@@ -1733,18 +1778,13 @@ const components = [
         icon: contentIcon,
         names: [
           'name',
+          'modelValue',
+          'max',
           'disable',
           'readonly',
           'icon',
           'iconSelected',
           'iconHalf',
-        ],
-      },
-      model: {
-        icon: modelIcon,
-        names: [
-          'modelValue',
-          'max',
         ],
       },
       style: {

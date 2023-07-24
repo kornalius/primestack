@@ -69,7 +69,7 @@ export const tableFieldSchema = Type.Object(
       Type.Object({
         label: Type.String(),
         value: Type.String(),
-      })
+      }),
     )),
   },
   {

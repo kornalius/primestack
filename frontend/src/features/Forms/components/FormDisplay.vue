@@ -12,6 +12,11 @@
         :components="components"
       />
 
+      <div
+        v-else-if="isParagraph(field)"
+        v-html="value[field.name]"
+      />
+
       <component
         :is="componentForType[field._type]"
         v-else
@@ -56,6 +61,9 @@ const value = useModelValue(props, emit)
 
 // eslint-disable-next-line no-underscore-dangle
 const isRow = (field: TFormField): boolean => field._type === 'row'
+
+// eslint-disable-next-line no-underscore-dangle
+const isParagraph = (field: TFormField): boolean => field._type === 'paragraph'
 
 const schemaForType = (field: TFormField): TSchema | undefined => (
   // eslint-disable-next-line no-underscore-dangle
