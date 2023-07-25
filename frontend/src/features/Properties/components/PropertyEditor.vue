@@ -166,6 +166,7 @@
           <property-schema-field
             v-model="value"
             v-model:forced-types="currentForcedTypes"
+            :disable="disable"
             :parent="parent"
             :schema="schema"
             :key-name="propName"
@@ -191,6 +192,7 @@ import PropertySchemaField from '@/features/Properties/components/PropertySchema
 
 const props = defineProps<{
   modelValue: unknown
+  disable?: boolean
   // parent object containing the modelValue
   parent: unknown
   schema: TSchema

@@ -2,6 +2,7 @@
   <q-tabs
     v-if="categories"
     v-model="category"
+    :disabled="disable"
     active-color="blue-4"
     indicator-color="blue-4"
     class="bg-grey-9 text-grey-1"
@@ -25,6 +26,7 @@
       v-model="value[name]"
       v-model:forced-types="currentForcedTypes"
       v-model:parent="value"
+      :disable="disable"
       :prop-name="subPropName(name)"
       :schema="schema.properties[name]"
       :required="schema.required.includes(name)"
@@ -46,6 +48,7 @@
       v-model="value[name]"
       v-model:forced-types="currentForcedTypes"
       v-model:parent="value"
+      :disable="disable"
       :prop-name="subPropName(name)"
       :schema="schema.properties[name]"
       :required="schema.required.includes(name)"
@@ -67,6 +70,7 @@ const props = defineProps<{
   modelValue: Record<string, unknown>
   // schema to extract property definitions from
   schema: TSchema
+  disable?: boolean
   // remove cells borders
   flat?: boolean
   // embed the label inside the input

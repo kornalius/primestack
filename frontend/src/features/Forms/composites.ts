@@ -2128,7 +2128,12 @@ const components = [
         virtualScrollStickySizeEnd: Type.Number(),
         tableColspan: Type.Number(),
         tableId: Type.String({ objectid: true, tableid: true }),
-        query: Type.Object({}, { query: true }),
+        query: Type.Object({}, {
+          query: true,
+          disable: (value, parent) => (
+            parent.tableId ? false : 'Please select a table first'
+          ),
+        }),
       }),
       commonProperties.style,
     ]),

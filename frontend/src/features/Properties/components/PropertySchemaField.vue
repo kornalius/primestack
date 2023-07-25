@@ -4,10 +4,15 @@
     v-model="value"
     :label="embedLabel ? label : undefined"
     :outlined="property"
+    :disable="disabled"
     dense
   >
     <template #append>
-      <q-icon class="cursor-pointer" name="mdi-pencil" size="small">
+      <q-icon
+        :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
+        name="mdi-pencil"
+        size="small"
+      >
         <q-popup-edit
           v-model="value"
           :title="label"
@@ -32,6 +37,7 @@
     v-model="value"
     class="full-width"
     :label="embedLabel ? label : undefined"
+    :disable="disabled"
     dense
   />
 
@@ -44,6 +50,7 @@
     :markers="property"
     :marker-labels="property"
     :snap="property"
+    :disable="disabled"
     label
     dense
   />
@@ -56,6 +63,7 @@
     :min="schema.min"
     :max="schema.max"
     :outlined="property"
+    :disable="disabled"
     type="number"
     dense
   />
@@ -65,6 +73,7 @@
     v-model="value"
     :label="embedLabel ? label : undefined"
     :outlined="property"
+    :disable="disabled"
     hide-bottom-space
     dense
   />
@@ -74,6 +83,7 @@
     v-model="value"
     :label="embedLabel ? label : undefined"
     :outlined="property"
+    :disable="disabled"
     hide-bottom-space
     dense
   />
@@ -89,6 +99,7 @@
     :multiple="multiple"
     :use-chips="multiple"
     :outlined="property"
+    :disable="disabled"
     dense
     clearable
     emit-value
@@ -102,6 +113,7 @@
     :label="embedLabel ? label : undefined"
     :options="toggleOptions"
     :clearable="clearableToggle"
+    :disable="disabled"
     spread
     stretch
     unelevated
@@ -113,6 +125,7 @@
     v-model="value"
     :label="embedLabel ? label : undefined"
     :outlined="property"
+    :disable="disabled"
     dense
     options-dense
     clearable
@@ -123,6 +136,7 @@
     v-model="value"
     :label="embedLabel ? label : undefined"
     :outlined="property"
+    :disable="disabled"
     quasar-palette
     dense
   />
@@ -133,6 +147,7 @@
     :service="schema.service"
     :query="schema.query"
     :outlined="property"
+    :disable="disabled"
     dense
     clearable
     options-dense
@@ -144,6 +159,7 @@
     v-else-if="type === 'tableid'"
     v-model="value"
     :outlined="property"
+    :disable="disabled"
     dense
     clearable
     options-dense
@@ -153,15 +169,24 @@
 
   <div
     v-if="type === 'json'"
-    class="ellipsis overflow-hidden cursor-pointer"
+    class="ellipsis overflow-hidden"
+    :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
   >
-    <span class="no-wrap">
-      {{ jsonValue }}
+    <span
+      class="no-wrap"
+      :class="{ 'text-negative': disabled }"
+    >
+      <q-tooltip :delay="500">
+        {{ disabledLabel || JSON.stringify(value, undefined, 2) }}
+      </q-tooltip>
+
+      {{ disabledLabel || jsonValue }}
     </span>
 
     <q-popup-edit
       v-model="value"
       :title="label"
+      :disable="disabled"
       auto-save
       @before-show="tempJson = JSON.stringify(value, undefined, 2)"
       @before-hide="value = JSON.parse(tempJson)"
@@ -178,11 +203,13 @@
   <padding-editor
     v-else-if="type === 'padding' && value"
     v-model="value"
+    :disable="disabled"
   />
 
   <margin-editor
     v-else-if="type === 'margin' && value"
     v-model="value"
+    :disable="disabled"
   />
 
   <properties-editor
@@ -192,25 +219,32 @@
     :prop-name="keyName"
     :schema="objectSchema"
     :horizontal="objectIsHorizontal"
+    :disable="disabled"
     embed-label
     flat
   />
 
   <div
     v-else-if="type === 'object' && typeof value === 'object' && !property"
-    class="overflow-hidden ellipsis cursor-pointer"
+    class="overflow-hidden ellipsis"
+    :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
     style="max-width: 230px;"
   >
-    <span class="no-wrap">
+    <span
+      class="no-wrap"
+      :class="{ 'text-negative': disabled }"
+    >
       <q-tooltip :delay="500">
-        {{ jsonValue }}
+        {{ disabledLabel || JSON.stringify(value, undefined, 2) }}
       </q-tooltip>
-      {{ jsonValue }}
+
+      {{ disabledLabel || jsonValue }}
     </span>
 
     <q-popup-edit
       v-model="value"
       :title="label"
+      :disable="disabled"
       auto-save
       v-slot="scope"
     >
@@ -233,6 +267,7 @@
     :add-function="() => addItem(value)"
     :remove-function="(v: unknown, idx: number) => removeItem(value, idx)"
     :no-separator="!arraySchemaIsObject"
+    :disable="disabled"
     reorderable
   >
     <template #default="{ index }">
@@ -262,20 +297,25 @@
 
   <div
     v-else-if="type === 'query' && typeof value === 'object' && property"
-    class="overflow-hidden ellipsis cursor-pointer"
+    class="overflow-hidden ellipsis"
+    :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
     style="max-width: 230px;"
   >
-    <span class="no-wrap">
+    <span
+      class="no-wrap"
+      :class="{ 'text-negative': disabled }"
+    >
       <q-tooltip :delay="500">
-        {{ queryValue }}
+        {{ disabledLabel || queryValue }}
       </q-tooltip>
 
-      {{ queryValue }}
+      {{ disabledLabel || queryValue }}
     </span>
 
     <q-popup-edit
       v-model="value"
       :title="label"
+      :disable="disabled"
       auto-save
       v-slot="scope"
     >
@@ -290,20 +330,25 @@
 
   <div
     v-else-if="type === 'array' && Array.isArray(value) && !property"
-    class="overflow-hidden ellipsis cursor-pointer"
+    class="overflow-hidden ellipsis"
+    :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
     style="max-width: 230px;"
   >
-    <span class="no-wrap">
+    <span
+      class="no-wrap"
+      :class="{ 'text-negative': disabled }"
+    >
       <q-tooltip :delay="500">
-        {{ jsonValue }}
+        {{ disabledLabel || jsonValue }}
       </q-tooltip>
 
-      {{ jsonValue }}
+      {{ disabledLabel || jsonValue }}
     </span>
 
     <q-popup-edit
       v-model="value"
       :title="label"
+      :disable="disabled"
       auto-save
       v-slot="scope"
     >
@@ -367,6 +412,7 @@ import ServiceSelect from '@/features/Fields/components/ServiceSelect.vue'
 
 const props = defineProps<{
   modelValue: unknown
+  disable?: boolean
   // parent object containing the modelValue
   parent: unknown
   // table to use
@@ -504,15 +550,31 @@ const table = computed(() => (
 
 const queryValue = computed(() => (
   type.value === 'query' && typeof value.value === 'object' && props.property
-    ? queryToString(value.value, table.value) || '&nbsp;'
-    : '&nbsp;'
+    ? queryToString(value.value, table.value) || '▪'
+    : '▪'
 ))
 
 const jsonValue = computed(() => (
   (type.value === 'object' && typeof value.value === 'object' && !props.property)
   || (type.value === 'array' && Array.isArray(value.value) && !props.property)
   || (type.value === 'json')
-    ? JSON.stringify(value.value) || '&nbsp;'
-    : '&nbsp;'
+    ? JSON.stringify(value.value) || '▪'
+    : '▪'
+))
+
+const disabled = computed((): boolean => {
+  if (props.disable) {
+    return true
+  }
+  if (props.schema?.disable) {
+    return props.schema.disable(value.value, props.parent) !== false
+  }
+  return false
+})
+
+const disabledLabel = computed((): string | undefined => (
+  disabled.value
+    ? props.schema?.disable?.(value.value, props.parent)
+    : undefined
 ))
 </script>

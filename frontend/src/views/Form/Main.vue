@@ -1,6 +1,4 @@
 <template>
-  <pre>{{ formData }}</pre>
-
   <div v-if="editor.active" class="row">
     <div class="q-mb-sm full-width">
       <div class="row bg-grey-8 items-center q-px-sm">
