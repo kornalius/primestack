@@ -2,9 +2,23 @@
   <q-table
     v-model:selected="selected"
     v-bind="$attrs"
-    :rows="data as any"
+    :rows="filteredRows as any"
     :columns="columns as any"
   >
+    <template v-if="!hideFilter" #top>
+      <q-input
+        v-model="currentFilter"
+        class="full-width"
+        placeholder="Filter expression (ex: field:value)"
+        dense
+        outlined
+      >
+        <template #append>
+          <q-icon name="mdi-magnify" size="xs" />
+        </template>
+      </q-input>
+    </template>
+
     <template #body-cell="p">
       <q-td :props="p">
         <property-schema-field
@@ -33,30 +47,37 @@ import {
 } from 'vue'
 import startCase from 'lodash/startCase'
 import { TSchema } from '@feathersjs/typebox'
+import sift from 'sift'
 import { useSyncedProp } from '@/composites/prop'
 import { columnAlignmentFor, getTypeFor } from '@/shared/schema'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useFeathers } from '@/composites/feathers'
 import PropertySchemaField from '@/features/Properties/components/PropertySchemaField.vue'
+import { filterToMongo } from '@/composites/filter'
+import { compact } from 'lodash'
 
 const attrs = useAttrs()
 
 const props = defineProps<{
   schema?: TSchema
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  selected?: any[]
+  selected?: unknown[]
   query?: AnyData
   tableId?: string
+  filter?: string
+  hideFilter?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
-  (e: 'update:model-value', value: string | null | undefined): void,
+  (e: 'update:filter', value: string | null | undefined): void,
+  (e: 'update:selected', value: unknown[]): void,
 }>()
 
 const { api } = useFeathers()
 
 const selected = useSyncedProp(props, 'selected', emit)
+
+const currentFilter = useSyncedProp(props, 'filter', emit)
 
 const columns = computed(() => {
   if (!props.schema) {
@@ -78,21 +99,36 @@ const columns = computed(() => {
   return cols
 })
 
+const dataRows = ref()
 let data
 
 watch([
   () => attrs.rows,
   () => props.tableId,
   () => props.query,
+  currentFilter,
 ], () => {
+  const f = filterToMongo(currentFilter.value || '') || {}
+  const q = {
+    $and: compact([
+      Object.keys(props.query).length ? props.query : undefined,
+      Object.keys(f).length ? f : undefined,
+    ]),
+  }
+  if (q.$and.length === 0) {
+    delete q.$and
+  }
   if (api.services[props.tableId]) {
-    const u = api.service(props.tableId).useFind({ query: props.query || {} })
+    const u = api.service(props.tableId).useFind({ query: q })
     u.find()
     data = u.data
     return
   }
-  data = ref(attrs.rows)
+  const s = sift(q)
+  dataRows.value = attrs.rows.filter(s)
 }, { immediate: true, deep: true })
 
 const schemaSchema = (name: string) => props.schema?.properties[name]
+
+const filteredRows = computed(() => data?.value || dataRows.value)
 </script>

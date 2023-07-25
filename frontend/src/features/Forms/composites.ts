@@ -2134,6 +2134,7 @@ const components = [
             parent.tableId ? false : 'Please select a table first'
           ),
         }),
+        hideFilter: Type.Boolean(),
       }),
       commonProperties.style,
     ]),
@@ -2144,6 +2145,7 @@ const components = [
       virtualScrollSliceRatioBefore: 1,
       virtualScrollSliceRatioAfter: 1,
       virtualScrollItemSize: 48,
+      hideFilter: true,
       columns: [
         {
           name: 'name',
@@ -2177,6 +2179,7 @@ const components = [
           'query',
           'selection',
           'filter',
+          'hideFilter',
           'noDataLabel',
           'noResultsLabel',
           'rowsPerPageLabel',

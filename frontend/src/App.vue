@@ -184,7 +184,7 @@ import {
   computed, onMounted, ref, watch,
 } from 'vue'
 import { useRoute } from 'vue-router'
-import useSnacks from '@/features/Snacks/composites'
+// import useSnacks from '@/features/Snacks/composites'
 import SnacksDisplay from '@/features/Snacks/components/Snacks.vue'
 import useAppEditor from '@/features/App/store'
 import useFormElements from '@/features/Forms/composites'
@@ -196,13 +196,13 @@ import { useFeathers } from '@/composites/feathers'
 
 const { api } = useFeathers()
 
-const snacks = useSnacks()
+// const snacks = useSnacks()
 
 onMounted(() => {
-  snacks.pushError('Error, this is an error')
-  snacks.pushWarn('Warning, this is a warning')
-  snacks.pushInfo('Info, this is an info')
-  snacks.pushSuccess('Success, this is a success')
+  // snacks.pushError('Error, this is an error')
+  // snacks.pushWarn('Warning, this is a warning')
+  // snacks.pushInfo('Info, this is an info')
+  // snacks.pushSuccess('Success, this is a success')
 })
 
 const version = import.meta.env.PACKAGE_VERSION

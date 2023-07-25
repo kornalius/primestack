@@ -3,6 +3,7 @@
     v-model:selected="selected"
     v-bind="$attrs"
     :columns="cols"
+    hide-filter
   >
     <template #header="p">
       <draggable
