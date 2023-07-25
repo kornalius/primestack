@@ -15,7 +15,7 @@
     </div>
 
     <q-btn
-      v-if="isRow && !editor.isDragging && editor.isHovered(field._id)"
+      v-if="(isRow || isCard) && !editor.isDragging && editor.isHovered(field._id)"
       class="action"
       style="right: 26px;"
       icon="mdi-plus"
@@ -23,7 +23,11 @@
       size="xs"
       round
       @click="onAddColumnClick"
-    />
+    >
+      <q-tooltip :delay="500">
+        Add Column or Section
+      </q-tooltip>
+    </q-btn>
 
     <q-btn
       v-else-if="interactable && !editor.isDragging && editor.isHovered(field._id)"
@@ -34,7 +38,11 @@
       size="xs"
       round
       @click="toggleInteractable"
-    />
+    >
+      <q-tooltip :delay="500">
+        {{ activeInteractable ? 'Drag' : 'Edit' }}
+      </q-tooltip>
+    </q-btn>
 
     <q-btn
       v-if="!editor.isDragging && editor.isHovered(field._id)"
@@ -45,13 +53,26 @@
       size="xs"
       round
       @click="onRemoveClick"
-    />
+    >
+      <q-tooltip :delay="500">
+        Remove
+      </q-tooltip>
+    </q-btn>
 
     <div class="element">
       <form-element-row
         v-if="isRow"
         v-model="field"
         class="bordered"
+        :components="components"
+        @remove="removeColumn"
+        @click="onColumnClick"
+      />
+
+      <form-element-card
+        v-else-if="isCard"
+        v-model="field"
+        class="card"
         :components="components"
         @remove="removeColumn"
         @click="onColumnClick"
@@ -91,10 +112,11 @@ import { TSchema } from '@feathersjs/typebox'
 import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 import useAppEditor from '@/features/App/store'
-import { defaultValueForSchema } from '@/shared/schema'
+import { defaultValueForSchema, defaultValues } from '@/shared/schema'
 import TableEditor from '@/features/Forms/components/Editor/TableEditor.vue'
 import useFormElements from '../../composites'
 import FormElementRow from './FormElementRow.vue'
+import FormElementCard from './FormElementCard.vue'
 
 const props = defineProps<{
   modelValue: TFormField
@@ -120,6 +142,12 @@ const component = computed(() => (
   props.components.find((c) => c.type === props.modelValue._type)
 ))
 
+const fieldIcon = computed(() => component.value?.icon)
+
+const isRow = computed(() => component.value.type === 'row')
+
+const isCard = computed(() => component.value.type === 'card')
+
 const schemaForType = (f: TFormField): TSchema | undefined => (
   // eslint-disable-next-line no-underscore-dangle
   props.components.find((c) => c.type === f._type)?.schema
@@ -134,16 +162,26 @@ const onColumnClick = (column: TFormColumn) => {
 }
 
 const onAddColumnClick = () => {
+  let type
+
+  if (isRow.value) {
+    type = 'col'
+  } else if (isCard.value) {
+    type = 'card-section'
+  }
+
+  const colComponent = props.components.find((c) => c.type === type)
+
   const col = {
     _id: hexObjectId(),
-    _type: 'col',
+    _type: type,
     _columns: undefined,
     _fields: [],
-    ...Object.keys(component.value.schema?.properties || {})
+    ...Object.keys(colComponent.schema?.properties || {})
       .reduce((acc, k) => (
-        { ...acc, [k]: defaultValueForSchema(component.value.schema.properties[k]) }
+        { ...acc, [k]: defaultValueForSchema(colComponent.schema.properties[k]) }
       ), {}),
-    ...(component.value.defaultValues || {}),
+    ...(defaultValues(colComponent.defaultValues) || {}),
   }
   // eslint-disable-next-line no-underscore-dangle
   field.value._columns.push(col)
@@ -161,10 +199,6 @@ const removeColumn = (column: TFormColumn) => {
     field.value._columns.splice(idx, 1)
   }
 }
-
-const fieldIcon = computed(() => component.value?.icon)
-
-const isRow = computed(() => component.value.type === 'row')
 
 const style = computed(() => ({
   paddingTop: field.value.padding?.top,
@@ -199,6 +233,9 @@ const toggleInteractable = () => {
   &.selected
     border-radius: 4px
     outline: 2px solid $blue-grey-5 !important
+
+.card
+  padding: 4px 0
 
 .bordered
   border: 1px dashed $blue-grey-4

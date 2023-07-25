@@ -1,5 +1,9 @@
 <template>
-  <div class="row form-row">
+  <div
+    class="row form-row"
+    v-bind="fieldBinds(field, schemaForType(field))"
+    :style="style(field)"
+  >
     <div
       v-for="column in field._columns"
       :key="column._id"
@@ -7,8 +11,11 @@
         [colName(column)]: true,
         'form-column': true,
         selected: editor.isSelected(column._id),
+        hovered: editor.isHovered(column._id),
       }"
+      v-bind="fieldBinds(column, schemaForType(column))"
       style="z-index: 1;"
+      :style="style(column)"
       @mouseover.stop="editor.hover(column._id)"
       @mouseleave="editor.unhover()"
       @focus.stop="editor.hover(column._id)"
@@ -49,9 +56,12 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { TSchema } from '@feathersjs/typebox'
 import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 import useAppEditor from '@/features/App/store'
+// eslint-disable-next-line import/no-cycle
+import useFormElements from '@/features/Forms/composites'
 import FieldsEditor from './FieldsEditor.vue'
 
 const props = defineProps<{
@@ -69,6 +79,8 @@ const emit = defineEmits<{
 
 const field = useModelValue(props, emit)
 
+const { fieldBinds, style } = useFormElements()
+
 const columnIcon = computed(() => props.components.find((c) => c.type === 'col').icon)
 
 const colName = (column: TFormColumn): string => {
@@ -77,6 +89,11 @@ const colName = (column: TFormColumn): string => {
   }
   return `col-${column.col}`
 }
+
+const schemaForType = (f: TFormField | TFormColumn): TSchema | undefined => (
+  // eslint-disable-next-line no-underscore-dangle
+  props.components.find((c) => c.type === f._type)?.schema
+)
 
 /**
  * Selection
@@ -102,7 +119,7 @@ const onRemoveClick = (column: TFormColumn) => {
   position: relative
   margin: 8px 4px
   padding: 8px 4px 4px 4px
-  border: 1px dashed $blue-grey-5
+  outline: 1px dashed $blue-grey-5
   border-radius: 4px
 
   &:first-child

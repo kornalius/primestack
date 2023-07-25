@@ -9,9 +9,9 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue'
 import omit from 'lodash/omit'
-import { useModelValue } from '@/composites/prop'
 import { QEditorCommand } from 'quasar'
 import DOMPurify from 'dompurify'
+import { useModelValue } from '@/composites/prop'
 
 type Definitions = {
   [commandName: string]: QEditorCommand | undefined

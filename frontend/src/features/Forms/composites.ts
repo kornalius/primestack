@@ -17,8 +17,8 @@ import {
 import {
   TObject, Type, StringEnum, TSchema,
 } from '@feathersjs/typebox'
-import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
-import { defaultValueForSchema } from '@/shared/schema'
+import { TFormColumn, TFormComponent, TFormField } from '@/shared/interfaces/forms'
+import { defaultValueForSchema, defaultValues } from '@/shared/schema'
 import { AnyData } from '@/shared/interfaces/commons'
 import { contentIcon, modelIcon, styleIcon } from '@/shared/icons'
 import DateField from '@/features/Fields/components/DateField.vue'
@@ -29,6 +29,7 @@ import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
 import LabelField from '@/features/Fields/components/LabelField.vue'
 import Editor from '@/features/Fields/components/Editor.vue'
 import FormElementRow from './components/Editor/FormElementRow.vue'
+import FormElementCard from './components/Editor/FormElementCard.vue'
 
 const sizeString = Type.String({
   options: [
@@ -88,6 +89,7 @@ const componentForType = {
   color: ColorField,
   iconSelect: IconField,
   row: FormElementRow,
+  card: FormElementCard,
   slider: QSlider,
   range: QRange,
   icon: QIcon,
@@ -107,8 +109,8 @@ const componentForType = {
 
 export const properties = (props: TObject[]) => Type.Intersect(
   [
-    commonProperties.name,
     ...props,
+    commonProperties.name,
   ],
 )
 
@@ -188,10 +190,29 @@ const components = [
     type: 'row',
     icon: 'mdi-view-column-outline',
     label: 'Row',
+    row: true,
     nokey: true,
     schema: properties([
       Type.Omit(commonProperties.style, ['dense']),
     ]),
+    defaultValues: {
+      _columns: () => ([
+        {
+          _id: hexObjectId(),
+          _type: 'col',
+          _fields: [],
+          padding: {},
+          margin: {},
+        },
+        {
+          _id: hexObjectId(),
+          _type: 'col',
+          _fields: [],
+          padding: {},
+          margin: {},
+        },
+      ]),
+    },
     categories: {
       style: {
         icon: styleIcon,
@@ -206,6 +227,7 @@ const components = [
     type: 'col',
     icon: 'mdi-table-column',
     label: 'Column',
+    col: true,
     nokey: true,
     hidden: true,
     schema: properties([
@@ -242,6 +264,120 @@ const components = [
       style: {
         icon: styleIcon,
         names: [
+          'padding',
+          'margin',
+        ],
+      },
+    },
+  },
+  {
+    type: 'card',
+    icon: 'mdi-card-bulleted',
+    label: 'Card',
+    row: true,
+    col: true,
+    nokey: true,
+    schema: properties([
+      Type.Object({
+        square: Type.Boolean(),
+        flat: Type.Boolean(),
+        bordered: Type.Boolean(),
+      }),
+      Type.Omit(commonProperties.style, ['dense']),
+    ]),
+    defaultValues: {
+      _columns: () => ([
+        {
+          _id: hexObjectId(),
+          _type: 'card-section',
+          _fields: [],
+          horizontal: false,
+          padding: {},
+          margin: {},
+        },
+        {
+          _id: hexObjectId(),
+          _type: 'card-actions',
+          _fields: [],
+          align: 'right',
+          vertical: false,
+          padding: {},
+          margin: {},
+        },
+      ]),
+    },
+    categories: {
+      style: {
+        icon: styleIcon,
+        names: [
+          'square',
+          'flat',
+          'bordered',
+          'padding',
+          'margin',
+        ],
+      },
+    },
+  },
+  {
+    type: 'card-section',
+    icon: 'mdi-card-text-outline',
+    label: 'Card Section',
+    col: true,
+    nokey: true,
+    hidden: true,
+    schema: properties([
+      Type.Object({
+        horizontal: Type.Boolean(),
+      }),
+      Type.Omit(commonProperties.style, ['dense']),
+    ]),
+    defaultValues: {
+      horizontal: false,
+    },
+    categories: {
+      style: {
+        icon: styleIcon,
+        names: [
+          'horizontal',
+          'padding',
+          'margin',
+        ],
+      },
+    },
+  },
+  {
+    type: 'card-actions',
+    icon: 'mdi-card-text-outline',
+    label: 'Card Actions',
+    col: true,
+    nokey: true,
+    hidden: true,
+    schema: properties([
+      Type.Object({
+        align: StringEnum([
+          'left',
+          'center',
+          'right',
+          'between',
+          'around',
+          'evenly',
+          'stretch',
+        ]),
+        vertical: Type.Boolean(),
+      }),
+      Type.Omit(commonProperties.style, ['dense']),
+    ]),
+    defaultValues: {
+      align: 'right',
+      vertical: false,
+    },
+    categories: {
+      style: {
+        icon: styleIcon,
+        names: [
+          'align',
+          'vertical',
           'padding',
           'margin',
         ],
@@ -590,6 +726,7 @@ const components = [
     ]),
     defaultValues: {
       align: 'center',
+      flat: true,
     },
     categories: {
       content: {
@@ -1145,6 +1282,7 @@ const components = [
     type: 'icon',
     icon: 'mdi-cube-outline',
     label: 'Icon',
+    noName: true,
     schema: properties([
       commonProperties.state,
       commonProperties.size,
@@ -1157,6 +1295,7 @@ const components = [
       commonProperties.style,
     ]),
     defaultValues: {
+      size: 'md',
     },
     categories: {
       content: {
@@ -2102,13 +2241,13 @@ const flattenFields = (fields: TFormField[]): (AnyData)[] => {
       flattended.push(f)
 
       // eslint-disable-next-line no-underscore-dangle
-      const flds = f._fields
-      // eslint-disable-next-line no-underscore-dangle
       const cols = f._columns
-
       if (cols) {
         flatten(cols)
       }
+
+      // eslint-disable-next-line no-underscore-dangle
+      const flds = f._fields
       if (flds) {
         flatten(flds)
       }
@@ -2120,23 +2259,40 @@ const flattenFields = (fields: TFormField[]): (AnyData)[] => {
   return flattended
 }
 
+const style = (field: AnyData): AnyData => {
+  const component = components
+    // eslint-disable-next-line no-underscore-dangle
+    .find((c) => c.type === field._type)
+  return {
+    paddingTop: field.padding?.top,
+    paddingLeft: field.padding?.left,
+    paddingBottom: field.padding?.bottom,
+    paddingRight: field.padding?.right,
+    marginTop: field.margin?.top,
+    marginLeft: field.margin?.left,
+    marginBottom: field.margin?.bottom,
+    marginRight: field.margin?.right,
+    ...(component.editStyles || {}),
+  }
+}
+
 export default () => ({
   createFormField: (component: TFormComponent, fields: TFormField[]): TFormField => ({
     _id: hexObjectId(),
     _type: component.type,
-    _columns: component.type === 'row' ? [] : undefined,
-    _fields: component.type === 'col' ? [] : undefined,
+    _columns: component.row ? [] : undefined,
+    _fields: component.col ? [] : undefined,
     ...Object.keys(component.schema?.properties || {})
       .reduce((acc, k) => (
         { ...acc, [k]: defaultValueForSchema(component.schema.properties[k]) }
       ), {}),
-    ...(component.defaultValues || {}),
-    name: newNameForField(component.type, flattenFields(fields)),
+    ...(defaultValues(component.defaultValues) || {}),
+    name: !component.noName ? newNameForField(component.type, flattenFields(fields)) : undefined,
   }),
 
   flattenFields,
 
-  fieldBinds: (field: TFormField, schema: TSchema): AnyData => {
+  fieldBinds: (field: TFormField | TFormColumn, schema: TSchema): AnyData => {
     const fieldsToOmit = [
       '_id',
       '_type',
@@ -2163,4 +2319,6 @@ export default () => ({
   componentForType,
 
   components,
+
+  style,
 })

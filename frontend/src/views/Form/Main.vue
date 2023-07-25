@@ -1,4 +1,6 @@
 <template>
+  <pre>{{ formData }}</pre>
+
   <div v-if="editor.active" class="row">
     <div class="q-mb-sm full-width">
       <div class="row bg-grey-8 items-center q-px-sm">
@@ -116,21 +118,21 @@ watch(form, () => {
     fields.value = form.value._fields || []
     editor.setFormId(form.value._id)
   }
-}, { immediate: true })
+}, { immediate: true, deep: true })
 
-const { components: comps, flattenFields } = useFormElements()
+const { components, flattenFields } = useFormElements()
 
-const components = ref(comps)
-
-const defaultValues = computed(() => flattenFields(fields.value)
-  .reduce((acc, f) => {
-    // eslint-disable-next-line no-underscore-dangle
-    const comp = components.value.find((c) => c.type === f._type)
-    if (comp && !comp.nokey) {
-      return { ...acc, [f.name]: defaultValueForSchema(comp.schema.properties.modelValue) }
-    }
-    return acc
-  }, {}))
+const defaultValues = computed(() => (
+  flattenFields(fields.value)
+    .reduce((acc, f) => {
+      // eslint-disable-next-line no-underscore-dangle
+      const comp = components.find((c) => c.type === f._type)
+      if (comp && !comp.nokey) {
+        return { ...acc, [f.name]: defaultValueForSchema(comp.schema.properties.modelValue) }
+      }
+      return acc
+    }, {})
+))
 
 const formModelValues = computed(() => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -142,7 +144,7 @@ const formModelValues = computed(() => {
       // eslint-disable-next-line no-underscore-dangle
       return field._columns.reduce((acc, col) => ({ ...acc, ...convertColumn(col) }), {})
     }
-    return { [field.name]: field.modelValue }
+    return field.modelValue ? { [field.name]: field.modelValue } : {}
   }
 
   convertColumn = (col: TFormColumn): AnyData => (
@@ -154,11 +156,11 @@ const formModelValues = computed(() => {
   return form.value._fields?.reduce((acc, f) => ({ ...acc, ...convertField(f) }), {})
 })
 
-const formData = ref({
+const formData = computed(() => ({
   ...defaultValues.value,
-  ...(formModelValues.value || {}),
   ...(form.value?.data || {}),
-})
+  ...(formModelValues.value || {}),
+}))
 
 const preview = ref(false)
 const previewFormData = ref({})
@@ -167,8 +169,8 @@ const showPreviewFormData = ref(false)
 watch(preview, () => {
   previewFormData.value = {
     ...defaultValues.value,
-    ...(formModelValues.value || {}),
     ...(form.value?.data || {}),
+    ...(formModelValues.value || {}),
   }
 })
 

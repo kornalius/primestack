@@ -1,6 +1,7 @@
 import { Static, TSchema, Type } from '@feathersjs/typebox'
 import omit from 'lodash/omit'
 import { tableFieldSchema } from './schemas/table'
+import { AnyData } from './interfaces/commons'
 
 export const optionsForSchema = (p: TSchema): unknown[] => {
   if (p.enum) {
@@ -112,6 +113,23 @@ export const defaultValueForSchema = (schema: TSchema, forcedType?: string): unk
         ), {})
     default: return undefined
   }
+}
+
+export const defaultValues = (values: AnyData | undefined): AnyData | undefined => {
+  if (!values) {
+    return undefined
+  }
+
+  const nv = {}
+  Object.keys(values).forEach((k) => {
+    const v = values[k]
+    if (typeof v === 'function') {
+      nv[k] = v()
+    } else {
+      nv[k] = v
+    }
+  })
+  return nv
 }
 
 export const omitFields = (schema: TSchema, fields: string[]): TSchema => ({
