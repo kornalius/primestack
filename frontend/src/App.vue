@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh LpR lFf">
+  <q-layout view="lHh LpR lff">
     <q-header
       class="bg-dark text-white"
       :style="{ backgroundColor: editor.active ? '#401a00 !important' : '' }"
@@ -172,10 +172,6 @@
         <router-view />
       </q-page>
     </q-page-container>
-
-    <q-footer class="bg-dark text-white">
-      <q-toolbar />
-    </q-footer>
   </q-layout>
 </template>
 

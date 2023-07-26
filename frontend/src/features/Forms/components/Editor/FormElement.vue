@@ -1,6 +1,10 @@
 <template>
   <div
-    :class="{ 'form-element': true, selected }"
+    :class="{
+      'form-element': true,
+      selected,
+      hovered: editor.isHovered(field._id),
+    }"
     @mouseover.stop="editor.hover(field._id)"
     @mouseleave="editor.unhover()"
     @focus.stop="editor.hover(field._id)"
@@ -63,7 +67,6 @@
       <form-element-row
         v-if="isRow"
         v-model="field"
-        class="bordered"
         :components="components"
         @remove="removeColumn"
         @click="onColumnClick"
@@ -226,20 +229,19 @@ const toggleInteractable = () => {
   position: relative
   margin: 8px 0
   width: 100%
+  border-radius: 4px
 
   &:first-child
     margin: 0
 
   &.selected
-    border-radius: 4px
     outline: 2px solid $blue-grey-5 !important
+
+  &.hovered
+    outline: 1px dashed $blue-grey-4
 
 .card
   padding: 4px 0
-
-.bordered
-  border: 1px dashed $blue-grey-4
-  border-radius: 4px
 
 .action
   position: absolute

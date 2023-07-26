@@ -2,7 +2,6 @@
   <q-tabs
     v-if="categories"
     v-model="category"
-    :disabled="disable"
     active-color="blue-4"
     indicator-color="blue-4"
     class="bg-grey-9 text-grey-1"

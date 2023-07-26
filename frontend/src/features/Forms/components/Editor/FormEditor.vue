@@ -1,9 +1,5 @@
 <template>
-  <q-layout
-    view="hHh lpr lFr"
-    style="height: 600px;"
-    container
-  >
+  <q-layout view="hHh lpr lFr">
     <q-drawer
       :model-value="true"
       class="q-pa-sm"
@@ -47,10 +43,7 @@
     </q-drawer>
 
     <q-page-container>
-      <q-page
-        class="q-px-md q-pt-sm"
-        @click="editor.unselectAll()"
-      >
+      <q-page @click="editor.unselectAll()">
         <fields-editor
           v-model="fields"
           :components="components"

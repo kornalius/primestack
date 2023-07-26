@@ -9,6 +9,7 @@
       :key="column._id"
       :class="{ [colName(column)]: true }"
       v-bind="fieldBinds(column, schemaForType(column))"
+      :style="style(column)"
     >
       <form-display
         v-model="value"

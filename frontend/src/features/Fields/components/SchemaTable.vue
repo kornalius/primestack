@@ -100,6 +100,7 @@ const columns = computed(() => {
 })
 
 const dataRows = ref()
+
 let data
 
 watch([
@@ -109,23 +110,27 @@ watch([
   currentFilter,
 ], () => {
   const f = filterToMongo(currentFilter.value || '') || {}
+
   const q = {
     $and: compact([
-      Object.keys(props.query).length ? props.query : undefined,
+      Object.keys(props.query || {}).length ? props.query : undefined,
       Object.keys(f).length ? f : undefined,
     ]),
   }
   if (q.$and.length === 0) {
     delete q.$and
   }
+
+  if (attrs.row) {
+    const s = sift(q)
+    dataRows.value = attrs.rows?.filter(s) || []
+    return
+  }
   if (api.services[props.tableId]) {
     const u = api.service(props.tableId).useFind({ query: q })
     u.find()
     data = u.data
-    return
   }
-  const s = sift(q)
-  dataRows.value = attrs.rows.filter(s)
 }, { immediate: true, deep: true })
 
 const schemaSchema = (name: string) => props.schema?.properties[name]

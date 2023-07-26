@@ -264,7 +264,7 @@ export const fieldToSchema = (field: TableFieldSchema): TSchema => {
 }
 
 export const fieldsToSchema = (fields: TableFieldSchema[]): TSchema => {
-  return Type.Object(fields.reduce((acc, f) => ({
+  return Type.Object((fields || []).reduce((acc, f) => ({
     ...acc,
     [f.name]: fieldToSchema(f),
   }), {}))

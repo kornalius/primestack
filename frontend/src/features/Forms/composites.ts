@@ -348,7 +348,7 @@ const components = [
   },
   {
     type: 'card-actions',
-    icon: 'mdi-card-text-outline',
+    icon: 'mdi-gesture-tap-button',
     label: 'Card Actions',
     col: true,
     nokey: true,
@@ -506,6 +506,7 @@ const components = [
       commonProperties.style,
     ]),
     defaultValues: {
+      modelValue: false,
     },
     categories: {
       content: {
@@ -551,6 +552,7 @@ const components = [
       commonProperties.style,
     ]),
     defaultValues: {
+      modelValue: false,
     },
     categories: {
       content: {
@@ -2130,7 +2132,7 @@ const components = [
         tableId: Type.String({ objectid: true, tableid: true }),
         query: Type.Object({}, {
           query: true,
-          disable: (value, parent) => (
+          disable: (value: unknown, parent: AnyData) => (
             parent.tableId ? false : 'Please select a table first'
           ),
         }),

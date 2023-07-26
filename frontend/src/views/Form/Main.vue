@@ -1,67 +1,92 @@
 <template>
-  <div v-if="editor.active" class="row">
-    <div class="q-mb-sm full-width">
-      <div class="row bg-grey-8 items-center q-px-sm">
-        <div class="col">
-          <span class="text-h6 text-white">Form</span>
+  <q-layout view="hHh lpr lFr">
+    <q-drawer
+      v-if="!editor.active && !form?.hideTable"
+      :model-value="true"
+      class="q-pa-sm q-pr-md"
+      :width="400"
+      side="left"
+      behavior="desktop"
+      show-if-above
+    >
+      <schema-table
+        v-model:selected="selected"
+        v-bind="tableBinds"
+        class="full-height"
+        :schema="fieldsToSchema(form?._fields)"
+        :table-id="form?.tableId"
+        :hide-filter="form?.hideFilter"
+      />
+    </q-drawer>
+
+    <q-page-container>
+      <q-page @click="editor.unselectAll()">
+        <div v-if="editor.active" class="row">
+          <div class="q-mb-sm full-width">
+            <div class="row bg-grey-8 items-center q-px-sm">
+              <div class="col">
+                <span class="text-h6 text-white">Form</span>
+              </div>
+
+              <div class="col-auto">
+                <q-toggle
+                  v-model="preview"
+                  class="q-ml-sm text-white"
+                  label="Preview"
+                  left-label
+                  dense
+                />
+
+                <q-toggle
+                  v-model="showPreviewFormData"
+                  class="q-ml-sm text-white"
+                  :disable="!preview"
+                  label="Data"
+                  left-label
+                  dense
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="col-auto">
-          <q-toggle
-            v-model="preview"
-            class="q-ml-sm text-white"
-            label="Preview"
-            left-label
-            dense
-          />
+        <form-display
+          v-if="!editor.active"
+          v-model="formData"
+          :fields="fields"
+          :components="components"
+        />
 
-          <q-toggle
-            v-model="showPreviewFormData"
-            class="q-ml-sm text-white"
-            :disable="!preview"
-            label="Data"
-            left-label
-            dense
-          />
+        <form-display
+          v-else-if="preview"
+          v-model="previewFormData"
+          :fields="fields"
+          :components="components"
+        />
+
+        <form-editor
+          v-else
+          v-model="fields"
+          :components="components"
+        />
+
+        <div
+          v-if="editor.active && preview && showPreviewFormData"
+          class="q-mt-sm"
+        >
+          <div class="bg-grey-8 q-pl-sm q-mb-sm">
+            <div class="row items-center">
+              <div class="col">
+                <span class="text-h6 text-white">Data</span>
+              </div>
+            </div>
+          </div>
+
+          <pre>{{ previewFormData }}</pre>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <form-display
-    v-if="!editor.active"
-    v-model="formData"
-    :fields="fields"
-    :components="components"
-  />
-
-  <form-display
-    v-else-if="preview"
-    v-model="previewFormData"
-    :fields="fields"
-    :components="components"
-  />
-
-  <form-editor
-    v-else
-    v-model="fields"
-    :components="components"
-  />
-
-  <div
-    v-if="preview && showPreviewFormData"
-    class="q-mt-sm"
-  >
-    <div class="bg-grey-8 q-pl-sm q-mb-sm">
-      <div class="row items-center">
-        <div class="col">
-          <span class="text-h6 text-white">Data</span>
-        </div>
-      </div>
-    </div>
-
-    <pre>{{ previewFormData }}</pre>
-  </div>
+      </q-page>
+    </q-page-container>
+  </q-layout>
 </template>
 
 <script setup lang="ts">
@@ -69,13 +94,16 @@ import {
   computed, onBeforeUnmount, ref, watch,
 } from 'vue'
 import useFormElements from '@/features/Forms/composites'
+import pick from 'lodash/pick'
 import useAppEditor from '@/features/App/store'
-import { defaultValueForSchema } from '@/shared/schema'
+import { defaultValueForSchema, fieldsToSchema } from '@/shared/schema'
 import { useFeathers } from '@/composites/feathers'
-import FormEditor from '@/features/Forms/components/Editor/FormEditor.vue'
-import FormDisplay from '@/features/Forms/components/FormDisplay.vue'
 import { TFormColumn, TFormField } from '@/shared/interfaces/forms'
 import { AnyData } from '@/shared/interfaces/commons'
+import FormEditor from '@/features/Forms/components/Editor/FormEditor.vue'
+import FormDisplay from '@/features/Forms/components/FormDisplay.vue'
+import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
+import { formSchema } from '@/shared/schemas/form'
 
 const props = defineProps<{
   menuId: string
@@ -85,6 +113,8 @@ const props = defineProps<{
 }>()
 
 const { api } = useFeathers()
+
+const selected = ref()
 
 const editor = useAppEditor()
 
@@ -109,6 +139,8 @@ const userForm = computed(() => forms.value?.[0])
 const form = computed(() => userForm.value?.list.find((f) => f._id === tab.value?.formId))
 
 const fields = ref([])
+
+const tableBinds = computed(() => pick(form.value, formSchema.tableFields))
 
 watch(form, () => {
   if (form.value) {
@@ -142,7 +174,7 @@ const formModelValues = computed(() => {
       // eslint-disable-next-line no-underscore-dangle
       return field._columns.reduce((acc, col) => ({ ...acc, ...convertColumn(col) }), {})
     }
-    return field.modelValue ? { [field.name]: field.modelValue } : {}
+    return field.modelValue !== undefined ? { [field.name]: field.modelValue } : {}
   }
 
   convertColumn = (col: TFormColumn): AnyData => (
@@ -151,7 +183,7 @@ const formModelValues = computed(() => {
   )
 
   // eslint-disable-next-line no-underscore-dangle
-  return form.value._fields?.reduce((acc, f) => ({ ...acc, ...convertField(f) }), {})
+  return (fields.value || []).reduce((acc, f) => ({ ...acc, ...convertField(f) }), {})
 })
 
 const formData = computed(() => ({
