@@ -4,10 +4,10 @@
       <q-table
         v-model:selected="selectedTable"
         style="height: 600px"
-        :rows="userTables"
+        :rows="editor.tables"
         :columns="schemaColumns as any"
         :rows-per-page-options="[0]"
-        title="Schemas"
+        title="Tables"
         selection="single"
         row-key="_id"
         virtual-scroll
@@ -43,14 +43,11 @@ import {
   computed, onBeforeUnmount, onMounted, ref, watch,
 } from 'vue'
 import useAppEditor from '@/features/App/store'
-import { useFeathers } from '@/composites/feathers'
 
 const props = defineProps<{
   id?: string
   create?: boolean
 }>()
-
-const { api } = useFeathers()
 
 const editor = useAppEditor()
 
@@ -64,19 +61,13 @@ onBeforeUnmount(() => {
   editor.unselectTable()
 })
 
-const { data: tables } = api.service('tables').useFind({
-  query: {},
-})
-
-const userTables = computed(() => tables.value?.[0]?.list)
-
 const selectedTable = ref([])
 
 const selectedTableField = ref([])
 
 watch(() => props.id, () => {
   if (props.id) {
-    selectedTable.value = [userTables.value?.find((s) => s._id === props.id)]
+    selectedTable.value = [editor.tables?.find((s) => s._id === props.id)]
   }
 }, { immediate: true })
 

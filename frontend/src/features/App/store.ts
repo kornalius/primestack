@@ -1,5 +1,9 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
+import hotkeys from 'hotkeys-js'
+import { useFeathers } from '@/composites/feathers'
+import cloneDeep from 'lodash/cloneDeep'
+import useSnacks from '@/features/Snacks/composites'
 
 export default defineStore('app-editor', () => {
   const states = ref({
@@ -12,6 +16,9 @@ export default defineStore('app-editor', () => {
     hovered: undefined,
     dragging: false,
     formId: undefined,
+    menus: [],
+    forms: [],
+    tables: [],
   })
 
   const active = computed(() => states.value.active)
@@ -21,6 +28,9 @@ export default defineStore('app-editor', () => {
   const selectedTab = computed(() => states.value.selectedTab)
   const selectedTable = computed(() => states.value.selectedTable)
   const selectedTableField = computed(() => states.value.selectedTableField)
+  const menus = computed(() => states.value.menus)
+  const forms = computed(() => states.value.forms)
+  const tables = computed(() => states.value.tables)
 
   const setFormId = (id: string): void => {
     states.value.formId = id
@@ -116,11 +126,52 @@ export default defineStore('app-editor', () => {
 
   const startEdit = (): void => {
     states.value.active = true
+
+    const { api } = useFeathers()
+
+    const userMenus = api.service('menus').findOneInStore({ query: {} })
+    const userForms = api.service('forms').findOneInStore({ query: {} })
+    const userTables = api.service('tables').findOneInStore({ query: {} })
+
+    states.value.menus = cloneDeep(userMenus.value?.list)
+    states.value.forms = cloneDeep(userForms.value?.list)
+    states.value.tables = cloneDeep(userTables.value?.list)
+
+    hotkeys.setScope('edit')
   }
 
   const endEdit = (): void => {
     states.value.active = false
     unselectMenu()
+    unselectTable()
+    states.value.selected = undefined
+    hotkeys.setScope('app')
+  }
+
+  const save = (): void => {
+    const { api } = useFeathers()
+
+    const userMenus = api.service('menus').findOneInStore({ query: {} })
+    const userForms = api.service('forms').findOneInStore({ query: {} })
+    const userTables = api.service('tables').findOneInStore({ query: {} })
+
+    api.service('menus').patch(userMenus.value._id, {
+      ...userMenus.value,
+      list: states.value.menus,
+    })
+
+    api.service('tables').patch(userTables.value._id, {
+      ...userTables.value,
+      list: states.value.tables,
+    })
+
+    api.service('forms').patch(userForms.value._id, {
+      ...userForms.value,
+      list: states.value.forms,
+    })
+
+    const snacks = useSnacks()
+    snacks.pushSuccess('Saved successfully')
   }
 
   return {
@@ -157,5 +208,9 @@ export default defineStore('app-editor', () => {
     selectTableField,
     unselectTableField,
     isTableFieldSelected,
+    menus,
+    forms,
+    tables,
+    save,
   }
 })

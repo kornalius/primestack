@@ -14,6 +14,7 @@ import { HookFunction } from '@feathersjs/feathers/src/declarations'
 import { AnyData } from '@/shared/interfaces/commons'
 import { MongoDBService } from '@feathersjs/mongodb'
 import { Collection, Db } from 'mongodb'
+import { schema as userSchema } from '@/shared/schemas/user'
 import { softDelete } from './hooks/soft-delete'
 // eslint-disable-next-line import/no-cycle
 import {
@@ -73,7 +74,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
   if (options.created) {
     schema.properties = {
       ...schema.properties,
-      createdAt: Type.String({ format: 'date-time' }),
+      createdAt: Type.Optional(Type.Number()),
       createdBy: Type.Optional(Type.String({ objectid: true })),
     }
   }
@@ -81,7 +82,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
   if (options.updated) {
     schema.properties = {
       ...schema.properties,
-      updatedAt: Type.String({ format: 'date-time' }),
+      updatedAt: Type.Optional(Type.Number()),
       updatedBy: Type.Optional(Type.String({ objectid: true })),
     }
   }
@@ -89,7 +90,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
   if (options.softDelete) {
     schema.properties = {
       ...schema.properties,
-      deletedAt: Type.Optional(Type.String({ format: 'date-time' })),
+      deletedAt: Type.Optional(Type.Number()),
       deletedBy: Type.Optional(Type.String({ objectid: true })),
     }
   }
@@ -98,7 +99,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
     schema.properties = {
       ...schema.properties,
       userId: Type.Optional(Type.String({ objectid: true })),
-      _user: Type.Optional(Type.Ref(Type.String({ $id: 'User' }))),
+      _user: Type.Optional(Type.Ref(userSchema)),
     }
   }
 
@@ -215,9 +216,10 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
 
   // Schema for updating existing entries
   const patchSchema = Type.Partial(
-    dataSchema,
+    schema,
     { $id: `${schema.$id}Patch`, additionalProperties: false }
   )
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   type Patch = Static<typeof patchSchema>
   const patchValidator = getValidator(patchSchema, validatorForData)

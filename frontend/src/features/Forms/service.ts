@@ -7,10 +7,7 @@ type FormInterface = Static<typeof schema>
 export default {
   setupInstance: (data: FormInterface): FormInterface => (
     useInstanceDefaults({
-      name: undefined,
-      tableId: undefined,
-      data: undefined,
-      fields: [],
+      list: [],
     }, data)
   ),
 }

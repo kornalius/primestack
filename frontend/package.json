@@ -37,6 +37,7 @@
     "dompurify": "^3.0.5",
     "feathers-pinia": "^3.0.4",
     "hex-object-id": "^1.0.0",
+    "hotkeys-js": "^3.11.2",
     "leac": "^0.6.0",
     "lodash": "^4.17.21",
     "pinia": "^2.1.4",

@@ -50,7 +50,7 @@ export default (): {
     snackClass: (snack) => {
       switch (snack.level) {
         case 'Info': return 'bg-info text-white'
-        case 'Success': return 'bg-positive text-white'
+        case 'Success': return 'bg-positive'
         case 'Error': return 'bg-negative'
         case 'Warning': return 'bg-warning'
         default:

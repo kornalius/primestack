@@ -11,7 +11,7 @@ export const logError = async (context: HookContext, next: NextFunction) => {
 
     // Log validation errors
     if (error.data) {
-      err(`Data: %O ${error.data}`)
+      err(`Data: ${JSON.stringify(error.data, undefined, 2)}`)
     }
 
     throw error

@@ -92,15 +92,12 @@ import { TFormComponent } from '@/shared/interfaces/forms'
 import { formSchema } from '@/shared/schemas/form'
 import { tableSchema, tableFieldSchema } from '@/shared/schemas/table'
 import { omitFields } from '@/shared/schema'
-import { useFeathers } from '@/composites/feathers'
 import SectionTitle from '@/features/Fields/components/SectionTitle.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 
 const props = defineProps<{
   components?: TFormComponent[]
 }>()
-
-const { api } = useFeathers()
 
 const forcedTypes = ref({})
 
@@ -110,15 +107,8 @@ const editor = useAppEditor()
  * Menus
  */
 
-const { data: menus, find: findMenus } = api.service('menus').useFind({
-  query: {},
-})
-findMenus()
-
-const menu = computed(() => menus.value?.[0])
-
 const selectedMenuObject = computed(() => (
-  menu.value?.list.find((m) => m._id === editor.selectedMenu)
+  editor.menus?.find((m) => m._id === editor.selectedMenu)
 ))
 
 const selectedMenuSchema = computed(() => (
@@ -155,13 +145,7 @@ const showTabProperties = computed(() => (
 
 const { flattenFields } = useFormElements()
 
-const { data: forms } = api.service('forms').useFind({
-  query: {},
-})
-
-const userForm = computed(() => forms.value?.[0])
-
-const form = computed(() => userForm.value?.list.find((f) => f._id === editor.formId))
+const form = computed(() => editor.forms?.find((f) => f._id === editor.formId))
 
 const fields = ref([])
 
@@ -195,12 +179,8 @@ const filteredFormSchema = computed(() => (
  * Schema
  */
 
-const { data: tables } = api.service('tables').useFind({
-  query: {},
-})
-
 const selectedTable = computed(() => (
-  tables.value?.[0]?.list.find((s) => s._id === editor.selectedTable)
+  editor.tables?.find((s) => s._id === editor.selectedTable)
 ))
 
 const selectedTableField = computed(() => (

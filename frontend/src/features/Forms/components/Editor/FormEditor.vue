@@ -43,7 +43,10 @@
     </q-drawer>
 
     <q-page-container>
-      <q-page @click="editor.unselectAll()">
+      <q-page
+        class="q-pa-sm"
+        @click="editor.unselectAll()"
+      >
         <fields-editor
           v-model="fields"
           :components="components"

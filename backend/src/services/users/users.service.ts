@@ -1,30 +1,20 @@
 import { authenticate } from '@feathersjs/authentication'
 import { Application } from '@feathersjs/koa'
-import { Type, Static } from '@feathersjs/typebox'
+import { Static } from '@feathersjs/typebox'
 import { HookContext } from '@feathersjs/feathers'
 import { AnyData } from '@/shared/interfaces/commons'
 import { passwordHash } from '@feathersjs/authentication-local'
 // eslint-disable-next-line import/no-cycle
 import { createService, MongoService } from '@/service'
+import { schema } from '@/shared/schemas/user'
+import { dataValidator } from '@/validators'
+
+dataValidator.addSchema(schema)
 
 const path = 'users'
 const collection = 'users'
 
 class Service extends MongoService {}
-
-export const schema = Type.Object(
-  {
-    _id: Type.String({ objectid: true }),
-    email: Type.String({ format: 'email' }),
-    password: Type.Optional(Type.String()),
-    googleId: Type.Optional(Type.String()),
-    facebookId: Type.Optional(Type.String()),
-    twitterId: Type.Optional(Type.String()),
-    githubId: Type.Optional(Type.String()),
-    auth0Id: Type.Optional(Type.String())
-  },
-  { $id: 'User', additionalProperties: false }
-)
 
 const service = createService(path, Service, {
   collection,

@@ -1,6 +1,6 @@
 import { StringEnum, Type } from '@feathersjs/typebox'
 import { contentIcon, tableIcon } from '../icons'
-import { AnyData } from '@/shared/interfaces/commons'
+import { AnyData } from '../interfaces/commons'
 
 export const columnSchema = Type.Recursive((self) => Type.Object(
   {
@@ -57,12 +57,12 @@ export const formSchema = Type.Object(
     tableColspan: Type.Optional(Type.Number()),
     tableId: Type.Optional(Type.String({ objectid: true, tableid: true })),
     hideTable: Type.Optional(Type.Boolean()),
-    query: Type.Object({}, {
+    query: Type.Optional(Type.Object({}, {
       query: true,
       disable: (value: unknown, parent: AnyData) => (
         parent.tableId ? false : 'Please select a table first'
       ),
-    }),
+    })),
     _fields: Type.Array(fieldSchema),
   },
   {

@@ -106,8 +106,8 @@
           <q-item
             v-if="editor.active"
             class="Drawer__item"
-            :class="{ leftDrawerExpanded, selected: $route.path === schemasUrl() }"
-            :to="schemasUrl()"
+            :class="{ leftDrawerExpanded, selected: $route.path === tablesUrl() }"
+            :to="tablesUrl()"
             name="schemas"
             tag="router-link"
             clickable
@@ -118,14 +118,14 @@
 
             <q-item-section v-if="leftDrawerExpanded">
               <q-item-label>
-                Schemas
+                Tables
               </q-item-label>
             </q-item-section>
           </q-item>
 
           <menus-editor
             v-if="editor.active"
-            v-model="userMenu.list"
+            v-model="editor.menus"
           />
 
           <div v-else>
@@ -221,15 +221,19 @@ watch(currentEditmode, () => {
   }
 })
 
-const { data: menus, find: findMenus } = api.service('menus').useFind({
-  query: {},
-})
+const { data: menus, find: findMenus } = api.service('menus').useFind({ query: {} })
 findMenus()
+
+const { find: findTables } = api.service('tables').useFind({ query: {} })
+findTables()
+
+const { find: findForms } = api.service('forms').useFind({ query: {} })
+findForms()
 
 const userMenu = computed(() => menus.value?.[0])
 
 const selectedMenuObject = computed(() => (
-  userMenu.value?.list.find((m) => m._id === editor.selectedMenu)
+  editor.menus?.find((m) => m._id === editor.selectedMenu)
 ))
 
 watch(() => editor.active, () => {
@@ -250,19 +254,9 @@ const components = ref(comps)
 //   })
 // }
 
-const { find: findTables } = api.service('tables').useFind({
-  query: {},
-})
-findTables()
-
-const { find: findForms } = api.service('forms').useFind({
-  query: {},
-})
-findForms()
-
 const route = useRoute()
 
-const { menuUrl, menuTabUrl, schemasUrl } = useUrl()
+const { menuUrl, menuTabUrl, tablesUrl } = useUrl()
 
 const routeMenu = computed(() => (
   userMenu.value?.list.find((m) => m._id === route.params.menuId)

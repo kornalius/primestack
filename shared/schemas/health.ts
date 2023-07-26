@@ -1,4 +1,4 @@
-import { Type} from '@feathersjs/typebox'
+import { Type } from '@feathersjs/typebox'
 
 export const schema = Type.Object(
   {

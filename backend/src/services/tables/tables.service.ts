@@ -2,6 +2,9 @@ import { Application } from '@feathersjs/koa'
 // eslint-disable-next-line import/no-cycle
 import { createService, MongoService } from '@/service'
 import { schema } from '@/shared/schemas/table'
+import { dataValidator } from '@/validators'
+
+dataValidator.addSchema(schema)
 
 const path = 'tables'
 const collection = 'tables'

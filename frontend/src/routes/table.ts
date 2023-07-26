@@ -6,8 +6,8 @@ export default (lazyLoad, patterns) => {
   const mid = patterns.mongoId.string
   return [
     {
-      path: `/schemas/:id(${mid}|create)?`,
-      component: lazyLoad('views/Schema/Main'),
+      path: `/tables/:id(${mid}|create)?`,
+      component: lazyLoad('views/Table/Main'),
       props: (route: RouteLocationNormalized): AnyData => ({
         id: route.params.id !== 'create' ? route.params.id : undefined,
         create: route.params.id === 'create',

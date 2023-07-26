@@ -118,25 +118,29 @@ const selected = ref()
 
 const editor = useAppEditor()
 
-const { data: menus } = api.service('menus').useFind({
-  query: {},
-})
+const { data: menus } = api.service('menus').useFind({ query: {} })
 
 const userMenu = computed(() => menus.value?.[0])
 
-const menu = computed(() => userMenu.value?.list.find((m) => m._id === props.menuId))
+const menu = computed(() => (
+  editor.active
+    ? editor.menus?.find((m) => m._id === props.menuId)
+    : userMenu.value?.list.find((m) => m._id === props.menuId)
+))
 
 const tab = computed(() => (
   menu.value?.tabs.find((t) => t._id === props.tabId)
 ))
 
-const { data: forms } = api.service('forms').useFind({
-  query: {},
-})
+const { data: forms } = api.service('forms').useFind({ query: {} })
 
 const userForm = computed(() => forms.value?.[0])
 
-const form = computed(() => userForm.value?.list.find((f) => f._id === tab.value?.formId))
+const form = computed(() => (
+  editor.active
+    ? editor.forms?.find((f) => f._id === tab.value?.formId)
+    : userForm.value?.list.find((f) => f._id === tab.value?.formId)
+))
 
 const fields = ref([])
 
