@@ -80,18 +80,18 @@ export const tableFieldSchema = Type.Object(
         names: [
           'name',
           'type',
+          'optional',
           'queryable',
-          'slider',
-          'options',
+          'array',
+          'readonly',
         ],
       },
       model: {
         icon: modelIcon,
         names: [
           'format',
-          'array',
-          'optional',
-          'readonly',
+          'options',
+          'slider',
           'multipleOf',
           'min',
           'exclusiveMin',

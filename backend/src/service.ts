@@ -58,12 +58,6 @@ export const reservedFields = [
   '_user',
 ]
 
-export const fieldTypes = [
-  'string',
-  'number',
-  'boolean',
-]
-
 export const createService = (name: string, klass: Newable<AnyData>, options: CreateServiceOptions) => {
   const { schema } = options
 
@@ -198,6 +192,10 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
     { $id: `${schema.$id}Data` }
   )
 
+  validatorForData.removeSchema(`${schema.$id}Data`)
+  validatorForData.removeSchema(`${schema.$id}Patch`)
+  validatorForQuery.removeSchema(`${schema.$id}Query`)
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   type Data = Static<typeof dataSchema>
   const dataValidator = getValidator(dataSchema, validatorForData)
@@ -251,7 +249,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
       // Add additional query properties here
       Type.Object({}, { additionalProperties: false })
     ],
-    { additionalProperties: false }
+    { $id: `${schema.$id}Query`, additionalProperties: false }
   )
   type Query = Static<typeof querySchema>
   const queryValidator = getValidator(querySchema, validatorForQuery)

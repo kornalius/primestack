@@ -13,7 +13,7 @@
         v-model:selected="selected"
         v-bind="tableBinds"
         class="full-height"
-        :schema="fieldsToSchema(form?._fields)"
+        :schema="fieldsToSchema(form?._fields, form?._id)"
         :table-id="form?.tableId"
         :hide-filter="form?.hideFilter"
       />

@@ -8,6 +8,7 @@ import {
 } from '@feathersjs/feathers'
 import { Application as FeathersApplication } from '@feathersjs/koa'
 import { TObject } from '@feathersjs/typebox'
+import { Index } from '@/shared/schema'
 // eslint-disable-next-line import/no-cycle
 import { User } from './services/users/users.service'
 import { ApplicationConfiguration } from './configuration'
@@ -54,13 +55,6 @@ export interface CreateServiceResolvers {
   result?: AnyData
   external?: AnyData
   query?: AnyData
-}
-
-export interface Index {
-  fields: Record<string, number>
-  unique?: boolean
-  sparse?: boolean
-  expireAfterSeconds?: number
 }
 
 export interface CreateServiceHooks {

@@ -52,6 +52,7 @@
     "@feathersjs/transport-commons": "^5.0.6",
     "@feathersjs/typebox": "^5.0.6",
     "dayjs": "^1.11.8",
+    "deep-diff": "^1.0.2",
     "lodash": "^4.17.21",
     "mongodb": "^5.6.0",
     "winston": "^3.9.0"
@@ -59,6 +60,7 @@
   "devDependencies": {
     "@feathersjs/cli": "^5.0.6",
     "@feathersjs/rest-client": "^5.0.6",
+    "@types/deep-diff": "^1.0.2",
     "@types/lodash": "^4.14.195",
     "@types/node": "^20.3.2",
     "@typescript-eslint/eslint-plugin": "^5.60.1",

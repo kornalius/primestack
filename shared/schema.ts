@@ -1,7 +1,13 @@
 import { Static, TSchema, Type } from '@feathersjs/typebox'
-import omit from 'lodash/omit'
-import { tableFieldSchema } from './schemas/table'
+import { tableFieldSchema, tableIndexSchema } from './schemas/table'
 import { AnyData } from './interfaces/commons'
+
+export interface Index {
+  fields: Record<string, number>
+  unique?: boolean
+  sparse?: boolean
+  expireAfterSeconds?: number
+}
 
 export const optionsForSchema = (p: TSchema): unknown[] => {
   if (p.enum) {
@@ -120,7 +126,7 @@ export const defaultValues = (values: AnyData | undefined): AnyData | undefined 
     return undefined
   }
 
-  const nv = {}
+  const nv: AnyData = {}
   Object.keys(values).forEach((k) => {
     const v = values[k]
     if (typeof v === 'function') {
@@ -130,6 +136,14 @@ export const defaultValues = (values: AnyData | undefined): AnyData | undefined 
     }
   })
   return nv
+}
+
+const omit = (obj: AnyData, props: string[]) => {
+  const result = { ...obj }
+  props.forEach(function(prop) {
+    delete result[prop]
+  })
+  return result
 }
 
 export const omitFields = (schema: TSchema, fields: string[]): TSchema => ({
@@ -182,6 +196,14 @@ export const fieldToSchema = (field: TableFieldSchema): TSchema => {
         return Type.Optional(s)
       }
       return s
+
+    case 'boolean':
+      // eslint-disable-next-line no-case-declarations
+      const b = Type.Boolean({})
+      if (field.optional) {
+        return Type.Optional(b)
+      }
+      return b
 
     case 'number':
       // eslint-disable-next-line no-case-declarations
@@ -263,9 +285,19 @@ export const fieldToSchema = (field: TableFieldSchema): TSchema => {
   }
 }
 
-export const fieldsToSchema = (fields: TableFieldSchema[]): TSchema => {
+export const fieldsToSchema = (fields: TableFieldSchema[], id: string): TSchema => {
   return Type.Object((fields || []).reduce((acc, f) => ({
     ...acc,
     [f.name]: fieldToSchema(f),
-  }), {}))
+  }), {}), { $id: id })
 }
+
+type TableIndexSchema = Static<typeof tableIndexSchema>
+
+export const indexesToMongo = (indexes: TableIndexSchema[]): Index[] => (
+  indexes.map((i) => ({
+    fields: { [i.name]: i.order },
+    unique: i.unique,
+    sparse: i.sparse,
+  }))
+)
