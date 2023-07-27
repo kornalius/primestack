@@ -1,92 +1,94 @@
 <template>
-  <q-layout view="hHh lpr lFr">
-    <q-drawer
-      v-if="!editor.active && !form?.hideTable"
-      :model-value="true"
-      class="q-pa-sm q-pr-md"
-      :width="400"
-      side="left"
-      behavior="desktop"
-      show-if-above
-    >
-      <schema-table
-        v-model:selected="selected"
-        v-bind="tableBinds"
-        class="full-height"
-        :schema="fieldsToSchema(form?._fields, form?._id)"
-        :table-id="form?.tableId"
-        :hide-filter="form?.hideFilter"
-      />
-    </q-drawer>
-
-    <q-page-container>
-      <q-page @click="editor.unselectAll()">
-        <div v-if="editor.active" class="row">
-          <div class="q-mb-sm full-width">
-            <div class="row bg-grey-8 items-center q-px-sm">
-              <div class="col">
-                <span class="text-h6 text-white">Form</span>
-              </div>
-
-              <div class="col-auto">
-                <q-toggle
-                  v-model="preview"
-                  class="q-ml-sm text-white"
-                  label="Preview"
-                  left-label
-                  dense
-                />
-
-                <q-toggle
-                  v-model="showPreviewFormData"
-                  class="q-ml-sm text-white"
-                  :disable="!preview"
-                  label="Data"
-                  left-label
-                  dense
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <form-display
-          v-if="!editor.active"
-          v-model="formData"
-          :fields="fields"
-          :components="components"
+  <q-page class="q-pa-md">
+    <q-layout view="hHh lpr lFr">
+      <q-drawer
+        v-if="!editor.active && !form?.hideTable"
+        :model-value="true"
+        class="q-pa-sm q-pr-md"
+        :width="400"
+        side="left"
+        behavior="desktop"
+        show-if-above
+      >
+        <schema-table
+          v-model:selected="selected"
+          v-bind="tableBinds"
+          class="full-height"
+          :schema="fieldsToSchema(form?._fields, form?._id)"
+          :table-id="form?.tableId"
+          :hide-filter="form?.hideFilter"
         />
+      </q-drawer>
 
-        <form-display
-          v-else-if="preview"
-          v-model="previewFormData"
-          :fields="fields"
-          :components="components"
-        />
+      <q-page-container>
+        <q-page @click="editor.unselectAll()">
+          <div v-if="editor.active" class="row">
+            <div class="q-mb-sm full-width">
+              <div class="row bg-grey-8 items-center q-px-sm">
+                <div class="col">
+                  <span class="text-h6 text-white">Form</span>
+                </div>
 
-        <form-editor
-          v-else
-          v-model="fields"
-          :components="components"
-        />
+                <div class="col-auto">
+                  <q-toggle
+                    v-model="preview"
+                    class="q-ml-sm text-white"
+                    label="Preview"
+                    left-label
+                    dense
+                  />
 
-        <div
-          v-if="editor.active && preview && showPreviewFormData"
-          class="q-mt-sm"
-        >
-          <div class="bg-grey-8 q-pl-sm q-mb-sm">
-            <div class="row items-center">
-              <div class="col">
-                <span class="text-h6 text-white">Data</span>
+                  <q-toggle
+                    v-model="showPreviewFormData"
+                    class="q-ml-sm text-white"
+                    :disable="!preview"
+                    label="Data"
+                    left-label
+                    dense
+                  />
+                </div>
               </div>
             </div>
           </div>
 
-          <pre>{{ previewFormData }}</pre>
-        </div>
-      </q-page>
-    </q-page-container>
-  </q-layout>
+          <form-display
+            v-if="!editor.active"
+            v-model="formData"
+            :fields="fields"
+            :components="components"
+          />
+
+          <form-display
+            v-else-if="preview"
+            v-model="previewFormData"
+            :fields="fields"
+            :components="components"
+          />
+
+          <form-editor
+            v-else
+            v-model="fields"
+            :components="components"
+          />
+
+          <div
+            v-if="editor.active && preview && showPreviewFormData"
+            class="q-mt-sm"
+          >
+            <div class="bg-grey-8 q-pl-sm q-mb-sm">
+              <div class="row items-center">
+                <div class="col">
+                  <span class="text-h6 text-white">Data</span>
+                </div>
+              </div>
+            </div>
+
+            <pre>{{ previewFormData }}</pre>
+          </div>
+        </q-page>
+      </q-page-container>
+    </q-layout>
+  </q-page>
 </template>
 
 <script setup lang="ts">

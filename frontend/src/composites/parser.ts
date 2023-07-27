@@ -1,7 +1,5 @@
 import dayjs from 'dayjs'
 
-type ParserFunction = { (string: string): string | null }
-
 const patterns = {
   mongoId: {
     string: '[a-f\\d]{24}',
@@ -10,10 +8,6 @@ const patterns = {
   phone: {
     string: '(\\d{3})\\s\\d{3}-\\d{4}',
     regex: /^\(\d{3}\)\s\d{3}-\d{4}$/g,
-  },
-  sin: {
-    string: '\\d{3}\\s\\d{3}\\s\\d{3}',
-    regex: /^\d{3}\s\d{3}\s\d{3}$/g,
   },
   alphaAndDiacritic: {
     string: '[a-zA-Z\\u00C0-\\u017F]+',
@@ -95,22 +89,6 @@ export const phone = (str: string | number): string | null => {
 }
 
 /**
- * Checks if a string matches a SIN
- *
- * @param {string} str
- *
- * @returns {boolean}
- */
-export const sin = (str: string | null | number): string | null => {
-  const newStr = str?.toString().replace(' ', '')
-  if (newStr) {
-    const s = `${newStr.substring(0, 3)} ${newStr.substring(3, 6)} ${newStr.substring(6, 9)}`
-    return s.match(patterns.sin.regex) ? s : null
-  }
-  return 'valid'
-}
-
-/**
  * Checks if a string matches a UUID
  *
  * @param {string} str
@@ -149,20 +127,10 @@ export const birthday = (str: string): string | null => {
   return 'valid'
 }
 
-export const useParser = (): {
-  numeric: ParserFunction
-  alpha: ParserFunction
-  phone: ParserFunction
-  sin: ParserFunction
-  mongoId: ParserFunction
-  unaccented: ParserFunction
-  email: ParserFunction
-  birthday: ParserFunction
-} => ({
+export const useParser = () => ({
   numeric,
   alpha,
   phone,
-  sin,
   mongoId,
   unaccented,
   email,

@@ -18,7 +18,7 @@ export default function (app: Application): void {
     created: true,
     updated: true,
     user: true,
-    // authentication: true,
+    authentication: true,
     methods: ['find', 'get', 'create', 'patch', 'remove'],
   }).init(app, {})
 }

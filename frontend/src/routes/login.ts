@@ -6,7 +6,7 @@ export default (lazyLoad, patterns) => ([
   {
     path: '/login',
     name: 'Login',
-    component: lazyLoad('views/Login/Main'),
+    component: lazyLoad('views/Auths/Login'),
     props: (route: RouteLocationNormalized): AnyData => ({
       code: route.query.code,
       sessionState: route.query.session_state,
@@ -16,6 +16,6 @@ export default (lazyLoad, patterns) => ([
   {
     path: '/logout',
     name: 'Logout',
-    component: lazyLoad('views/Logout/Main'),
+    component: lazyLoad('views/Auths/Logout'),
   },
 ])

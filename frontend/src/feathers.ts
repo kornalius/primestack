@@ -1,6 +1,7 @@
 import { feathers, HookContext } from '@feathersjs/feathers'
 import { stripSlashes } from '@feathersjs/commons'
 import socketio from '@feathersjs/socketio-client'
+import authentication from '@feathersjs/authentication-client'
 import io from 'socket.io-client'
 import useSnacks from '@/features/Snacks/composites'
 import { getEnv } from './utils/variables'
@@ -114,11 +115,12 @@ const errorHandler = (context: HookContext): HookContext => {
 
 export const feathersClient = feathers()
   .configure(socketio(socket, { timeout: SOCKET_TIMEOUT }))
+  .configure(authentication({ storage: window.localStorage }))
   .hooks({
     before: {
       all: [
-        // hooks.authentication(),
-        // hooks.populateHeader(),
+        hooks.authentication(),
+        hooks.populateHeader(),
       ],
     },
     error: {

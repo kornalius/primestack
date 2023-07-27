@@ -1,6 +1,7 @@
 <template>
   <q-layout view="lHh LpR lff">
     <q-header
+      v-if="auth.authenticated"
       class="bg-dark text-white"
       :style="{ backgroundColor: editor.active ? '#401a00 !important' : '' }"
     >
@@ -37,10 +38,35 @@
           left-label
           keep-color
         />
+
+        <q-btn
+          v-if="auth.authenticated"
+          icon="mdi-account-edit"
+          aria-label="Menu"
+          flat
+          dense
+          round
+        >
+          <q-menu>
+            <q-list>
+              <q-item clickable @click="auth.logout">
+                <q-item-section avatar>
+                  <q-icon name="mdi-logout" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>
+                    Logout
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
       </q-toolbar>
     </q-header>
 
     <q-drawer
+      v-if="auth.authenticated"
       class="bg-dark text-white"
       :model-value="true"
       :width="leftDrawerExpanded ? 250 : 50"
@@ -163,14 +189,15 @@
       </q-list>
     </q-drawer>
 
-    <app-properties :components="components" />
+    <app-properties
+      v-if="auth.authenticated"
+      :components="components"
+    />
 
-    <q-page-container style="padding-bottom: 0 !important;">
-      <q-page class="q-ma-md">
-        <snacks-display />
+    <q-page-container>
+      <snacks-display class="q-pt-md" />
 
-        <router-view />
-      </q-page>
+      <router-view />
     </q-page-container>
   </q-layout>
 </template>
@@ -179,10 +206,11 @@
 import {
   computed, onMounted, ref, watch,
 } from 'vue'
-import { useRoute } from 'vue-router'
-// import useSnacks from '@/features/Snacks/composites'
+import { useRoute, useRouter } from 'vue-router'
+import useSnacks from '@/features/Snacks/composites'
 import SnacksDisplay from '@/features/Snacks/components/Snacks.vue'
 import useAppEditor from '@/features/App/store'
+import useAuth from '@/features/Auth/store'
 import useFormElements from '@/features/Forms/composites'
 import TabsEditor from '@/features/Tabs/components/TabsEditor.vue'
 import MenusEditor from '@/features/Menus/components/MenusEditor.vue'
@@ -192,13 +220,13 @@ import { useFeathers } from '@/composites/feathers'
 
 const { api } = useFeathers()
 
-// const snacks = useSnacks()
+const snacks = useSnacks()
 
 onMounted(() => {
-  // snacks.pushError('Error, this is an error')
-  // snacks.pushWarn('Warning, this is a warning')
-  // snacks.pushInfo('Info, this is an info')
-  // snacks.pushSuccess('Success, this is a success')
+  snacks.pushError('Error, this is an error')
+  snacks.pushWarn('Warning, this is a warning')
+  snacks.pushInfo('Info, this is an info')
+  snacks.pushSuccess('Success, this is a success')
 })
 
 const version = import.meta.env.PACKAGE_VERSION
@@ -221,14 +249,7 @@ watch(currentEditmode, () => {
   }
 })
 
-const { data: menus, find: findMenus } = api.service('menus').useFind({ query: {} })
-findMenus()
-
-const { find: findTables } = api.service('tables').useFind({ query: {} })
-findTables()
-
-const { find: findForms } = api.service('forms').useFind({ query: {} })
-findForms()
+const menus = ref()
 
 const userMenu = computed(() => menus.value?.[0])
 
@@ -263,4 +284,33 @@ const routeMenu = computed(() => (
 ))
 
 const routeTabs = computed(() => routeMenu.value?.tabs)
+
+/**
+ * Auth
+ */
+
+const loadUserData = async () => {
+  menus.value = (await api.service('menus').find({ query: {} })).data
+  api.service('tables').find({ query: {} })
+  api.service('forms').find({ query: {} })
+}
+
+const auth = useAuth()
+
+onMounted(() => {
+  auth.reAuthenticate()
+  if (auth.authenticated) {
+    loadUserData()
+  }
+})
+
+const router = useRouter()
+
+watch(() => auth.authenticated, () => {
+  if (auth.authenticated) {
+    loadUserData()
+  } else {
+    router.push('/login')
+  }
+})
 </script>

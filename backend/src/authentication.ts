@@ -22,5 +22,6 @@ export const authentication = (app: Application) => {
   authentication.register('auth0', new OAuthStrategy())
 
   app.use('authentication', authentication)
+
   app.configure(oauth())
 }

@@ -1,7 +1,6 @@
 <template>
   <div
     v-if="snacks.length"
-    class="q-mb-sm"
     style="margin-top: -16px;"
   >
     <transition

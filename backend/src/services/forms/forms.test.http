@@ -1,13 +1,29 @@
+// Login
+POST http://localhost:3030/authentication
+Content-Type: application/json
+
+{
+  "strategy": "local",
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+> {% client.global.set("token", response.body.accessToken); %}
+###
+
 // List forms
 GET http://localhost:3030/forms
 Accept: application/json
 Content-Type: application/json
+Authorization: {{token}}
+
 ###
 
 // Create forms
 POST http://localhost:3030/forms
 Accept: application/json
 Content-Type: application/json
+Authorization: {{token}}
 
 {
   "list": [
@@ -71,6 +87,7 @@ Content-Type: application/json
 PATCH http://localhost:3030/forms/{{formId}}
 Accept: application/json
 Content-Type: application/json
+Authorization: {{token}}
 
 {
   "_id": "{{ formId }}",

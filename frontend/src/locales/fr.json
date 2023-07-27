@@ -1,2 +1,10 @@
 {
+  "field_errors": {
+    "required": "Champ requis",
+    "numeric": "Doit être numérique",
+    "alpha": "Doit être des lettres",
+    "email": "Courriel invalide",
+    "max": "Ne peut dépasser {count} caractères",
+    "min": "Doit être au moins {count} caractères"
+  }
 }

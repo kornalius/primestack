@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <q-page class="q-pa-md">
     <q-tabs
       v-model="tab"
       align="justify"
@@ -103,7 +103,7 @@
         </div>
       </q-tab-panel>
     </q-tab-panels>
-  </div>
+  </q-page>
 </template>
 
 <script setup lang="ts">
@@ -117,8 +117,8 @@ import { useFeathers } from '@/composites/feathers'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import QueryEditor from '@/features/Query/components/Editor/QueryEditor.vue'
-import SchemaEditor from '@/features/Tables/components/Editor/TableEditor.vue'
 import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
+import SchemaEditor from '@/features/Tables/components/Editor/TableEditor.vue'
 
 /**
  * Properties

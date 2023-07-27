@@ -11,6 +11,9 @@ export default (lazyLoad, patterns) => {
       props: (route: RouteLocationNormalized): AnyData => ({
         menuId: route.params.menuId,
       }),
+      meta: {
+        requiresAuth: true,
+      },
     },
     {
       path: `/menus/:menuId(${mid})/:tabId(${mid})/:id(${mid}|create)?`,
@@ -21,6 +24,9 @@ export default (lazyLoad, patterns) => {
         id: route.params.id !== 'create' ? route.params.id : undefined,
         create: route.params.id === 'create',
       }),
+      meta: {
+        requiresAuth: true,
+      },
     },
   ]
 }

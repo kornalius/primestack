@@ -1,13 +1,29 @@
+// Login
+POST http://localhost:3030/authentication
+Content-Type: application/json
+
+{
+  "strategy": "local",
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+> {% client.global.set("token", response.body.accessToken); %}
+###
+
 // List menus
 GET http://localhost:3030/menus
 Accept: application/json
 Content-Type: application/json
+Authorization: {{token}}
+
 ###
 
 // Create menus
 POST http://localhost:3030/menus
 Accept: application/json
 Content-Type: application/json
+Authorization: {{token}}
 
 {
   "list": [
@@ -47,6 +63,7 @@ Content-Type: application/json
 PATCH http://localhost:3030/menus/{{menuId}}
 Accept: application/json
 Content-Type: application/json
+Authorization: {{token}}
 
 {
   "_id": "{{menuId}}",

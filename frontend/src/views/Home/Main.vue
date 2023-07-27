@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <q-page class="q-pa-md">
     <div class="text-h2 q-mb-md">
       Home
     </div>
@@ -12,7 +12,7 @@
       color="primary"
       size="x-large"
     />
-  </div>
+  </q-page>
 </template>
 
 <script setup lang="ts">

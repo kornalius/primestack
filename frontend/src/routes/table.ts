@@ -12,6 +12,9 @@ export default (lazyLoad, patterns) => {
         id: route.params.id !== 'create' ? route.params.id : undefined,
         create: route.params.id === 'create',
       }),
+      meta: {
+        requiresAuth: true,
+      },
     },
   ]
 }

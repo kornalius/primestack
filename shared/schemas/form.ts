@@ -136,7 +136,6 @@ export const formSchema = Type.Object(
 export const schema = Type.Object(
   {
     _id: Type.String({ objectid: true }),
-    userId: Type.Optional(Type.String({ objectid: true })),
     list: Type.Array(formSchema),
   },
   { $id: 'Form', additionalProperties: false },

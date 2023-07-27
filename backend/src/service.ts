@@ -49,12 +49,11 @@ export class MongoService<ServiceParams extends Params = Params> extends MongoDB
 export const reservedFields = [
   '_id',
   'createdAt',
-  'createdBy',
+  // 'createdBy',
   'updatedAt',
   'updatedBy',
   'deletedAt',
   'deletedBy',
-  'userId',
   '_user',
 ]
 
@@ -92,7 +91,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
   if (options.user) {
     schema.properties = {
       ...schema.properties,
-      userId: Type.Optional(Type.String({ objectid: true })),
+      createdBy: Type.Optional(Type.String({ objectid: true })),
       _user: Type.Optional(Type.Ref(userSchema)),
     }
   }
@@ -101,17 +100,9 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
    * Custom resolvers
    */
 
-  const userIdResolver = options.user
+  const limitToUserResolver = options.user
     ? {
-      userId: async (value: AnyData, record: AnyData, context: HookContext) => (
-        // Associate the currently authenticated user
-        context.params?.user?._id
-      ),
-    } : {}
-
-  const limitToUserIdResolver = options.user
-    ? {
-      userId: async (value: AnyData, query: AnyData, context: HookContext) => {
+      createdBy: async (value: AnyData, query: AnyData, context: HookContext) => {
         if (context.params?.user) {
           return context.params.user._id
         }
@@ -150,7 +141,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
       _user: virtual(async (record: AnyData, context: HookContext) => {
         if (record.userId) {
           // Populate the user associated via `userId`
-          return context.app.service('users').get(record.userId)
+          return context.app.service('users').get(record.createdBy)
         }
         return undefined
       }),
@@ -202,7 +193,6 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
   const dataResolver = resolve<TSType, HookContext>(
     {
       ...(options.resolvers?.data?.$create || options.resolvers?.data || {}),
-      ...userIdResolver as AnyData,
       ...createdResolver as AnyData,
       ...nullifyDeletedAtResolver as AnyData,
     }
@@ -238,7 +228,6 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
     ...(options.created ? ['createdAt', 'createdBy'] : []),
     ...(options.updated ? ['updatedAt', 'updatedBy'] : []),
     ...(options.softDelete ? ['deletedAt', 'deletedBy'] : []),
-    ...(options.user ? ['userId'] : []),
   ]
 
   // Schema for allowed query properties
@@ -256,7 +245,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
   const queryResolver = resolve<Query, HookContext>(
     {
       ...(options.resolvers?.query || {}),
-      ...limitToUserIdResolver as AnyData,
+      ...limitToUserResolver as AnyData,
       ...limitToNonDeletedResolver as AnyData,
     }
   )

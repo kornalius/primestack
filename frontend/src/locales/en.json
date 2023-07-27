@@ -1,2 +1,10 @@
 {
+  "field_errors": {
+    "required": "Required",
+    "numeric": "Must be digits only",
+    "alpha": "Must be letters only",
+    "email": "Invalid email",
+    "max": "Cannot exceed {count} characters",
+    "min": "Cannot be less than {count} characters"
+  }
 }
