@@ -1,0 +1,98 @@
+import { QDate } from 'quasar'
+import { StringEnum, Type } from '@feathersjs/typebox'
+import { contentIcon, modelIcon, styleIcon } from '@/shared/icons'
+import { TFormComponent } from '@/shared/interfaces/forms'
+import { properties, commonProperties } from './common'
+
+export default {
+  type: 'date',
+  icon: 'mdi-calendar',
+  label: 'Date',
+  component: QDate,
+  schema: properties([
+    commonProperties.state,
+    Type.Object({
+      modelValue: Type.String(),
+      landscape: Type.Boolean(),
+      outlined: Type.Boolean(),
+      yearsInMonthView: Type.Boolean(),
+      title: Type.String(),
+      subTitle: Type.String(),
+      todayBtn: Type.Boolean(),
+      minimal: Type.Boolean(),
+      mask: Type.String(),
+      calendar: StringEnum(['gregorian', 'persian']),
+      defaultYearMonth: Type.String(),
+      defaultView: StringEnum(['Calendar', 'Months', 'Years']),
+      firstDayOfWeek: Type.Number(),
+      multiple: Type.Boolean(),
+      range: Type.Boolean(),
+      emitImmediately: Type.Boolean(),
+      navigationMinYearMonth: Type.String(),
+      navigationMaxYearMonth: Type.String(),
+      noUnset: Type.Boolean(),
+      color: Type.String({ color: true }),
+      textColor: Type.String({ color: true }),
+      square: Type.Boolean(),
+      flat: Type.Boolean(),
+      bordered: Type.Boolean(),
+      hideBottomSpace: Type.Boolean(),
+    }),
+    commonProperties.style,
+  ]),
+  defaultValues: {
+    dense: true,
+    outlined: true,
+    calendar: 'gregorian',
+    defaultView: 'Calendar',
+    hideBottomSpace: true,
+  },
+  categories: {
+    content: {
+      icon: contentIcon,
+      names: [
+        'name',
+        'disable',
+        'readonly',
+        'title',
+        'subTitle',
+        'calendar',
+        'defaultView',
+        'defaultYearMonth',
+        'yearsInMonthView',
+        'firstDayOfWeek',
+        'navigationMinYearMonth',
+        'navigationMaxYearMonth',
+      ],
+    },
+    model: {
+      icon: modelIcon,
+      names: [
+        'modelValue',
+        'emitImmediately',
+        'noUnset',
+        'mask',
+        'multiple',
+        'range',
+      ],
+    },
+    style: {
+      icon: styleIcon,
+      names: [
+        'dense',
+        'todayBtn',
+        'landscape',
+        'outlined',
+        'minimal',
+        'color',
+        'textColor',
+        'square',
+        'flat',
+        'bordered',
+        'hideBottomSpace',
+        'padding',
+        'margin',
+      ],
+    },
+  },
+} as TFormComponent

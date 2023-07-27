@@ -15,6 +15,8 @@ export interface TFormComponent {
   col?: boolean
   // label for the component
   label: string
+  // component to use
+  component?: unknown
   // icon for the component
   icon: string
   // don't create a key for preview data
