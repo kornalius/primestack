@@ -3,7 +3,7 @@ import chip from './chip'
 import icon from './icon'
 import image from './image'
 import video from './video'
-import text from './text'
+import input from './input'
 import select from './select'
 import table from './table'
 import color from './color'
@@ -38,7 +38,7 @@ export const components = [
   progress,
   separator,
   skeleton,
-  text,
+  input,
   select,
   table,
   color,

@@ -9,6 +9,7 @@
           hide-bottom-space
           outlined
           dense
+          @keydown="editor.preventSystemUndoRedo"
         />
       </div>
     </div>
@@ -22,6 +23,7 @@
           hide-bottom-space
           outlined
           dense
+          @keydown="editor.preventSystemUndoRedo"
         />
       </div>
 
@@ -35,6 +37,7 @@
           hide-bottom-space
           outlined
           dense
+          @keydown="editor.preventSystemUndoRedo"
         />
       </div>
     </div>
@@ -48,6 +51,7 @@
           hide-bottom-space
           outlined
           dense
+          @keydown="editor.preventSystemUndoRedo"
         />
       </div>
     </div>
@@ -57,6 +61,7 @@
 <script setup lang="ts">
 import { useModelValue } from '@/composites/prop'
 import { AnyData } from '@/shared/interfaces/commons'
+import useAppEditor from '@/features/App/store'
 
 const props = defineProps<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -70,6 +75,8 @@ const emit = defineEmits<{
 }>()
 
 const value = useModelValue(props, emit)
+
+const editor = useAppEditor()
 </script>
 
 <style scoped lang="sass">

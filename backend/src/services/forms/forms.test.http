@@ -32,7 +32,7 @@ Content-Type: application/json
               "_fields": [
                 {
                   "_id": "64b40d6aec6b76cac94a91e3",
-                  "_type": "text",
+                  "_type": "input",
                   "name": "name",
                   "label": "name",
                   "dense": true,
@@ -96,7 +96,7 @@ Content-Type: application/json
               "_fields": [
                 {
                   "_id": "64b40d6aec6b76cac94a91e3",
-                  "_type": "text",
+                  "_type": "input",
                   "name": "name",
                   "label": "name",
                   "dense": true,

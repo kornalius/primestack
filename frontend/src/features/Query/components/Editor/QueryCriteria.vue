@@ -10,6 +10,7 @@
         clearable
         dense
         outlined
+        @keydown="editor.preventSystemUndoRedo"
       />
     </div>
 
@@ -22,6 +23,7 @@
         options-dense
         dense
         outlined
+        @keydown="editor.preventSystemUndoRedo"
       />
     </div>
 
@@ -34,6 +36,7 @@
           clearable
           dense
           outlined
+          @keydown="editor.preventSystemUndoRedo"
         />
 
         <q-input
@@ -43,6 +46,7 @@
           label="Value"
           dense
           outlined
+          @keydown="editor.preventSystemUndoRedo"
         />
 
         <q-checkbox
@@ -62,6 +66,7 @@ import { useModelValue } from '@/composites/prop'
 import { tableFieldSchema } from '@/shared/schemas/table'
 import { defaultValueForSchema } from '@/shared/schema'
 import { QueryCriteria } from '@/shared/interfaces/query'
+import useAppEditor from '@/features/App/store'
 import TableFieldSelect from '@/features/Fields/components/TableFieldSelect.vue'
 
 type TableFieldSchema = Static<typeof tableFieldSchema>
@@ -79,6 +84,8 @@ const emit = defineEmits<{
 }>()
 
 const field = useModelValue(props, emit)
+
+const editor = useAppEditor()
 
 const selectedField = computed(() => (
   props.fields.find((f) => f._id === field.value.fieldId)

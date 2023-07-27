@@ -5,9 +5,9 @@ import { TFormComponent } from '@/shared/interfaces/forms'
 import { properties, commonProperties } from './common'
 
 export default {
-  type: 'text',
+  type: 'input',
   icon: 'mdi-form-textbox',
-  label: 'Text',
+  label: 'Input',
   component: QInput,
   schema: properties([
     commonProperties.state,

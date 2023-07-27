@@ -6,6 +6,7 @@
     :outlined="property"
     :disable="disabled"
     dense
+    @keydown="editor.preventSystemUndoRedo"
   >
     <template #append>
       <q-icon
@@ -26,6 +27,7 @@
             autofocus
             autogrow
             dense
+            @keydown="editor.preventSystemUndoRedo"
           />
         </q-popup-edit>
       </q-icon>
@@ -66,6 +68,7 @@
     :disable="disabled"
     type="number"
     dense
+    @keydown="editor.preventSystemUndoRedo"
   />
 
   <date-field
@@ -76,6 +79,7 @@
     :disable="disabled"
     hide-bottom-space
     dense
+    @keydown="editor.preventSystemUndoRedo"
   />
 
   <time-field
@@ -86,6 +90,7 @@
     :disable="disabled"
     hide-bottom-space
     dense
+    @keydown="editor.preventSystemUndoRedo"
   />
 
   <q-select
@@ -105,6 +110,7 @@
     emit-value
     map-options
     options-dense
+    @keydown="editor.preventSystemUndoRedo"
   />
 
   <q-btn-toggle
@@ -129,6 +135,7 @@
     dense
     options-dense
     clearable
+    @keydown="editor.preventSystemUndoRedo"
   />
 
   <color-field
@@ -139,6 +146,7 @@
     :disable="disabled"
     quasar-palette
     dense
+    @keydown="editor.preventSystemUndoRedo"
   />
 
   <service-select
@@ -153,6 +161,7 @@
     options-dense
     create-new
     @create="$emit('create-new')"
+    @keydown="editor.preventSystemUndoRedo"
   />
 
   <table-select
@@ -165,6 +174,7 @@
     options-dense
     create-new
     @create="$emit('create-new')"
+    @keydown="editor.preventSystemUndoRedo"
   />
 
   <div
@@ -196,6 +206,7 @@
         style="width: 600px; height: 400px;"
         lang-json
         autofocus
+        @keydown="editor.preventSystemUndoRedo"
       />
     </q-popup-edit>
   </div>
@@ -396,6 +407,7 @@ import { defaultValueForSchema, getTypeFor, optionsForSchema } from '@/shared/sc
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { useQuery } from '@/features/Query/composites'
 import { useFeathers } from '@/composites/feathers'
+import useAppEditor from '@/features/App/store'
 import PaddingEditor from '@/features/Fields/components/PaddingEditor.vue'
 import MarginEditor from '@/features/Fields/components/MarginEditor.vue'
 import IconField from '@/features/Fields/components/IconField.vue'
@@ -577,4 +589,6 @@ const disabledLabel = computed((): string | undefined => (
     ? props.schema?.disable?.(value.value, props.parent)
     : undefined
 ))
+
+const editor = useAppEditor()
 </script>

@@ -8,3 +8,15 @@ hotkeys('ctrl+s', 'edit', (e) => {
   editor.save()
   e.preventDefault()
 })
+
+hotkeys('ctrl+z', 'edit', (e) => {
+  const editor = useAppEditor()
+  editor.undo()
+  e.preventDefault()
+})
+
+hotkeys('ctrl+shift+z', 'edit', (e) => {
+  const editor = useAppEditor()
+  editor.redo()
+  e.preventDefault()
+})

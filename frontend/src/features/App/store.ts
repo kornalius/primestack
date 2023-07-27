@@ -1,9 +1,16 @@
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
+import debounce from 'lodash/debounce'
 import { defineStore } from 'pinia'
 import hotkeys from 'hotkeys-js'
 import { useFeathers } from '@/composites/feathers'
 import cloneDeep from 'lodash/cloneDeep'
 import useSnacks from '@/features/Snacks/composites'
+
+interface Snapshot {
+  menus: unknown[]
+  forms: unknown[]
+  tables: unknown[]
+}
 
 export default defineStore('app-editor', () => {
   const states = ref({
@@ -19,6 +26,9 @@ export default defineStore('app-editor', () => {
     menus: [],
     forms: [],
     tables: [],
+    origSnapshot: {} as Snapshot,
+    undoPtr: 0,
+    undoStack: [] as Snapshot[],
   })
 
   const active = computed(() => states.value.active)
@@ -124,18 +134,59 @@ export default defineStore('app-editor', () => {
     states.value.selectedTableField === id
   )
 
+  const maxUndoStack = 25
+
+  const loadFromStore = () => {
+    const { api } = useFeathers()
+
+    return {
+      userMenus: api.service('menus').findOneInStore({ query: {} }),
+      userForms: api.service('forms').findOneInStore({ query: {} }),
+      userTables: api.service('tables').findOneInStore({ query: {} }),
+    }
+  }
+
+  const saveToStore = (snapshot: Snapshot): void => {
+    const { userMenus, userForms, userTables } = loadFromStore()
+
+    if (snapshot.menus && userMenus.value) {
+      userMenus.value.list = snapshot.menus
+    }
+    if (snapshot.forms && userForms.value) {
+      userForms.value.list = snapshot.forms
+    }
+    if (snapshot.tables && userTables.value) {
+      userTables.value.list = snapshot.tables
+    }
+
+    states.value.menus = snapshot.menus
+    states.value.forms = snapshot.forms
+    states.value.tables = snapshot.tables
+  }
+
+  const snapshot = (): Snapshot => (
+    {
+      menus: cloneDeep(states.value.menus),
+      forms: cloneDeep(states.value.forms),
+      tables: cloneDeep(states.value.tables),
+    }
+  )
+
+  const clearUndoStack = (): void => {
+    states.value.undoStack = []
+    states.value.undoPtr = 0
+  }
+
   const startEdit = (): void => {
     states.value.active = true
 
-    const { api } = useFeathers()
-
-    const userMenus = api.service('menus').findOneInStore({ query: {} })
-    const userForms = api.service('forms').findOneInStore({ query: {} })
-    const userTables = api.service('tables').findOneInStore({ query: {} })
+    const { userMenus, userForms, userTables } = loadFromStore()
 
     states.value.menus = cloneDeep(userMenus.value?.list)
     states.value.forms = cloneDeep(userForms.value?.list)
     states.value.tables = cloneDeep(userTables.value?.list)
+
+    snapshot()
 
     hotkeys.setScope('edit')
   }
@@ -145,34 +196,118 @@ export default defineStore('app-editor', () => {
     unselectMenu()
     unselectTable()
     states.value.selected = undefined
+    clearUndoStack()
     hotkeys.setScope('app')
   }
 
-  const save = (): void => {
+  const reset = (): void => {
+    saveToStore(states.value.origSnapshot)
+    states.value.origSnapshot = {} as Snapshot
+  }
+
+  const save = async (): Promise<void> => {
     const { api } = useFeathers()
 
-    const userMenus = api.service('menus').findOneInStore({ query: {} })
-    const userForms = api.service('forms').findOneInStore({ query: {} })
-    const userTables = api.service('tables').findOneInStore({ query: {} })
+    const { userMenus, userForms, userTables } = loadFromStore()
 
-    api.service('menus').patch(userMenus.value._id, {
-      ...userMenus.value,
-      list: states.value.menus,
-    })
+    states.value.menus = cloneDeep(
+      await api.service('menus').patch(userMenus.value._id, {
+        ...userMenus.value,
+        list: states.value.menus,
+      }),
+    )
 
-    api.service('tables').patch(userTables.value._id, {
-      ...userTables.value,
-      list: states.value.tables,
-    })
+    states.value.tables = cloneDeep(
+      await api.service('tables').patch(userTables.value._id, {
+        ...userTables.value,
+        list: states.value.tables,
+      }),
+    )
 
-    api.service('forms').patch(userForms.value._id, {
-      ...userForms.value,
-      list: states.value.forms,
-    })
+    states.value.forms = cloneDeep(
+      await api.service('forms').patch(userForms.value._id, {
+        ...userForms.value,
+        list: states.value.forms,
+      }),
+    )
 
     const snacks = useSnacks()
     snacks.pushSuccess('Saved successfully')
   }
+
+  const snap = debounce(() => {
+    if (states.value.undoStack.length > maxUndoStack) {
+      states.value.undoStack.shift()
+    }
+    states.value.undoStack = states.value.undoStack.slice(0, states.value.undoPtr + 1)
+    states.value.undoStack.push(snapshot())
+    states.value.undoPtr = states.value.undoStack.length - 1
+  }, 250)
+
+  let stopWatchHandle
+
+  const startWatch = (): void => {
+    if (!stopWatchHandle) {
+      stopWatchHandle = watch([
+        () => states.value.menus,
+        () => states.value.forms,
+        () => states.value.tables,
+      ], () => {
+        snap()
+      }, { deep: true })
+    }
+  }
+
+  const cancelWatch = (): void => {
+    if (stopWatchHandle) {
+      stopWatchHandle()
+    }
+    stopWatchHandle = undefined
+  }
+
+  const canUndo = computed(() => (
+    states.value.undoPtr > 0
+  ))
+
+  const undo = (): boolean => {
+    if (canUndo.value) {
+      cancelWatch()
+      states.value.undoPtr -= 1
+      saveToStore(cloneDeep(states.value.undoStack[states.value.undoPtr]))
+      setTimeout(startWatch, 100)
+      return true
+    }
+    return false
+  }
+
+  const canRedo = computed(() => (
+    states.value.undoPtr < states.value.undoStack.length - 1
+  ))
+
+  const redo = (): boolean => {
+    if (canRedo.value) {
+      cancelWatch()
+      states.value.undoPtr += 1
+      saveToStore(cloneDeep(states.value.undoStack[states.value.undoPtr]))
+      setTimeout(startWatch, 100)
+      return true
+    }
+    return false
+  }
+
+  const preventSystemUndoRedo = (e: KeyboardEvent) => {
+    if (states.value.active) {
+      if (e.ctrlKey && e.shiftKey && e.key === 'Z') {
+        redo()
+        e.preventDefault()
+      } else if (e.ctrlKey && e.key === 'z') {
+        undo()
+        e.preventDefault()
+      }
+    }
+  }
+
+  startWatch()
 
   return {
     states,
@@ -212,5 +347,12 @@ export default defineStore('app-editor', () => {
     forms,
     tables,
     save,
+    reset,
+    snap,
+    canUndo,
+    undo,
+    canRedo,
+    redo,
+    preventSystemUndoRedo,
   }
 })
