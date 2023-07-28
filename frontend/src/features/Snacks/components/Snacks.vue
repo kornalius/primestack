@@ -26,11 +26,11 @@
 </template>
 
 <script setup lang="ts">
-import useSnacks from '@/features/Snacks/composites'
+import useSnacks from '@/features/Snacks/store'
 
 const {
   snacks,
   snackClass,
-  remove: removeSnack,
+  removeSnack,
 } = useSnacks()
 </script>

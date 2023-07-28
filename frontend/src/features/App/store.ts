@@ -4,7 +4,7 @@ import { defineStore } from 'pinia'
 import hotkeys from 'hotkeys-js'
 import { useFeathers } from '@/composites/feathers'
 import cloneDeep from 'lodash/cloneDeep'
-import useSnacks from '@/features/Snacks/composites'
+import useSnacks from '@/features/Snacks/store'
 
 interface Snapshot {
   menus: unknown[]

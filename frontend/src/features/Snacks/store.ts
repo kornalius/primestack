@@ -3,64 +3,92 @@ import { defineStore } from 'pinia'
 import hexObjectId from 'hex-object-id'
 import { Snack } from '@/shared/interfaces/snacks'
 
-export default defineStore('snacks', () => {
-  const snackStates = ref([])
+const hideDelay = 5000
 
-  const snacks = computed(() => snackStates.value)
-  const count = computed(() => snackStates.value.length)
+export default defineStore('snacks', () => {
+  const states = ref([])
+
+  const snacks = computed(() => states.value)
+  const count = computed(() => states.value.length)
+
+  const removeAfter = (id: string, delay: number): void => {
+    setTimeout(() => {
+      const idx = states.value.findIndex((s) => s.id === id)
+      if (idx !== -1) {
+        states.value.splice(idx, 1)
+      }
+    }, delay)
+  }
 
   const pushSnack = (payload: Snack): void => {
-    snackStates.value.push({
+    const id = hexObjectId()
+    states.value.push({
       ...payload,
-      id: hexObjectId(),
+      id,
     })
+    if (payload.level !== 'Error') {
+      removeAfter(id, hideDelay)
+    }
   }
 
-  const pushWarn = (payload: Snack): void => {
-    snackStates.value.push({
-      ...payload,
+  const pushWarn = (message: string): void => {
+    const id = hexObjectId()
+    states.value.push({
       level: 'Warning',
-      id: hexObjectId(),
+      message,
+      id,
     })
+    removeAfter(id, hideDelay)
   }
 
-  const pushError = (payload: Snack): void => {
-    snackStates.value.push({
-      ...payload,
+  const pushError = (message: string): void => {
+    const id = hexObjectId()
+    states.value.push({
       level: 'Error',
-      id: hexObjectId(),
+      message,
+      id,
     })
   }
 
-  const pushInfo = (payload: Snack): void => {
-    snackStates.value.push({
-      ...payload,
+  const pushInfo = (message: string): void => {
+    const id = hexObjectId()
+    states.value.push({
       level: 'Info',
-      id: hexObjectId(),
+      message,
+      id,
     })
+    removeAfter(id, hideDelay)
   }
 
-  const pushSuccess = (payload: Snack): void => {
-    snackStates.value.push({
-      ...payload,
+  const pushSuccess = (message: string): void => {
+    const id = hexObjectId()
+    states.value.push({
       level: 'Success',
-      id: hexObjectId(),
+      message,
+      id,
     })
-  }
-
-  const popSnack = () => {
-    snackStates.value.slice(1)
+    removeAfter(id, hideDelay)
   }
 
   const removeSnack = (id: string) => {
-    const idx = snackStates.value.findIndex((snack) => snack.id === id)
+    const idx = states.value.findIndex((snack) => snack.id === id)
     if (idx !== -1) {
-      snackStates.value.splice(idx, 1)
+      states.value.splice(idx, 1)
+    }
+  }
+
+  const snackClass = (snack: Snack): string => {
+    switch (snack.level) {
+      case 'Info': return 'bg-info text-white'
+      case 'Success': return 'bg-positive'
+      case 'Error': return 'bg-negative'
+      case 'Warning': return 'bg-warning'
+      default: return 'bg-primary text-white'
     }
   }
 
   return {
-    snackStates,
+    states,
     snacks,
     count,
     pushSnack,
@@ -68,7 +96,7 @@ export default defineStore('snacks', () => {
     pushError,
     pushInfo,
     pushSuccess,
-    popSnack,
     removeSnack,
+    snackClass,
   }
 })

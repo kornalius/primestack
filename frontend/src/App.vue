@@ -207,7 +207,7 @@ import {
   computed, onMounted, ref, watch,
 } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import useSnacks from '@/features/Snacks/composites'
+import useSnacks from '@/features/Snacks/store'
 import SnacksDisplay from '@/features/Snacks/components/Snacks.vue'
 import useAppEditor from '@/features/App/store'
 import useAuth from '@/features/Auth/store'

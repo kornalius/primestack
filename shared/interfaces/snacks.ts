@@ -11,8 +11,8 @@ type SnackType = keyof typeof SnackTypes
 
 export interface Snack {
   id?: string
+  level?: SnackType
   message: string
-  level: SnackType
   timeout?: number
   error?: AnyData
 }

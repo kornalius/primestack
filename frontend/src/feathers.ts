@@ -3,7 +3,7 @@ import { stripSlashes } from '@feathersjs/commons'
 import socketio from '@feathersjs/socketio-client'
 import authentication from '@feathersjs/authentication-client'
 import io from 'socket.io-client'
-import useSnacks from '@/features/Snacks/composites'
+import useSnacks from '@/features/Snacks/store'
 import { getEnv } from './utils/variables'
 
 const API_URL = getEnv(import.meta.env.VITE_API_URL) as string
