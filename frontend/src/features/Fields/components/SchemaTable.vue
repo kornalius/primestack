@@ -1,6 +1,6 @@
 <template>
   <q-table
-    v-model:selected="selected"
+    v-model:selected="selection"
     v-bind="$attrs"
     :rows="filteredRows as any"
     :columns="columns as any"
@@ -19,7 +19,7 @@
       </q-input>
     </template>
 
-    <template #body-cell="p">
+    <template v-if="schemaRows" #body-cell="p">
       <q-td :props="p">
         <property-schema-field
           v-if="schemaSchema(p.col.field)"
@@ -65,6 +65,7 @@ const props = defineProps<{
   tableId?: string
   filter?: string
   hideFilter?: boolean
+  schemaRows?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -75,7 +76,7 @@ const emit = defineEmits<{
 
 const { api } = useFeathers()
 
-const selected = useSyncedProp(props, 'selected', emit)
+const selection = useSyncedProp(props, 'selected', emit)
 
 const currentFilter = useSyncedProp(props, 'filter', emit)
 
@@ -126,7 +127,7 @@ watch([
     dataRows.value = attrs.rows?.filter(s) || []
     return
   }
-  if (api.services[props.tableId]) {
+  if (props.tableId) {
     const u = api.service(props.tableId).useFind({ query: q })
     u.find()
     data = u.data

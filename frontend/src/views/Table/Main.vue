@@ -1,41 +1,43 @@
 <template>
-  <div class="row">
-    <div class="col">
-      <q-table
-        v-model:selected="selectedTable"
-        style="height: 600px"
-        :rows="editor.tables"
-        :columns="schemaColumns as any"
-        :rows-per-page-options="[0]"
-        title="Tables"
-        selection="single"
-        row-key="_id"
-        virtual-scroll
-        bordered
-        dense
-        flat
-        @row-click="toggleTableSelection"
-      />
-    </div>
+  <q-page class="q-pa-md">
+    <div class="row">
+      <div class="col">
+        <q-table
+          v-model:selected="selectedTable"
+          style="height: 600px"
+          :rows="editor.tables"
+          :columns="schemaColumns as any"
+          :rows-per-page-options="[0]"
+          title="Tables"
+          selection="single"
+          row-key="_id"
+          virtual-scroll
+          bordered
+          dense
+          flat
+          @row-click="toggleTableSelection"
+        />
+      </div>
 
-    <div v-if="selectedTable.length > 0" class="col">
-      <q-table
-        v-model:selected="selectedTableField"
-        style="height: 600px"
-        :rows="tableFields"
-        :columns="fieldColumns as any"
-        :rows-per-page-options="[0]"
-        title="Fields"
-        selection="single"
-        row-key="_id"
-        virtual-scroll
-        bordered
-        dense
-        flat
-        @row-click="toggleTableFieldSelection"
-      />
+      <div v-if="selectedTable.length > 0" class="col">
+        <q-table
+          v-model:selected="selectedTableField"
+          style="height: 600px"
+          :rows="tableFields"
+          :columns="fieldColumns as any"
+          :rows-per-page-options="[0]"
+          title="Fields"
+          selection="single"
+          row-key="_id"
+          virtual-scroll
+          bordered
+          dense
+          flat
+          @row-click="toggleTableFieldSelection"
+        />
+      </div>
     </div>
-  </div>
+  </q-page>
 </template>
 
 <script setup lang="ts">
@@ -67,7 +69,7 @@ const selectedTableField = ref([])
 
 watch(() => props.id, () => {
   if (props.id) {
-    selectedTable.value = [editor.tables?.find((s) => s._id === props.id)]
+    selectedTable.value = [editor.tableInstance(props.id)]
   }
 }, { immediate: true })
 

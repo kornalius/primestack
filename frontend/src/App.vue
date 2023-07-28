@@ -249,13 +249,9 @@ watch(currentEditmode, () => {
   }
 })
 
-const menus = ref()
+const userMenu = ref()
 
-const userMenu = computed(() => menus.value?.[0])
-
-const selectedMenuObject = computed(() => (
-  editor.menus?.find((m) => m._id === editor.selectedMenu)
-))
+const selectedMenuObject = computed(() => editor.menuInstance(editor.selectedMenu))
 
 watch(() => editor.active, () => {
   if (editor.active) {
@@ -290,7 +286,7 @@ const routeTabs = computed(() => routeMenu.value?.tabs)
  */
 
 const loadUserData = async () => {
-  menus.value = (await api.service('menus').find({ query: {} })).data
+  userMenu.value = (await api.service('menus').find({ query: {} })).data?.[0]
   api.service('tables').find({ query: {} })
   api.service('forms').find({ query: {} })
 }

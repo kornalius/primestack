@@ -5,6 +5,15 @@ import hotkeys from 'hotkeys-js'
 import { useFeathers } from '@/composites/feathers'
 import cloneDeep from 'lodash/cloneDeep'
 import useSnacks from '@/features/Snacks/store'
+import { AnyData } from '@/shared/interfaces/commons'
+import { menuSchema } from '@/shared/schemas/menu'
+import { formSchema } from '@/shared/schemas/form'
+import { tableSchema } from '@/shared/schemas/table'
+import { Static } from '@feathersjs/typebox'
+
+type Menu = Static<typeof menuSchema>
+type Form = Static<typeof formSchema>
+type Table = Static<typeof tableSchema>
 
 interface Snapshot {
   menus: unknown[]
@@ -211,24 +220,24 @@ export default defineStore('app-editor', () => {
     const { userMenus, userForms, userTables } = loadFromStore()
 
     states.value.menus = cloneDeep(
-      await api.service('menus').patch(userMenus.value._id, {
+      (await api.service('menus').patch(userMenus.value._id, {
         ...userMenus.value,
         list: states.value.menus,
-      }),
+      }) as AnyData).list,
     )
 
     states.value.tables = cloneDeep(
-      await api.service('tables').patch(userTables.value._id, {
+      (await api.service('tables').patch(userTables.value._id, {
         ...userTables.value,
         list: states.value.tables,
-      }),
+      }) as AnyData).list,
     )
 
     states.value.forms = cloneDeep(
-      await api.service('forms').patch(userForms.value._id, {
+      (await api.service('forms').patch(userForms.value._id, {
         ...userForms.value,
         list: states.value.forms,
-      }),
+      }) as AnyData).list,
     )
 
     const snacks = useSnacks()
@@ -307,6 +316,24 @@ export default defineStore('app-editor', () => {
     }
   }
 
+  const formInstance = (id: string): Form | undefined => (
+    states.value.forms?.find
+      ? states.value.forms?.find((f) => f._id === id)
+      : undefined
+  )
+
+  const menuInstance = (id: string): Menu | undefined => (
+    states.value.menus?.find
+      ? states.value.menus?.find((m) => m._id === id)
+      : undefined
+  )
+
+  const tableInstance = (id: string): Table | undefined => (
+    states.value.tables?.find
+      ? states.value.tables?.find((t) => t._id === id)
+      : undefined
+  )
+
   startWatch()
 
   return {
@@ -354,5 +381,8 @@ export default defineStore('app-editor', () => {
     canRedo,
     redo,
     preventSystemUndoRedo,
+    formInstance,
+    menuInstance,
+    tableInstance,
   }
 })

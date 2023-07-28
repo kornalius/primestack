@@ -1,8 +1,11 @@
 <template>
   <q-page class="q-pa-md">
-    <q-layout view="hHh lpr lFr">
+    <q-layout
+      v-if="form"
+      view="hHh lpr lFr"
+    >
       <q-drawer
-        v-if="!editor.active && !form?.hideTable"
+        v-if="!editor.active && !form.hideTable && table"
         :model-value="true"
         class="q-pa-sm q-pr-md"
         :width="400"
@@ -14,9 +17,16 @@
           v-model:selected="selected"
           v-bind="tableBinds"
           class="full-height"
-          :schema="fieldsToSchema(form?._fields, form?._id)"
-          :table-id="form?.tableId"
-          :hide-filter="form?.hideFilter"
+          :schema="fieldsToSchema(table.fields, `Table-${table._id}`)"
+          :table-id="table._id"
+          :hide-filter="form.hideFilter"
+          selection="single"
+          row-key="_id"
+          virtual-scroll
+          bordered
+          dense
+          flat
+          @row-click="toggleSelection"
         />
       </q-drawer>
 
@@ -116,17 +126,19 @@ const props = defineProps<{
 
 const { api } = useFeathers()
 
-const selected = ref()
+const selected = ref([])
 
 const editor = useAppEditor()
 
-const { data: menus } = api.service('menus').useFind({ query: {} })
+/**
+ * Menu
+ */
 
-const userMenu = computed(() => menus.value?.[0])
+const userMenu = api.service('menus').findOneInStore({ query: {} })
 
 const menu = computed(() => (
   editor.active
-    ? editor.menus?.find((m) => m._id === props.menuId)
+    ? editor.menuInstance(props.menuId)
     : userMenu.value?.list.find((m) => m._id === props.menuId)
 ))
 
@@ -134,19 +146,19 @@ const tab = computed(() => (
   menu.value?.tabs.find((t) => t._id === props.tabId)
 ))
 
-const { data: forms } = api.service('forms').useFind({ query: {} })
+/**
+ * Form
+ */
 
-const userForm = computed(() => forms.value?.[0])
+const userForm = api.service('forms').findOneInStore({ query: {} })
 
 const form = computed(() => (
   editor.active
-    ? editor.forms?.find((f) => f._id === tab.value?.formId)
+    ? editor.formInstance(tab.value?.formId)
     : userForm.value?.list.find((f) => f._id === tab.value?.formId)
 ))
 
 const fields = ref([])
-
-const tableBinds = computed(() => pick(form.value, formSchema.tableFields))
 
 watch(form, () => {
   if (form.value) {
@@ -192,11 +204,13 @@ const formModelValues = computed(() => {
   return (fields.value || []).reduce((acc, f) => ({ ...acc, ...convertField(f) }), {})
 })
 
-const formData = computed(() => ({
-  ...defaultValues.value,
-  ...(form.value?.data || {}),
-  ...(formModelValues.value || {}),
-}))
+const formData = computed(() => (
+  selected.value?.[0] || {
+    ...defaultValues.value,
+    ...(form.value?.data || {}),
+    ...(formModelValues.value || {}),
+  }
+))
 
 const preview = ref(false)
 const previewFormData = ref({})
@@ -213,4 +227,20 @@ watch(preview, () => {
 onBeforeUnmount(() => {
   editor.setFormId(undefined)
 })
+
+/**
+ * Table
+ */
+
+const userTable = api.service('tables').findOneInStore({ query: {} })
+
+const table = computed(() => (
+  userTable.value?.list.find((t) => t._id === form.value?.tableId)
+))
+
+const tableBinds = computed(() => pick(form.value, formSchema.tableFields))
+
+const toggleSelection = (evt, row) => {
+  selected.value = [row]
+}
 </script>

@@ -107,9 +107,7 @@ const editor = useAppEditor()
  * Menus
  */
 
-const selectedMenuObject = computed(() => (
-  editor.menus?.find((m) => m._id === editor.selectedMenu)
-))
+const selectedMenuObject = computed(() => editor.menuInstance(editor.selectedMenu))
 
 const selectedMenuSchema = computed(() => (
   editor.selectedMenu
@@ -145,7 +143,7 @@ const showTabProperties = computed(() => (
 
 const { flattenFields } = useFormElements()
 
-const form = computed(() => editor.forms?.find((f) => f._id === editor.formId))
+const form = computed(() => editor.formInstance(editor.formId))
 
 const fields = ref([])
 
@@ -179,9 +177,7 @@ const filteredFormSchema = computed(() => (
  * Schema
  */
 
-const selectedTable = computed(() => (
-  editor.tables?.find((s) => s._id === editor.selectedTable)
-))
+const selectedTable = computed(() => editor.tableInstance(editor.selectedTable))
 
 const selectedTableField = computed(() => (
   selectedTable.value?.fields.find((f) => f._id === editor.selectedTableField)
