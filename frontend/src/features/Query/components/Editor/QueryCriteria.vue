@@ -103,8 +103,3 @@ watch(() => field.value.fieldId, () => {
   }
 }, { immediate: true })
 </script>
-
-<style scoped lang="sass">
-.q-item__section--avatar
-  min-width: unset
-</style>

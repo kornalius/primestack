@@ -5,6 +5,7 @@ import Home from './home'
 import Login from './login'
 import Menu from './menu'
 import Table from './table'
+import User from './user'
 
 const patterns = usePatterns()
 
@@ -23,6 +24,7 @@ const routes = [
   ...Home(lazyLoad, patterns),
   ...Menu(lazyLoad, patterns),
   ...Table(lazyLoad, patterns),
+  ...User(lazyLoad, patterns),
   // Always leave this as last one,
   // but you can also remove it
   {

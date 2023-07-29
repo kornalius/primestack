@@ -102,7 +102,7 @@ const columns = computed(() => {
 
 const dataRows = ref()
 
-let data
+const data = ref()
 
 watch([
   () => attrs.rows,
@@ -118,23 +118,26 @@ watch([
       Object.keys(f).length ? f : undefined,
     ]),
   }
-  if (q.$and.length === 0) {
+  if (q.$and?.length === 0) {
     delete q.$and
   }
 
-  if (attrs.row) {
-    const s = sift(q)
-    dataRows.value = attrs.rows?.filter(s) || []
+  if (props.tableId) {
+    const dataFind = api.service(props.tableId).useFind({ query: q })
+    dataFind.find()
+    watch(dataFind.data, () => {
+      data.value = dataFind.data.value
+    }, { immediate: true })
     return
   }
-  if (props.tableId) {
-    const u = api.service(props.tableId).useFind({ query: q })
-    u.find()
-    data = u.data
+
+  if (attrs.rows) {
+    const s = sift(q)
+    dataRows.value = attrs.rows?.filter(s) || []
   }
 }, { immediate: true, deep: true })
 
 const schemaSchema = (name: string) => props.schema?.properties[name]
 
-const filteredRows = computed(() => data?.value || dataRows.value)
+const filteredRows = computed(() => data.value || dataRows.value)
 </script>

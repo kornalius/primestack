@@ -44,6 +44,7 @@ export const dataValidator: Ajv = addFormats(ajv, formats)
 export const queryValidator: Ajv = addFormats(
   new Ajv({
     coerceTypes: true,
+    strictSchema: false,
   }),
   formats
 )

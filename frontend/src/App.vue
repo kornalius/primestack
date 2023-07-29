@@ -41,7 +41,7 @@
 
         <q-btn
           v-if="auth.authenticated"
-          icon="mdi-account-edit"
+          icon="mdi-account-circle"
           aria-label="Menu"
           flat
           dense
@@ -49,6 +49,17 @@
         >
           <q-menu>
             <q-list>
+              <q-item clickable @click="profileClick">
+                <q-item-section avatar>
+                  <q-icon name="mdi-account-edit" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>
+                    User Profile
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+
               <q-item clickable @click="auth.logout">
                 <q-item-section avatar>
                   <q-icon name="mdi-logout" />
@@ -285,13 +296,14 @@ const routeTabs = computed(() => routeMenu.value?.tabs)
  * Auth
  */
 
+const auth = useAuth()
+
 const loadUserData = async () => {
+  api.service('users').get(auth.userId)
   userMenu.value = (await api.service('menus').find({ query: {} })).data?.[0]
   api.service('tables').find({ query: {} })
   api.service('forms').find({ query: {} })
 }
-
-const auth = useAuth()
 
 onMounted(() => {
   auth.reAuthenticate()
@@ -309,4 +321,8 @@ watch(() => auth.authenticated, () => {
     router.push('/login')
   }
 })
+
+const profileClick = () => {
+  router.push('/profile')
+}
 </script>

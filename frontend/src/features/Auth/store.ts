@@ -7,15 +7,21 @@ export default defineStore('auth', () => {
   const states = ref({
     processing: false,
     authenticated: false,
+    userId: undefined,
+    userEmail: undefined,
   })
 
   const processing = computed(() => states.value.processing)
   const authenticated = computed(() => states.value.authenticated)
+  const userId = computed(() => states.value.userId)
+  const userEmail = computed(() => states.value.userEmail)
 
   const reAuthenticate = async (): Promise<void> => {
     try {
       states.value.processing = true
-      await app.reAuthenticate()
+      const r = await app.reAuthenticate()
+      states.value.userId = r.user._id
+      states.value.userEmail = r.user.email
       states.value.authenticated = true
     } catch (e) {
       states.value.authenticated = false
@@ -32,7 +38,8 @@ export default defineStore('auth', () => {
         strategy: 'local',
         ...args,
       })
-      console.log('Authenticated!', r)
+      states.value.userId = r.user._id
+      states.value.userEmail = r.user.email
       states.value.authenticated = true
     } catch (e) {
       states.value.authenticated = false
@@ -45,8 +52,7 @@ export default defineStore('auth', () => {
   const logout = async (): Promise<void> => {
     try {
       states.value.processing = true
-      const r = await app.logout()
-      console.log('Logged out!', r)
+      await app.logout()
       states.value.authenticated = false
     } finally {
       states.value.processing = false
@@ -57,6 +63,8 @@ export default defineStore('auth', () => {
     states,
     processing,
     authenticated,
+    userId,
+    userEmail,
     reAuthenticate,
     authenticate,
     logout,

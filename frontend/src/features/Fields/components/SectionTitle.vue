@@ -21,9 +21,3 @@ defineProps<{
   color?: string
 }>()
 </script>
-
-<style scoped lang="sass">
-.q-item__section--avatar
-  min-width: unset
-  padding-right: 4px
-</style>

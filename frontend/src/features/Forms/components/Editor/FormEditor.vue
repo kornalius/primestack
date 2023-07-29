@@ -93,7 +93,9 @@ const editor = useAppEditor()
 const onAddFieldClick = (component: TFormComponent) => {
   const field = createFormField(component, fields.value)
   fields.value.push(field)
-  editor.select(field._id)
+  setTimeout(() => {
+    editor.select(field._id)
+  }, 100)
 }
 
 const cloneComponent = (component: TFormComponent) => createFormField(component, fields.value)

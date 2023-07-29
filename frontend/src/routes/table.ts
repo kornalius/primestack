@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/explicit-module-boundary-types
 import { RouteLocationNormalized } from 'vue-router'
 import { AnyData } from '@/shared/interfaces/commons'
 

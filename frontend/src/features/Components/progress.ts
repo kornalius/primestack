@@ -35,6 +35,7 @@ export default {
     color: 'primary',
     indeterminate: true,
     thickness: 0.2,
+    size: 'sm',
   },
   categories: {
     content: {

@@ -1,5 +1,6 @@
 import get from 'lodash/get'
 import omit from 'lodash/omit'
+import cloneDeep from 'lodash/cloneDeep'
 import difference from 'lodash/difference'
 // eslint-disable-next-line import/no-cycle
 import { CreateServiceOptions, HookContext } from '@/declarations'
@@ -58,7 +59,7 @@ export const reservedFields = [
 ]
 
 export const createService = (name: string, klass: Newable<AnyData>, options: CreateServiceOptions) => {
-  const { schema } = options
+  const { schema } = cloneDeep(options)
 
   /**
    * Upgrade Schema
@@ -192,7 +193,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
   const dataValidator = getValidator(dataSchema, validatorForData)
   const dataResolver = resolve<TSType, HookContext>(
     {
-      ...(options.resolvers?.data?.$create || options.resolvers?.data || {}),
+      ...(options.resolvers?.data?.$create || options.resolvers?.data?.$create || {}),
       ...createdResolver as AnyData,
       ...nullifyDeletedAtResolver as AnyData,
     }
@@ -213,7 +214,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
   const patchValidator = getValidator(patchSchema, validatorForData)
   const patchResolver = resolve<TSType, HookContext>(
     {
-      ...(options.resolvers?.data?.$patch || options.resolvers?.data || {}),
+      ...(options.resolvers?.data?.$patch || options.resolvers?.data?.$patch || {}),
       ...updatedResolver as AnyData,
     }
   )
@@ -222,8 +223,13 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
    * Query
    */
 
+  const filteredKeys = Object.keys(options.schema.properties).filter((k) => (
+    options.schema.properties[k].type !== 'array'
+  ))
+
   const queryKeys = [
     '_id',
+    ...filteredKeys,
     ...(options.validators?.query || []),
     ...(options.created ? ['createdAt', 'createdBy'] : []),
     ...(options.updated ? ['updatedAt', 'updatedBy'] : []),

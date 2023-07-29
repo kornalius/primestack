@@ -4,7 +4,7 @@
       <div class="col">
         <q-table
           v-model:selected="selectedTable"
-          style="height: 600px"
+          style="height: 300px"
           :rows="editor.tables"
           :columns="schemaColumns as any"
           :rows-per-page-options="[0]"
@@ -18,7 +18,9 @@
           @row-click="toggleTableSelection"
         />
       </div>
+    </div>
 
+    <div class="row q-mt-sm">
       <div v-if="selectedTable.length > 0" class="col">
         <q-table
           v-model:selected="selectedTableField"
