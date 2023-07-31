@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHh LpR lff">
     <q-header
-      v-if="auth.authenticated"
+      v-if="!hideUI"
       class="bg-dark text-white"
       :style="{ backgroundColor: editor.active ? '#401a00 !important' : '' }"
     >
@@ -47,7 +47,65 @@
           dense
           round
         >
-          <q-menu>
+          <q-menu fit>
+            <div class="row q-pa-md items-center">
+              <div class="col">
+                <q-btn
+                  class="q-mx-sm"
+                  icon="mdi-magnify"
+                  color="grey-7"
+                  size="sm"
+                  flat
+                  round
+                />
+
+                <q-btn
+                  class="q-mx-sm"
+                  icon="mdi-bookmark-multiple-outline"
+                  color="grey-7"
+                  size="sm"
+                  flat
+                  round
+                />
+
+                <q-btn
+                  class="q-mx-sm"
+                  icon="mdi-bell-outline"
+                  color="grey-7"
+                  size="sm"
+                  flat
+                  round
+                />
+
+                <q-btn
+                  class="q-mx-sm"
+                  color="grey-7"
+                  size="sm"
+                  label="Upgrade"
+                  no-caps
+                  outline
+                />
+              </div>
+            </div>
+
+            <q-separator />
+
+            <div class="row q-pa-md q-gutter-sm items-center">
+              <div class="col-auto">
+                <q-skeleton type="QAvatar" size="50px" animation="none" />
+              </div>
+              <div class="col">
+                <div class="row">
+                  <span class="text-bold">{{ auth.username }}</span>
+                </div>
+                <div class="row">
+                  <span>{{ auth.userEmail }}</span>
+                </div>
+              </div>
+            </div>
+
+            <q-separator />
+
             <q-list>
               <q-item clickable @click="profileClick">
                 <q-item-section avatar>
@@ -60,7 +118,7 @@
                 </q-item-section>
               </q-item>
 
-              <q-item clickable @click="auth.logout">
+              <q-item clickable @click="logout">
                 <q-item-section avatar>
                   <q-icon name="mdi-logout" />
                 </q-item-section>
@@ -77,7 +135,7 @@
     </q-header>
 
     <q-drawer
-      v-if="auth.authenticated"
+      v-if="!hideUI"
       class="bg-dark text-white"
       :model-value="true"
       :width="leftDrawerExpanded ? 250 : 50"
@@ -201,7 +259,7 @@
     </q-drawer>
 
     <app-properties
-      v-if="auth.authenticated"
+      v-if="!hideUI"
       :components="components"
     />
 
@@ -218,7 +276,7 @@ import {
   computed, onMounted, ref, watch,
 } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import useSnacks from '@/features/Snacks/store'
+// import useSnacks from '@/features/Snacks/store'
 import SnacksDisplay from '@/features/Snacks/components/Snacks.vue'
 import useAppEditor from '@/features/App/store'
 import useAuth from '@/features/Auth/store'
@@ -231,14 +289,14 @@ import { useFeathers } from '@/composites/feathers'
 
 const { api } = useFeathers()
 
-const snacks = useSnacks()
+// const snacks = useSnacks()
 
-onMounted(() => {
-  snacks.pushError('Error, this is an error')
-  snacks.pushWarn('Warning, this is a warning')
-  snacks.pushInfo('Info, this is an info')
-  snacks.pushSuccess('Success, this is a success')
-})
+// onMounted(() => {
+//   snacks.pushError('Error, this is an error')
+//   snacks.pushWarn('Warning, this is a warning')
+//   snacks.pushInfo('Info, this is an info')
+//   snacks.pushSuccess('Success, this is a success')
+// })
 
 const version = import.meta.env.PACKAGE_VERSION
 
@@ -325,4 +383,12 @@ watch(() => auth.authenticated, () => {
 const profileClick = () => {
   router.push('/profile')
 }
+
+const logout = () => {
+  router.push('/logout')
+}
+
+const hideUI = computed(() => (
+  !auth.authenticated || route.name === 'Logout'
+))
 </script>

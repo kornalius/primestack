@@ -8,12 +8,14 @@ export default defineStore('auth', () => {
     processing: false,
     authenticated: false,
     userId: undefined,
+    username: undefined,
     userEmail: undefined,
   })
 
   const processing = computed(() => states.value.processing)
   const authenticated = computed(() => states.value.authenticated)
   const userId = computed(() => states.value.userId)
+  const username = computed(() => states.value.username)
   const userEmail = computed(() => states.value.userEmail)
 
   const reAuthenticate = async (): Promise<void> => {
@@ -21,6 +23,7 @@ export default defineStore('auth', () => {
       states.value.processing = true
       const r = await app.reAuthenticate()
       states.value.userId = r.user._id
+      states.value.username = r.user.username
       states.value.userEmail = r.user.email
       states.value.authenticated = true
     } catch (e) {
@@ -39,6 +42,7 @@ export default defineStore('auth', () => {
         ...args,
       })
       states.value.userId = r.user._id
+      states.value.username = r.user.username
       states.value.userEmail = r.user.email
       states.value.authenticated = true
     } catch (e) {
@@ -64,6 +68,7 @@ export default defineStore('auth', () => {
     processing,
     authenticated,
     userId,
+    username,
     userEmail,
     reAuthenticate,
     authenticate,
