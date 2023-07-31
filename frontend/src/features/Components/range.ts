@@ -57,7 +57,6 @@ export default {
     content: {
       icon: contentIcon,
       names: [
-        'name',
         'disable',
         'readonly',
         'reverse',
@@ -68,6 +67,7 @@ export default {
       icon: modelIcon,
       names: [
         'modelValue',
+        'field',
         'min',
         'max',
         'innerMin',

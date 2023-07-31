@@ -99,7 +99,7 @@ export default defineStore('app-editor', () => {
 
   const selectMenu = (id: string): void => {
     states.value.selectedMenu = id
-    unselectTab()
+    select(undefined)
   }
 
   const isMenuSelected = (id: string): boolean => (
@@ -108,6 +108,7 @@ export default defineStore('app-editor', () => {
 
   const selectTab = (id: string): void => {
     states.value.selectedTab = id
+    select(undefined)
   }
 
   const isTabSelected = (id: string): boolean => (

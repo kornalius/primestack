@@ -7,7 +7,8 @@ export default {
   icon: 'mdi-keyboard-space',
   label: 'Spacer',
   component: QSpace,
-  schema: properties([]),
+  nokey: true,
+  schema: properties([], false),
   defaultValues: {
   },
 } as TFormComponent

@@ -24,13 +24,13 @@
 
       <div
         v-else-if="isParagraph(field)"
-        v-html="value[field.name]"
+        v-html="value[field.field]"
       />
 
       <component
         :is="componentForType[field._type]"
         v-else
-        v-model="value[field.name]"
+        v-model="value[field.field]"
         v-bind="fieldBinds(field, schemaForType(field))"
         :style="style(field)"
       />

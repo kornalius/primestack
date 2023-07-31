@@ -89,7 +89,7 @@ export default {
       hideFilter: Type.Boolean(),
     }),
     commonProperties.style,
-  ]),
+  ], false),
   defaultValues: {
     separator: 'horizontal',
     selection: 'none',
@@ -121,7 +121,6 @@ export default {
     content: {
       icon: contentIcon,
       names: [
-        'name',
         'title',
         'rows',
         'rowKey',

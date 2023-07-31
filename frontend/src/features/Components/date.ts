@@ -51,7 +51,6 @@ export default {
     content: {
       icon: contentIcon,
       names: [
-        'name',
         'disable',
         'readonly',
         'title',
@@ -69,6 +68,7 @@ export default {
       icon: modelIcon,
       names: [
         'modelValue',
+        'field',
         'emitImmediately',
         'noUnset',
         'mask',

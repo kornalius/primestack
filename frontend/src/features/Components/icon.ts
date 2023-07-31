@@ -9,12 +9,11 @@ export default {
   icon: 'mdi-cube-outline',
   label: 'Icon',
   component: QIcon,
-  noName: true,
   schema: properties([
     commonProperties.state,
     commonProperties.size,
     Type.Object({
-      name: Type.String({ icon: true }),
+      modelValue: Type.String({ icon: true }),
       left: Type.Boolean(),
       right: Type.Boolean(),
       color: Type.String({ color: true }),
@@ -28,7 +27,8 @@ export default {
     content: {
       icon: contentIcon,
       names: [
-        'name',
+        'modelValue',
+        'field',
         'disable',
         'readonly',
       ],

@@ -176,7 +176,10 @@ const defaultValues = computed(() => (
       // eslint-disable-next-line no-underscore-dangle
       const comp = components.find((c) => c.type === f._type)
       if (comp && !comp.nokey) {
-        return { ...acc, [f.name]: defaultValueForSchema(comp.schema.properties.modelValue) }
+        const v = f.modelValue !== undefined && f.field !== undefined && f.field !== null
+          ? { [f.field]: defaultValueForSchema(comp.schema.properties.modelValue) }
+          : {}
+        return { ...acc, ...v }
       }
       return acc
     }, {})
@@ -192,7 +195,9 @@ const formModelValues = computed(() => {
       // eslint-disable-next-line no-underscore-dangle
       return field._columns.reduce((acc, col) => ({ ...acc, ...convertColumn(col) }), {})
     }
-    return field.modelValue !== undefined ? { [field.name]: field.modelValue } : {}
+    return field.modelValue !== undefined && field.field !== undefined && field.field !== null
+      ? { [field.field]: field.modelValue }
+      : {}
   }
 
   convertColumn = (col: TFormColumn): AnyData => (

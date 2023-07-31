@@ -1,5 +1,5 @@
 import { StringEnum, Type } from '@feathersjs/typebox'
-import { contentIcon, tableIcon } from '../icons'
+import { tableIcon } from '../icons'
 import { AnyData } from '../interfaces/commons'
 
 export const columnSchema = Type.Recursive((self) => Type.Object(
@@ -11,7 +11,6 @@ export const columnSchema = Type.Recursive((self) => Type.Object(
       {
         _id: Type.String({ objectid: true }),
         _type: Type.String(),
-        name: Type.String(),
         _columns: Type.Optional(Type.Array(self)),
       },
       { additionalProperties: true },
@@ -24,7 +23,6 @@ export const fieldSchema = Type.Object(
   {
     _id: Type.String({ objectid: true }),
     _type: Type.String(),
-    name: Type.String(),
     _columns: Type.Optional(Type.Array(columnSchema)),
   },
   { $id: 'FormField',additionalProperties: true },
@@ -32,7 +30,6 @@ export const fieldSchema = Type.Object(
 
 export const formSchema = Type.Object(
   {
-    name: Type.String(),
     data: Type.Optional(Type.Object({}, { json: true })),
     hideFilter: Type.Optional(Type.Boolean({ skip: true })),
     grid: Type.Optional(Type.Boolean()),
@@ -69,19 +66,13 @@ export const formSchema = Type.Object(
     $id: 'Form',
     additionalProperties: true,
     categories: {
-      content: {
-        icon: contentIcon,
-        names: [
-          'name',
-          'data',
-        ],
-      },
       table: {
         icon: tableIcon,
         names: [
           'tableId',
           'hideTable',
           'query',
+          'data',
           'title',
           'visibleColumns',
           'filter',

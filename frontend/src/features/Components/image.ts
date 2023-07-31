@@ -51,7 +51,7 @@ export default {
       spinnerSize: sizeString,
     }),
     commonProperties.style,
-  ]),
+  ], false),
   defaultValues: {
     loading: 'eager',
     decoding: 'async',
@@ -63,7 +63,6 @@ export default {
     content: {
       icon: contentIcon,
       names: [
-        'name',
         'disable',
         'readonly',
         'src',

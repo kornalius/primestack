@@ -21,8 +21,6 @@ export interface TFormComponent {
   icon: string
   // don't create a key for preview data
   nokey?: boolean
-  // don't generate a new name for newly placed component on the form
-  noName?: boolean
   // should we hide the component from the palette?
   hidden?: boolean
   // component properties schema
@@ -52,7 +50,6 @@ export interface TFormColumn {
 export interface TFormField {
   _id: string
   _type: string
-  name: string
   _columns?: TFormColumn[]
   [k: string]: unknown
 }

@@ -15,7 +15,7 @@ export default {
       horizontal: Type.Boolean(),
     }),
     Type.Omit(commonProperties.style, ['dense']),
-  ]),
+  ], false),
   defaultValues: {
     horizontal: false,
   },

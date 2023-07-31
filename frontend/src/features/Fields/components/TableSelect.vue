@@ -2,7 +2,6 @@
   <q-select
     v-model="value"
     v-bind="$attrs"
-    :loading="isPending"
     :options="userTables"
     option-value="_id"
     option-label="name"
@@ -32,8 +31,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useFeathers } from '@/composites/feathers'
 import { useModelValue } from '@/composites/prop'
+import useAppEditor from '@/features/App/store'
 
 const props = defineProps<{
   modelValue: unknown
@@ -49,11 +48,7 @@ const emit = defineEmits<{
 
 const value = useModelValue(props, emit)
 
-const { api } = useFeathers()
+const editor = useAppEditor()
 
-const { data: tables, isPending } = api.service('tables').useFind({
-  query: {},
-})
-
-const userTables = computed(() => tables.value?.[0]?.list)
+const userTables = computed(() => editor.tables)
 </script>

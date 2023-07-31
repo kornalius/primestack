@@ -56,14 +56,14 @@
 import { computed, ref, watch } from 'vue'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { Query, QueryGroup, queryOperators } from '@/shared/interfaces/query'
-import { useFeathers } from '@/composites/feathers'
+import useAppEditor from '@/features/App/store'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import QueryGroupEditor from '@/features/Query/components/Editor/QueryGroup.vue'
 import QueryLogicalOperators from '@/features/Query/components/Editor/QueryLogicalOperators.vue'
 import TableSelect from '@/features/Fields/components/TableSelect.vue'
 
 const props = defineProps<{
-  modelValue: Query
+  modelValue: Query | undefined
   // override the query tableId
   tableId?: string
   disable?: boolean
@@ -77,7 +77,7 @@ const emit = defineEmits<{
   (e: 'update:model-value', value: Query): void,
 }>()
 
-const { api } = useFeathers()
+const editor = useAppEditor()
 
 const palette = ref([
   'bg-purple-1',
@@ -106,15 +106,6 @@ const removeGroup = (val: unknown, index: number): boolean => {
   return true
 }
 
-watch(query, () => {
-  if (!Array.isArray(query.value.groups)) {
-    query.value.groups = []
-  }
-  if (query.value.groups.length === 0) {
-    addGroup()
-  }
-}, { immediate: true })
-
 watch(() => props.tableId, () => {
   if (props.tableId) {
     query.value.tableId = props.tableId
@@ -125,16 +116,21 @@ watch(currentSchemaId, () => {
   query.value.tableId = currentSchemaId.value
 })
 
+watch(query, () => {
+  if (!Array.isArray(query.value.groups)) {
+    query.value.groups = []
+  }
+  if (query.value.groups.length === 0) {
+    addGroup()
+  }
+}, { immediate: true })
+
 /**
  * Schemas
  */
 
-const { data: tables } = api.service('tables').useFind({
-  query: {},
-})
-
 const table = computed(() => (
-  tables.value?.[0]?.list.find((s) => s._id === query.value.tableId)
+  editor.tables?.find((s) => s._id === query.value?.tableId)
 ))
 
 const fields = computed(() => table.value?.fields || [])

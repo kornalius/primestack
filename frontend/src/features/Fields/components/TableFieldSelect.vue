@@ -2,8 +2,8 @@
   <q-select
     v-model="value"
     v-bind="$attrs"
-    :loading="isPending"
-    :options="options"
+    :disable="!!($attrs.disable || !table)"
+    :options="[...options, ...(extraOptions || [])]"
     label="Fieldname"
     option-value="_id"
     option-label="name"
@@ -44,10 +44,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
-import { useFeathers } from '@/composites/feathers'
 import { useModelValue } from '@/composites/prop'
 import { iconForType } from '@/shared/schema'
 import { tableFieldSchema } from '@/shared/schemas/table'
+import useAppEditor from '@/features/App/store'
+import { AnyData } from '@/shared/interfaces/commons'
 
 type TableFieldSchema = Static<typeof tableFieldSchema>
 
@@ -57,6 +58,7 @@ const props = defineProps<{
   fields?: TableFieldSchema[]
   createNew?: boolean
   createLabel?: string
+  extraOptions?: AnyData[]
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -67,17 +69,13 @@ const emit = defineEmits<{
 
 const value = useModelValue(props, emit)
 
-const { api } = useFeathers()
-
-const { data: tables, isPending } = api.service('tables').useFind({
-  query: {},
-})
+const editor = useAppEditor()
 
 const table = computed(() => (
-  tables.value?.[0]?.list.find((s) => s._id === props.tableId)
+  editor.tables?.find((s) => s._id === props.tableId)
 ))
 
 const options = computed(() => (
-  props.fields ? props.fields : table.value?.fields
+  props.fields || table.value?.fields
 ))
 </script>

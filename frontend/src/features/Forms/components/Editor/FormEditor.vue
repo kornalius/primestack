@@ -91,14 +91,14 @@ const visibleComponents = computed(() => props.components.filter((c) => !c.hidde
 const editor = useAppEditor()
 
 const onAddFieldClick = (component: TFormComponent) => {
-  const field = createFormField(component, fields.value)
+  const field = createFormField(component)
   fields.value.push(field)
   setTimeout(() => {
     editor.select(field._id)
   }, 100)
 }
 
-const cloneComponent = (component: TFormComponent) => createFormField(component, fields.value)
+const cloneComponent = (component: TFormComponent) => createFormField(component)
 </script>
 
 <style scoped lang="sass">

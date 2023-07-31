@@ -14,7 +14,7 @@ export default {
   nokey: true,
   schema: properties([
     Type.Omit(commonProperties.style, ['dense']),
-  ]),
+  ], false),
   defaultValues: {
     _columns: () => ([
       {

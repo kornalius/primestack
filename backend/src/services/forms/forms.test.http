@@ -38,18 +38,17 @@ Authorization: {{token}}
         {
           "_id": "64b40e66fd77c9b5d159bc6c",
           "_type": "row",
-          "name": "row1",
           "_columns": [
             {
               "_id": "64b40e6b4ab865f040a443fb",
               "_type": "col",
-              "name": "col1",
+              "field": "col1",
               "size": 6,
               "_fields": [
                 {
                   "_id": "64b40d6aec6b76cac94a91e3",
                   "_type": "input",
-                  "name": "name",
+                  "field": "name",
                   "label": "name",
                   "dense": true,
                   "outlined": true
@@ -59,13 +58,12 @@ Authorization: {{token}}
             {
               "_id": "64b40e7b7600abdf0ec85e13",
               "_type": "col",
-              "name": "col2",
               "size": 6,
               "_fields": [
                 {
                   "_id": "64b40d708822f84e00862cc9",
                   "_type": "checkbox",
-                  "name": "active",
+                  "field": "active",
                   "label": "Active?"
                 }
               ]

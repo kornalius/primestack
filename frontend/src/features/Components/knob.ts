@@ -37,7 +37,6 @@ export default {
     content: {
       icon: contentIcon,
       names: [
-        'name',
         'disable',
         'readonly',
         'angle',
@@ -49,6 +48,7 @@ export default {
       icon: modelIcon,
       names: [
         'modelValue',
+        'field',
         'reverse',
         'min',
         'max',

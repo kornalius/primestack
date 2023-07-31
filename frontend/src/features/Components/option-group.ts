@@ -36,9 +36,9 @@ export default {
     content: {
       icon: contentIcon,
       names: [
-        'name',
         'type',
         'modelValue',
+        'field',
         'options',
         'disable',
         'readonly',

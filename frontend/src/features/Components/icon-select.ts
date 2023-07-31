@@ -53,7 +53,6 @@ export default {
     content: {
       icon: contentIcon,
       names: [
-        'name',
         'disable',
         'readonly',
         'label',
@@ -68,6 +67,7 @@ export default {
       icon: modelIcon,
       names: [
         'modelValue',
+        'field',
         'clearable',
         'multiple',
         'emitValue',

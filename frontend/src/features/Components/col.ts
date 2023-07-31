@@ -33,7 +33,7 @@ export default {
       }),
     }),
     Type.Omit(commonProperties.style, ['dense']),
-  ]),
+  ], false),
   categories: {
     content: {
       icon: contentIcon,

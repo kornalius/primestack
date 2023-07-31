@@ -87,6 +87,7 @@
         v-model:columns="field.columns"
         v-model:visible-columns="field.visibleColumns"
         v-bind="fieldBinds(field, schemaForType(field))"
+        :query="queryToMongo(field.query?.groups)"
         :style="style"
       />
 
@@ -117,6 +118,7 @@ import { useModelValue } from '@/composites/prop'
 import useAppEditor from '@/features/App/store'
 import { defaultValueForSchema, defaultValues } from '@/shared/schema'
 import TableEditor from '@/features/Forms/components/Editor/TableEditor.vue'
+import { useQuery } from '@/features/Query/composites'
 import useFormElements from '../../composites'
 import FormElementRow from './FormElementRow.vue'
 import FormElementCard from './FormElementCard.vue'
@@ -137,6 +139,8 @@ const emit = defineEmits<{
 const { componentForType, fieldBinds } = useFormElements()
 
 const field = useModelValue(props, emit)
+
+const { queryToMongo } = useQuery()
 
 const editor = useAppEditor()
 

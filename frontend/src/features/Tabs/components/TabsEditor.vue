@@ -22,6 +22,7 @@
           :icon="t.icon"
           :content-class="`text-${t.color}`"
           :to="menuTabUrl(menu._id, t._id)"
+          @click="editor.selectTab(t._id)"
         />
       </template>
     </array-editor>
@@ -29,9 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  computed, onMounted, ref, watch,
-} from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { Static } from '@feathersjs/typebox'
 import hexObjectId from 'hex-object-id'
@@ -39,7 +38,6 @@ import { useModelValue } from '@/composites/prop'
 import { tabSchema, menuSchema } from '@/shared/schemas/menu'
 import useAppEditor from '@/features/App/store'
 import { useUrl } from '@/composites/url'
-import { useFeathers } from '@/composites/feathers'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 
 type Menu = Static<typeof menuSchema>
@@ -55,8 +53,6 @@ const emit = defineEmits<{
   (e: 'update:model-value', value: Tab[]): void,
 }>()
 
-const { api } = useFeathers()
-
 const tabs = useModelValue(props, emit)
 
 const currentTab = ref()
@@ -69,19 +65,13 @@ watch(currentTab, () => {
   editor.selectTab(currentTab.value)
 }, { immediate: true })
 
-const { data: forms } = api.service('forms').useFind({
-  query: {},
-})
-
-const userForm = computed(() => forms.value?.[0])
-
 const addTab = () => {
   const f = {
     _id: hexObjectId(),
     name: 'form',
     fields: [],
   }
-  userForm.value.list.push(f)
+  editor.forms?.push(f)
 
   const t: Tab = {
     _id: hexObjectId(),
@@ -95,9 +85,9 @@ const addTab = () => {
 }
 
 const removeTab = (v: Tab, index: number): boolean => {
-  const idx = userForm.value?.list.findIndex((f) => f._id === v.formId)
+  const idx = editor.forms?.findIndex((f) => f._id === v.formId)
   if (idx !== -1) {
-    userForm.value.list.splice(idx, 1)
+    editor.forms?.splice(idx, 1)
   }
   tabs.value.splice(index, 1)
   return true

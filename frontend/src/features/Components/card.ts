@@ -20,7 +20,7 @@ export default {
       bordered: Type.Boolean(),
     }),
     Type.Omit(commonProperties.style, ['dense']),
-  ]),
+  ], false),
   defaultValues: {
     _columns: () => ([
       {

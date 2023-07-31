@@ -1,4 +1,5 @@
 import { TObject, Type } from '@feathersjs/typebox'
+import compact from 'lodash/compact'
 
 export const sizeString = Type.String({
   options: [
@@ -13,8 +14,8 @@ export const sizeString = Type.String({
 })
 
 export const commonProperties = {
-  name: Type.Object({
-    name: Type.String(),
+  field: Type.Object({
+    field: Type.String({ field: true }),
   }),
 
   state: Type.Object({
@@ -43,9 +44,9 @@ export const commonProperties = {
   }),
 }
 
-export const properties = (props: TObject[]) => Type.Intersect(
-  [
+export const properties = (props: TObject[], field = true) => Type.Intersect(
+  compact([
     ...props,
-    commonProperties.name,
-  ],
+    field ? commonProperties.field : undefined,
+  ]),
 )

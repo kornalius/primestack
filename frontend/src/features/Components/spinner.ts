@@ -1,6 +1,6 @@
 import { QSpinnerIos } from 'quasar'
 import { Type } from '@feathersjs/typebox'
-import { contentIcon, styleIcon } from '@/shared/icons'
+import { styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { properties, commonProperties } from './common'
 
@@ -9,6 +9,7 @@ export default {
   icon: 'mdi-vanish',
   label: 'Spinner',
   component: QSpinnerIos,
+  nokey: true,
   schema: properties([
     commonProperties.size,
     Type.Object({
@@ -16,18 +17,12 @@ export default {
       thickness: Type.Number(),
     }),
     commonProperties.style,
-  ]),
+  ], false),
   defaultValues: {
     color: 'primary',
     thickness: 5,
   },
   categories: {
-    content: {
-      icon: contentIcon,
-      names: [
-        'name',
-      ],
-    },
     style: {
       icon: styleIcon,
       names: [

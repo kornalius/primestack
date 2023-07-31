@@ -28,7 +28,7 @@ export default {
       ]),
     }),
     Type.Omit(commonProperties.style, ['dense']),
-  ]),
+  ], false),
   defaultValues: {
     loading: 'eager',
     fetchpriority: 'auto',
@@ -38,7 +38,6 @@ export default {
     content: {
       icon: contentIcon,
       names: [
-        'name',
         'title',
         'src',
         'fetchpriority',

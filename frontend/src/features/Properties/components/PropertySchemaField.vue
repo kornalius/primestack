@@ -177,6 +177,22 @@
     @keydown="editor.preventSystemUndoRedo"
   />
 
+  <table-field-select
+    v-else-if="type === 'field'"
+    v-model="value"
+    :table-id="tableId"
+    :outlined="property"
+    :disable="disabled || !tableId"
+    :extra-options="extraFields"
+    option-value="name"
+    dense
+    clearable
+    options-dense
+    create-new
+    @create="$emit('create-new')"
+    @keydown="editor.preventSystemUndoRedo"
+  />
+
   <div
     v-if="type === 'json'"
     class="ellipsis overflow-hidden"
@@ -187,7 +203,7 @@
       :class="{ 'text-negative': disabled }"
     >
       <q-tooltip :delay="500">
-        {{ disabledLabel || JSON.stringify(value, undefined, 2) }}
+        {{ disabledLabel || JSON.stringify(value || {}, undefined, 2) }}
       </q-tooltip>
 
       {{ disabledLabel || jsonValue }}
@@ -236,7 +252,7 @@
   />
 
   <div
-    v-else-if="type === 'object' && typeof value === 'object' && !property"
+    v-else-if="type === 'object' && !property"
     class="overflow-hidden ellipsis"
     :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
     style="max-width: 230px;"
@@ -246,7 +262,7 @@
       :class="{ 'text-negative': disabled }"
     >
       <q-tooltip :delay="500">
-        {{ disabledLabel || JSON.stringify(value, undefined, 2) }}
+        {{ disabledLabel || JSON.stringify(value || {}, undefined, 2) }}
       </q-tooltip>
 
       {{ disabledLabel || jsonValue }}
@@ -307,7 +323,7 @@
   </array-editor>
 
   <div
-    v-else-if="type === 'query' && typeof value === 'object' && property"
+    v-else-if="type === 'query' && property"
     class="overflow-hidden ellipsis"
     :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
     style="max-width: 230px;"
@@ -406,7 +422,6 @@ import { TSchema } from '@feathersjs/typebox'
 import { defaultValueForSchema, getTypeFor, optionsForSchema } from '@/shared/schema'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { useQuery } from '@/features/Query/composites'
-import { useFeathers } from '@/composites/feathers'
 import useAppEditor from '@/features/App/store'
 import PaddingEditor from '@/features/Fields/components/PaddingEditor.vue'
 import MarginEditor from '@/features/Fields/components/MarginEditor.vue'
@@ -421,6 +436,7 @@ import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import QueryEditor from '@/features/Query/components/Editor/QueryEditor.vue'
 import TableSelect from '@/features/Fields/components/TableSelect.vue'
 import ServiceSelect from '@/features/Fields/components/ServiceSelect.vue'
+import TableFieldSelect from '@/features/Fields/components/TableFieldSelect.vue'
 
 const props = defineProps<{
   modelValue: unknown
@@ -449,7 +465,9 @@ const emit = defineEmits<{
   (e: 'update:model-value', value: unknown): void,
 }>()
 
-const value = useModelValue(props, emit)
+const value = useModelValue(props, emit, defaultValueForSchema(props.schema))
+
+const editor = useAppEditor()
 
 const { queryToString } = useQuery()
 
@@ -550,29 +568,28 @@ const removeItem = (arr: unknown[], index: number): boolean => {
 
 const tempJson = ref()
 
-const { api } = useFeathers()
-
-const { data: tables } = api.service('tables').useFind({
-  query: {},
-})
-
 const table = computed(() => (
-  tables.value?.[0]?.list.find((s) => s._id === props.parent?.tableId)
+  editor.tables?.find((s) => s._id === props.parent?.tableId)
 ))
 
 const queryValue = computed(() => (
-  type.value === 'query' && typeof value.value === 'object' && props.property
-    ? queryToString(value.value, table.value) || '▪'
-    : '▪'
+  type.value === 'query' && props.property
+    ? queryToString(value.value || { groups: [] }, table.value) || '()'
+    : '()'
 ))
 
-const jsonValue = computed(() => (
-  (type.value === 'object' && typeof value.value === 'object' && !props.property)
-  || (type.value === 'array' && Array.isArray(value.value) && !props.property)
-  || (type.value === 'json')
-    ? JSON.stringify(value.value) || '▪'
-    : '▪'
-))
+const jsonValue = computed(() => {
+  if (type.value === 'object' && !props.property) {
+    return JSON.stringify(value.value || {})
+  }
+  if (type.value === 'array' && !props.property) {
+    return JSON.stringify(value.value || [])
+  }
+  if (type.value === 'json') {
+    return JSON.stringify(value.value) || '▪'
+  }
+  return ''
+})
 
 const disabled = computed((): boolean => {
   if (props.disable) {
@@ -590,5 +607,15 @@ const disabledLabel = computed((): string | undefined => (
     : undefined
 ))
 
-const editor = useAppEditor()
+const form = computed(() => (
+  editor.forms.find((f) => f._id === editor.formId)
+))
+
+const tableId = computed(() => (
+  (props.schema.tableProp && value.value[props.schema.tableProp]) || form.value.tableId
+))
+
+const extraFields = computed(() => (
+  Object.keys(form.value?.data || {}).map((k) => ({ _id: k, name: k }))
+))
 </script>

@@ -28,7 +28,7 @@ const queryToMongo = (q: QueryGroup[]): AnyData => {
   }
 
   const reduceCriteria = (c: QueryCriteria): AnyData | undefined => {
-    if (c.fieldId && c.value !== null && c.value !== undefined) {
+    if (c.fieldId && c.op && c.value !== null && c.value !== undefined) {
       if (c.op === 'like') {
         return { [c.fieldId]: new RegExp(c.value, 'i') }
       }
@@ -98,7 +98,12 @@ const queryToString = (query: Query, schema: TableSchema): string => {
     const cr = []
     criterias.forEach((c, index) => {
       const n = schema?.fields.find((f) => f._id === c.fieldId)?.name
-      cr.push(n || 'N/A')
+
+      if (!n || !c.op || c.value === undefined || c.value === null) {
+        return
+      }
+
+      cr.push(n)
       cr.push(` ${c.op} `)
       cr.push(JSON.stringify(c.value))
       if (c.logicOp === 'and' && index < criterias.length - 1) {

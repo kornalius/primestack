@@ -64,7 +64,7 @@ const style = (field: AnyData): AnyData => {
 }
 
 export default () => ({
-  createFormField: (component: TFormComponent, fields: TFormField[]): TFormField => ({
+  createFormField: (component: TFormComponent): TFormField => ({
     _id: hexObjectId(),
     _type: component.type,
     _columns: component.row ? [] : undefined,
@@ -74,7 +74,6 @@ export default () => ({
         { ...acc, [k]: defaultValueForSchema(component.schema.properties[k]) }
       ), {}),
     ...(defaultValues(component.defaultValues) || {}),
-    name: !component.noName ? newNameForField(component.type, flattenFields(fields)) : undefined,
   }),
 
   flattenFields,

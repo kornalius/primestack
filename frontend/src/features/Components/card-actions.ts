@@ -24,7 +24,7 @@ export default {
       vertical: Type.Boolean(),
     }),
     Type.Omit(commonProperties.style, ['dense']),
-  ]),
+  ], false),
   defaultValues: {
     align: 'right',
     vertical: false,

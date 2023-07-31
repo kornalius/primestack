@@ -9,6 +9,7 @@ export default {
   icon: 'mdi-timer-sand',
   label: 'Skeleton',
   component: QSkeleton,
+  nokey: true,
   schema: properties([
     commonProperties.state,
     commonProperties.size,
@@ -45,7 +46,7 @@ export default {
       height: Type.String(),
     }),
     Type.Omit(commonProperties.style, ['dense']),
-  ]),
+  ], false),
   defaultValues: {
     type: 'rect',
   },
@@ -53,7 +54,6 @@ export default {
     content: {
       icon: contentIcon,
       names: [
-        'name',
         'type',
         'disable',
         'readonly',
