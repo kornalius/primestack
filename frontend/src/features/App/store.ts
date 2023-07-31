@@ -1,19 +1,25 @@
 import { computed, ref, watch } from 'vue'
+import { Static } from '@feathersjs/typebox'
 import debounce from 'lodash/debounce'
+import isEqual from 'lodash/isEqual'
+import hexObjectId from 'hex-object-id'
 import { defineStore } from 'pinia'
 import hotkeys from 'hotkeys-js'
 import { useFeathers } from '@/composites/feathers'
 import cloneDeep from 'lodash/cloneDeep'
 import useSnacks from '@/features/Snacks/store'
 import { AnyData } from '@/shared/interfaces/commons'
-import { menuSchema } from '@/shared/schemas/menu'
+import { menuSchema, tabSchema } from '@/shared/schemas/menu'
 import { formSchema } from '@/shared/schemas/form'
-import { tableSchema } from '@/shared/schemas/table'
-import { Static } from '@feathersjs/typebox'
+import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
+import { TFormColumn, TFormComponent, TFormField } from '@/shared/interfaces/forms'
+import { defaultValueForSchema, defaultValues } from '@/shared/schema'
 
 type Menu = Static<typeof menuSchema>
+type Tab = Static<typeof tabSchema>
 type Form = Static<typeof formSchema>
 type Table = Static<typeof tableSchema>
+type TableField = Static<typeof tableFieldSchema>
 
 interface Snapshot {
   menus: unknown[]
@@ -50,6 +56,13 @@ export default defineStore('app-editor', () => {
   const menus = computed(() => states.value.menus)
   const forms = computed(() => states.value.forms)
   const tables = computed(() => states.value.tables)
+
+  const isModified = computed(() => {
+    const f = isEqual(states.value.origSnapshot.forms, states.value.forms)
+    const t = isEqual(states.value.origSnapshot.tables, states.value.tables)
+    const m = isEqual(states.value.origSnapshot.menus, states.value.menus)
+    return states.value.active && (!f || !t || !m)
+  })
 
   const setFormId = (id: string): void => {
     states.value.formId = id
@@ -196,7 +209,7 @@ export default defineStore('app-editor', () => {
     states.value.forms = cloneDeep(userForms.value?.list)
     states.value.tables = cloneDeep(userTables.value?.list)
 
-    snapshot()
+    states.value.origSnapshot = snapshot()
 
     hotkeys.setScope('edit')
   }
@@ -335,6 +348,177 @@ export default defineStore('app-editor', () => {
       : undefined
   )
 
+  const findTabById = (id: string): Tab | undefined => {
+    const findTab = (m: Menu): Tab | undefined => (
+      m.tabs.find((t) => t._id === id)
+    )
+    return states.value.menus.find(findTab)
+  }
+
+  const addMenu = (): Menu => {
+    const m = {
+      _id: hexObjectId(),
+      label: undefined,
+      icon: undefined,
+      color: undefined,
+      href: undefined,
+      target: '_self',
+      tabs: [],
+    }
+    states.value.menus.push(m)
+    return m
+  }
+
+  const removeMenu = (id: string): boolean => {
+    const index = states.value.menus.findIndex((m) => m._id === id)
+    menus.value.splice(index, 1)
+    return true
+  }
+
+  const addTab = (): Tab => {
+    const f = {
+      _id: hexObjectId(),
+      name: 'form',
+      fields: [],
+    }
+    states.value.forms?.push(f)
+
+    const t: Tab = {
+      _id: hexObjectId(),
+      label: 'New Tab',
+      icon: undefined,
+      color: undefined,
+      formId: f._id,
+    }
+
+    const menu = menuInstance(states.value.selectedMenu)
+    menu.tabs.push(t)
+    return t
+  }
+
+  const removeTab = (id: string): boolean => {
+    const t = findTabById(id)
+    const idx = states.value.forms.findIndex((f) => f._id === t.formId)
+    if (idx !== -1) {
+      states.value.forms.splice(idx, 1)
+    }
+
+    const menu = menuInstance(states.value.selectedMenu)
+    const index = menu.tabs.findIndex((tab) => tab._id === id)
+    menu.tabs.splice(index, 1)
+    return true
+  }
+
+  const createFormField = (component: TFormComponent): TFormField => ({
+    _id: hexObjectId(),
+    _type: component.type,
+    _columns: component.row ? [] : undefined,
+    _fields: component.col ? [] : undefined,
+    ...Object.keys(component.schema?.properties || {})
+      .reduce((acc, k) => (
+        { ...acc, [k]: defaultValueForSchema(component.schema.properties[k]) }
+      ), {}),
+    ...(defaultValues(component.defaultValues) || {}),
+  })
+
+  const addFieldToForm = (component: TFormComponent): TFormField | undefined => {
+    const form = states.value.forms.find((f) => f._id === states.value.formId)
+    if (form) {
+      const field = createFormField(component)
+      // eslint-disable-next-line no-underscore-dangle
+      form._fields.push(field)
+      setTimeout(() => {
+        select(field._id)
+      }, 100)
+      return field
+    }
+    return undefined
+  }
+
+  const addColumnToField = (
+    components: TFormComponent[],
+    componentType: string,
+    field: TFormField,
+  ): TFormColumn => {
+    let type
+
+    if (componentType === 'row') {
+      type = 'col'
+    } else if (componentType === 'card') {
+      type = 'card-section'
+    }
+
+    const colComponent = components.find((c) => c.type === type)
+
+    const col = {
+      _id: hexObjectId(),
+      _type: type,
+      _columns: undefined,
+      _fields: [],
+      size: undefined,
+      ...Object.keys(colComponent.schema?.properties || {})
+        .reduce((acc, k) => (
+          { ...acc, [k]: defaultValueForSchema(colComponent.schema.properties[k]) }
+        ), {}),
+      ...(defaultValues(colComponent.defaultValues) || {}),
+    } as TFormColumn
+    // eslint-disable-next-line no-underscore-dangle
+    field._columns.push(col)
+    return col
+  }
+
+  const removeColumnFromField = (column: TFormColumn, field: TFormField): void => {
+    // eslint-disable-next-line no-underscore-dangle
+    const idx = field._columns.findIndex((c) => c._id === column._id)
+    if (idx !== -1) {
+      // eslint-disable-next-line no-underscore-dangle
+      field._columns.splice(idx, 1)
+    }
+  }
+
+  const addTable = (): Table => {
+    const t = {
+      _id: hexObjectId(),
+      name: undefined,
+      methods: ['get', 'find', 'create', 'patch', 'remove'],
+      created: true,
+      updated: true,
+      softDelete: false,
+      user: true,
+      fields: [],
+      indexes: [],
+    }
+    states.value.tables.push(t)
+    return t
+  }
+
+  const removeTable = (id: string): boolean => {
+    const index = states.value.tables.findIndex((m) => m._id === id)
+    tables.value.splice(index, 1)
+    return true
+  }
+
+  const addFieldToTable = (table: Table): TableField => {
+    const f = {
+      _id: hexObjectId(),
+      name: undefined,
+      type: 'string',
+      hidden: false,
+      array: false,
+      optional: false,
+      readonly: false,
+      queryable: true,
+    }
+    table.fields.push(f)
+    return f
+  }
+
+  const removeFieldFromTable = (id: string, table: Table): boolean => {
+    const index = table.fields.findIndex((f) => f._id === id)
+    table.fields.splice(index, 1)
+    return true
+  }
+
   startWatch()
 
   return {
@@ -385,5 +569,18 @@ export default defineStore('app-editor', () => {
     formInstance,
     menuInstance,
     tableInstance,
+    isModified,
+    addMenu,
+    removeMenu,
+    addTab,
+    removeTab,
+    createFormField,
+    addFieldToForm,
+    addColumnToField,
+    removeColumnFromField,
+    addTable,
+    removeTable,
+    addFieldToTable,
+    removeFieldFromTable,
   }
 })

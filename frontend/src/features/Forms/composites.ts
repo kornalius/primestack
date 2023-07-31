@@ -1,9 +1,7 @@
-import hexObjectId from 'hex-object-id'
 import startCase from 'lodash/startCase'
 import omit from 'lodash/omit'
 import { TSchema } from '@feathersjs/typebox'
-import { TFormColumn, TFormComponent, TFormField } from '@/shared/interfaces/forms'
-import { defaultValueForSchema, defaultValues } from '@/shared/schema'
+import { TFormColumn, TFormField } from '@/shared/interfaces/forms'
 import { AnyData } from '@/shared/interfaces/commons'
 import { components, componentForType } from '@/features/Components'
 
@@ -64,18 +62,6 @@ const style = (field: AnyData): AnyData => {
 }
 
 export default () => ({
-  createFormField: (component: TFormComponent): TFormField => ({
-    _id: hexObjectId(),
-    _type: component.type,
-    _columns: component.row ? [] : undefined,
-    _fields: component.col ? [] : undefined,
-    ...Object.keys(component.schema?.properties || {})
-      .reduce((acc, k) => (
-        { ...acc, [k]: defaultValueForSchema(component.schema.properties[k]) }
-      ), {}),
-    ...(defaultValues(component.defaultValues) || {}),
-  }),
-
   flattenFields,
 
   fieldBinds: (field: TFormField | TFormColumn, schema: TSchema): AnyData => {

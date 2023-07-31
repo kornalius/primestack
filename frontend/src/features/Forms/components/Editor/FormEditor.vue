@@ -35,7 +35,7 @@
               align="left"
               dense
               flat
-              @click="onAddFieldClick(value)"
+              @click="editor.addFieldToForm(value)"
             />
           </template>
         </draggable>
@@ -62,7 +62,6 @@ import draggable from 'vuedraggable'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 import useAppEditor from '@/features/App/store'
-import useFormElements from '../../composites'
 import FieldsEditor from './FieldsEditor.vue'
 
 const props = defineProps<{
@@ -80,8 +79,6 @@ const emit = defineEmits<{
 
 const fields = useModelValue(props, emit)
 
-const { createFormField } = useFormElements()
-
 const visibleComponents = computed(() => props.components.filter((c) => !c.hidden))
 
 /**
@@ -90,15 +87,7 @@ const visibleComponents = computed(() => props.components.filter((c) => !c.hidde
 
 const editor = useAppEditor()
 
-const onAddFieldClick = (component: TFormComponent) => {
-  const field = createFormField(component)
-  fields.value.push(field)
-  setTimeout(() => {
-    editor.select(field._id)
-  }, 100)
-}
-
-const cloneComponent = (component: TFormComponent) => createFormField(component)
+const cloneComponent = (component: TFormComponent) => editor.createFormField(component)
 </script>
 
 <style scoped lang="sass">

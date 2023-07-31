@@ -1,8 +1,8 @@
 <template>
   <array-editor
     v-model="menus"
-    :add-function="addMenu"
-    :remove-function="removeMenu"
+    :add-function="editor.addMenu"
+    :remove-function="(m) => editor.removeMenu(m._id)"
     add-button="end"
     no-separator
     reorderable
@@ -32,7 +32,6 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { Static } from '@feathersjs/typebox'
-import hexObjectId from 'hex-object-id'
 import { useModelValue } from '@/composites/prop'
 import { menuSchema } from '@/shared/schemas/menu'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
@@ -52,24 +51,6 @@ const emit = defineEmits<{
 const menus = useModelValue(props, emit)
 
 const editor = useAppEditor()
-
-const addMenu = () => {
-  const m = {
-    _id: hexObjectId(),
-    label: undefined,
-    icon: undefined,
-    color: undefined,
-    href: undefined,
-    target: '_self',
-    tabs: [],
-  }
-  menus.value.push(m)
-}
-
-const removeMenu = (v: Menu, index: number): boolean => {
-  menus.value.splice(index, 1)
-  return true
-}
 
 onMounted(() => {
   editor.selectMenu(menus.value?.[0]?._id)

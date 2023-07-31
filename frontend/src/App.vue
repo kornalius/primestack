@@ -31,12 +31,28 @@
           </q-tabs>
         </q-toolbar-title>
 
-        <q-toggle
-          v-model="currentEditmode"
-          label="Edit"
-          color="orange-4"
-          left-label
-          keep-color
+        <q-btn
+          v-if="editor.active"
+          :disable="!editor.isModified"
+          icon="mdi-check"
+          label="Save"
+          color="green-4"
+          size="sm"
+          outline
+          no-caps
+          @click="save"
+        />
+
+        <q-btn
+          v-if="editor.active"
+          class="q-ml-sm"
+          icon="mdi-check"
+          label="Cancel"
+          color="red-3"
+          size="sm"
+          outline
+          no-caps
+          @click="cancel"
         />
 
         <q-btn
@@ -47,43 +63,55 @@
           dense
           round
         >
-          <q-menu fit>
-            <div class="row q-pa-md items-center">
-              <div class="col">
+          <q-menu max-width="400px" fit>
+            <div class="row q-pa-md q-gutter-sm items-center">
+              <div class="col-auto">
                 <q-btn
-                  class="q-mx-sm"
                   icon="mdi-magnify"
                   color="grey-7"
                   size="sm"
                   flat
                   round
+                  v-close-popup
                 />
+              </div>
 
+              <div class="col-auto">
                 <q-btn
-                  class="q-mx-sm"
-                  icon="mdi-bookmark-multiple-outline"
-                  color="grey-7"
+                  :color="editor.active ? 'red-7' : 'grey-7'"
+                  :disable="editor.active"
+                  icon="mdi-pencil-ruler"
                   size="sm"
                   flat
                   round
-                />
+                  v-close-popup
+                  @click="editor.startEdit"
+                >
+                  <q-tooltip :delay="500">
+                    Toggle editor
+                  </q-tooltip>
+                </q-btn>
+              </div>
 
+              <div class="col-auto">
                 <q-btn
-                  class="q-mx-sm"
                   icon="mdi-bell-outline"
                   color="grey-7"
                   size="sm"
                   flat
                   round
+                  v-close-popup
                 />
+              </div>
 
+              <div class="col">
                 <q-btn
-                  class="q-mx-sm"
-                  color="grey-7"
+                  color="green-7"
                   size="sm"
                   label="Upgrade"
                   no-caps
                   outline
+                  v-close-popup
                 />
               </div>
             </div>
@@ -107,7 +135,11 @@
             <q-separator />
 
             <q-list>
-              <q-item clickable @click="profileClick">
+              <q-item
+                clickable
+                v-close-popup
+                @click="profileClick"
+              >
                 <q-item-section avatar>
                   <q-icon name="mdi-account-edit" />
                 </q-item-section>
@@ -118,7 +150,11 @@
                 </q-item-section>
               </q-item>
 
-              <q-item clickable @click="logout">
+              <q-item
+                clickable
+                v-close-popup
+                @click="logout"
+              >
                 <q-item-section avatar>
                   <q-icon name="mdi-logout" />
                 </q-item-section>
@@ -275,6 +311,7 @@
 import {
   computed, onMounted, ref, watch,
 } from 'vue'
+import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
 // import useSnacks from '@/features/Snacks/store'
 import SnacksDisplay from '@/features/Snacks/components/Snacks.vue'
@@ -286,6 +323,8 @@ import MenusEditor from '@/features/Menus/components/MenusEditor.vue'
 import AppProperties from '@/features/App/components/AppProperties.vue'
 import { useUrl } from '@/composites/url'
 import { useFeathers } from '@/composites/feathers'
+
+const quasar = useQuasar()
 
 const { api } = useFeathers()
 
@@ -307,16 +346,6 @@ function toggleLeftDrawer() {
 }
 
 const editor = useAppEditor()
-
-const currentEditmode = ref(false)
-
-watch(currentEditmode, () => {
-  if (currentEditmode.value) {
-    editor.startEdit()
-  } else {
-    editor.endEdit()
-  }
-})
 
 const userMenu = ref()
 
@@ -391,4 +420,26 @@ const logout = () => {
 const hideUI = computed(() => (
   !auth.authenticated || route.name === 'Logout'
 ))
+
+const save = async () => {
+  try {
+    await editor.save()
+  } finally {
+    editor.endEdit()
+  }
+}
+
+const cancel = () => {
+  if (editor.isModified) {
+    quasar.dialog({
+      title: 'Unsaved changes',
+      persistent: true,
+      message: 'There are unsaved changes. Are you sure you want to cancel?',
+      ok: { color: 'green', outline: true },
+      cancel: { color: 'negative', outline: true },
+    }).onOk(() => {
+      editor.endEdit()
+    })
+  }
+}
 </script>

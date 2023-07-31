@@ -26,7 +26,7 @@
       color="blue-4"
       size="xs"
       round
-      @click="onAddColumnClick"
+      @click="editor.addColumnToField(components, component.type, field)"
     >
       <q-tooltip :delay="500">
         Add Column or Section
@@ -68,7 +68,7 @@
         v-if="isRow"
         v-model="field"
         :components="components"
-        @remove="removeColumn"
+        @remove="(col) => editor.removeColumnFromField(col, field)"
         @click="onColumnClick"
       />
 
@@ -77,7 +77,7 @@
         v-model="field"
         class="card"
         :components="components"
-        @remove="removeColumn"
+        @remove="(col) => editor.removeColumnFromField(col, field)"
         @click="onColumnClick"
       />
 
@@ -111,12 +111,10 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import hexObjectId from 'hex-object-id'
 import { TSchema } from '@feathersjs/typebox'
 import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 import useAppEditor from '@/features/App/store'
-import { defaultValueForSchema, defaultValues } from '@/shared/schema'
 import TableEditor from '@/features/Forms/components/Editor/TableEditor.vue'
 import { useQuery } from '@/features/Query/composites'
 import useFormElements from '../../composites'
@@ -168,43 +166,8 @@ const onColumnClick = (column: TFormColumn) => {
   emit('click', column._id)
 }
 
-const onAddColumnClick = () => {
-  let type
-
-  if (isRow.value) {
-    type = 'col'
-  } else if (isCard.value) {
-    type = 'card-section'
-  }
-
-  const colComponent = props.components.find((c) => c.type === type)
-
-  const col = {
-    _id: hexObjectId(),
-    _type: type,
-    _columns: undefined,
-    _fields: [],
-    ...Object.keys(colComponent.schema?.properties || {})
-      .reduce((acc, k) => (
-        { ...acc, [k]: defaultValueForSchema(colComponent.schema.properties[k]) }
-      ), {}),
-    ...(defaultValues(colComponent.defaultValues) || {}),
-  }
-  // eslint-disable-next-line no-underscore-dangle
-  field.value._columns.push(col)
-}
-
 const onRemoveClick = () => {
   emit('remove', props.modelValue)
-}
-
-const removeColumn = (column: TFormColumn) => {
-  // eslint-disable-next-line no-underscore-dangle
-  const idx = field.value._columns.findIndex((c) => c._id === column._id)
-  if (idx !== -1) {
-    // eslint-disable-next-line no-underscore-dangle
-    field.value._columns.splice(idx, 1)
-  }
 }
 
 const style = computed(() => ({
