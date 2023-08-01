@@ -9,9 +9,11 @@ export default {
   icon: 'mdi-progress-helper',
   label: 'Progress',
   component: QCircularProgress,
+  numericInput: true,
   schema: properties([
     commonProperties.state,
     commonProperties.size,
+    commonProperties.style,
     Type.Object({
       modelValue: Type.Number({ min: 0, max: 360 }),
       angle: Type.Number({ min: 0, max: 360 }),
@@ -29,7 +31,6 @@ export default {
       thickness: Type.Number({ step: 0.1 }),
       animationSpeed: Type.Number(),
     }),
-    commonProperties.style,
   ]),
   defaultValues: {
     color: 'primary',

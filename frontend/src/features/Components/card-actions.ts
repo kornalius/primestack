@@ -11,6 +11,7 @@ export default {
   nokey: true,
   hidden: true,
   schema: properties([
+    Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
       align: StringEnum([
         'left',
@@ -23,7 +24,6 @@ export default {
       ]),
       vertical: Type.Boolean(),
     }),
-    Type.Omit(commonProperties.style, ['dense']),
   ], false),
   defaultValues: {
     align: 'right',

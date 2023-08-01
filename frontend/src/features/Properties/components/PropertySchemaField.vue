@@ -303,7 +303,7 @@
         v-model="value[index]"
         v-model:forced-types="currentForcedTypes"
         :prop-name="subPropName(index)"
-        :schema="arraySchema"
+        :schema="dynamicArraySchema(value[index])"
         :horizontal="arrayIsHorizontal"
         embed-label
         flat
@@ -394,7 +394,7 @@
             v-model="scope.value[index]"
             v-model:forced-types="currentForcedTypes"
             :prop-name="subPropName(index)"
-            :schema="arraySchema"
+            :schema="dynamicArraySchema(scope.value[index])"
             :horizontal="arrayIsHorizontalPopup"
             embed-label
             flat
@@ -418,7 +418,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { TSchema } from '@feathersjs/typebox'
+import { TSchema, Type } from '@feathersjs/typebox'
 import { defaultValueForSchema, getTypeFor, optionsForSchema } from '@/shared/schema'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { useQuery } from '@/features/Query/composites'
@@ -437,6 +437,8 @@ import QueryEditor from '@/features/Query/components/Editor/QueryEditor.vue'
 import TableSelect from '@/features/Fields/components/TableSelect.vue'
 import ServiceSelect from '@/features/Fields/components/ServiceSelect.vue'
 import TableFieldSelect from '@/features/Fields/components/TableFieldSelect.vue'
+import { AnyData } from '@/shared/interfaces/commons'
+import { ruleTypes } from '@/features/Components/common'
 
 const props = defineProps<{
   modelValue: unknown
@@ -536,6 +538,19 @@ const multiple = computed((): boolean => {
 })
 
 const arraySchema = computed(() => props.schema.items)
+
+const dynamicArraySchema = (val: AnyData): TSchema => {
+  if (props.schema.rules) {
+    const rt = ruleTypes.find((r) => r.name === val.type)
+    if (rt?.options) {
+      return Type.Intersect([
+        arraySchema.value,
+        rt.options,
+      ])
+    }
+  }
+  return arraySchema.value
+}
 
 const objectSchema = computed(() => props.schema)
 

@@ -1,8 +1,7 @@
 import { RouteLocationNormalized } from 'vue-router'
 import { AnyData } from '@/shared/interfaces/commons'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/explicit-module-boundary-types
-export default (lazyLoad, patterns) => ([
+export default (lazyLoad) => ([
   {
     path: '/login',
     name: 'Login',

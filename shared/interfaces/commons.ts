@@ -19,3 +19,5 @@ export interface BaseInterface extends FeathersTempRecordInterface {
   'deleted_at': Timestamp;
   'deleted_by': NullableString;
 }
+
+export type T18N = (path: string, args?) => string

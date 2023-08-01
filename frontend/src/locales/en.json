@@ -1,10 +1,25 @@
 {
   "field_errors": {
     "required": "Required",
-    "numeric": "Must be digits only",
     "alpha": "Must be letters only",
+    "alphanumeric": "Must be letters and/or digits only",
+    "numeric": "Must be digits only",
+    "integer": "Must be integer",
+    "float": "Must be float",
+    "hexadecimal": "Must be hexadecimal",
     "email": "Invalid email",
-    "max": "Cannot exceed {count} characters",
-    "min": "Cannot be less than {count} characters"
+    "phone": "Invalid phone",
+    "issn": "Invalid social security number",
+    "min": "Cannot be less than {count}",
+    "max": "Cannot exceed {count}",
+    "between": "Must be between {minValue} and {maxValue}",
+    "minLength": "Cannot be less than {length} characters",
+    "maxLength": "Cannot exceed {length} characters",
+    "creditcard": "Invalid credit card number",
+    "after": "Date must be after {date}",
+    "before": "Date must be before {date}",
+    "regex": "Must match the pattern {regex}",
+    "lowercase": "Must be lowercase",
+    "uppercase": "Must be uppercase"
   }
 }

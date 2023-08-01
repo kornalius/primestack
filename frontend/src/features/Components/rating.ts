@@ -9,9 +9,11 @@ export default {
   icon: 'mdi-star',
   label: 'Rating',
   component: QRating,
+  numericInput: true,
   schema: properties([
     commonProperties.state,
     commonProperties.size,
+    Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
       modelValue: Type.Number(),
       icon: Type.String({ icon: true }),
@@ -24,7 +26,6 @@ export default {
       colorSelected: Type.String({ color: true }),
       colorHalf: Type.String({ color: true }),
     }),
-    Type.Omit(commonProperties.style, ['dense']),
   ]),
   defaultValues: {
     dense: true,

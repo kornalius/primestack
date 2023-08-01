@@ -29,19 +29,31 @@
 
       <component
         :is="componentForType[field._type]"
+        v-else-if="isNumericInput(field)"
+        v-model.number="value[field.field]"
+        v-bind="fieldBinds(field, schemaForType(field))"
+        :style="style(field)"
+        :rules="serializeRules(t, field)"
+        lazy-rules
+      />
+
+      <component
+        :is="componentForType[field._type]"
         v-else
         v-model="value[field.field]"
         v-bind="fieldBinds(field, schemaForType(field))"
         :style="style(field)"
+        :rules="serializeRules(t, field)"
+        lazy-rules
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { TFormColumn, TFormComponent, TFormField } from '@/shared/interfaces/forms'
-import { TSchema } from '@feathersjs/typebox'
+import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
+import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import useFormElements from '../composites'
 import FormDisplayRow from './FormDisplayRow.vue'
 import FormDisplayCard from './FormDisplayCard.vue'
@@ -57,21 +69,19 @@ const emit = defineEmits<{
   (e: 'update:model-value', value: Record<string, unknown>): void,
 }>()
 
-const { componentForType, fieldBinds, style } = useFormElements()
+const {
+  componentForType,
+  fieldBinds,
+  style,
+  isNumericInput,
+  schemaForType,
+  isRow,
+  isCard,
+  isParagraph,
+  serializeRules,
+} = useFormElements()
 
 const value = useModelValue(props, emit)
 
-// eslint-disable-next-line no-underscore-dangle
-const isRow = (field: TFormField): boolean => field._type === 'row'
-
-// eslint-disable-next-line no-underscore-dangle
-const isCard = (field: TFormField): boolean => field._type === 'card'
-
-// eslint-disable-next-line no-underscore-dangle
-const isParagraph = (field: TFormField): boolean => field._type === 'paragraph'
-
-const schemaForType = (f: TFormField | TFormColumn): TSchema | undefined => (
-  // eslint-disable-next-line no-underscore-dangle
-  props.components.find((c) => c.type === f._type)?.schema
-)
+const { t } = useI18n()
 </script>

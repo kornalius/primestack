@@ -11,6 +11,7 @@ export default {
   component: ColorField,
   schema: properties([
     commonProperties.state,
+    commonProperties.style,
     Type.Object({
       modelValue: Type.String(),
       defaultValue: Type.String(),
@@ -24,7 +25,6 @@ export default {
       bordered: Type.Boolean(),
       hideBottomSpace: Type.Boolean(),
     }),
-    commonProperties.style,
   ]),
   defaultValues: {
     dense: true,

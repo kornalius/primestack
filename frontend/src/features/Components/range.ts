@@ -11,8 +11,9 @@ export default {
   component: QRange,
   schema: properties([
     commonProperties.state,
+    commonProperties.style,
     Type.Object({
-      modelValue: Type.String(),
+      modelValue: Type.Object({ min: Type.Number(), max: Type.Number() }),
       min: Type.Number(),
       max: Type.Number(),
       innerMin: Type.Number(),
@@ -44,9 +45,9 @@ export default {
       leftThumbColor: Type.String({ color: true }),
       rightThumbColor: Type.String({ color: true }),
     }),
-    commonProperties.style,
   ]),
   defaultValues: {
+    modelValue: { min: 0, max: 0 },
     step: 1,
     snap: true,
     max: 10,

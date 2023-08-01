@@ -11,6 +11,7 @@ export default {
   component: QOptionGroup,
   schema: properties([
     commonProperties.state,
+    commonProperties.style,
     Type.Object({
       modelValue: Type.String(),
       color: Type.String({ color: true }),
@@ -24,7 +25,6 @@ export default {
         disable: Type.Boolean(),
       }, { horizontalPopup: true })),
     }),
-    commonProperties.style,
   ]),
   defaultValues: {
     type: 'radio',

@@ -11,6 +11,7 @@ export default {
   component: QSelect,
   schema: properties([
     commonProperties.state,
+    commonProperties.style,
     Type.Object({
       modelValue: Type.String(),
       virtualScrollHorizontal: Type.Boolean(),
@@ -51,7 +52,6 @@ export default {
       itemAligned: Type.Boolean(),
       hideBottomSpace: Type.Boolean(),
     }),
-    commonProperties.style,
   ]),
   defaultValues: {
     dense: true,

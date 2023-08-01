@@ -12,6 +12,7 @@ export default {
   schema: properties([
     commonProperties.state,
     commonProperties.size,
+    commonProperties.style,
     Type.Object({
       modelValue: Type.Boolean(),
       label: Type.String(),
@@ -20,7 +21,6 @@ export default {
       iconColor: Type.String({ color: true }),
       keepColor: Type.Boolean(),
     }),
-    commonProperties.style,
   ]),
   defaultValues: {
     modelValue: false,

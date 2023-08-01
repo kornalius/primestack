@@ -11,6 +11,7 @@ export default {
   component: QCheckbox,
   schema: properties([
     commonProperties.state,
+    commonProperties.style,
     Type.Object({
       modelValue: Type.Boolean(),
       label: Type.String(),
@@ -20,7 +21,6 @@ export default {
       checkedIcon: Type.String({ icon: true }),
       uncheckedIcon: Type.String({ icon: true }),
     }),
-    commonProperties.style,
   ]),
   defaultValues: {
     modelValue: false,

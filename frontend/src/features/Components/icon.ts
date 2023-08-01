@@ -12,13 +12,13 @@ export default {
   schema: properties([
     commonProperties.state,
     commonProperties.size,
+    commonProperties.style,
     Type.Object({
       modelValue: Type.String({ icon: true }),
       left: Type.Boolean(),
       right: Type.Boolean(),
       color: Type.String({ color: true }),
     }),
-    commonProperties.style,
   ]),
   defaultValues: {
     size: 'md',

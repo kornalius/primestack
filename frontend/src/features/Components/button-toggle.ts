@@ -11,6 +11,7 @@ export default {
   component: QBtnToggle,
   schema: properties([
     commonProperties.state,
+    commonProperties.style,
     Type.Object({
       modelValue: Type.String(),
       spread: Type.Boolean(),
@@ -25,7 +26,6 @@ export default {
         icon: Type.String({ icon: true }),
       }, { horizontalPopup: true })),
     }),
-    commonProperties.style,
   ]),
   defaultValues: {
   },

@@ -11,10 +11,10 @@ export default {
   nokey: true,
   hidden: true,
   schema: properties([
+    Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
       horizontal: Type.Boolean(),
     }),
-    Type.Omit(commonProperties.style, ['dense']),
   ], false),
   defaultValues: {
     horizontal: false,

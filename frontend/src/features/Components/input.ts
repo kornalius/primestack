@@ -1,7 +1,7 @@
 import { QInput } from 'quasar'
 import { StringEnum, Type } from '@feathersjs/typebox'
 import { contentIcon, modelIcon, styleIcon } from '@/shared/icons'
-import { TFormComponent } from '@/shared/interfaces/forms'
+import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { properties, commonProperties } from './common'
 
 export default {
@@ -9,8 +9,11 @@ export default {
   icon: 'mdi-form-textbox',
   label: 'Input',
   component: QInput,
+  numericInput: (field: TFormField): boolean => field.type === 'number',
   schema: properties([
     commonProperties.state,
+    commonProperties.style,
+    commonProperties.rules,
     Type.Object({
       modelValue: Type.Union([Type.String(), Type.Null(), Type.Undefined()]),
       mask: Type.String(),
@@ -51,12 +54,12 @@ export default {
       bgColor: Type.String({ color: true }),
       hideBottomSpace: Type.Boolean(),
     }),
-    commonProperties.style,
   ]),
   defaultValues: {
     type: 'text',
     dense: true,
     outlined: true,
+    rules: [],
   },
   categories: {
     content: {
@@ -78,6 +81,7 @@ export default {
         'type',
         'modelValue',
         'field',
+        'rules',
         'clearable',
         'mask',
         'fillMask',

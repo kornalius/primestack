@@ -11,6 +11,7 @@ export default {
   component: LabelField,
   schema: properties([
     commonProperties.state,
+    Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
       modelValue: Type.String(),
       format: Type.String({
@@ -54,7 +55,6 @@ export default {
         clearable: true,
       }),
     }),
-    Type.Omit(commonProperties.style, ['dense']),
   ]),
   categories: {
     content: {

@@ -46,6 +46,7 @@ import {
   computed, ref, useAttrs, watch,
 } from 'vue'
 import startCase from 'lodash/startCase'
+import compact from 'lodash/compact'
 import { TSchema } from '@feathersjs/typebox'
 import sift from 'sift'
 import { useSyncedProp } from '@/composites/prop'
@@ -54,7 +55,6 @@ import { AnyData } from '@/shared/interfaces/commons'
 import { useFeathers } from '@/composites/feathers'
 import PropertySchemaField from '@/features/Properties/components/PropertySchemaField.vue'
 import { filterToMongo } from '@/composites/filter'
-import { compact } from 'lodash'
 
 const attrs = useAttrs()
 

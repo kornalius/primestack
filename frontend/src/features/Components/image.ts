@@ -12,6 +12,7 @@ export default {
   schema: properties([
     commonProperties.state,
     commonProperties.size,
+    commonProperties.style,
     Type.Object({
       src: Type.String(),
       srcset: Type.String(),
@@ -50,7 +51,6 @@ export default {
       spinnerColor: Type.String({ color: true }),
       spinnerSize: sizeString,
     }),
-    commonProperties.style,
   ], false),
   defaultValues: {
     loading: 'eager',

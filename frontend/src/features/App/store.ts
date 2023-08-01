@@ -218,6 +218,7 @@ export default defineStore('app-editor', () => {
     states.value.active = false
     unselectMenu()
     unselectTable()
+    states.value.formId = undefined
     states.value.selected = undefined
     clearUndoStack()
     hotkeys.setScope('app')

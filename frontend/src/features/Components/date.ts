@@ -11,6 +11,7 @@ export default {
   component: QDate,
   schema: properties([
     commonProperties.state,
+    commonProperties.style,
     Type.Object({
       modelValue: Type.String(),
       landscape: Type.Boolean(),
@@ -38,7 +39,6 @@ export default {
       bordered: Type.Boolean(),
       hideBottomSpace: Type.Boolean(),
     }),
-    commonProperties.style,
   ]),
   defaultValues: {
     dense: true,

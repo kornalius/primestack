@@ -116,7 +116,7 @@
                     v-model="scope.value[index]"
                     v-model:forced-types="currentForcedTypes"
                     :prop-name="subPropName(index)"
-                    :schema="arraySchema"
+                    :schema="dynamicArraySchema(scope.value[index])"
                     :horizontal="arrayIsHorizontalPopup"
                     embed-label
                     flat
@@ -182,13 +182,15 @@
 
 <script setup lang="ts">
 import { computed, watch } from 'vue'
-import { TSchema } from '@feathersjs/typebox'
+import { TSchema, Type } from '@feathersjs/typebox'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { getTypeFor, defaultValueForSchema } from '@/shared/schema'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import PropertyLabel from '@/features/Properties/components/PropertyLabel.vue'
 import PropertySchemaField from '@/features/Properties/components/PropertySchemaField.vue'
+import { AnyData } from '@/shared/interfaces/commons'
+import { ruleTypes } from '@/features/Components/common'
 
 const props = defineProps<{
   modelValue: unknown
@@ -239,6 +241,19 @@ watch(value, () => {
 })
 
 const arraySchema = computed(() => props.schema.items)
+
+const dynamicArraySchema = (val: AnyData): TSchema => {
+  if (props.schema.rules) {
+    const rt = ruleTypes.find((r) => r.name === val.type)
+    if (rt?.options) {
+      return Type.Intersect([
+        arraySchema.value,
+        rt.options,
+      ])
+    }
+  }
+  return arraySchema.value
+}
 
 const arrayIsHorizontalPopup = computed(() => arraySchema.value?.horizontalPopup)
 

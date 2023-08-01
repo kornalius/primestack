@@ -440,6 +440,8 @@ const cancel = () => {
     }).onOk(() => {
       editor.endEdit()
     })
+  } else {
+    editor.endEdit()
   }
 }
 </script>

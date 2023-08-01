@@ -2,21 +2,11 @@ import startCase from 'lodash/startCase'
 import omit from 'lodash/omit'
 import { TSchema } from '@feathersjs/typebox'
 import { TFormColumn, TFormField } from '@/shared/interfaces/forms'
-import { AnyData } from '@/shared/interfaces/commons'
+import { AnyData, T18N } from '@/shared/interfaces/commons'
 import { components, componentForType } from '@/features/Components'
+import useValidators from '@/features/Validation/composites'
 
-const newNameForField = (type: string, fields: AnyData[]): string => {
-  let index = 1
-  let newName = `${startCase(type)}${index}`
-  let field = fields.find((f) => f.name === newName)
-  while (field) {
-    index += 1
-    newName = `${startCase(type)}${index}`
-    // eslint-disable-next-line @typescript-eslint/no-loop-func
-    field = fields.find((f) => f.name === newName)
-  }
-  return newName
-}
+const validators = useValidators()
 
 const flattenFields = (fields: TFormField[]): (AnyData)[] => {
   const flattended = []
@@ -44,24 +34,24 @@ const flattenFields = (fields: TFormField[]): (AnyData)[] => {
   return flattended
 }
 
-const style = (field: AnyData): AnyData => {
-  const component = components
-    // eslint-disable-next-line no-underscore-dangle
-    .find((c) => c.type === field._type)
-  return {
-    paddingTop: field.padding?.top,
-    paddingLeft: field.padding?.left,
-    paddingBottom: field.padding?.bottom,
-    paddingRight: field.padding?.right,
-    marginTop: field.margin?.top,
-    marginLeft: field.margin?.left,
-    marginBottom: field.margin?.bottom,
-    marginRight: field.margin?.right,
-    ...(component.editStyles || {}),
-  }
-}
-
 export default () => ({
+  componentForType,
+
+  components,
+
+  newNameForField: (type: string, fields: AnyData[]): string => {
+    let index = 1
+    let newName = `${startCase(type)}${index}`
+    let field = fields.find((f) => f.name === newName)
+    while (field) {
+      index += 1
+      newName = `${startCase(type)}${index}`
+      // eslint-disable-next-line @typescript-eslint/no-loop-func
+      field = fields.find((f) => f.name === newName)
+    }
+    return newName
+  },
+
   flattenFields,
 
   fieldBinds: (field: TFormField | TFormColumn, schema: TSchema): AnyData => {
@@ -88,9 +78,50 @@ export default () => ({
     return omit(field, fieldsToOmit)
   },
 
-  componentForType,
+  schemaForType: (f: TFormField | TFormColumn): TSchema | undefined => (
+    // eslint-disable-next-line no-underscore-dangle
+    components.find((c) => c.type === f._type)?.schema
+  ),
 
-  components,
+  // eslint-disable-next-line no-underscore-dangle
+  isRow: (field: TFormField): boolean => field._type === 'row',
 
-  style,
+  // eslint-disable-next-line no-underscore-dangle
+  isCard: (field: TFormField): boolean => field._type === 'card',
+
+  // eslint-disable-next-line no-underscore-dangle
+  isParagraph: (field: TFormField): boolean => field._type === 'paragraph',
+
+  serializeRules: (t: T18N, field: TFormField): ((...args) => (val: string) => true | string)[] => (
+    (field.rules as AnyData[])?.map((r) => validators[r.type](t, omit(r, ['type'])))
+  ),
+
+  isNumericInput: (field: TFormField): boolean => {
+    // eslint-disable-next-line no-underscore-dangle
+    const comp = components.find((c) => c.type === field._type)
+    if (comp) {
+      if (typeof comp.numericInput === 'function') {
+        return comp.numericInput(field)
+      }
+      return comp.numericInput
+    }
+    return false
+  },
+
+  style: (field: AnyData): AnyData => {
+    const component = components
+      // eslint-disable-next-line no-underscore-dangle
+      .find((c) => c.type === field._type)
+    return {
+      paddingTop: field.padding?.top,
+      paddingLeft: field.padding?.left,
+      paddingBottom: field.padding?.bottom,
+      paddingRight: field.padding?.right,
+      marginTop: field.margin?.top,
+      marginLeft: field.margin?.left,
+      marginBottom: field.margin?.bottom,
+      marginRight: field.margin?.right,
+      ...(component.editStyles || {}),
+    }
+  },
 })

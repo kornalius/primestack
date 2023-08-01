@@ -11,13 +11,13 @@ export default {
   component: QSeparator,
   nokey: true,
   schema: properties([
+    Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
       spaced: Type.Boolean(),
       inset: Type.Boolean(),
       vertical: Type.Boolean(),
       color: Type.String({ color: true }),
     }),
-    Type.Omit(commonProperties.style, ['dense']),
   ], false),
   defaultValues: {
   },

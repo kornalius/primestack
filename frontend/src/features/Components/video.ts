@@ -10,6 +10,7 @@ export default {
   label: 'Video',
   component: QVideo,
   schema: properties([
+    Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
       src: Type.String(),
       title: Type.String(),
@@ -27,7 +28,6 @@ export default {
         'unsafe-url',
       ]),
     }),
-    Type.Omit(commonProperties.style, ['dense']),
   ], false),
   defaultValues: {
     loading: 'eager',

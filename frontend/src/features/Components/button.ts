@@ -12,6 +12,7 @@ export default {
   schema: properties([
     commonProperties.state,
     commonProperties.size,
+    commonProperties.style,
     Type.Object({
       modelValue: Type.String(),
       label: Type.String(),
@@ -45,7 +46,6 @@ export default {
       fab: Type.Boolean(),
       fabMini: Type.Boolean(),
     }),
-    commonProperties.style,
   ]),
   defaultValues: {
     align: 'center',

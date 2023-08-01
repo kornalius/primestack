@@ -12,6 +12,7 @@ export default {
   component: SchemaTable,
   schema: properties([
     commonProperties.state,
+    commonProperties.style,
     Type.Object({
       noRouteFullscreenExit: Type.Boolean(),
       grid: Type.Boolean(),
@@ -88,7 +89,6 @@ export default {
       }),
       hideFilter: Type.Boolean(),
     }),
-    commonProperties.style,
   ], false),
   defaultValues: {
     separator: 'horizontal',

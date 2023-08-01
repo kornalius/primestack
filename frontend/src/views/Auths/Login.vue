@@ -25,7 +25,7 @@
                 label="email"
                 type="email"
                 autocomplete="email"
-                :rules="[isRequired, isEmail]"
+                :rules="[isRequired(t), isEmail(t)]"
                 dense
                 outlined
                 clearable
@@ -36,7 +36,7 @@
                 label="password"
                 type="password"
                 autocomplete="password"
-                :rules="[isRequired]"
+                :rules="[isRequired(t)]"
                 dense
                 outlined
                 clearable
@@ -72,14 +72,18 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import useAuth from '@/features/Auth/store'
-import { useValidator } from '@/composites/validator'
 import { useI18n } from 'vue-i18n'
+import useAuth from '@/features/Auth/store'
+import useValidator from '@/features/Validation/composites'
 
 const { t } = useI18n()
-const { isRequired, isEmail } = useValidator(t)
+
+const { required: isRequired, email: isEmail } = useValidator()
+
 const auth = useAuth()
+
 const route = useRoute()
+
 const router = useRouter()
 
 const email = ref()

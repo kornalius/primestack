@@ -12,11 +12,11 @@ export default {
   nokey: true,
   schema: properties([
     commonProperties.size,
+    commonProperties.style,
     Type.Object({
       color: Type.String({ color: true }),
       thickness: Type.Number(),
     }),
-    commonProperties.style,
   ], false),
   defaultValues: {
     color: 'primary',

@@ -9,8 +9,10 @@ export default {
   icon: 'mdi-tune-variant',
   label: 'Slider',
   component: QSlider,
+  numericInput: true,
   schema: properties([
     commonProperties.state,
+    commonProperties.style,
     Type.Object({
       modelValue: Type.Number(),
       label: Type.String(),
@@ -36,7 +38,6 @@ export default {
       innerTrackColor: Type.String({ color: true }),
       selectionColor: Type.String({ color: true }),
     }),
-    commonProperties.style,
   ]),
   defaultValues: {
     step: 1,

@@ -11,6 +11,7 @@ export default {
   nokey: true,
   hidden: true,
   schema: properties([
+    Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
       col: Type.String({
         options: [
@@ -32,7 +33,6 @@ export default {
         clearable: true,
       }),
     }),
-    Type.Omit(commonProperties.style, ['dense']),
   ], false),
   categories: {
     content: {

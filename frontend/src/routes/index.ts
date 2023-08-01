@@ -1,13 +1,10 @@
 import { RouteRecordRaw } from 'vue-router'
-import { usePatterns } from '@/composites/parser'
 
 import Home from './home'
 import Login from './login'
 import Menu from './menu'
 import Table from './table'
 import User from './user'
-
-const patterns = usePatterns()
 
 function lazyLoad(view) {
   const dynamicPath = `../${view}.vue`
@@ -20,11 +17,11 @@ const routes = [
     name: 'Index',
     redirect: () => '/home',
   },
-  ...Login(lazyLoad, patterns),
-  ...Home(lazyLoad, patterns),
-  ...Menu(lazyLoad, patterns),
-  ...Table(lazyLoad, patterns),
-  ...User(lazyLoad, patterns),
+  ...Login(lazyLoad),
+  ...Home(lazyLoad),
+  ...Menu(lazyLoad),
+  ...Table(lazyLoad),
+  ...User(lazyLoad),
   // Always leave this as last one,
   // but you can also remove it
   {

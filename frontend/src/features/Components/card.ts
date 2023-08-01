@@ -14,12 +14,12 @@ export default {
   col: true,
   nokey: true,
   schema: properties([
+    Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
       square: Type.Boolean(),
       flat: Type.Boolean(),
       bordered: Type.Boolean(),
     }),
-    Type.Omit(commonProperties.style, ['dense']),
   ], false),
   defaultValues: {
     _columns: () => ([

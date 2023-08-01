@@ -12,6 +12,7 @@ export default {
   schema: properties([
     commonProperties.state,
     commonProperties.size,
+    commonProperties.style,
     Type.Object({
       modelValue: Type.Boolean(),
       selected: Type.Boolean(),
@@ -24,7 +25,6 @@ export default {
       square: Type.Boolean(),
       outline: Type.Boolean(),
     }),
-    commonProperties.style,
   ]),
   defaultValues: {
     modelValue: true,

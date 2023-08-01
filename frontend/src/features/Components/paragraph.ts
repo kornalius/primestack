@@ -12,6 +12,7 @@ export default {
   interactable: true,
   schema: properties([
     commonProperties.state,
+    commonProperties.style,
     Type.Object({
       modelValue: Type.String(),
       placeholder: Type.String(),
@@ -37,7 +38,6 @@ export default {
       toolbarToggleColor: Type.String({ color: true }),
       toolbarBg: Type.String({ color: true }),
     }),
-    commonProperties.style,
   ]),
   defaultValues: {
     paragraphTag: 'div',

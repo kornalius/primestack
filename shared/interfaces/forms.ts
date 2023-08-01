@@ -37,6 +37,8 @@ export interface TFormComponent {
   horizontalPopup?: boolean
   // can you desactivate the drag & drop to play with the component?
   interactable?: boolean
+  // for input fields (v-model), convert the value to numeric and not string
+  numericInput?: boolean | ((field: TFormField) => boolean)
 }
 
 export interface TFormColumn {

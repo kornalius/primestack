@@ -9,9 +9,11 @@ export default {
   icon: 'mdi-knob',
   label: 'Knob',
   component: QKnob,
+  numericInput: true,
   schema: properties([
     commonProperties.state,
     commonProperties.size,
+    commonProperties.style,
     Type.Object({
       modelValue: Type.Number({ min: 0, max: 360 }),
       angle: Type.Number({ min: 0, max: 360 }),
@@ -29,7 +31,6 @@ export default {
       trackColor: Type.String({ color: true }),
       thickness: Type.Number(),
     }),
-    commonProperties.style,
   ]),
   defaultValues: {
   },

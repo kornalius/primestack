@@ -61,12 +61,39 @@
             </div>
           </div>
 
-          <form-display
+          <q-form
             v-if="!editor.active"
-            v-model="formData"
-            :fields="fields"
-            :components="components"
-          />
+            ref="qform"
+            @validation-success="validationSuccess"
+            @validation-error="validationError"
+          >
+            <form-display
+              v-model="currentData"
+              :fields="fields"
+              :components="components"
+            />
+
+            <pre>{{ currentData }}</pre>
+
+            <q-card-actions align="right">
+              <q-btn
+                label="Save"
+                type="submit"
+                color="positive"
+                href="#"
+                unelevated
+                @click="submit"
+              />
+
+              <q-btn
+                label="Reset"
+                type="reset"
+                color="grey-6"
+                flat
+                @click="resetForm"
+              />
+            </q-card-actions>
+          </q-form>
 
           <form-display
             v-else-if="preview"
@@ -106,6 +133,7 @@ import {
   computed, onBeforeUnmount, ref, watch,
 } from 'vue'
 import useFormElements from '@/features/Forms/composites'
+import omit from 'lodash/omit'
 import pick from 'lodash/pick'
 import useAppEditor from '@/features/App/store'
 import { defaultValueForSchema, fieldsToSchema } from '@/shared/schema'
@@ -116,6 +144,7 @@ import FormEditor from '@/features/Forms/components/Editor/FormEditor.vue'
 import FormDisplay from '@/features/Forms/components/FormDisplay.vue'
 import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
 import { formSchema } from '@/shared/schemas/form'
+import cloneDeep from 'lodash/cloneDeep'
 
 const props = defineProps<{
   menuId: string
@@ -125,8 +154,6 @@ const props = defineProps<{
 }>()
 
 const { api } = useFeathers()
-
-const selected = ref([])
 
 const editor = useAppEditor()
 
@@ -209,13 +236,8 @@ const formModelValues = computed(() => {
   return (fields.value || []).reduce((acc, f) => ({ ...acc, ...convertField(f) }), {})
 })
 
-const formData = computed(() => (
-  selected.value?.[0] || {
-    ...defaultValues.value,
-    ...(form.value?.data || {}),
-    ...(formModelValues.value || {}),
-  }
-))
+const currentId = ref()
+const currentData = ref({})
 
 const preview = ref(false)
 const previewFormData = ref({})
@@ -237,6 +259,8 @@ onBeforeUnmount(() => {
  * Table
  */
 
+const selected = ref([])
+
 const userTable = api.service('tables').findOneInStore({ query: {} })
 
 const table = computed(() => (
@@ -245,7 +269,71 @@ const table = computed(() => (
 
 const tableBinds = computed(() => pick(form.value, formSchema.tableFields))
 
+/**
+ * Form editing & validations
+ */
+
+const qform = ref()
+
+/**
+ * Clone document from store or create a new value with the data from the Form
+ */
+const cloneData = () => {
+  if (currentId.value) {
+    const r = api.service(table.value._id).getFromStore(currentId.value)
+    currentData.value = cloneDeep(r.value)
+  } else {
+    currentData.value = {
+      ...defaultValues.value,
+      ...(form.value?.data || {}),
+      ...(formModelValues.value || {}),
+    }
+  }
+}
+
+/**
+ * when the props.id changes, update currentId
+ */
+watch(() => props.id, () => {
+  currentId.value = props.id
+})
+
+/**
+ * When selection changes, update the currentId
+ */
+watch(selected, () => {
+  currentId.value = selected.value?.[0]?._id
+}, { immediate: true, deep: true })
+
+/**
+ * When currentId, form data, defaultValues or formModelValues change, clone the data
+ */
+watch([currentId, form, defaultValues, formModelValues], () => {
+  cloneData()
+}, { immediate: true })
+
+const submit = async () => {
+  const success = await qform.value.validate()
+  if (success) {
+    // assume we have a mongo document here
+    if (currentData.value._id) {
+      api.service(table.value._id).patch(currentData.value._id, omit(currentData.value, ['_id']))
+    }
+  }
+}
+
+const validationSuccess = () => {
+}
+
+const validationError = () => {
+}
+
+const resetForm = () => {
+  cloneData()
+}
+
 const toggleSelection = (evt, row) => {
   selected.value = [row]
+  cloneData()
 }
 </script>

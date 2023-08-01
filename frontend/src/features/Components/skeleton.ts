@@ -13,6 +13,7 @@ export default {
   schema: properties([
     commonProperties.state,
     commonProperties.size,
+    Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
       type: StringEnum([
         'rect',
@@ -45,7 +46,6 @@ export default {
       width: Type.String(),
       height: Type.String(),
     }),
-    Type.Omit(commonProperties.style, ['dense']),
   ], false),
   defaultValues: {
     type: 'rect',

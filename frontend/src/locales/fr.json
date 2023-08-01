@@ -1,10 +1,25 @@
 {
   "field_errors": {
     "required": "Champ requis",
-    "numeric": "Doit être numérique",
     "alpha": "Doit être des lettres",
+    "alphanumeric": "Doit être des lettres et/ou des chiffres",
+    "numeric": "Doit être numérique",
+    "integer": "Doit être une valeur entière",
+    "float": "Doit être une valeur flottante",
+    "hexadecimal": "Doit être hexadecimale",
     "email": "Courriel invalide",
-    "max": "Ne peut dépasser {count} caractères",
-    "min": "Doit être au moins {count} caractères"
+    "phone": "Téléphone invalide",
+    "issn": "Numéro de sécurité sociale invalide",
+    "min": "Doit être au moins {count}",
+    "max": "Ne peut dépasser {count}",
+    "between": "Doit être entre {minValue} et {maxValue}",
+    "minLength": "Doit être au moins {length} caractères",
+    "maxLength": "Ne peut dépasser {length} caractères",
+    "creditcard": "Numéro de carte de crédit invalide",
+    "after": "Date doit être après le {date}",
+    "before": "Date doit être avant le {date}",
+    "regex": "Doit correspondre au modèle {regex}",
+    "lowercase": "Doit être en minuscule",
+    "uppercase": "Doit être en majuscule"
   }
 }
