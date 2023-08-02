@@ -20,6 +20,17 @@
     "before": "Date doit être avant le {date}",
     "regex": "Doit correspondre au modèle {regex}",
     "lowercase": "Doit être en minuscule",
-    "uppercase": "Doit être en majuscule"
+    "uppercase": "Doit être en majuscule",
+    "allow": "Doit être une de ces valeurs '{words}'",
+    "reject": "Ne doit pas être une de ces valeurs '{words}'",
+    "ean": "Numéro d'article international invalide",
+    "hexcolor": "Couleur hexadécimale invalide",
+    "isbn": "Numéro de livre standard international invalide",
+    "json": "Syntaxe JSON invalide",
+    "luhn": "Valeur Luhn invalide",
+    "md5": "Valeur MD5 invalide",
+    "semver": "Valeur de version sémantique invalide",
+    "latlong": "Format de latitude et longitude invalide",
+    "postalcode": "Code postal invalide"
   }
 }

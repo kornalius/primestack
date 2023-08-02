@@ -307,7 +307,7 @@ const fourDigit = /^\d{4}$/
 const fiveDigit = /^\d{5}$/
 const sixDigit = /^\d{6}$/
 
-const postalCodes = {
+export const postalCodes = {
   AD: /^AD\d{3}$/,
   AT: fourDigit,
   AU: fourDigit,
@@ -380,6 +380,27 @@ export const mongoId = /^[a-f\d]{24}$/gi
 export const mongoIdString = '[a-f\\d]{24}'
 
 export const issn = /^\\d{4}-?\\d{3}[\\dX]$/
+
+export const ean = /^(\d{8}|\d{13}|\d{14})$/
+
+export const hexcolor = /^#?([0-9A-F]{3}|[0-9A-F]{4}|[0-9A-F]{6}|[0-9A-F]{8})$/i
+
+export const possibleIsbn10 = /^(?:[0-9]{9}X|[0-9]{10})$/
+export const possibleIsbn13 = /^(?:[0-9]{13})$/
+
+export const md5 = /^[a-f0-9]{32}$/
+
+export const semver = new RegExp([
+  '^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)',
+  '(?:-((?:0|[1-9]\\d*|\\d*[a-z-][0-9a-z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-z-][0-9a-z-]*))*))',
+  '?(?:\\+([0-9a-z-]+(?:\\.[0-9a-z-]+)*))?$',
+].join(''), 'i')
+
+export const lat = /^\(?[+-]?(90(\.0+)?|[1-8]?\d(\.\d+)?)$/
+export const long = /^\s?[+-]?(180(\.0+)?|1[0-7]\d(\.\d+)?|\d{1,2}(\.\d+)?)\)?$/
+
+export const latDMS = /^(([1-8]?\d)\D+([1-5]?\d|60)\D+([1-5]?\d|60)(\.\d+)?|90\D+0\D+0)\D+[NSns]?$/i
+export const longDMS = /^\s*([1-7]?\d{1,2}\D+([1-5]?\d|60)\D+([1-5]?\d|60)(\.\d+)?|180\D+0\D+0)\D+[EWew]?$/i
 
 export const getLocale = () => {
   if (navigator.languages !== undefined) {

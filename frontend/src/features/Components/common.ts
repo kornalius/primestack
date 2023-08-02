@@ -2,6 +2,7 @@ import {
   StringEnum, TObject, TSchema, Type,
 } from '@feathersjs/typebox'
 import compact from 'lodash/compact'
+import { postalCodes } from '@/features/Validation/helpers'
 
 export const sizeString = Type.String({
   options: [
@@ -102,6 +103,42 @@ export const ruleTypes: RuleType[] = [
     options: Type.Object({
       hyphen: Type.Boolean(),
       caseSensitive: Type.Boolean(),
+    }),
+  },
+  {
+    name: 'allow',
+    options: Type.Object({
+      values: Type.String(),
+    }),
+  },
+  {
+    name: 'reject',
+    options: Type.Object({
+      values: Type.String(),
+    }),
+  },
+  { name: 'ean' },
+  { name: 'hexcolor' },
+  {
+    name: 'isbn',
+    options: Type.Object({
+      version: StringEnum(['10', '13']),
+    }),
+  },
+  { name: 'json' },
+  { name: 'luhn' },
+  { name: 'md5' },
+  { name: 'semver' },
+  {
+    name: 'latlong',
+    options: Type.Object({
+      checkDMS: Type.Boolean(),
+    }),
+  },
+  {
+    name: 'postalcode',
+    options: Type.Object({
+      locale: StringEnum(['current', 'any', ...Object.keys(postalCodes)]),
     }),
   },
 ]
