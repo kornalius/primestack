@@ -21,7 +21,7 @@
           :label="t.label"
           :icon="t.icon"
           :content-class="`text-${t.color}`"
-          :to="menuTabUrl(menu._id, t._id)"
+          :to="menuUrl(menu._id, t._id)"
           @click="editor.selectTab(t._id)"
         />
       </template>
@@ -64,11 +64,11 @@ watch(currentTab, () => {
   editor.selectTab(currentTab.value)
 }, { immediate: true })
 
-const { menuTabUrl } = useUrl()
+const { menuUrl } = useUrl()
 
 onMounted(() => {
   setTimeout(() => {
-    router.push(menuTabUrl(props.menu._id, tabs.value?.[0]?._id))
+    router.push(menuUrl(props.menu._id, tabs.value?.[0]?._id))
   }, 100)
 })
 </script>

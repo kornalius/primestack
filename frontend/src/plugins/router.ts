@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { getEnv } from '@/utils/variables'
 import routes from '@/routes'
 import useAuth from '@/features/Auth/store'
+import useAppEditor from '@/features/App/store'
 
 const router = createRouter({
   scrollBehavior: () => ({ left: 0, top: 0 }),
@@ -23,6 +24,17 @@ router.beforeEach(async (to, from, next) => {
         .map((k) => `${k}=${to.query[k]}`)
         .join('&')
       next(`/login/?redirect=${to.path}&${p}`)
+      return
+    }
+  }
+
+  const editor = useAppEditor()
+
+  const isEditorRequired = to?.matched.some((r) => r.meta.editor)
+
+  if (isEditorRequired) {
+    if (!editor.active) {
+      next('/')
       return
     }
   }

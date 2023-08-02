@@ -4,14 +4,16 @@ import { mongoIdString } from '@/features/Validation/helpers'
 
 export default (lazyLoad) => ([
   {
-    path: `/tables/:id(${mongoIdString}|create)?`,
+    path: `/tables/:id(${mongoIdString}|create)?/:fieldId(${mongoIdString}|create)?`,
     component: lazyLoad('views/Table/Main'),
     props: (route: RouteLocationNormalized): AnyData => ({
       id: route.params.id !== 'create' ? route.params.id : undefined,
-      create: route.params.id === 'create',
+      fieldId: route.params.fieldId !== 'create' ? route.params.fieldId : undefined,
+      create: route.params.id === 'create' || route.params.fieldId === 'create',
     }),
     meta: {
       requiresAuth: true,
+      editor: true,
     },
   },
 ])

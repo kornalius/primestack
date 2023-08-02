@@ -74,7 +74,7 @@ info('  - channels')
 app.configure(channels)
 
 info('  - global hooks')
-app.hooks(appHooks)
+app.configure(appHooks)
 
 info(`Running in ${app.get('env') || 'development'} mode`)
 

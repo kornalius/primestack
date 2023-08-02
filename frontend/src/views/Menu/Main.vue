@@ -18,7 +18,7 @@ const { api } = useFeathers()
 
 const router = useRouter()
 
-const { menuTabUrl } = useUrl()
+const { menuUrl } = useUrl()
 
 const { data: menus } = api.service('menus').useFind({
   query: {},
@@ -33,7 +33,7 @@ const firstTab = computed(() => menu.value?.tabs[0])
 watch(firstTab, () => {
   if (firstTab.value) {
     // Automatically go to the first tab
-    router.replace(menuTabUrl(props.menuId as string, firstTab.value?._id))
+    router.replace(menuUrl(props.menuId as string, firstTab.value?._id))
   }
 }, { immediate: true })
 </script>

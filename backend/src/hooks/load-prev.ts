@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-cycle
 import { HookContext } from '@/declarations'
 
 export const loadPrev = async (context: HookContext) => {

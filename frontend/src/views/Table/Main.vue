@@ -46,14 +46,21 @@
 import {
   computed, onBeforeUnmount, onMounted, ref, watch,
 } from 'vue'
+import { useRouter } from 'vue-router'
 import useAppEditor from '@/features/App/store'
+import { useUrl } from '@/composites/url'
 
 const props = defineProps<{
   id?: string
+  fieldId?: string
   create?: boolean
 }>()
 
 const editor = useAppEditor()
+
+const { tableUrl } = useUrl()
+
+const router = useRouter()
 
 onMounted(() => {
   editor.unselectTab()
@@ -77,15 +84,43 @@ watch(() => props.id, () => {
 
 watch(selectedTable, () => {
   editor.selectTable(selectedTable.value?.[0]?._id)
-})
-
-watch(selectedTableField, () => {
-  editor.selectTableField(selectedTableField.value?.[0]?._id)
+  router.push(tableUrl(selectedTable.value?.[0]?._id))
 })
 
 const tableFields = computed(() => (
   selectedTable.value?.[0]?.fields || []
 ))
+
+watch(() => props.fieldId, () => {
+  if (tableFields.value && props.fieldId) {
+    const field = tableFields.value.find((f) => f._id === props.fieldId)
+    if (field) {
+      selectedTableField.value = [field]
+    }
+  }
+}, { immediate: true })
+
+watch(selectedTableField, () => {
+  editor.selectTableField(selectedTableField.value?.[0]?._id)
+  router.push(tableUrl(selectedTable.value?.[0]?._id, selectedTableField.value?.[0]?._id))
+})
+
+watch(() => props.create, () => {
+  if (props.create) {
+    if (props.id) {
+      // create a new field in table
+      const table = editor.tableInstance(props.id)
+      selectedTable.value = [table]
+      const field = editor.addFieldToTable(table)
+      selectedTableField.value = [field]
+      return
+    }
+
+    // create a new table
+    const table = editor.addTable()
+    selectedTable.value = [table]
+  }
+}, { immediate: true })
 
 const schemaColumns = ref([
   {

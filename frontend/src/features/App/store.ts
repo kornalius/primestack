@@ -14,6 +14,7 @@ import { formSchema } from '@/shared/schemas/form'
 import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
 import { TFormColumn, TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { defaultValueForSchema, defaultValues } from '@/shared/schema'
+import { useRoute, useRouter } from 'vue-router'
 
 type Menu = Static<typeof menuSchema>
 type Tab = Static<typeof tabSchema>

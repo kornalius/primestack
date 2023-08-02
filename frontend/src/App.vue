@@ -26,7 +26,7 @@
               :label="t.label"
               :icon="t.icon"
               :content-class="`text-${t.color}`"
-              :to="menuTabUrl(routeMenu._id, t._id)"
+              :to="menuUrl(routeMenu._id, t._id)"
             />
           </q-tabs>
         </q-toolbar-title>
@@ -237,8 +237,8 @@
           <q-item
             v-if="editor.active"
             class="Drawer__item"
-            :class="{ leftDrawerExpanded, selected: $route.path === tablesUrl() }"
-            :to="tablesUrl()"
+            :class="{ leftDrawerExpanded, selected: $route.path === tableUrl() }"
+            :to="tableUrl()"
             name="schemas"
             tag="router-link"
             clickable
@@ -341,16 +341,42 @@ const version = import.meta.env.PACKAGE_VERSION
 
 const leftDrawerExpanded = ref(true)
 
+const editor = useAppEditor()
+
+const route = useRoute()
+
+const router = useRouter()
+
+/**
+ * End editor editing, if the current route needs the editor to be active, exit out of it
+ */
+const endEdit = () => {
+  editor.endEdit()
+
+  const isEditorRequired = route.matched.some((r) => r.meta.editor)
+
+  if (isEditorRequired) {
+    router.push('/')
+  }
+}
+
+const userMenu = ref()
+
+/**
+ * Selected menu instance
+ */
+const selectedMenuObject = computed(() => editor.menuInstance(editor.selectedMenu))
+
+/**
+ * Toggle left drawer expanded or collapsed states
+ */
 function toggleLeftDrawer() {
   leftDrawerExpanded.value = !leftDrawerExpanded.value
 }
 
-const editor = useAppEditor()
-
-const userMenu = ref()
-
-const selectedMenuObject = computed(() => editor.menuInstance(editor.selectedMenu))
-
+/**
+ * When editor becomes active, expand the drawer and unselect all menus
+ */
 watch(() => editor.active, () => {
   if (editor.active) {
     leftDrawerExpanded.value = true
@@ -369,14 +395,18 @@ const components = ref(comps)
 //   })
 // }
 
-const route = useRoute()
+const { menuUrl, tableUrl } = useUrl()
 
-const { menuUrl, menuTabUrl, tablesUrl } = useUrl()
-
+/**
+ * Returns the current route menu instance when editor is not active
+ */
 const routeMenu = computed(() => (
   userMenu.value?.list.find((m) => m._id === route.params.menuId)
 ))
 
+/**
+ * Returns the tabs instances when editor is not active
+ */
 const routeTabs = computed(() => routeMenu.value?.tabs)
 
 /**
@@ -385,6 +415,9 @@ const routeTabs = computed(() => routeMenu.value?.tabs)
 
 const auth = useAuth()
 
+/**
+ * Load user's editor data
+ */
 const loadUserData = async () => {
   api.service('users').get(auth.userId)
   userMenu.value = (await api.service('menus').find({ query: {} })).data?.[0]
@@ -392,6 +425,9 @@ const loadUserData = async () => {
   api.service('forms').find({ query: {} })
 }
 
+/**
+ * When mounted, tries to re-authenticate and reload user's data
+ */
 onMounted(() => {
   auth.reAuthenticate()
   if (auth.authenticated) {
@@ -399,8 +435,9 @@ onMounted(() => {
   }
 })
 
-const router = useRouter()
-
+/**
+ * When authenticated, load all user's data, else go to the login view
+ */
 watch(() => auth.authenticated, () => {
   if (auth.authenticated) {
     loadUserData()
@@ -409,26 +446,41 @@ watch(() => auth.authenticated, () => {
   }
 })
 
+/**
+ * Go to the profile view
+ */
 const profileClick = () => {
   router.push('/profile')
 }
 
+/**
+ * Go to the logout view
+ */
 const logout = () => {
   router.push('/logout')
 }
 
+/**
+ * Hide the UI (drawer, topbar etc...) when not authenticated or in the logout route
+ */
 const hideUI = computed(() => (
   !auth.authenticated || route.name === 'Logout'
 ))
 
+/**
+ * Editor save and end
+ */
 const save = async () => {
   try {
     await editor.save()
   } finally {
-    editor.endEdit()
+    endEdit()
   }
 }
 
+/**
+ * If changes are detected, ask to save or cancel first
+ */
 const cancel = () => {
   if (editor.isModified) {
     quasar.dialog({
@@ -438,10 +490,10 @@ const cancel = () => {
       ok: { color: 'green', outline: true },
       cancel: { color: 'negative', outline: true },
     }).onOk(() => {
-      editor.endEdit()
+      endEdit()
     })
   } else {
-    editor.endEdit()
+    endEdit()
   }
 }
 </script>

@@ -74,7 +74,7 @@ Authorization: {{token}}
       "indexes": [
         {
           "_id": "64affbcf36fd14263d91945e",
-          "name": "field1",
+          "name": "stringField",
           "order": 1,
           "unique": true,
           "sparse": false

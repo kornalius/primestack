@@ -1,0 +1,33 @@
+// Login
+POST http://localhost:3030/authentication
+Content-Type: application/json
+
+{
+  "strategy": "local",
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+> {% client.global.set("token", response.body.accessToken); %}
+###
+
+// List
+GET http://localhost:3030/64b806da03ac5093de3f3e78
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+###
+
+// Create
+POST http://localhost:3030/64b806da03ac5093de3f3e78
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "stringField": "Test",
+  "numberField": 2132
+}
+
+###

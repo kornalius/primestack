@@ -145,6 +145,8 @@ import FormDisplay from '@/features/Forms/components/FormDisplay.vue'
 import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
 import { formSchema } from '@/shared/schemas/form'
 import cloneDeep from 'lodash/cloneDeep'
+import { useRouter } from 'vue-router'
+import { useUrl } from '@/composites/url'
 
 const props = defineProps<{
   menuId: string
@@ -156,6 +158,8 @@ const props = defineProps<{
 const { api } = useFeathers()
 
 const editor = useAppEditor()
+
+const router = useRouter()
 
 /**
  * Menu
@@ -275,13 +279,28 @@ const tableBinds = computed(() => pick(form.value, formSchema.tableFields))
 
 const qform = ref()
 
+const getRecord = async (id: string): Promise<AnyData> => {
+  const s = api.service(table.value._id).getFromStore(currentId.value)
+  if (!s.value) {
+    return api.service(table.value._id).get(currentId.value)
+  }
+  return s.value
+}
+
 /**
  * Clone document from store or create a new value with the data from the Form
  */
-const cloneData = () => {
+const cloneData = async () => {
   if (currentId.value) {
-    const r = api.service(table.value._id).getFromStore(currentId.value)
-    currentData.value = cloneDeep(r.value)
+    const r = await getRecord(currentId.value)
+    if (r) {
+      currentData.value = cloneDeep(r)
+    }
+  } else if (props.create) {
+    currentData.value = {
+      ...defaultValues.value,
+      ...(formModelValues.value || {}),
+    }
   } else {
     currentData.value = {
       ...defaultValues.value,
@@ -291,19 +310,21 @@ const cloneData = () => {
   }
 }
 
+const { menuUrl } = useUrl()
+
 /**
  * when the props.id changes, update currentId
  */
 watch(() => props.id, () => {
   currentId.value = props.id
-})
+}, { immediate: true })
 
 /**
  * When selection changes, update the currentId
  */
 watch(selected, () => {
   currentId.value = selected.value?.[0]?._id
-}, { immediate: true, deep: true })
+})
 
 /**
  * When currentId, form data, defaultValues or formModelValues change, clone the data
@@ -312,12 +333,24 @@ watch([currentId, form, defaultValues, formModelValues], () => {
   cloneData()
 }, { immediate: true })
 
+watch(currentId, async () => {
+  if (currentId.value) {
+    const r = await getRecord(currentId.value)
+    if (r) {
+      selected.value = [r]
+      await router.push(menuUrl(props.menuId, props.tabId, r._id))
+    }
+  }
+}, { immediate: true })
+
 const submit = async () => {
   const success = await qform.value.validate()
   if (success) {
     // assume we have a mongo document here
     if (currentData.value._id) {
       api.service(table.value._id).patch(currentData.value._id, omit(currentData.value, ['_id']))
+    } else if (props.create) {
+      api.service(table.value._id).create(omit(currentData.value, ['_id']))
     }
   }
 }
