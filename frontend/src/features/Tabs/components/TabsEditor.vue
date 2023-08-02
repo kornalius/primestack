@@ -15,7 +15,7 @@
       reorderable
       @click.stop=""
     >
-      <template #default="{ value: t }: { value: Tab }">
+      <template #default="{ value: t }">
         <q-route-tab
           :name="t._id"
           :label="t.label"

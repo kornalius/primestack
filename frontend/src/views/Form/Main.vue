@@ -132,10 +132,12 @@
 import {
   computed, onBeforeUnmount, ref, watch,
 } from 'vue'
-import useFormElements from '@/features/Forms/composites'
+import { useRouter } from 'vue-router'
 import omit from 'lodash/omit'
 import pick from 'lodash/pick'
+import cloneDeep from 'lodash/cloneDeep'
 import useAppEditor from '@/features/App/store'
+import useFormElements from '@/features/Forms/composites'
 import { defaultValueForSchema, fieldsToSchema } from '@/shared/schema'
 import { useFeathers } from '@/composites/feathers'
 import { TFormColumn, TFormField } from '@/shared/interfaces/forms'
@@ -144,8 +146,6 @@ import FormEditor from '@/features/Forms/components/Editor/FormEditor.vue'
 import FormDisplay from '@/features/Forms/components/FormDisplay.vue'
 import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
 import { formSchema } from '@/shared/schemas/form'
-import cloneDeep from 'lodash/cloneDeep'
-import { useRouter } from 'vue-router'
 import { useUrl } from '@/composites/url'
 
 const props = defineProps<{
@@ -280,9 +280,9 @@ const tableBinds = computed(() => pick(form.value, formSchema.tableFields))
 const qform = ref()
 
 const getRecord = async (id: string): Promise<AnyData> => {
-  const s = api.service(table.value._id).getFromStore(currentId.value)
+  const s = api.service(table.value._id).getFromStore(id)
   if (!s.value) {
-    return api.service(table.value._id).get(currentId.value)
+    return api.service(table.value._id).get(id)
   }
   return s.value
 }
