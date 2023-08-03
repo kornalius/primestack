@@ -14,18 +14,22 @@
         show-if-above
       >
         <schema-table
-          v-model:selected="selected"
           v-bind="tableBinds"
           class="full-height"
           :schema="fieldsToSchema(table.fields, `Table-${table._id}`)"
           :table-id="table._id"
+          :selected="selected"
           :hide-filter="form.hideFilter"
+          add-button="start"
+          remove-button="end"
           selection="single"
           row-key="_id"
           virtual-scroll
           bordered
           dense
           flat
+          @add="addRecord"
+          @remove="removeRecord"
           @row-click="toggleSelection"
         />
       </q-drawer>
@@ -75,20 +79,20 @@
 
             <pre>{{ currentData }}</pre>
 
-            <q-card-actions align="right">
+            <q-card-actions
+              v-if="hasChanges"
+              align="right"
+            >
               <q-btn
                 label="Save"
-                type="submit"
                 color="positive"
-                href="#"
-                unelevated
+                outline
                 @click="submit"
               />
 
               <q-btn
-                label="Reset"
-                type="reset"
-                color="grey-6"
+                label="Cancel"
+                color="negative"
                 flat
                 @click="resetForm"
               />
@@ -132,10 +136,11 @@
 import {
   computed, onBeforeUnmount, ref, watch,
 } from 'vue'
-import { useRouter } from 'vue-router'
-import omit from 'lodash/omit'
+import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
 import pick from 'lodash/pick'
 import cloneDeep from 'lodash/cloneDeep'
+import isEqual from 'lodash/isEqual'
 import useAppEditor from '@/features/App/store'
 import useFormElements from '@/features/Forms/composites'
 import { defaultValueForSchema, fieldsToSchema } from '@/shared/schema'
@@ -147,6 +152,7 @@ import FormDisplay from '@/features/Forms/components/FormDisplay.vue'
 import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
 import { formSchema } from '@/shared/schemas/form'
 import { useUrl } from '@/composites/url'
+import { getId } from '@/composites/utilities'
 
 const props = defineProps<{
   menuId: string
@@ -160,6 +166,8 @@ const { api } = useFeathers()
 const editor = useAppEditor()
 
 const router = useRouter()
+
+const quasar = useQuasar()
 
 /**
  * Menu
@@ -226,9 +234,18 @@ const formModelValues = computed(() => {
       // eslint-disable-next-line no-underscore-dangle
       return field._columns.reduce((acc, col) => ({ ...acc, ...convertColumn(col) }), {})
     }
-    return field.modelValue !== undefined && field.field !== undefined && field.field !== null
-      ? { [field.field]: field.modelValue }
-      : {}
+    if (field.field !== undefined && field.field !== null) {
+      // eslint-disable-next-line no-underscore-dangle
+      const comp = components.find((c) => c.type === field._type)
+      let v = field.modelValue
+      if (comp.numericInput && v !== undefined) {
+        v = Number(v)
+      }
+      if (v !== undefined) {
+        return { [field.field]: v }
+      }
+    }
+    return {}
   }
 
   convertColumn = (col: TFormColumn): AnyData => (
@@ -241,6 +258,7 @@ const formModelValues = computed(() => {
 })
 
 const currentId = ref()
+const prevData = ref({})
 const currentData = ref({})
 
 const preview = ref(false)
@@ -280,11 +298,14 @@ const tableBinds = computed(() => pick(form.value, formSchema.tableFields))
 const qform = ref()
 
 const getRecord = async (id: string): Promise<AnyData> => {
-  const s = api.service(table.value._id).getFromStore(id)
-  if (!s.value) {
-    return api.service(table.value._id).get(id)
+  if (table.value) {
+    const s = api.service(table.value._id).getFromStore(id, { temps: true })
+    if (!s.value) {
+      return api.service(table.value._id).get(id)
+    }
+    return s.value
   }
-  return s.value
+  return undefined
 }
 
 /**
@@ -292,25 +313,39 @@ const getRecord = async (id: string): Promise<AnyData> => {
  */
 const cloneData = async () => {
   if (currentId.value) {
+    if (currentData.value.__isTemp) {
+      prevData.value = cloneDeep(currentData.value)
+      return
+    }
+
     const r = await getRecord(currentId.value)
     if (r) {
-      currentData.value = cloneDeep(r)
+      if (!r.__isTemp) {
+        currentData.value = r.clone()
+      } else {
+        currentData.value = r
+      }
+      selected.value = [r]
     }
-  } else if (props.create) {
-    currentData.value = {
-      ...defaultValues.value,
-      ...(formModelValues.value || {}),
-    }
-  } else {
+  } else if (!table.value) {
     currentData.value = {
       ...defaultValues.value,
       ...(form.value?.data || {}),
       ...(formModelValues.value || {}),
     }
+  } else {
+    currentData.value = {}
   }
+  prevData.value = cloneDeep(currentData.value)
 }
 
 const { menuUrl } = useUrl()
+
+const saveDisabled = ref(false)
+
+const toggleSelection = (row) => {
+  router.push(menuUrl(props.menuId, props.tabId, getId(row)))
+}
 
 /**
  * when the props.id changes, update currentId
@@ -320,53 +355,110 @@ watch(() => props.id, () => {
 }, { immediate: true })
 
 /**
- * When selection changes, update the currentId
- */
-watch(selected, () => {
-  currentId.value = selected.value?.[0]?._id
-})
-
-/**
  * When currentId, form data, defaultValues or formModelValues change, clone the data
  */
 watch([currentId, form, defaultValues, formModelValues], () => {
   cloneData()
 }, { immediate: true })
 
-watch(currentId, async () => {
-  if (currentId.value) {
-    const r = await getRecord(currentId.value)
-    if (r) {
-      selected.value = [r]
-      await router.push(menuUrl(props.menuId, props.tabId, r._id))
-    }
-  }
-}, { immediate: true })
+const refresh = () => {
+  currentData.value = {}
+  prevData.value = {}
+  router.push(menuUrl(props.menuId, props.tabId))
+}
 
 const submit = async () => {
   const success = await qform.value.validate()
   if (success) {
-    // assume we have a mongo document here
-    if (currentData.value._id) {
-      api.service(table.value._id).patch(currentData.value._id, omit(currentData.value, ['_id']))
-    } else if (props.create) {
-      api.service(table.value._id).create(omit(currentData.value, ['_id']))
-    }
+    const r = await currentData.value.save()
+    prevData.value = cloneDeep(currentData.value)
+    toggleSelection(r)
   }
 }
 
+const resetForm = () => {
+  quasar.dialog({
+    title: 'Unsaved changes',
+    persistent: true,
+    message: 'There are unsaved changes. Are you sure you want to cancel?',
+    ok: { color: 'green', outline: true },
+    cancel: { color: 'negative', outline: true },
+  }).onOk(() => {
+    if (currentData.value.__isTemp) {
+      currentData.value.remove()
+      refresh()
+    } else {
+      cloneData()
+    }
+  })
+}
+
 const validationSuccess = () => {
+  saveDisabled.value = false
 }
 
 const validationError = () => {
+  saveDisabled.value = true
 }
 
-const resetForm = () => {
-  cloneData()
+const hasChanges = computed(() => (
+  currentData.value.__isTemp || !isEqual(prevData.value, currentData.value)
+))
+
+const addRecord = (value?: AnyData) => {
+  const r = api.service(table.value._id).new({
+    ...defaultValues.value,
+    ...(formModelValues.value || {}),
+    ...(value || {}),
+  })
+  r.createInStore()
+  toggleSelection(r)
 }
 
-const toggleSelection = (evt, row) => {
-  selected.value = [row]
-  cloneData()
+const removeRecord = (value: AnyData) => {
+  quasar.dialog({
+    title: 'Delete record?',
+    persistent: true,
+    message: 'Are you sure you want to delete this record?',
+    ok: { color: 'green', outline: true },
+    cancel: { color: 'negative', outline: true },
+  }).onOk(async () => {
+    const r = await getRecord(getId(value))
+    if (r) {
+      r.remove()
+      refresh()
+    }
+  })
 }
+
+/**
+ * when the props.create is true, create a new temp record
+ */
+watch(() => props.create, () => {
+  if (props.create) {
+    addRecord()
+  }
+}, { immediate: true })
+
+onBeforeRouteUpdate((): boolean => {
+  if (hasChanges.value) {
+    // eslint-disable-next-line no-alert
+    const answer = window.confirm('Do you really want to navigate away? You have unsaved changes!')
+    if (!answer) {
+      return false
+    }
+  }
+  return true
+})
+
+onBeforeRouteLeave((): boolean => {
+  if (hasChanges.value) {
+    // eslint-disable-next-line no-alert
+    const answer = window.confirm('Do you really want to navigate away? You have unsaved changes!')
+    if (!answer) {
+      return false
+    }
+  }
+  return true
+})
 </script>

@@ -2,15 +2,16 @@
   <q-page class="q-pa-md">
     <div class="row">
       <div class="col">
-        <q-table
+        <schema-table
           v-model:selected="selectedTable"
           style="height: 300px"
           :rows="editor.tables"
-          :columns="schemaColumns as any"
+          :columns="schemaColumns"
           :rows-per-page-options="[0]"
           title="Tables"
           selection="single"
           row-key="_id"
+          add-button="start"
           virtual-scroll
           bordered
           dense
@@ -22,11 +23,11 @@
 
     <div class="row q-mt-sm">
       <div v-if="selectedTable.length > 0" class="col">
-        <q-table
+        <schema-table
           v-model:selected="selectedTableField"
           style="height: 600px"
           :rows="tableFields"
-          :columns="fieldColumns as any"
+          :columns="fieldColumns"
           :rows-per-page-options="[0]"
           title="Fields"
           selection="single"
@@ -49,6 +50,7 @@ import {
 import { useRouter } from 'vue-router'
 import useAppEditor from '@/features/App/store'
 import { useUrl } from '@/composites/url'
+import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
 
 const props = defineProps<{
   id?: string
@@ -147,12 +149,12 @@ const schemaColumns = ref([
   },
 ])
 
-const toggleTableSelection = (evt, row) => {
+const toggleTableSelection = (row) => {
   selectedTableField.value = []
   selectedTable.value = [row]
 }
 
-const toggleTableFieldSelection = (evt, row) => {
+const toggleTableFieldSelection = (row) => {
   selectedTableField.value = [row]
 }
 

@@ -10,7 +10,7 @@ module.exports = {
       allowForLoopAfterthoughts: true,
     }],
     'no-underscore-dangle': ['error', {
-      allow: ['_id', '__id', '__isTemp'],
+      allow: ['_id', '__tempId', '__isTemp'],
     }],
     'indent': ['error', 2, { SwitchCase: 1 }],
     'linebreak-style': ['error', 'unix'],

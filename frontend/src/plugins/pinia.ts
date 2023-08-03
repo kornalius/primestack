@@ -26,16 +26,16 @@ export const api = createPiniaClient(feathersClient, {
   storage: window.localStorage,
 
   setupInstance(data: AnyData): AnyData {
-    return {
-      _id: undefined,
-      createdAt: undefined,
-      createdBy: undefined,
-      updatedAt: undefined,
-      updatedBy: undefined,
-      deletedAt: undefined,
-      deletedBy: undefined,
-      ...data,
-    }
+    /* eslint-disable no-param-reassign */
+    data._id = data._id || undefined
+    data.createdAt = data.createdAt || undefined
+    data.createdBy = data.createdBy || undefined
+    data.updatedAt = data.updatedAt || undefined
+    data.updatedBy = data.updatedBy || undefined
+    data.deletedAt = data.deletedAt || undefined
+    data.deletedBy = data.deletedBy || undefined
+    /* eslint-enable no-param-reassign */
+    return data
   },
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

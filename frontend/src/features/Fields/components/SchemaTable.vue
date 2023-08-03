@@ -1,54 +1,144 @@
 <template>
   <q-table
-    v-model:selected="selection"
+    v-model:selected="currentSelected"
     v-bind="$attrs"
     :rows="filteredRows as any"
     :columns="columns as any"
   >
-    <template v-if="!hideFilter" #top>
-      <q-input
-        v-model="currentFilter"
-        class="full-width"
-        placeholder="Filter expression (ex: field:value)"
-        dense
-        outlined
-      >
-        <template #append>
-          <q-icon name="mdi-magnify" size="xs" />
-        </template>
-      </q-input>
+    <template #top>
+      <div class="row q-gutter-sm full-width items-center">
+        <div class="col-auto">
+          {{ $attrs.title }}
+        </div>
+
+        <div class="col">
+          <q-input
+            v-if="!hideFilter"
+            v-model="currentFilter"
+            class="full-width"
+            placeholder="Filter expression (ex: field:value)"
+            clearable
+            dense
+            outlined
+          >
+            <template #append>
+              <q-icon name="mdi-magnify" size="xs" />
+            </template>
+          </q-input>
+        </div>
+
+        <div class="col-auto">
+          <q-btn
+            v-if="addButton === 'start'"
+            class="add-button start"
+            :label="addLabel"
+            :round="!addLabel"
+            :disable="disable || addDisable"
+            :icon-right="addLabel ? (addIcon || 'mdi-plus') : undefined"
+            :icon="!addLabel ? (addIcon || 'mdi-plus') : undefined"
+            size="sm"
+            color="primary"
+            flat
+            @click="addRow"
+          >
+            <q-tooltip :delay="500">
+              {{ addLabel || 'Create new' }}
+            </q-tooltip>
+          </q-btn>
+        </div>
+      </div>
     </template>
 
-    <template v-if="schemaRows" #body-cell="p">
-      <q-td :props="p">
-        <property-schema-field
-          v-if="schemaSchema(p.col.field)"
-          v-model="p.row[p.col.field]"
-          :parent="p.row"
-          :schema="schemaSchema(p.col.field)"
-          :key-name="p.col.field"
-          :label="p.col.label"
-        />
-        <span v-else>
-          {{ p.value }}
-        </span>
-      </q-td>
+    <template #body="p">
+      <q-tr
+        :props="p"
+        @mouseover="hover = p.row._id"
+        @mouseleave="hover = undefined"
+        @focus="hover = p.row.id"
+        @blur="hover = undefined"
+        @click="$emit('row-click', filteredRows[p.rowIndex])"
+      >
+        <q-td
+          v-if="$attrs.selection !== 'none'"
+          class="q-table--col-auto-width"
+        >
+          <q-checkbox
+            v-if="$attrs.selection === 'multiple'"
+            v-model="p.selected"
+            dense
+          />
+        </q-td>
+
+        <q-td
+          v-for="col in p.cols"
+          :key="col.field"
+          class="cursor-pointer"
+          :props="p"
+        >
+          <property-schema-field
+            v-if="schemaRows && schemaSchema(col.field)"
+            v-model="p.row[col.field]"
+            :parent="p.row"
+            :schema="schemaSchema(col.field)"
+            :key-name="col.field"
+            :label="col.label"
+          />
+          <span v-else>
+            {{ col.format ? col.format(p.row[col.field]) : p.row[col.field] }}
+          </span>
+        </q-td>
+
+        <q-btn
+          v-if="removeButton === 'end'"
+          v-show="hover === p.row._id"
+          class="remove-button"
+          :disable="disable || removeDisable"
+          :icon="removeIcon || 'mdi-trash-can-outline'"
+          color="red-6"
+          size="sm"
+          round
+          flat
+          @click.stop="removeRow(p.row)"
+        >
+          <q-tooltip :delay="500">
+            {{ removeLabel || 'Delete' }}
+          </q-tooltip>
+        </q-btn>
+      </q-tr>
     </template>
 
     <template v-for="(_, name) in $slots" #[name]="slotData">
       <slot :name="name" v-bind="slotData" />
     </template>
   </q-table>
+
+  <q-btn
+    v-if="addButton === 'end'"
+    class="add-button end"
+    :label="addLabel"
+    :round="!addLabel"
+    :disable="disable || addDisable"
+    :icon-right="addLabel ? (addIcon || 'mdi-plus') : undefined"
+    :icon="!addLabel ? (addIcon || 'mdi-plus') : undefined"
+    size="sm"
+    color="primary"
+    flat
+    @click="addRow"
+  >
+    <q-tooltip :delay="500">
+      {{ addLabel || 'Create new' }}
+    </q-tooltip>
+  </q-btn>
 </template>
 
 <script setup lang="ts">
 import {
   computed, ref, useAttrs, watch,
 } from 'vue'
+import sift from 'sift'
 import startCase from 'lodash/startCase'
 import compact from 'lodash/compact'
 import { TSchema } from '@feathersjs/typebox'
-import sift from 'sift'
 import { useSyncedProp } from '@/composites/prop'
 import { columnAlignmentFor, getTypeFor } from '@/shared/schema'
 import { AnyData } from '@/shared/interfaces/commons'
@@ -66,17 +156,45 @@ const props = defineProps<{
   filter?: string
   hideFilter?: boolean
   schemaRows?: boolean
+  disable?: boolean
+  // position of the add button
+  addButton?: 'start' | 'end'
+  // function to execute to add a new item to the array, return the value if successful
+  addFunction?: () => unknown | undefined
+  // icon for the add button
+  addIcon?: string
+  // label for the add button
+  addLabel?: string
+  // should we disable the add feature?
+  addDisable?: boolean
+  // position of the remove button on the rows
+  removeButton?: 'end'
+  // icon for the remove button
+  removeIcon?: string
+  // function called before removing item at index
+  canRemove?: (value: unknown) => boolean
+  // label for the remove button
+  removeLabel?: string
+  // function to execute to remove an item from the table, return the true is successful
+  removeFunction?: (value: unknown) => boolean
+  // should we disable the remove row feature
+  removeDisable?: boolean
+  // show temps records from store
+  temps?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
+  (e: 'row-click', value: unknown): void,
+  (e: 'add', value: unknown): void,
+  (e: 'remove', value: unknown): void,
   (e: 'update:filter', value: string | null | undefined): void,
   (e: 'update:selected', value: unknown[]): void,
 }>()
 
 const { api } = useFeathers()
 
-const selection = useSyncedProp(props, 'selected', emit)
+const currentSelected = useSyncedProp(props, 'selected', emit)
 
 const currentFilter = useSyncedProp(props, 'filter', emit)
 
@@ -104,6 +222,8 @@ const dataRows = ref()
 
 const data = ref()
 
+const hover = ref()
+
 watch([
   () => attrs.rows,
   () => props.tableId,
@@ -123,7 +243,7 @@ watch([
   }
 
   if (props.tableId) {
-    const dataFind = api.service(props.tableId).useFind({ query: q })
+    const dataFind = api.service(props.tableId).useFind({ query: q, temps: props.temps })
     dataFind.find()
     watch(dataFind.data, () => {
       data.value = dataFind.data.value
@@ -140,4 +260,37 @@ watch([
 const schemaSchema = (name: string) => props.schema?.properties[name]
 
 const filteredRows = computed(() => data.value || dataRows.value)
+
+const addRow = () => {
+  const newValue = props.addFunction ? props.addFunction() : {}
+  if (newValue) {
+    emit('add', newValue)
+  }
+}
+
+const removeRow = (value: unknown) => {
+  if (!props.canRemove || (props.canRemove(value) && props.removeFunction(value))) {
+    emit('remove', value)
+  }
+}
 </script>
+
+<style scoped lang="sass">
+:deep(.q-table)
+  & .q-td:last-child,
+  & th:last-child
+    padding-right: 32px
+
+:deep(.q-table__bottom)
+  padding-right: 32px
+
+.remove-button
+  position: absolute
+  right: 0
+
+.add-button
+  &.end
+    position: absolute
+    right: 20px
+    bottom: 10px
+</style>

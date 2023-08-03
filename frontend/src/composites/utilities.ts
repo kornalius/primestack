@@ -119,7 +119,7 @@ export const scanDiff = (v1: AnyData, v2: AnyData): AnyData => {
  * @param data
  */
 export const getId = (data?: AnyData): string | undefined => (
-  data?._id || data?.__id
+  data?._id || data?.__tempId
 )
 
 /**
