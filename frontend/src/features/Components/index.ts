@@ -1,3 +1,4 @@
+import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import label from './label'
 import chip from './chip'
 import icon from './icon'
@@ -67,3 +68,12 @@ export const componentForType = (
     { ...acc, [c.type]: c.component }
   ), {})
 )
+
+export const componentForField = (field: TFormField): TFormComponent => {
+  // eslint-disable-next-line no-underscore-dangle
+  let comp = componentForType[field._type]
+  if (typeof comp === 'function') {
+    comp = comp(field)
+  }
+  return comp
+}

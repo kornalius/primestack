@@ -35,7 +35,7 @@
       </q-drawer>
 
       <q-page-container>
-        <q-page @click="editor.unselectAll()">
+        <q-page @click="unselectAll">
           <div v-if="editor.active" class="row">
             <div class="q-mb-sm full-width">
               <div class="row bg-grey-8 items-center q-px-sm">
@@ -109,6 +109,8 @@
           <form-editor
             v-else
             v-model="fields"
+            :form="form"
+            :preview="preview"
             :components="components"
           />
 
@@ -461,4 +463,10 @@ onBeforeRouteLeave((): boolean => {
   }
   return true
 })
+
+const unselectAll = () => {
+  if (editor.active && !preview.value) {
+    editor.unselectAll()
+  }
+}
 </script>

@@ -56,7 +56,7 @@
         @mouseleave="hover = undefined"
         @focus="hover = p.row.id"
         @blur="hover = undefined"
-        @click="$emit('row-click', filteredRows[p.rowIndex])"
+        @click="$emit('row-click', p.row)"
       >
         <q-td
           v-if="$attrs.selection !== 'none'"
@@ -155,6 +155,7 @@ const props = defineProps<{
   tableId?: string
   filter?: string
   hideFilter?: boolean
+  // Renders the rows using schema inputs
   schemaRows?: boolean
   disable?: boolean
   // position of the add button
@@ -175,8 +176,8 @@ const props = defineProps<{
   canRemove?: (value: unknown) => boolean
   // label for the remove button
   removeLabel?: string
-  // function to execute to remove an item from the table, return the true is successful
-  removeFunction?: (value: unknown) => boolean
+  // function to execute to remove an item from the table
+  removeFunction?: (value: unknown) => void
   // should we disable the remove row feature
   removeDisable?: boolean
   // show temps records from store
@@ -269,7 +270,10 @@ const addRow = () => {
 }
 
 const removeRow = (value: unknown) => {
-  if (!props.canRemove || (props.canRemove(value) && props.removeFunction(value))) {
+  if (!props.canRemove || props.canRemove(value)) {
+    if (props.removeFunction) {
+      props.removeFunction(value)
+    }
     emit('remove', value)
   }
 }

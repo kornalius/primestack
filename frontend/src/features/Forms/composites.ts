@@ -3,7 +3,7 @@ import omit from 'lodash/omit'
 import { TSchema } from '@feathersjs/typebox'
 import { TFormColumn, TFormField } from '@/shared/interfaces/forms'
 import { AnyData, T18N } from '@/shared/interfaces/commons'
-import { components, componentForType } from '@/features/Components'
+import { components, componentForType, componentForField } from '@/features/Components'
 import useValidators from '@/features/Validation/composites'
 
 const validators = useValidators()
@@ -35,6 +35,8 @@ const flattenFields = (fields: TFormField[]): (AnyData)[] => {
 }
 
 export default () => ({
+  componentForField,
+
   componentForType,
 
   components,

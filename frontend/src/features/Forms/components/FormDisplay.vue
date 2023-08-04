@@ -28,7 +28,7 @@
       />
 
       <component
-        :is="componentForType[field._type]"
+        :is="componentForField(field)"
         v-else-if="isNumericInput(field)"
         v-model.number="value[field.field]"
         v-bind="fieldBinds(field, schemaForType(field))"
@@ -38,7 +38,7 @@
       />
 
       <component
-        :is="componentForType[field._type]"
+        :is="componentForField(field)"
         v-else
         v-model="value[field.field]"
         v-bind="fieldBinds(field, schemaForType(field))"
@@ -70,7 +70,7 @@ const emit = defineEmits<{
 }>()
 
 const {
-  componentForType,
+  componentForField,
   fieldBinds,
   style,
   isNumericInput,

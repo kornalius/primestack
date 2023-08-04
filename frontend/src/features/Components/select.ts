@@ -2,18 +2,23 @@ import { QSelect } from 'quasar'
 import { Type } from '@feathersjs/typebox'
 import { contentIcon, modelIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
+import { AnyData } from '@/shared/interfaces/commons'
+import ServiceSelect from '@/features/Fields/components/ServiceSelect.vue'
 import { properties, commonProperties } from './common'
 
 export default {
   type: 'select',
   icon: 'mdi-form-select',
   label: 'Select',
-  component: QSelect,
+  component: (data: AnyData) => (
+    data.tableId ? ServiceSelect : QSelect
+  ),
   schema: properties([
     commonProperties.state,
     commonProperties.style,
     Type.Object({
       modelValue: Type.String(),
+      tableId: Type.String({ objectid: true, tableid: true }),
       virtualScrollHorizontal: Type.Boolean(),
       loading: Type.Boolean(),
       clearable: Type.Boolean(),
@@ -81,6 +86,7 @@ export default {
       names: [
         'modelValue',
         'field',
+        'tableId',
         'options',
         'optionLabel',
         'optionValue',

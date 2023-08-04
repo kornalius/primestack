@@ -1,4 +1,5 @@
 <template>
+  FUCK
   <q-select
     v-model="value"
     v-bind="$attrs"
@@ -44,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useModelValue } from '@/composites/prop'
 import { useFeathers } from '@/composites/feathers'
 import { AnyData } from '@/shared/interfaces/commons'
@@ -52,6 +53,7 @@ import { AnyData } from '@/shared/interfaces/commons'
 const props = defineProps<{
   modelValue: unknown
   service?: string
+  tableId?: string
   query?: AnyData
   createNew?: boolean
   createLabel?: string
@@ -75,7 +77,7 @@ const userTable = computed(() => tables.value?.[0])
 const userForm = computed(() => forms.value?.[0])
 const userMenu = computed(() => menus.value?.[0])
 
-let data
+const data = ref()
 
 const entities = computed(() => {
   switch (props.service) {
@@ -86,12 +88,12 @@ const entities = computed(() => {
       }))
     case 'forms':
       return userForm.value?.list.map((s) => ({
-        label: s.name,
+        label: s._id,
         value: s._id,
       }))
     case 'menus':
       return userMenu.value?.list.map((s) => ({
-        label: s.name,
+        label: s.label,
         value: s._id,
       }))
     default:
@@ -99,13 +101,23 @@ const entities = computed(() => {
   }
 })
 
-watch(() => props.service, () => {
+watch([() => props.service, () => props.tableId], () => {
   if (props.service && !['tables', 'menus', 'forms'].includes(props.service)) {
     const { data: c, find: findEntities } = api.service(props.service).useFind({
       query: props.query || {},
     })
-    data = c
     findEntities()
+    watch(c, () => {
+      data.value = c.value
+    }, { immediate: true })
+  } else if (props.tableId) {
+    const { data: c, find } = api.service(props.tableId).useFind({
+      query: props.query || {},
+    })
+    find()
+    watch(c, () => {
+      data.value = c.value
+    }, { immediate: true })
   }
-})
+}, { immediate: true })
 </script>

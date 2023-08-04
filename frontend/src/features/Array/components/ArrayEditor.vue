@@ -115,7 +115,7 @@
             </div>
 
             <div
-              class="q-ml-sm"
+              class="q-mx-sm"
               :class="{ 'col-auto': !horizontal, 'inline-block': horizontal }"
               style="width: 30px;"
             >
@@ -140,7 +140,7 @@
       :class="{
         column: !horizontal,
         'items-end': !horizontal,
-        'q-my-sm': !horizontal,
+        'q-ma-sm': !horizontal,
         'inline-block': horizontal,
         'full-height': horizontal,
       }"
@@ -162,6 +162,7 @@
         />
 
         <q-btn
+          :class="{ 'q-ml-sm': horizontal }"
           :label="addLabel"
           :round="!addLabel"
           :disable="disable || addDisable"
@@ -199,8 +200,8 @@ const props = defineProps<{
   addButton?: 'start' | 'end'
   // function to execute to add a new item to the array, return the value if successful
   addFunction: () => unknown | undefined
-  // function to execute to remove an item from the array, return the true is successful
-  removeFunction: (value: unknown, index: number) => boolean
+  // function to execute to remove an item from the array
+  removeFunction: (value: unknown, index: number) => void
   // width in pixels of the component
   width?: number
   // height in pixels of the component
@@ -290,11 +291,10 @@ const addItem = () => {
 
 const removeItem = (value: unknown) => {
   const idx = values.value.indexOf(value)
-  if (
-    idx !== -1
-    && (!props.canRemove || props.canRemove(value))
-    && props.removeFunction(value, idx)
-  ) {
+  if (idx !== -1 && (!props.canRemove || props.canRemove(value))) {
+    if (props.removeFunction) {
+      props.removeFunction(value, idx)
+    }
     emit('remove', value, idx)
   }
 }

@@ -17,7 +17,6 @@ export const tabSchema = Type.Object(
       content: {
         icon: contentIcon,
         names: [
-          'formId',
           'label',
           'icon',
           'color',

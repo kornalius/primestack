@@ -30,6 +30,7 @@ export const fieldSchema = Type.Object(
 
 export const formSchema = Type.Object(
   {
+    _id: Type.String({ objectid: true }),
     data: Type.Optional(Type.Object({}, { json: true })),
     hideFilter: Type.Optional(Type.Boolean({ skip: true })),
     grid: Type.Optional(Type.Boolean()),

@@ -20,7 +20,7 @@
     />
 
     <properties-editor
-      v-else-if="showSchemaProperties"
+      v-else-if="showTableProperties"
       v-model="selectedTable"
       v-model:forced-types="forcedTypes"
       :prop-name="''"
@@ -29,7 +29,7 @@
     />
 
     <properties-editor
-      v-else-if="showSchemaFieldProperties"
+      v-else-if="showTableFieldProperties"
       v-model="selectedTableField"
       v-model:forced-types="forcedTypes"
       :prop-name="''"
@@ -180,25 +180,25 @@ const filteredFormSchema = computed(() => (
 const selectedTable = computed(() => editor.tableInstance(editor.selectedTable))
 
 const selectedTableField = computed(() => (
-  selectedTable.value?.fields.find((f) => f._id === editor.selectedTableField)
+  editor.tableFieldInstance(editor.selectedTableField, selectedTable.value)
 ))
 
-const showSchemaProperties = computed(() => (
-  editor.selectedTable && !editor.selectedTableField
+const showTableProperties = computed(() => (
+  selectedTable.value && !selectedTableField.value
 ))
 
-const showSchemaFieldProperties = computed(() => (
-  editor.selectedTable && editor.selectedTableField
+const showTableFieldProperties = computed(() => (
+  selectedTable.value && selectedTableField.value
 ))
 
 const selectedTableSchema = computed(() => (
-  editor.selectedTable
+  selectedTable.value
     ? omitFields(tableSchema, ['_id', 'fields', 'indexes'])
     : undefined
 ))
 
 const selectedSchemaFieldSchema = computed(() => (
-  editor.selectedTableField
+  selectedTableField.value
     ? omitFields(tableFieldSchema, ['_id'])
     : undefined
 ))

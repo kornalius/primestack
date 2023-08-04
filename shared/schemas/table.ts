@@ -7,6 +7,8 @@ export const supportedFieldTypes = [
   'boolean',
   'color',
   'icon',
+  'date',
+  'time',
   'objectid',
 ]
 

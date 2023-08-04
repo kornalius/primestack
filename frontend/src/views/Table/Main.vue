@@ -8,10 +8,13 @@
           :rows="editor.tables"
           :columns="schemaColumns"
           :rows-per-page-options="[0]"
+          :add-function="addTable"
+          :remove-function="removeTable"
+          add-button="start"
+          remove-button="end"
           title="Tables"
           selection="single"
           row-key="_id"
-          add-button="start"
           virtual-scroll
           bordered
           dense
@@ -29,6 +32,10 @@
           :rows="tableFields"
           :columns="fieldColumns"
           :rows-per-page-options="[0]"
+          :add-function="addTableField"
+          :remove-function="removeTableField"
+          add-button="start"
+          remove-button="end"
           title="Fields"
           selection="single"
           row-key="_id"
@@ -48,9 +55,14 @@ import {
   computed, onBeforeUnmount, onMounted, ref, watch,
 } from 'vue'
 import { useRouter } from 'vue-router'
+import { Static } from '@feathersjs/typebox'
 import useAppEditor from '@/features/App/store'
 import { useUrl } from '@/composites/url'
+import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
 import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
+
+type Table = Static<typeof tableSchema>
+type TableField = Static<typeof tableFieldSchema>
 
 const props = defineProps<{
   id?: string
@@ -65,18 +77,29 @@ const { tableUrl } = useUrl()
 const router = useRouter()
 
 onMounted(() => {
-  editor.unselectTab()
-  editor.unselectMenu()
+  editor.unselectAll()
 })
 
 onBeforeUnmount(() => {
-  editor.unselectTableField()
-  editor.unselectTable()
+  editor.unselectAll()
 })
 
 const selectedTable = ref([])
 
 const selectedTableField = ref([])
+
+const toggleTableSelection = (row) => {
+  selectedTableField.value = []
+  selectedTable.value = [row]
+}
+
+const toggleTableFieldSelection = (row) => {
+  selectedTableField.value = [row]
+}
+
+const tableFields = computed(() => (
+  editor.tableInstance(selectedTable.value?.[0]?._id)?.fields || []
+))
 
 watch(() => props.id, () => {
   if (props.id) {
@@ -84,43 +107,58 @@ watch(() => props.id, () => {
   }
 }, { immediate: true })
 
-watch(selectedTable, () => {
-  editor.selectTable(selectedTable.value?.[0]?._id)
-  router.push(tableUrl(selectedTable.value?.[0]?._id))
-})
-
-const tableFields = computed(() => (
-  selectedTable.value?.[0]?.fields || []
-))
-
 watch(() => props.fieldId, () => {
-  if (tableFields.value && props.fieldId) {
-    const field = tableFields.value.find((f) => f._id === props.fieldId)
-    if (field) {
-      selectedTableField.value = [field]
-    }
+  if (props.fieldId) {
+    selectedTableField.value = [editor.tableFieldInstance(props.fieldId, selectedTable.value?.[0])]
   }
 }, { immediate: true })
 
-watch(selectedTableField, () => {
-  editor.selectTableField(selectedTableField.value?.[0]?._id)
-  router.push(tableUrl(selectedTable.value?.[0]?._id, selectedTableField.value?.[0]?._id))
+watch(selectedTable, () => {
+  if (selectedTable.value?.[0]?._id) {
+    editor.selectTable(selectedTable.value?.[0]?._id)
+    router.push(tableUrl(selectedTable.value?.[0]?._id))
+  }
 })
+
+watch(selectedTableField, () => {
+  if (selectedTable.value?.[0]?._id && selectedTableField.value?.[0]?._id) {
+    editor.selectTableField(selectedTableField.value?.[0]?._id)
+    router.push(tableUrl(selectedTable.value?.[0]?._id, selectedTableField.value?.[0]?._id))
+  }
+})
+
+const addTable = () => {
+  const t = editor.addTable(true)
+  selectedTable.value = [t]
+}
+
+const removeTable = (t: Table): void => {
+  if (editor.removeTable(t._id)) {
+    editor.unselectTable()
+    selectedTable.value = []
+  }
+}
+
+const addTableField = () => {
+  const field = editor.addFieldToTable(selectedTable.value?.[0]?._id)
+  selectedTableField.value = [field]
+}
+
+const removeTableField = (f: TableField): void => {
+  if (editor.removeFieldFromTable(f._id, selectedTable.value?.[0])) {
+    editor.unselectTableField()
+    selectedTableField.value = []
+  }
+}
 
 watch(() => props.create, () => {
   if (props.create) {
     if (props.id) {
-      // create a new field in table
-      const table = editor.tableInstance(props.id)
-      selectedTable.value = [table]
-      const field = editor.addFieldToTable(table)
-      selectedTableField.value = [field]
-      return
+      selectedTable.value = [editor.tableInstance(props.id)]
+      addTableField()
+    } else {
+      addTable()
     }
-
-    // create a new table
-    const table = editor.addTable()
-    selectedTable.value = [table]
   }
 }, { immediate: true })
 
@@ -148,15 +186,6 @@ const schemaColumns = ref([
     format: (val) => val.length,
   },
 ])
-
-const toggleTableSelection = (row) => {
-  selectedTableField.value = []
-  selectedTable.value = [row]
-}
-
-const toggleTableFieldSelection = (row) => {
-  selectedTableField.value = [row]
-}
 
 const fieldColumns = ref([
   {

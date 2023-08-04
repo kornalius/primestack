@@ -143,7 +143,7 @@ export const defaultValues = (values: AnyData | undefined): AnyData | undefined 
 
 const omit = (obj: AnyData, props: string[]) => {
   const result = { ...obj }
-  props.forEach(function(prop) {
+  props.forEach((prop) => {
     delete result[prop]
   })
   return result

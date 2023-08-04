@@ -7,7 +7,7 @@
   >
     <array-editor
       v-model="tabs"
-      :add-function="editor.addTab"
+      :add-function="() => editor.addTab(true)"
       :remove-function="(t) => editor.removeTab(t._id)"
       add-button="end"
       horizontal
@@ -60,11 +60,19 @@ const router = useRouter()
 
 const editor = useAppEditor()
 
+const { menuUrl } = useUrl()
+
+watch(() => editor.selectedTab, () => {
+  if (currentTab.value !== editor.selectedTab) {
+    setTimeout(() => {
+      router.push(menuUrl(props.menu._id, editor.selectedTab))
+    }, 100)
+  }
+})
+
 watch(currentTab, () => {
   editor.selectTab(currentTab.value)
 }, { immediate: true })
-
-const { menuUrl } = useUrl()
 
 onMounted(() => {
   setTimeout(() => {

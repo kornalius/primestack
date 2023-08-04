@@ -1,7 +1,7 @@
 <template>
   <array-editor
     v-model="menus"
-    :add-function="editor.addMenu"
+    :add-function="() => editor.addMenu(true)"
     :remove-function="(m) => editor.removeMenu(m._id)"
     add-button="end"
     no-separator
@@ -12,8 +12,10 @@
         class="Drawer__item left-drawer-expanded"
         :class="{ selected: editor.selectedMenu === m._id }"
         tag="router-link"
+        :to="m.href || menuUrl(m._id)"
+        :target="m.target as string"
         clickable
-        @click.stop="editor.selectMenu(m._id)"
+        @click.stop="selectMenu(m._id)"
       >
         <q-item-section avatar>
           <q-icon :name="m.icon" :color="m.color" />
@@ -34,8 +36,9 @@ import { onMounted } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
 import { menuSchema } from '@/shared/schemas/menu'
-import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
+import { useUrl } from '@/composites/url'
 import useAppEditor from '@/features/App/store'
+import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 
 type Menu = Static<typeof menuSchema>
 
@@ -50,9 +53,19 @@ const emit = defineEmits<{
 
 const menus = useModelValue(props, emit)
 
+const { menuUrl } = useUrl()
+
 const editor = useAppEditor()
 
+const selectMenu = (id: string): void => {
+  editor.selectMenu(id)
+  const el: HTMLElement = document.querySelector(`a[href="${menuUrl(id)}"]`)
+  if (el) {
+    el.click()
+  }
+}
+
 onMounted(() => {
-  editor.selectMenu(menus.value?.[0]?._id)
+  selectMenu(menus.value?.[0]?._id)
 })
 </script>

@@ -92,7 +92,7 @@
       />
 
       <component
-        :is="componentForType[field._type]"
+        :is="componentForField(field)"
         v-else
         v-model="field.modelValue"
         v-bind="fieldBinds(field, schemaForType(field))"
@@ -134,7 +134,7 @@ const emit = defineEmits<{
   (e: 'update:model-value', value: TFormField): void,
 }>()
 
-const { componentForType, fieldBinds } = useFormElements()
+const { componentForField, fieldBinds } = useFormElements()
 
 const field = useModelValue(props, emit)
 

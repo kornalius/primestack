@@ -1,4 +1,6 @@
-import { computed, ref, watch } from 'vue'
+import {
+  computed, ref, watch, WatchStopHandle,
+} from 'vue'
 import { Static } from '@feathersjs/typebox'
 import debounce from 'lodash/debounce'
 import isEqual from 'lodash/isEqual'
@@ -268,7 +270,7 @@ export default defineStore('app-editor', () => {
     states.value.undoPtr = states.value.undoStack.length - 1
   }, 250)
 
-  let stopWatchHandle
+  let stopWatchHandle: WatchStopHandle
 
   const startWatch = (): void => {
     if (!stopWatchHandle) {
@@ -349,6 +351,12 @@ export default defineStore('app-editor', () => {
       : undefined
   )
 
+  const tableFieldInstance = (id: string, t: Table): TableField | undefined => (
+    t?.fields?.find
+      ? t.fields.find((f) => f._id === id)
+      : undefined
+  )
+
   const findTabById = (id: string): Tab | undefined => {
     const findTab = (m: Menu): Tab | undefined => (
       m.tabs.find((t) => t._id === id)
@@ -356,8 +364,8 @@ export default defineStore('app-editor', () => {
     return states.value.menus.find(findTab)
   }
 
-  const addMenu = (): Menu => {
-    const m = {
+  const addMenu = (selectIt?: boolean): Menu => {
+    const m: Menu = {
       _id: hexObjectId(),
       label: undefined,
       icon: undefined,
@@ -367,20 +375,25 @@ export default defineStore('app-editor', () => {
       tabs: [],
     }
     states.value.menus.push(m)
+    if (selectIt) {
+      selectMenu(m._id)
+    }
     return m
   }
 
   const removeMenu = (id: string): boolean => {
     const index = states.value.menus.findIndex((m) => m._id === id)
-    menus.value.splice(index, 1)
-    return true
+    if (index !== -1) {
+      menus.value.splice(index, 1)
+      return true
+    }
+    return false
   }
 
-  const addTab = (): Tab => {
-    const f = {
+  const addTab = (selectIt?: boolean): Tab => {
+    const f: Form = {
       _id: hexObjectId(),
-      name: 'form',
-      fields: [],
+      _fields: [],
     }
     states.value.forms?.push(f)
 
@@ -394,6 +407,9 @@ export default defineStore('app-editor', () => {
 
     const menu = menuInstance(states.value.selectedMenu)
     menu.tabs.push(t)
+    if (selectIt) {
+      selectTab(t._id)
+    }
     return t
   }
 
@@ -406,11 +422,14 @@ export default defineStore('app-editor', () => {
 
     const menu = menuInstance(states.value.selectedMenu)
     const index = menu.tabs.findIndex((tab) => tab._id === id)
-    menu.tabs.splice(index, 1)
-    return true
+    if (index !== -1) {
+      menu.tabs.splice(index, 1)
+      return true
+    }
+    return false
   }
 
-  const createFormField = (component: TFormComponent): TFormField => ({
+  const createFormField = (component: TFormComponent, options?: AnyData): TFormField => ({
     _id: hexObjectId(),
     _type: component.type,
     _columns: component.row ? [] : undefined,
@@ -420,12 +439,13 @@ export default defineStore('app-editor', () => {
         { ...acc, [k]: defaultValueForSchema(component.schema.properties[k]) }
       ), {}),
     ...(defaultValues(component.defaultValues) || {}),
+    ...(options || {}),
   })
 
-  const addFieldToForm = (component: TFormComponent): TFormField | undefined => {
+  const addFieldToForm = (component: TFormComponent, options?: AnyData): TFormField | undefined => {
     const form = states.value.forms.find((f) => f._id === states.value.formId)
     if (form) {
-      const field = createFormField(component)
+      const field = createFormField(component, options)
       // eslint-disable-next-line no-underscore-dangle
       form._fields.push(field)
       setTimeout(() => {
@@ -441,7 +461,7 @@ export default defineStore('app-editor', () => {
     componentType: string,
     field: TFormField,
   ): TFormColumn => {
-    let type
+    let type: string
 
     if (componentType === 'row') {
       type = 'col'
@@ -468,16 +488,18 @@ export default defineStore('app-editor', () => {
     return col
   }
 
-  const removeColumnFromField = (column: TFormColumn, field: TFormField): void => {
+  const removeColumnFromField = (column: TFormColumn, field: TFormField): boolean => {
     // eslint-disable-next-line no-underscore-dangle
-    const idx = field._columns.findIndex((c) => c._id === column._id)
-    if (idx !== -1) {
+    const index = field._columns.findIndex((c) => c._id === column._id)
+    if (index !== -1) {
       // eslint-disable-next-line no-underscore-dangle
-      field._columns.splice(idx, 1)
+      field._columns.splice(index, 1)
+      return true
     }
+    return false
   }
 
-  const addTable = (): Table => {
+  const addTable = (selectIt?: boolean): Table => {
     const t = {
       _id: hexObjectId(),
       name: undefined,
@@ -490,34 +512,47 @@ export default defineStore('app-editor', () => {
       indexes: [],
     }
     states.value.tables.push(t)
+    if (selectIt) {
+      selectTable(t._id)
+    }
     return t
   }
 
   const removeTable = (id: string): boolean => {
     const index = states.value.tables.findIndex((m) => m._id === id)
-    tables.value.splice(index, 1)
-    return true
+    if (index !== -1) {
+      tables.value.splice(index, 1)
+      return true
+    }
+    return false
   }
 
-  const addFieldToTable = (table: Table): TableField => {
-    const f = {
-      _id: hexObjectId(),
-      name: undefined,
-      type: 'string',
-      hidden: false,
-      array: false,
-      optional: false,
-      readonly: false,
-      queryable: true,
+  const addFieldToTable = (tableId: string): TableField => {
+    const table = tableInstance(tableId)
+    if (table) {
+      const f = {
+        _id: hexObjectId(),
+        name: undefined,
+        type: 'string',
+        hidden: false,
+        array: false,
+        optional: false,
+        readonly: false,
+        queryable: true,
+      }
+      table.fields.push(f)
+      return f
     }
-    table.fields.push(f)
-    return f
+    return undefined
   }
 
   const removeFieldFromTable = (id: string, table: Table): boolean => {
     const index = table.fields.findIndex((f) => f._id === id)
-    table.fields.splice(index, 1)
-    return true
+    if (index !== -1) {
+      table.fields.splice(index, 1)
+      return true
+    }
+    return false
   }
 
   startWatch()
@@ -570,6 +605,7 @@ export default defineStore('app-editor', () => {
     formInstance,
     menuInstance,
     tableInstance,
+    tableFieldInstance,
     isModified,
     addMenu,
     removeMenu,
