@@ -38,6 +38,9 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string => {
   if (p.type === 'string' && p.objectid === true && p.tableid === true) {
     return 'tableid'
   }
+  if (p.type === 'string' && p.objectid === true && p.action === true) {
+    return 'action'
+  }
   if (p.type === 'string' && p.objectid === true) {
     return 'objectid'
   }

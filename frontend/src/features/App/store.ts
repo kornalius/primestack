@@ -14,19 +14,24 @@ import { AnyData } from '@/shared/interfaces/commons'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
 import { formSchema } from '@/shared/schemas/form'
 import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
+import { actionSchema, actionElementSchema } from '@/shared/schemas/actions'
 import { TFormColumn, TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { defaultValueForSchema, defaultValues } from '@/shared/schema'
+import { TAction } from '@/shared/interfaces/actions'
 
 type Menu = Static<typeof menuSchema>
 type Tab = Static<typeof tabSchema>
 type Form = Static<typeof formSchema>
 type Table = Static<typeof tableSchema>
 type TableField = Static<typeof tableFieldSchema>
+type Action = Static<typeof actionSchema>
+type ActionElement = Static<typeof actionElementSchema>
 
 interface Snapshot {
-  menus: unknown[]
-  forms: unknown[]
-  tables: unknown[]
+  menus: Menu[]
+  forms: Form[]
+  tables: Table[]
+  actions: Action[]
 }
 
 export default defineStore('app-editor', () => {
@@ -36,13 +41,16 @@ export default defineStore('app-editor', () => {
     selectedTab: undefined,
     selectedTable: undefined,
     selectedTableField: undefined,
+    selectedActionElement: undefined,
     selected: undefined,
     hovered: undefined,
     dragging: false,
     formId: undefined,
-    menus: [],
-    forms: [],
-    tables: [],
+    actionId: undefined,
+    menus: [] as Menu[],
+    forms: [] as Form[],
+    tables: [] as Table[],
+    actions: [] as Action[],
     origSnapshot: {} as Snapshot,
     undoPtr: 0,
     undoStack: [] as Snapshot[],
@@ -51,19 +59,23 @@ export default defineStore('app-editor', () => {
   const active = computed(() => states.value.active)
   const selected = computed(() => states.value.selected)
   const formId = computed(() => states.value.formId)
+  const actionId = computed(() => states.value.actionId)
   const selectedMenu = computed(() => states.value.selectedMenu)
   const selectedTab = computed(() => states.value.selectedTab)
   const selectedTable = computed(() => states.value.selectedTable)
   const selectedTableField = computed(() => states.value.selectedTableField)
+  const selectedActionElement = computed(() => states.value.selectedActionElement)
   const menus = computed(() => states.value.menus)
   const forms = computed(() => states.value.forms)
   const tables = computed(() => states.value.tables)
+  const actions = computed(() => states.value.actions)
 
   const isModified = computed(() => {
     const f = isEqual(states.value.origSnapshot.forms, states.value.forms)
     const t = isEqual(states.value.origSnapshot.tables, states.value.tables)
     const m = isEqual(states.value.origSnapshot.menus, states.value.menus)
-    return states.value.active && (!f || !t || !m)
+    const a = isEqual(states.value.origSnapshot.actions, states.value.actions)
+    return states.value.active && (!f || !t || !m || !a)
   })
 
   const setFormId = (id: string): void => {
@@ -159,6 +171,40 @@ export default defineStore('app-editor', () => {
     states.value.selectedTableField === id
   )
 
+  const actionInstance = (id: string): Action | undefined => (
+    states.value.actions.find((a) => a._id === id)
+  )
+
+  const actionElementInstance = (id: string): ActionElement | undefined => {
+    const currentAction = actionInstance(states.value.actionId)
+    if (!currentAction) {
+      return undefined
+    }
+    // eslint-disable-next-line no-underscore-dangle
+    return currentAction._actions.find((a) => a._id === id)
+  }
+
+  const selectActionElement = (id: string): void => {
+    states.value.selectedActionElement = id
+  }
+
+  const unselectActionElement = (): void => {
+    states.value.selectedActionElement = undefined
+  }
+
+  const setActionId = (id: string): void => {
+    states.value.actionId = id
+    const a = actionInstance(id)
+    if (a) {
+      // eslint-disable-next-line no-underscore-dangle
+      selectActionElement(a._actions?.[0]?._id)
+    }
+  }
+
+  const isActionElementSelected = (id: string): boolean => (
+    states.value.selectedActionElement === id
+  )
+
   const maxUndoStack = 25
 
   const loadFromStore = () => {
@@ -168,11 +214,17 @@ export default defineStore('app-editor', () => {
       userMenus: api.service('menus').findOneInStore({ query: {} }),
       userForms: api.service('forms').findOneInStore({ query: {} }),
       userTables: api.service('tables').findOneInStore({ query: {} }),
+      userActions: api.service('actions').findOneInStore({ query: {} }),
     }
   }
 
   const saveToStore = (snapshot: Snapshot): void => {
-    const { userMenus, userForms, userTables } = loadFromStore()
+    const {
+      userMenus,
+      userForms,
+      userTables,
+      userActions,
+    } = loadFromStore()
 
     if (snapshot.menus && userMenus.value) {
       userMenus.value.list = snapshot.menus
@@ -183,10 +235,14 @@ export default defineStore('app-editor', () => {
     if (snapshot.tables && userTables.value) {
       userTables.value.list = snapshot.tables
     }
+    if (snapshot.actions && userActions.value) {
+      userActions.value.list = snapshot.actions
+    }
 
     states.value.menus = snapshot.menus
     states.value.forms = snapshot.forms
     states.value.tables = snapshot.tables
+    states.value.actions = snapshot.actions
   }
 
   const snapshot = (): Snapshot => (
@@ -194,6 +250,7 @@ export default defineStore('app-editor', () => {
       menus: cloneDeep(states.value.menus),
       forms: cloneDeep(states.value.forms),
       tables: cloneDeep(states.value.tables),
+      actions: cloneDeep(states.value.actions),
     }
   )
 
@@ -205,11 +262,17 @@ export default defineStore('app-editor', () => {
   const startEdit = (): void => {
     states.value.active = true
 
-    const { userMenus, userForms, userTables } = loadFromStore()
+    const {
+      userMenus,
+      userForms,
+      userTables,
+      userActions,
+    } = loadFromStore()
 
     states.value.menus = cloneDeep(userMenus.value?.list)
     states.value.forms = cloneDeep(userForms.value?.list)
     states.value.tables = cloneDeep(userTables.value?.list)
+    states.value.actions = cloneDeep(userActions.value?.list)
 
     states.value.origSnapshot = snapshot()
 
@@ -220,7 +283,9 @@ export default defineStore('app-editor', () => {
     states.value.active = false
     unselectMenu()
     unselectTable()
+    unselectActionElement()
     states.value.formId = undefined
+    states.value.actionId = undefined
     states.value.selected = undefined
     clearUndoStack()
     hotkeys.setScope('app')
@@ -234,7 +299,12 @@ export default defineStore('app-editor', () => {
   const save = async (): Promise<void> => {
     const { api } = useFeathers()
 
-    const { userMenus, userForms, userTables } = loadFromStore()
+    const {
+      userMenus,
+      userForms,
+      userTables,
+      userActions,
+    } = loadFromStore()
 
     states.value.menus = cloneDeep(
       (await api.service('menus').patch(userMenus.value._id, {
@@ -254,6 +324,13 @@ export default defineStore('app-editor', () => {
       (await api.service('forms').patch(userForms.value._id, {
         ...userForms.value,
         list: states.value.forms,
+      }) as AnyData).list,
+    )
+
+    states.value.actions = cloneDeep(
+      (await api.service('actions').patch(userActions.value._id, {
+        ...userForms.value,
+        list: states.value.actions,
       }) as AnyData).list,
     )
 
@@ -278,6 +355,7 @@ export default defineStore('app-editor', () => {
         () => states.value.menus,
         () => states.value.forms,
         () => states.value.tables,
+        () => states.value.actions,
       ], () => {
         snap()
       }, { deep: true })
@@ -358,10 +436,14 @@ export default defineStore('app-editor', () => {
   )
 
   const findTabById = (id: string): Tab | undefined => {
-    const findTab = (m: Menu): Tab | undefined => (
-      m.tabs.find((t) => t._id === id)
-    )
-    return states.value.menus.find(findTab)
+    for (let i = 0; i < states.value.menus.length; i++) {
+      const m = states.value.menus[i]
+      const tab = m.tabs.find((t) => t._id === id)
+      if (tab) {
+        return tab
+      }
+    }
+    return undefined
   }
 
   const addMenu = (selectIt?: boolean): Menu => {
@@ -555,6 +637,64 @@ export default defineStore('app-editor', () => {
     return false
   }
 
+  const createAction = (id: string, props: AnyData, edit?: boolean): Action => {
+    if (id) {
+      const act = states.value.actions.find((a) => a._id === id)
+      if (edit && act) {
+        setActionId(act._id)
+      }
+      return act
+    }
+
+    const a: Action = {
+      _id: hexObjectId(),
+      _actions: [],
+      ...props,
+    }
+    states.value.actions.push(a)
+    if (edit) {
+      setActionId(a._id)
+    }
+    return a
+  }
+
+  const removeAction = (id: string): boolean => {
+    const idx = states.value.actions.findIndex((a) => a._id === id)
+    if (idx !== -1) {
+      states.value.actions.splice(idx, 1)
+      return true
+    }
+    return false
+  }
+
+  const addActionElement = (action: TAction, selectIt?: boolean): ActionElement => {
+    const currentAction = actionInstance(states.value.actionId)
+
+    const a: ActionElement = {
+      _id: hexObjectId(),
+      _type: action.type,
+      _children: [],
+    }
+    // eslint-disable-next-line no-underscore-dangle
+    currentAction._actions.push(a)
+    if (selectIt) {
+      selectActionElement(a._id)
+    }
+    return a
+  }
+
+  const removeActionElement = (id: string): boolean => {
+    const currentAction = actionInstance(states.value.actionId)
+    // eslint-disable-next-line no-underscore-dangle
+    const index = currentAction._actions.findIndex((a) => a._id === id)
+    if (index !== -1) {
+      // eslint-disable-next-line no-underscore-dangle
+      currentAction._actions.splice(index, 1)
+      return true
+    }
+    return false
+  }
+
   startWatch()
 
   return {
@@ -565,7 +705,13 @@ export default defineStore('app-editor', () => {
     selected,
     selectedTable,
     selectedTableField,
+    selectedActionElement,
     formId,
+    actionId,
+    menus,
+    forms,
+    tables,
+    actions,
     select,
     unselect,
     unselectAll,
@@ -591,9 +737,6 @@ export default defineStore('app-editor', () => {
     selectTableField,
     unselectTableField,
     isTableFieldSelected,
-    menus,
-    forms,
-    tables,
     save,
     reset,
     snap,
@@ -619,5 +762,15 @@ export default defineStore('app-editor', () => {
     removeTable,
     addFieldToTable,
     removeFieldFromTable,
+    setActionId,
+    selectActionElement,
+    unselectActionElement,
+    isActionElementSelected,
+    actionInstance,
+    actionElementInstance,
+    createAction,
+    removeAction,
+    addActionElement,
+    removeActionElement,
   }
 })

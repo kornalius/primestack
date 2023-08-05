@@ -1,9 +1,9 @@
 <template>
   <div>
     <draggable
-      :list="fields"
-      class="form-builder-container"
-      :group="{ name: 'form-builder' }"
+      :list="actionList"
+      class="action-builder-container"
+      :group="{ name: 'action-builder' }"
       filter=".overlay"
       :animation="150"
       easing="cubic-bezier(1, 0, 0, 1)"
@@ -13,11 +13,11 @@
       @change="onChange"
     >
       <template #item="{ index }">
-        <form-element
-          v-model="fields[index]"
-          :components="components"
-          :selected="editor.isSelected(fields[index]._id)"
-          @click="editor.select"
+        <action-element
+          v-model="actionList[index]"
+          :actions="actions"
+          :selected="editor.isActionElementSelected(actionList[index]._id)"
+          @click="editor.selectActionElement"
           @remove="remove"
         />
       </template>
@@ -26,16 +26,20 @@
 </template>
 
 <script setup lang="ts">
+import { Static } from '@feathersjs/typebox'
 import draggable from 'vuedraggable'
-import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
-import { AnyData } from '@/shared/interfaces/commons'
-import { useModelValue } from '@/composites/prop'
 import useAppEditor from '@/features/App/store'
-import FormElement from './FormElement.vue'
+import { useModelValue } from '@/composites/prop'
+import { TAction } from '@/shared/interfaces/actions'
+import { actionElementSchema } from '@/shared/schemas/actions'
+import { AnyData } from '@/shared/interfaces/commons'
+import ActionElement from './ActionElement.vue'
+
+type Action = Static<typeof actionElementSchema>
 
 const props = defineProps<{
-  modelValue: unknown[]
-  components: TFormComponent[]
+  modelValue: Action[]
+  actions: TAction[]
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -45,10 +49,9 @@ const emit = defineEmits<{
   (e: 'moved', oldIndex: number, newIndex: number): void,
   (e: 'select', value: unknown): void,
   (e: 'update:model-value', value: unknown[]): void,
-  (e: 'update:previewFormData', value: Record<string, unknown>): void,
 }>()
 
-const fields = useModelValue(props, emit)
+const actionList = useModelValue(props, emit)
 
 /**
  * Selection
@@ -56,10 +59,10 @@ const fields = useModelValue(props, emit)
 
 const editor = useAppEditor()
 
-const remove = (field: TFormField) => {
-  const idx = fields.value.findIndex((v) => v._id === field._id)
+const remove = (action: Action) => {
+  const idx = actionList.value.findIndex((v) => v._id === action._id)
   if (idx !== -1) {
-    fields.value.splice(idx, 1)
+    actionList.value.splice(idx, 1)
   }
 }
 
@@ -75,6 +78,6 @@ const onChange = (evt: AnyData) => {
 </script>
 
 <style scoped lang="sass">
-.form-builder-container
+.action-builder-container
   min-height: 24px
 </style>

@@ -11,7 +11,16 @@
     />
 
     <properties-editor
-      v-if="showFieldProperties"
+      v-if="showActionElementProperties"
+      v-model="selectedActionElement"
+      v-model:forced-types="forcedTypes"
+      :prop-name="''"
+      :schema="selectedAction.schema"
+      :categories="selectedAction.categories"
+    />
+
+    <properties-editor
+      v-else-if="showFieldProperties"
       v-model="selectedField"
       v-model:forced-types="forcedTypes"
       :prop-name="''"
@@ -37,7 +46,7 @@
       :categories="selectedSchemaFieldSchema.categories"
     />
 
-    <template v-else>
+    <template v-else-if="!editor.actionId">
       <section-title
         v-if="showMenuProperties"
         title="Menu"
@@ -89,6 +98,7 @@ import useAppEditor from '@/features/App/store'
 import useFormElements from '@/features/Forms/composites'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
 import { TFormComponent } from '@/shared/interfaces/forms'
+import { TAction } from '@/shared/interfaces/actions'
 import { formSchema } from '@/shared/schemas/form'
 import { tableSchema, tableFieldSchema } from '@/shared/schemas/table'
 import { omitFields } from '@/shared/schema'
@@ -97,6 +107,7 @@ import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.
 
 const props = defineProps<{
   components?: TFormComponent[]
+  actions?: TAction[]
 }>()
 
 const forcedTypes = ref({})
@@ -201,5 +212,20 @@ const selectedSchemaFieldSchema = computed(() => (
   selectedTableField.value
     ? omitFields(tableFieldSchema, ['_id'])
     : undefined
+))
+
+/**
+ * Actions
+ */
+
+const selectedActionElement = computed(() => editor.actionElementInstance(editor.selectedActionElement))
+
+const selectedAction = computed(() => (
+  // eslint-disable-next-line no-underscore-dangle
+  props.actions.find((a) => a.type === selectedActionElement.value?._type)
+))
+
+const showActionElementProperties = computed(() => (
+  selectedActionElement.value && selectedAction.value
 ))
 </script>

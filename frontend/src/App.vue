@@ -297,6 +297,7 @@
     <app-properties
       v-if="!hideUI"
       :components="components"
+      :actions="actions"
     />
 
     <q-page-container>
@@ -318,6 +319,7 @@ import SnacksDisplay from '@/features/Snacks/components/Snacks.vue'
 import useAppEditor from '@/features/App/store'
 import useAuth from '@/features/Auth/store'
 import useFormElements from '@/features/Forms/composites'
+import useActions from '@/features/Actions/composites'
 import TabsEditor from '@/features/Tabs/components/TabsEditor.vue'
 import MenusEditor from '@/features/Menus/components/MenusEditor.vue'
 import AppProperties from '@/features/App/components/AppProperties.vue'
@@ -384,6 +386,8 @@ watch(() => editor.active, () => {
   editor.unselectMenu()
 })
 
+const { actions } = useActions()
+
 const { components: comps } = useFormElements()
 
 const components = ref(comps)
@@ -423,6 +427,7 @@ const loadUserData = async () => {
   userMenu.value = (await api.service('menus').find({ query: {} })).data?.[0]
   api.service('tables').find({ query: {} })
   api.service('forms').find({ query: {} })
+  api.service('actions').find({ query: {} })
 }
 
 /**

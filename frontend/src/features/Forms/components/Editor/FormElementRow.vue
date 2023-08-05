@@ -29,7 +29,7 @@
 
       <div
         v-if="!editor.isDragging && editor.isHovered(column._id)"
-        class="action bg-grey-9 rounded-borders no-pointer-events"
+        class="action-button bg-grey-9 rounded-borders no-pointer-events"
         style="left: 0; width: 18px;"
       >
         <q-icon :name="columnIcon" color="white" size="xs" />
@@ -37,7 +37,7 @@
 
       <q-btn
         v-if="!editor.isDragging && editor.isHovered(column._id)"
-        class="action"
+        class="action-button"
         style="right: 0;"
         icon="mdi-trash-can"
         color="red-4"
@@ -134,7 +134,7 @@ const onRemoveClick = (column: TFormColumn) => {
   &.hovered
     outline: 1px dashed $blue-grey-4
 
-.action
+.action-button
   position: absolute
   top: 0
   z-index: 5

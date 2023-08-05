@@ -3,18 +3,7 @@ import {
 } from '@feathersjs/typebox'
 import compact from 'lodash/compact'
 import { postalCodes } from '@/features/Validation/helpers'
-
-export const sizeString = Type.String({
-  options: [
-    { value: 'xs', icon: 'mdi-size-xs' },
-    { value: 'sm', icon: 'mdi-size-s' },
-    { value: 'md', icon: 'mdi-size-m' },
-    { value: 'lg', icon: 'mdi-size-l' },
-    { value: 'xl', icon: 'mdi-size-xl' },
-  ],
-  toggles: true,
-  clearable: true,
-})
+import { sizeString as gSizeString } from '@/shared/interfaces/commons'
 
 export interface RuleType {
   name: string
@@ -170,7 +159,7 @@ export const commonProperties = {
   }),
 
   size: Type.Object({
-    size: sizeString,
+    size: gSizeString,
   }),
 
   rules: Type.Object({
@@ -189,3 +178,5 @@ export const properties = (props: TObject[], field = true) => Type.Intersect(
     field ? commonProperties.field : undefined,
   ]),
 )
+
+export const sizeString = gSizeString

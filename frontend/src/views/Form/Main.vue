@@ -36,7 +36,7 @@
 
       <q-page-container>
         <q-page @click="unselectAll">
-          <div v-if="editor.active" class="row">
+          <div v-if="editor.active && !editor.actionId" class="row">
             <div class="q-mb-sm full-width">
               <div class="row bg-grey-8 items-center q-px-sm">
                 <div class="col">
@@ -99,6 +99,12 @@
             </q-card-actions>
           </q-form>
 
+          <actions-editor
+            v-else-if="editor.actionId"
+            v-model="actionList"
+            :actions="actions"
+          />
+
           <form-display
             v-else-if="preview"
             v-model="previewFormData"
@@ -145,16 +151,18 @@ import cloneDeep from 'lodash/cloneDeep'
 import isEqual from 'lodash/isEqual'
 import useAppEditor from '@/features/App/store'
 import useFormElements from '@/features/Forms/composites'
+import useActions from '@/features/Actions/composites'
 import { defaultValueForSchema, fieldsToSchema } from '@/shared/schema'
 import { useFeathers } from '@/composites/feathers'
+import { formSchema } from '@/shared/schemas/form'
+import { useUrl } from '@/composites/url'
+import { getId } from '@/composites/utilities'
 import { TFormColumn, TFormField } from '@/shared/interfaces/forms'
 import { AnyData } from '@/shared/interfaces/commons'
 import FormEditor from '@/features/Forms/components/Editor/FormEditor.vue'
 import FormDisplay from '@/features/Forms/components/FormDisplay.vue'
 import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
-import { formSchema } from '@/shared/schemas/form'
-import { useUrl } from '@/composites/url'
-import { getId } from '@/composites/utilities'
+import ActionsEditor from '@/features/Actions/components/Editor/ActionsEditor.vue'
 
 const props = defineProps<{
   menuId: string
@@ -186,6 +194,19 @@ const menu = computed(() => (
 const tab = computed(() => (
   menu.value?.tabs.find((t) => t._id === props.tabId)
 ))
+
+/**
+ * Action
+ */
+
+const actionList = computed(() => (
+  editor.active
+    // eslint-disable-next-line no-underscore-dangle
+    ? editor.actionInstance(editor.actionId)?._actions
+    : undefined
+))
+
+const { actions } = useActions()
 
 /**
  * Form
@@ -465,8 +486,12 @@ onBeforeRouteLeave((): boolean => {
 })
 
 const unselectAll = () => {
-  if (editor.active && !preview.value) {
+  if (editor.active && !preview.value && !editor.actionId) {
     editor.unselectAll()
+  }
+  if (editor.active && editor.actionId) {
+    editor.unselectAll()
+    editor.unselectActionElement()
   }
 }
 </script>

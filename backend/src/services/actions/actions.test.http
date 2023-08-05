@@ -1,0 +1,70 @@
+// Login
+POST http://localhost:3030/authentication
+Content-Type: application/json
+
+{
+  "strategy": "local",
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+> {% client.global.set("token", response.body.accessToken); %}
+###
+
+// List actions
+GET http://localhost:3030/actions
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+###
+
+// Create action
+POST http://localhost:3030/actions
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "list": [
+    {
+      "_id": "64cd9a166c9241725a050767",
+      "_actions": [
+        {
+          "_id": "64cd804dfe6b53febf796614",
+          "_type": "patch",
+          "_children": []
+        }
+      ]
+    }
+  ]
+}
+
+> {%
+  // client.log(response.body._id)
+  client.global.set("actionId", response.body._id);
+%}
+###
+
+// Patch action
+PATCH http://localhost:3030/actions/{{actionId}}
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "_id": "{{actionId}}",
+  "list": [
+    {
+      "_id": "64cd9a166c9241725a050767",
+      "_actions": [
+        {
+          "_id": "64cd804dfe6b53febf796614",
+          "_type": "patch",
+          "_children": []
+        }
+      ]
+    }
+  ]
+}
+###

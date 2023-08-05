@@ -12,7 +12,7 @@
   >
     <div
       v-if="!editor.isDragging && editor.isHovered(field._id)"
-      class="action bg-grey-9 rounded-borders no-pointer-events"
+      class="action-button bg-grey-9 rounded-borders no-pointer-events"
       style="left: 0; width: 18px;"
     >
       <q-icon :name="fieldIcon" color="white" size="xs" />
@@ -20,7 +20,7 @@
 
     <q-btn
       v-if="(isRow || isCard) && !editor.isDragging && editor.isHovered(field._id)"
-      class="action"
+      class="action-button"
       style="right: 26px;"
       icon="mdi-plus"
       color="blue-4"
@@ -35,7 +35,7 @@
 
     <q-btn
       v-else-if="interactable && !editor.isDragging && editor.isHovered(field._id)"
-      class="action"
+      class="action-button"
       style="right: 26px;"
       :icon="activeInteractable ? 'mdi-cursor-pointer' : 'mdi-cursor-move'"
       color="green-4"
@@ -50,7 +50,7 @@
 
     <q-btn
       v-if="!editor.isDragging && editor.isHovered(field._id)"
-      class="action"
+      class="action-button"
       style="right: 0;"
       icon="mdi-trash-can"
       color="red-4"
@@ -210,7 +210,7 @@ const toggleInteractable = () => {
 .card
   padding: 4px 0
 
-.action
+.action-button
   position: absolute
   top: 0
   z-index: 5

@@ -166,15 +166,7 @@ const unselectAll = () => {
 </script>
 
 <style scoped lang="sass">
-.Components
-  width: 100px
-  border-right: 1px solid $grey-3
-
 .form-component
   width: 90%
   height: 30px
-
-.Properties
-  width: 400px
-  border-left: 1px solid $grey-3
 </style>

@@ -5,6 +5,7 @@ import users from './users/users.service'
 import tables from './tables/tables.service'
 import menus from './menus/menus.service'
 import forms from './forms/forms.service'
+import actions from './actions/actions.service'
 
 export default function (app: Application): void {
   info('    - Health Check')
@@ -21,4 +22,7 @@ export default function (app: Application): void {
 
   info('    - Forms')
   app.configure(forms)
+
+  info('    - Actions')
+  app.configure(actions)
 }

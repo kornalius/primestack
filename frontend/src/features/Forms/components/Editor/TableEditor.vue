@@ -11,7 +11,7 @@
         tag="tr"
         :component-data="p"
         :group="{ name: 'table-editor-headers' }"
-        filter=".form-element-header .overlay"
+        filter=".overlay"
         :animation="150"
         easing="cubic-bezier(1, 0, 0, 1)"
         item-key="name"

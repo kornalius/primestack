@@ -28,7 +28,7 @@
 
       <div
         v-if="!editor.isDragging && editor.isHovered(section._id)"
-        class="action bg-grey-9 rounded-borders no-pointer-events"
+        class="action-button bg-grey-9 rounded-borders no-pointer-events"
         style="left: 0; width: 18px;"
       >
         <q-icon :name="sectionIcon" color="white" size="xs" />
@@ -36,7 +36,7 @@
 
       <q-btn
         v-if="!editor.isDragging && editor.isHovered(section._id)"
-        class="action"
+        class="action-button"
         style="right: 0;"
         icon="mdi-trash-can"
         color="red-4"
@@ -79,7 +79,7 @@
 
       <div
         v-if="!editor.isDragging && editor.isHovered(action._id)"
-        class="action bg-grey-9 rounded-borders no-pointer-events"
+        class="action-button bg-grey-9 rounded-borders no-pointer-events"
         style="left: 0; width: 18px;"
       >
         <q-icon :name="actionIcon" color="white" size="xs" />
@@ -87,7 +87,7 @@
 
       <q-btn
         v-if="!editor.isDragging && editor.isHovered(action._id)"
-        class="action"
+        class="action-button"
         style="right: 26px;"
         icon="mdi-plus"
         color="blue-4"
@@ -102,7 +102,7 @@
 
       <q-btn
         v-if="!editor.isDragging && editor.isHovered(action._id)"
-        class="action"
+        class="action-button"
         style="right: 0;"
         icon="mdi-trash-can"
         color="red-4"
@@ -255,7 +255,7 @@ const onRemoveClick = (column: TFormColumn) => {
   &.hovered
     outline: 1px dashed $blue-grey-5
 
-.action
+.action-button
   position: absolute
   top: 0
   z-index: 5

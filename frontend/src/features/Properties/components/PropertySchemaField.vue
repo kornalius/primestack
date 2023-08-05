@@ -34,6 +34,21 @@
     </template>
   </q-input>
 
+  <div
+    v-if="type === 'action'"
+    class="action-input row items-center"
+    :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
+    @click="() => !disabled && createAction()"
+  >
+    <div class="col">
+      <span class="text-blue-4 text-italic">
+        {{ value ? 'Event' : '' }}
+      </span>
+    </div>
+
+    <q-icon name="mdi-flash" />
+  </div>
+
   <q-checkbox
     v-else-if="type === 'boolean'"
     v-model="value"
@@ -418,6 +433,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import omit from 'lodash/omit'
 import { TSchema, Type } from '@feathersjs/typebox'
 import { defaultValueForSchema, getTypeFor, optionsForSchema } from '@/shared/schema'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
@@ -633,4 +649,29 @@ const tableId = computed(() => (
 const extraFields = computed(() => (
   Object.keys(form.value?.data || {}).map((k) => ({ _id: k, name: k }))
 ))
+
+const createAction = () => {
+  const a = editor.createAction(
+    value.value,
+    omit(props.schema, ['properties', 'type', 'objectid', 'action']),
+    true,
+  )
+  value.value = a._id
+}
 </script>
+
+<style scoped lang="sass">
+.action-input
+  width: 100%
+  height: 40px
+  padding: 8px
+  outline: 1px solid $grey-5
+  border-radius: 3px
+  position: relative
+  background: white
+
+  & .q-icon
+    position: absolute
+    right: 8px
+    top: 13px
+</style>

@@ -1,6 +1,6 @@
 import { QBtn } from 'quasar'
 import { StringEnum, Type } from '@feathersjs/typebox'
-import { contentIcon, styleIcon } from '@/shared/icons'
+import { contentIcon, styleIcon, actionIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { properties, commonProperties } from './common'
 
@@ -45,6 +45,7 @@ export default {
       unelevated: Type.Boolean(),
       fab: Type.Boolean(),
       fabMini: Type.Boolean(),
+      click: Type.String({ objectid: true, action: true }),
     }),
   ]),
   defaultValues: {
@@ -91,6 +92,12 @@ export default {
         'fabMini',
         'padding',
         'margin',
+      ],
+    },
+    action: {
+      icon: actionIcon,
+      names: [
+        'click',
       ],
     },
   },
