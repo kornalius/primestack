@@ -19,7 +19,6 @@
             pull: 'clone',
             put: false,
           }"
-          filter=".overlay"
           :sort="false"
           @start="editor.setDragging(true)"
           @end="editor.setDragging(false)"
@@ -28,16 +27,20 @@
             <q-btn
               v-if="value.type !== ''"
               class="action-button q-mx-sm"
-              :icon="value.icon"
-              :label="value.label"
-              :color="value.color"
               type="button"
               size="12px"
               align="left"
               dense
               flat
-              @click="editor.addActionElement(value)"
-            />
+              @click="editor.addActionElement(value, true)"
+            >
+              <q-tooltip :delay="500">
+                {{ actionDescription(value) }}
+              </q-tooltip>
+
+              <q-icon :name="actionIcon(value)" :color="actionIconColor(value)" />
+              <span class="q-ml-sm">{{ actionLabel(value) }}</span>
+            </q-btn>
           </template>
         </draggable>
       </q-list>
@@ -48,7 +51,7 @@
         class="q-pa-sm"
         @click="unselectAll"
       >
-        <div class="row items-center">
+        <div class="row items-center q-mb-md">
           <div class="col">
             Actions
           </div>
@@ -85,10 +88,10 @@ import { useModelValue } from '@/composites/prop'
 import { actionElementSchema } from '@/shared/schemas/actions'
 import ActionsListEditor from './ActionsListEditor.vue'
 
-type Action = Static<typeof actionElementSchema>
+type ActionElement = Static<typeof actionElementSchema>
 
 const props = defineProps<{
-  modelValue: Action[]
+  modelValue: ActionElement[]
   actions: TAction[]
 }>()
 
@@ -106,12 +109,46 @@ const visibleActions = computed(() => props.actions.filter((a) => !a.hidden))
 
 const editor = useAppEditor()
 
-const cloneAction = (action: TAction) => editor.addActionElement(action)
+const cloneAction = (action: TAction) => editor.createActionElement(action)
 
 const unselectAll = () => {
   if (editor.active) {
     editor.unselectAll()
   }
+}
+
+const actionIconColor = (action: TAction) => {
+  if (typeof action.iconColor === 'function') {
+    return action.iconColor()
+  }
+  if (action.iconColor) {
+    return action.iconColor
+  }
+  if (typeof action.color === 'function') {
+    return action.color()
+  }
+  return action.color
+}
+
+const actionDescription = (action: TAction) => {
+  if (typeof action.description === 'function') {
+    return action.description()
+  }
+  return action.description
+}
+
+const actionIcon = (action: TAction) => {
+  if (typeof action.icon === 'function') {
+    return action.icon()
+  }
+  return action.icon
+}
+
+const actionLabel = (action: TAction) => {
+  if (typeof action.label === 'function') {
+    return action.label()
+  }
+  return action.label
 }
 </script>
 

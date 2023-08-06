@@ -1,11 +1,6 @@
-import { TAction } from '@/shared/interfaces/actions'
-import schema from '@/shared/schemas/actions/patch'
+import { TFrontAction } from '@/features/Actions/interface'
+import globalPatch from '@/shared/actions/patch'
 
 export default {
-  type: 'patch',
-  label: 'Patch',
-  description: 'Patch records in a table',
-  icon: 'mdi-database-edit',
-  color: 'grey-9',
-  schema,
-} as TAction
+  ...globalPatch,
+} as TFrontAction

@@ -1,70 +1,81 @@
 <template>
-  <div
-    :class="{
-      'action-element': true,
-      selected,
-      hovered: editor.isHovered(actionElement._id),
-    }"
-    @mouseover.stop="editor.hover(actionElement._id)"
-    @mouseleave="editor.unhover()"
-    @focus.stop="editor.hover(actionElement._id)"
-    @blur="editor.unhover()"
-    @click.stop="editor.selectActionElement(actionElement._id)"
-  >
+  <div>
     <div
-      class="banner"
-      :class="`bg-${action.color}`"
-    />
-
-    <q-btn
-      v-if="!editor.isDragging && editor.isHovered(actionElement._id)"
-      class="action-button"
-      style="right: 0;"
-      icon="mdi-trash-can"
-      color="red-4"
-      size="xs"
-      round
-      @click.stop="onRemoveClick"
+      :class="{
+        'action-element': true,
+        selected,
+        hovered: editor.isHovered(actionElement._id),
+      }"
+      @mouseover.stop="editor.hover(actionElement._id)"
+      @mouseleave="editor.unhover()"
+      @focus.stop="editor.hover(actionElement._id)"
+      @blur="editor.unhover()"
+      @click.stop="editor.selectActionElement(actionElement._id)"
     >
-      <q-tooltip :delay="500">
-        Remove
-      </q-tooltip>
-    </q-btn>
+      <div
+        class="banner"
+        :class="`bg-${actionColor}`"
+      />
 
-    <div class="cursor-pointer text-grey-9">
-      <q-tooltip :delay="500">
-        {{ action.description }}
-      </q-tooltip>
+      <q-btn
+        v-if="!editor.isDragging && editor.isHovered(actionElement._id)"
+        class="action-button"
+        style="right: 0;"
+        icon="mdi-trash-can"
+        color="red-4"
+        size="xs"
+        round
+        @click.stop="onRemoveClick"
+      >
+        <q-tooltip :delay="500">
+          Remove
+        </q-tooltip>
+      </q-btn>
 
-      <div class="row items-center">
-        <div class="col-auto q-mr-sm">
-          <q-icon
-            :name="action.icon"
-            size="sm"
-          />
-        </div>
+      <div class="cursor-pointer text-grey-9">
+        <q-tooltip :delay="500">
+          {{ actionDescription }}
+        </q-tooltip>
 
-        <div class="col text-bold">
-          {{ action.label }}
-        </div>
-      </div>
+        <div class="row">
+          <div class="col-auto q-mr-sm">
+            <q-icon
+              :name="actionIcon"
+              :color="actionIconColor"
+              size="sm"
+            />
+          </div>
 
-      <div class="row q-gutter-sm" style="margin-left: 24px;">
-        <div class="col">
-          <component
-            :is="component"
-            v-if="component"
-            v-model="actionElement"
-            v-bind="binds"
-          />
+          <div class="col">
+            <div class="row">
+              <div class="col text-bold">
+                {{ actionLabel }}
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col">
+                <component
+                  :is="component"
+                  v-if="component"
+                  v-model="actionElement"
+                  v-bind="binds"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div v-if="action.acceptsChildren && actionElement._children.length">
+    <div
+      v-if="action.acceptsChildren"
+      class="q-ml-lg"
+    >
       <actions-list-editor
         v-model="actionElement._children"
         :actions="actions"
+        :empty-message="action.childrenMessage"
       />
     </div>
   </div>
@@ -111,6 +122,41 @@ const editor = useAppEditor()
 const onRemoveClick = () => {
   emit('remove', props.modelValue)
 }
+
+const actionColor = computed(() => {
+  if (typeof action.value.color === 'function') {
+    return action.value.color(actionElement.value)
+  }
+  return action.value.color
+})
+
+const actionIconColor = computed(() => {
+  if (typeof action.value.iconColor === 'function') {
+    return action.value.iconColor(actionElement.value)
+  }
+  return action.value.iconColor
+})
+
+const actionDescription = computed(() => {
+  if (typeof action.value.description === 'function') {
+    return action.value.description(actionElement.value)
+  }
+  return action.value.description
+})
+
+const actionIcon = computed(() => {
+  if (typeof action.value.icon === 'function') {
+    return action.value.icon(actionElement.value)
+  }
+  return action.value.icon
+})
+
+const actionLabel = computed(() => {
+  if (typeof action.value.label === 'function') {
+    return action.value.label(actionElement.value)
+  }
+  return action.value.label
+})
 </script>
 
 <style scoped lang="sass">
@@ -119,7 +165,7 @@ const onRemoveClick = () => {
   margin: 8px 0
   padding: 4px 4px 4px 24px
   width: 100%
-  border-radius: 4px
+  border-radius: 2px
   outline: 1px solid $blue-grey-2
 
   &.selected
@@ -133,8 +179,8 @@ const onRemoveClick = () => {
     left: 0
     top: 0
     bottom: 0
-    width: 20px
-    border-radius: 4px 0 0 4px
+    width: 16px
+    border-radius: 2px 0 0 2px
 
 .action-button
   position: absolute

@@ -95,7 +95,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import useAppEditor from '@/features/App/store'
-import useFormElements from '@/features/Forms/composites'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { TAction } from '@/shared/interfaces/actions'
@@ -152,8 +151,6 @@ const showTabProperties = computed(() => (
  * Form
  */
 
-const { flattenFields } = useFormElements()
-
 const form = computed(() => editor.formInstance(editor.formId))
 
 const fields = ref([])
@@ -165,9 +162,7 @@ watch(form, () => {
   }
 }, { immediate: true })
 
-const selectedField = computed(() => (
-  flattenFields(fields.value).find((f) => f._id === editor.selected)
-))
+const selectedField = computed(() => editor.formFieldInstance(editor.selected))
 
 const selectedComponent = computed(() => (
   // eslint-disable-next-line no-underscore-dangle

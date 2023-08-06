@@ -79,7 +79,7 @@ export default defineStore('snacks', () => {
 
   const snackClass = (snack: Snack): string => {
     switch (snack.level) {
-      case 'Info': return 'bg-info text-white'
+      case 'Info': return 'bg-info'
       case 'Success': return 'bg-positive'
       case 'Error': return 'bg-negative'
       case 'Warning': return 'bg-warning'

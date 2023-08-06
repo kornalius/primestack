@@ -1,10 +1,16 @@
 <template>
   <div>
+    <div
+      v-if="actionList.length === 0 && !editor.isDragging"
+      class="text-italic text-grey-8"
+    >
+      {{ emptyMessage }}
+    </div>
+
     <draggable
       :list="actionList"
       class="action-builder-container"
-      :group="{ name: 'action-builder' }"
-      filter=".overlay"
+      :group="{ name: 'actions-builder' }"
       :animation="150"
       easing="cubic-bezier(1, 0, 0, 1)"
       item-key="_id"
@@ -40,6 +46,7 @@ type Action = Static<typeof actionElementSchema>
 const props = defineProps<{
   modelValue: Action[]
   actions: TAction[]
+  emptyMessage?: string
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits

@@ -45,6 +45,7 @@
         :style="style(field)"
         :rules="serializeRules(t, field)"
         lazy-rules
+        @click="callEventAction(field.click as string)"
       />
     </div>
   </div>
@@ -52,8 +53,12 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import { useQuasar } from 'quasar'
 import { useModelValue } from '@/composites/prop'
 import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
+import { useFeathers } from '@/composites/feathers'
+import useSnacks from '@/features/Snacks/store'
+import useActions from '@/features/Actions/composites'
 import useFormElements from '../composites'
 import FormDisplayRow from './FormDisplayRow.vue'
 import FormDisplayCard from './FormDisplayCard.vue'
@@ -84,4 +89,22 @@ const {
 const value = useModelValue(props, emit)
 
 const { t } = useI18n()
+
+const quasar = useQuasar()
+
+const { api } = useFeathers()
+
+const { exec } = useActions()
+
+const snacks = useSnacks()
+
+const userActions = api.service('actions').findOneInStore({ query: {} })?.value.list
+
+const callEventAction = (id: string) => {
+  const act = userActions.find((a) => a._id === id)
+  if (act) {
+    // eslint-disable-next-line no-underscore-dangle
+    exec(act._actions, { quasar, api, snacks })
+  }
+}
 </script>

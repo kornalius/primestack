@@ -1,27 +1,29 @@
-import schema from '@/shared/schemas/actions/dialog'
-import dialog from './components/dialog.vue'
+import { Static } from '@feathersjs/typebox'
+import { AnyData } from '@/shared/interfaces/commons'
+import { actionElementSchema } from '@/shared/schemas/actions'
+import globalDialog from '@/shared/actions/dialog'
+import dialog from '../components/dialog.vue'
 import { TFrontAction } from '../interface'
+// eslint-disable-next-line import/no-cycle
+import useActions from '../composites'
+
+type ActionElement = Static<typeof actionElementSchema>
 
 export default {
-  type: 'dialog',
-  label: 'Dialog',
-  description: 'Display confirmation dialog',
-  icon: 'mdi-dock-window',
-  color: 'red-4',
-  schema,
-  acceptsChildren: true,
+  ...globalDialog,
   component: dialog,
-  exec: ({ value, quasar }) => {
-    quasar.dialog({
-      title: value.title,
+  exec: (args) => {
+    args.quasar.dialog({
+      title: args.title as string,
       persistent: true,
-      message: value.message,
-      ok: value.ok,
-      cancel: value.cancel,
+      message: args.message as string,
+      ok: args.ok as AnyData,
+      cancel: args.cancel as AnyData,
     }).onOk(() => {
-      console.log('ok')
+      const { exec } = useActions()
+      // eslint-disable-next-line no-underscore-dangle
+      exec(args._children as ActionElement[], args)
     }).onCancel(() => {
-      console.log('cancel')
     })
   },
 } as TFrontAction

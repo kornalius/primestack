@@ -1,28 +1,32 @@
+import { Static, TSchema } from '@feathersjs/typebox'
 import startCase from 'lodash/startCase'
 import omit from 'lodash/omit'
-import { TSchema } from '@feathersjs/typebox'
 import { TFormColumn, TFormField } from '@/shared/interfaces/forms'
 import { AnyData, T18N } from '@/shared/interfaces/commons'
 import { components, componentForType, componentForField } from '@/features/Components'
 import useValidators from '@/features/Validation/composites'
+import { columnSchema, fieldSchema } from '@/shared/schemas/form'
+
+type FormField = Static<typeof fieldSchema>
+type FormColumn = Static<typeof columnSchema>
 
 const validators = useValidators()
 
-const flattenFields = (fields: TFormField[]): (AnyData)[] => {
+const flattenFields = (fields: FormField[] | FormColumn[]): FormField[] => {
   const flattended = []
 
-  const flatten = (list: AnyData[]): void => {
-    list.forEach((f) => {
+  const flatten = (list: FormField[] | FormColumn[]): void => {
+    list.forEach((f: FormField | FormColumn) => {
       flattended.push(f)
 
       // eslint-disable-next-line no-underscore-dangle
-      const cols = f._columns
+      const cols = (f as FormField)._columns
       if (cols) {
         flatten(cols)
       }
 
       // eslint-disable-next-line no-underscore-dangle
-      const flds = f._fields
+      const flds = (f as FormColumn)._fields
       if (flds) {
         flatten(flds)
       }

@@ -11,8 +11,10 @@ import { useFeathers } from '@/composites/feathers'
 import cloneDeep from 'lodash/cloneDeep'
 import useSnacks from '@/features/Snacks/store'
 import { AnyData } from '@/shared/interfaces/commons'
+import useFormElements from '@/features/Forms/composites'
+import useActions from '@/features/Actions/composites'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
-import { formSchema } from '@/shared/schemas/form'
+import { fieldSchema, formSchema } from '@/shared/schemas/form'
 import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
 import { actionSchema, actionElementSchema } from '@/shared/schemas/actions'
 import { TFormColumn, TFormComponent, TFormField } from '@/shared/interfaces/forms'
@@ -22,6 +24,7 @@ import { TAction } from '@/shared/interfaces/actions'
 type Menu = Static<typeof menuSchema>
 type Tab = Static<typeof tabSchema>
 type Form = Static<typeof formSchema>
+type FormField = Static<typeof fieldSchema>
 type Table = Static<typeof tableSchema>
 type TableField = Static<typeof tableFieldSchema>
 type Action = Static<typeof actionSchema>
@@ -33,6 +36,9 @@ interface Snapshot {
   tables: Table[]
   actions: Action[]
 }
+
+const { flattenActions } = useActions()
+const { flattenFields } = useFormElements()
 
 export default defineStore('app-editor', () => {
   const states = ref({
@@ -181,7 +187,7 @@ export default defineStore('app-editor', () => {
       return undefined
     }
     // eslint-disable-next-line no-underscore-dangle
-    return currentAction._actions.find((a) => a._id === id)
+    return flattenActions(currentAction._actions).find((a) => a._id === id)
   }
 
   const selectActionElement = (id: string): void => {
@@ -415,6 +421,11 @@ export default defineStore('app-editor', () => {
     states.value.forms?.find
       ? states.value.forms?.find((f) => f._id === id)
       : undefined
+  )
+
+  const formFieldInstance = (id: string): FormField | undefined => (
+    // eslint-disable-next-line no-underscore-dangle
+    flattenFields(formInstance(states.value.formId)?._fields || []).find((f) => f._id === id) as FormField
   )
 
   const menuInstance = (id: string): Menu | undefined => (
@@ -667,6 +678,18 @@ export default defineStore('app-editor', () => {
     return false
   }
 
+  const createActionElement = (action: TAction, options?: AnyData): ActionElement => ({
+    _id: hexObjectId(),
+    _type: action.type,
+    _children: [],
+    ...Object.keys(action.schema?.properties || {})
+      .reduce((acc, k) => (
+        { ...acc, [k]: defaultValueForSchema(action.schema.properties[k]) }
+      ), {}),
+    ...(defaultValues(action.defaultValues) || {}),
+    ...(options || {}),
+  })
+
   const addActionElement = (action: TAction, selectIt?: boolean): ActionElement => {
     const currentAction = actionInstance(states.value.actionId)
 
@@ -678,7 +701,9 @@ export default defineStore('app-editor', () => {
     // eslint-disable-next-line no-underscore-dangle
     currentAction._actions.push(a)
     if (selectIt) {
-      selectActionElement(a._id)
+      setTimeout(() => {
+        selectActionElement(a._id)
+      }, 100)
     }
     return a
   }
@@ -746,6 +771,7 @@ export default defineStore('app-editor', () => {
     redo,
     preventSystemUndoRedo,
     formInstance,
+    formFieldInstance,
     menuInstance,
     tableInstance,
     tableFieldInstance,
@@ -770,6 +796,7 @@ export default defineStore('app-editor', () => {
     actionElementInstance,
     createAction,
     removeAction,
+    createActionElement,
     addActionElement,
     removeActionElement,
   }
