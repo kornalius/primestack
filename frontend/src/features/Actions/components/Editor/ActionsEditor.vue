@@ -20,6 +20,7 @@
             put: false,
           }"
           :sort="false"
+          filter=".array-editor .form-builder .tabs-builder"
           @start="editor.setDragging(true)"
           @end="editor.setDragging(false)"
         >
@@ -39,6 +40,7 @@
               </q-tooltip>
 
               <q-icon :name="actionIcon(value)" :color="actionIconColor(value)" />
+
               <span class="q-ml-sm">{{ actionLabel(value) }}</span>
             </q-btn>
           </template>
@@ -86,13 +88,14 @@ import useAppEditor from '@/features/App/store'
 import { TAction } from '@/shared/interfaces/actions'
 import { useModelValue } from '@/composites/prop'
 import { actionElementSchema } from '@/shared/schemas/actions'
+import { TFrontAction } from '@/features/Actions/interface'
 import ActionsListEditor from './ActionsListEditor.vue'
 
 type ActionElement = Static<typeof actionElementSchema>
 
 const props = defineProps<{
   modelValue: ActionElement[]
-  actions: TAction[]
+  actions: TFrontAction[]
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -117,7 +120,7 @@ const unselectAll = () => {
   }
 }
 
-const actionIconColor = (action: TAction) => {
+const actionIconColor = (action: TFrontAction) => {
   if (typeof action.iconColor === 'function') {
     return action.iconColor()
   }
@@ -137,14 +140,14 @@ const actionDescription = (action: TAction) => {
   return action.description
 }
 
-const actionIcon = (action: TAction) => {
+const actionIcon = (action: TFrontAction) => {
   if (typeof action.icon === 'function') {
     return action.icon()
   }
   return action.icon
 }
 
-const actionLabel = (action: TAction) => {
+const actionLabel = (action: TFrontAction) => {
   if (typeof action.label === 'function') {
     return action.label()
   }

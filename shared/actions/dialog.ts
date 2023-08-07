@@ -6,8 +6,6 @@ export default {
   type: 'dialog',
   label: 'Dialog',
   description: 'Display confirmation dialog',
-  icon: 'mdi-dock-window',
-  color: 'red-4',
   schema: Type.Object({
     title: Type.String(),
     message: Type.String(),
@@ -45,5 +43,4 @@ export default {
     }, { horizontalPopup: true }),
   }),
   acceptsChildren: true,
-  childrenMessage: 'When user press the OK button...',
 } as TAction

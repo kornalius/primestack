@@ -86,7 +86,7 @@ import { computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
 import useAppEditor from '@/features/App/store'
-import { TAction } from '@/shared/interfaces/actions'
+import { TFrontAction } from '@/features/Actions/interface'
 import { actionElementSchema } from '@/shared/schemas/actions'
 import useActions from '@/features/Actions/composites'
 import ActionsListEditor from '@/features/Actions/components/Editor/ActionsListEditor.vue'
@@ -95,7 +95,7 @@ type Action = Static<typeof actionElementSchema>
 
 const props = defineProps<{
   modelValue: Action
-  actions: TAction[]
+  actions: TFrontAction[]
   selected?: boolean
 }>()
 
@@ -134,7 +134,7 @@ const actionIconColor = computed(() => {
   if (typeof action.value.iconColor === 'function') {
     return action.value.iconColor(actionElement.value)
   }
-  return action.value.iconColor
+  return action.value.iconColor || 'grey-8'
 })
 
 const actionDescription = computed(() => {

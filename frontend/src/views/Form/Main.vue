@@ -234,7 +234,7 @@ const { components, flattenFields } = useFormElements()
 
 const defaultValues = computed(() => (
   flattenFields(fields.value)
-    .reduce((acc, f) => {
+    .reduce((acc, f: TFormField) => {
       // eslint-disable-next-line no-underscore-dangle
       const comp = components.find((c) => c.type === f._type)
       if (comp && !comp.nokey) {

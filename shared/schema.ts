@@ -56,6 +56,9 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string => {
   if (p.type === 'string' && Array.isArray(options)) {
     return 'select'
   }
+  if (p.type === 'string' && p.variable) {
+    return 'variable'
+  }
   if (p.type === 'string' && p.color) {
     return 'color'
   }

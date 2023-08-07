@@ -164,11 +164,9 @@
     @keydown="editor.preventSystemUndoRedo"
   />
 
-  <service-select
-    v-else-if="type === 'objectid'"
+  <variable-select
+    v-else-if="type === 'variable'"
     v-model="value"
-    :service="schema.service"
-    :query="schema.query"
     :outlined="property"
     :disable="disabled"
     dense
@@ -200,6 +198,21 @@
     :disable="disabled || !tableId"
     :extra-options="extraFields"
     option-value="name"
+    dense
+    clearable
+    options-dense
+    create-new
+    @create="$emit('create-new')"
+    @keydown="editor.preventSystemUndoRedo"
+  />
+
+  <service-select
+    v-else-if="type === 'objectid'"
+    v-model="value"
+    :service="schema.service"
+    :query="schema.query"
+    :outlined="property"
+    :disable="disabled"
     dense
     clearable
     options-dense
@@ -438,6 +451,8 @@ import { TSchema, Type } from '@feathersjs/typebox'
 import { defaultValueForSchema, getTypeFor, optionsForSchema } from '@/shared/schema'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { useQuery } from '@/features/Query/composites'
+import { AnyData } from '@/shared/interfaces/commons'
+import { ruleTypes } from '@/features/Components/common'
 import useAppEditor from '@/features/App/store'
 import PaddingEditor from '@/features/Fields/components/PaddingEditor.vue'
 import MarginEditor from '@/features/Fields/components/MarginEditor.vue'
@@ -453,11 +468,11 @@ import QueryEditor from '@/features/Query/components/Editor/QueryEditor.vue'
 import TableSelect from '@/features/Fields/components/TableSelect.vue'
 import ServiceSelect from '@/features/Fields/components/ServiceSelect.vue'
 import TableFieldSelect from '@/features/Fields/components/TableFieldSelect.vue'
-import { AnyData } from '@/shared/interfaces/commons'
-import { ruleTypes } from '@/features/Components/common'
+import VariableSelect from '@/features/Fields/components/VariableSelect.vue'
 
 const props = defineProps<{
   modelValue: unknown
+  // is the property disabled or not?
   disable?: boolean
   // parent object containing the modelValue
   parent: unknown

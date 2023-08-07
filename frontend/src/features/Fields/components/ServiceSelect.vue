@@ -1,5 +1,4 @@
 <template>
-  FUCK
   <q-select
     v-model="value"
     v-bind="$attrs"

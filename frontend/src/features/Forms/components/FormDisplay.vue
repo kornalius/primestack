@@ -58,6 +58,7 @@ import { useModelValue } from '@/composites/prop'
 import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { useFeathers } from '@/composites/feathers'
 import useSnacks from '@/features/Snacks/store'
+import useVariables from '@/features/Variables/store'
 import useActions from '@/features/Actions/composites'
 import useFormElements from '../composites'
 import FormDisplayRow from './FormDisplayRow.vue'
@@ -100,11 +101,18 @@ const snacks = useSnacks()
 
 const userActions = api.service('actions').findOneInStore({ query: {} })?.value.list
 
+const store = useVariables()
+
 const callEventAction = (id: string) => {
   const act = userActions.find((a) => a._id === id)
   if (act) {
     // eslint-disable-next-line no-underscore-dangle
-    exec(act._actions, { quasar, api, snacks })
+    exec(act._actions, {
+      quasar,
+      api,
+      snacks,
+      store,
+    })
   }
 }
 </script>

@@ -10,8 +10,10 @@
     <draggable
       :list="actionList"
       class="action-builder-container"
+      style="padding-bottom: 12px;"
       :group="{ name: 'actions-builder' }"
       :animation="150"
+      filter=".array-editor"
       easing="cubic-bezier(1, 0, 0, 1)"
       item-key="_id"
       @start="editor.setDragging(true)"
@@ -36,16 +38,16 @@ import { Static } from '@feathersjs/typebox'
 import draggable from 'vuedraggable'
 import useAppEditor from '@/features/App/store'
 import { useModelValue } from '@/composites/prop'
-import { TAction } from '@/shared/interfaces/actions'
 import { actionElementSchema } from '@/shared/schemas/actions'
 import { AnyData } from '@/shared/interfaces/commons'
+import { TFrontAction } from '@/features/Actions/interface'
 import ActionElement from './ActionElement.vue'
 
 type Action = Static<typeof actionElementSchema>
 
 const props = defineProps<{
   modelValue: Action[]
-  actions: TAction[]
+  actions: TFrontAction[]
   emptyMessage?: string
 }>()
 

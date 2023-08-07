@@ -6,8 +6,6 @@ export default {
   type: 'patch',
   label: 'Patch',
   description: 'Patch records in a table',
-  icon: 'mdi-database-edit',
-  color: 'grey-9',
   schema: Type.Object({
     tableId: Type.String({ objectid: true, tableid: true }),
     query: Type.Optional(Type.Object({}, {

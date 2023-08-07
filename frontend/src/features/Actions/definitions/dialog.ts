@@ -11,6 +11,9 @@ type ActionElement = Static<typeof actionElementSchema>
 
 export default {
   ...globalDialog,
+  icon: 'mdi-dock-window',
+  color: 'red-4',
+  childrenMessage: 'When user press the OK button...',
   component: dialog,
   exec: (args) => {
     args.quasar.dialog({
