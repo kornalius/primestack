@@ -1,7 +1,7 @@
 <template>
   <div
     class="row form-row"
-    v-bind="fieldBinds(field, schemaForType(field))"
+    v-bind="fieldBinds(field, schemaForType(field), ctx)"
     :style="style(field)"
   >
     <div
@@ -13,7 +13,7 @@
         selected: editor.isSelected(column._id),
         hovered: editor.isHovered(column._id),
       }"
-      v-bind="fieldBinds(column, schemaForType(column))"
+      v-bind="fieldBinds(column, schemaForType(column), ctx)"
       style="z-index: 1;"
       :style="style(column)"
       @mouseover.stop="editor.hover(column._id)"
@@ -59,6 +59,7 @@ import { computed } from 'vue'
 import { TSchema } from '@feathersjs/typebox'
 import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
+// eslint-disable-next-line import/no-cycle
 import useAppEditor from '@/features/App/store'
 // eslint-disable-next-line import/no-cycle
 import useFormElements from '@/features/Forms/composites'
@@ -79,7 +80,9 @@ const emit = defineEmits<{
 
 const field = useModelValue(props, emit)
 
-const { fieldBinds, style } = useFormElements()
+const { fieldBinds, style, buildCtx } = useFormElements()
+
+const ctx = buildCtx()
 
 const columnIcon = computed(() => props.components.find((c) => c.type === 'col').icon)
 

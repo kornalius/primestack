@@ -22,11 +22,8 @@
 
 <script setup lang="ts">
 import { TSchema } from '@feathersjs/typebox'
-import { useRoute } from 'vue-router'
 import { TFormColumn, TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
-import { useFeathers } from '@/composites/feathers'
-import useVariables from '@/features/Variables/store'
 import useFormElements from '../composites'
 import FormDisplay from './FormDisplay.vue'
 
@@ -44,20 +41,9 @@ const emit = defineEmits<{
 
 const value = useModelValue(props, emit)
 
-const { fieldBinds, style } = useFormElements()
+const { fieldBinds, style, buildCtx } = useFormElements()
 
-const { api } = useFeathers()
-
-const store = useVariables()
-
-const route = useRoute()
-
-const ctx = {
-  api,
-  store,
-  route,
-  doc: value.value,
-}
+const ctx = buildCtx(value.value)
 
 const colName = (column: TFormColumn): string => {
   if (column.col === undefined || column.col === null || column.col === '') {

@@ -1,3 +1,6 @@
+import { useI18n } from 'vue-i18n'
+import { useQuasar } from 'quasar'
+import { useRoute } from 'vue-router'
 import { Static, TSchema } from '@feathersjs/typebox'
 import startCase from 'lodash/startCase'
 import omit from 'lodash/omit'
@@ -7,9 +10,18 @@ import { AnyData, T18N } from '@/shared/interfaces/commons'
 import { components, componentForType, componentForField } from '@/features/Components'
 import useValidators from '@/features/Validation/composites'
 import { columnSchema, fieldSchema } from '@/shared/schemas/form'
+import { getTypeFor } from '@/shared/schema'
+import { actionSchema } from '@/shared/schemas/actions'
+import { useFeathers } from '@/composites/feathers'
+import useActions from '@/features/Actions/composites'
+import useSnacks from '@/features/Snacks/store'
+import useVariables from '@/features/Variables/store'
+// eslint-disable-next-line import/no-cycle
+import useAppEditor from '@/features/App/store'
 
 type FormField = Static<typeof fieldSchema>
 type FormColumn = Static<typeof columnSchema>
+type Action = Static<typeof actionSchema>
 
 const validators = useValidators()
 
@@ -42,6 +54,13 @@ const flattenFields = (fields: FormField[] | FormColumn[]): FormField[] => {
 const isExpr = (v: string): boolean => typeof v === 'string' && v.startsWith('```') && v.endsWith('```')
 
 const exprCode = (v: string): string => (isExpr(v) ? v.substring(3, v.length - 3) : undefined)
+
+const exprToString = (v: string): string => (isExpr(v) ? v.substring(3, v.length - 3) : v)
+
+const stringToExpr = (v: string): string => {
+  const quotes = '```'
+  return `${quotes}${exprToString(v)}${quotes}`
+}
 
 const runExpr = (v: string, ctx: AnyData): unknown => expr2fn(v)({
   doc: ctx.doc,
@@ -89,16 +108,33 @@ export default () => ({
       Object.keys(s.properties).forEach((k) => {
         if (s.properties[k].style) {
           fieldsToOmit.push(k)
-        } else if (s.properties[k].type === 'object') {
-          scanSchema(s.properties[k])
         }
       })
     }
 
     scanSchema(schema)
 
+    const userActions = ctx.api.service('actions').findOneInStore({ query: {} })?.value.list
+
+    const callEventAction = (id: string) => () => {
+      const act = userActions.find((a: Action) => a._id === id)
+      if (act) {
+        // eslint-disable-next-line no-underscore-dangle
+        ctx.exec(act._actions, ctx)
+      }
+    }
+
     return Object.keys(omit(field, fieldsToOmit))
-      .reduce((acc, k) => ({ ...acc, [k]: getProp(field, k, ctx) }), {})
+      .reduce((acc, k) => {
+        // if (ctx.editor.active) {
+        //   return { ...acc, [k]: field[k] }
+        // }
+        // if it's an action, use onXxxx event key names instead
+        if (schema.properties[k] && getTypeFor(schema.properties[k]) === 'action') {
+          return { ...acc, [`on${startCase(k)}`]: callEventAction(field[k] as string) }
+        }
+        return { ...acc, [k]: getProp(field, k, ctx) }
+      }, {})
   },
 
   schemaForType: (f: TFormField | TFormColumn): TSchema | undefined => (
@@ -131,6 +167,8 @@ export default () => ({
     return false
   },
 
+  getProp,
+
   style: (field: AnyData): AnyData => {
     const component = components
       // eslint-disable-next-line no-underscore-dangle
@@ -152,5 +190,30 @@ export default () => ({
 
   exprCode,
 
+  stringToExpr,
+
   runExpr,
+
+  buildCtx: (doc?: AnyData): AnyData => {
+    const { t } = useI18n()
+    const quasar = useQuasar()
+    const { api } = useFeathers()
+    const { exec } = useActions()
+    const snacks = useSnacks()
+    const store = useVariables()
+    const route = useRoute()
+    const editor = useAppEditor()
+
+    return {
+      quasar,
+      snacks,
+      api,
+      editor,
+      t,
+      store,
+      route,
+      exec,
+      doc,
+    }
+  },
 })

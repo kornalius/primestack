@@ -1,6 +1,15 @@
 <template>
+  <div
+    v-if="isExpr(value)"
+    class="row"
+  >
+    <div class="col">
+      <pre v-html="hljs.highlight(exprCode(value), { language: 'javascript' }).value" />
+    </div>
+  </div>
+
   <q-input
-    v-if="type === 'string'"
+    v-else-if="type === 'string'"
     v-model="value"
     :label="embedLabel ? label : undefined"
     :outlined="property"
@@ -35,7 +44,7 @@
   </q-input>
 
   <div
-    v-if="type === 'action'"
+    v-else-if="type === 'action'"
     class="action-input row items-center"
     :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
     @click="() => !disabled && createAction()"
@@ -222,7 +231,7 @@
   />
 
   <div
-    v-if="type === 'json'"
+    v-else-if="type === 'json'"
     class="ellipsis overflow-hidden"
     :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
   >
@@ -448,12 +457,15 @@
 import { computed, ref } from 'vue'
 import omit from 'lodash/omit'
 import { TSchema, Type } from '@feathersjs/typebox'
+import hljs from 'highlight.js'
+import javascript from 'highlight.js/lib/languages/javascript'
 import { defaultValueForSchema, getTypeFor, optionsForSchema } from '@/shared/schema'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { useQuery } from '@/features/Query/composites'
 import { AnyData } from '@/shared/interfaces/commons'
 import { ruleTypes } from '@/features/Components/common'
 import useAppEditor from '@/features/App/store'
+import useFormElements from '@/features/Forms/composites'
 import PaddingEditor from '@/features/Fields/components/PaddingEditor.vue'
 import MarginEditor from '@/features/Fields/components/MarginEditor.vue'
 import IconField from '@/features/Fields/components/IconField.vue'
@@ -469,6 +481,8 @@ import TableSelect from '@/features/Fields/components/TableSelect.vue'
 import ServiceSelect from '@/features/Fields/components/ServiceSelect.vue'
 import TableFieldSelect from '@/features/Fields/components/TableFieldSelect.vue'
 import VariableSelect from '@/features/Fields/components/VariableSelect.vue'
+
+hljs.registerLanguage('javascript', javascript)
 
 const props = defineProps<{
   modelValue: unknown
@@ -501,6 +515,8 @@ const emit = defineEmits<{
 const value = useModelValue(props, emit, defaultValueForSchema(props.schema))
 
 const editor = useAppEditor()
+
+const { isExpr, exprCode } = useFormElements()
 
 const { queryToString } = useQuery()
 

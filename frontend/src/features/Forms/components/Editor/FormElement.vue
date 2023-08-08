@@ -83,10 +83,10 @@
 
       <table-editor
         v-else-if="field._type === 'table'"
-        v-model="field.modelValue"
         v-model:columns="field.columns"
         v-model:visible-columns="field.visibleColumns"
-        v-bind="fieldBinds(field, schemaForType(field))"
+        :model-value="displayValue"
+        v-bind="fieldBinds(field, schemaForType(field), ctx)"
         :query="queryToMongo(field.query?.groups)"
         :style="style"
       />
@@ -94,8 +94,8 @@
       <component
         :is="componentForField(field)"
         v-else
-        v-model="field.modelValue"
-        v-bind="fieldBinds(field, schemaForType(field))"
+        :model-value="displayValue"
+        v-bind="fieldBinds(field, schemaForType(field), ctx)"
         :style="style"
       />
 
@@ -134,9 +134,16 @@ const emit = defineEmits<{
   (e: 'update:model-value', value: TFormField): void,
 }>()
 
-const { componentForField, fieldBinds } = useFormElements()
+const {
+  componentForField,
+  fieldBinds,
+  getProp,
+  buildCtx,
+} = useFormElements()
 
 const field = useModelValue(props, emit)
+
+const ctx = buildCtx()
 
 const { queryToMongo } = useQuery()
 
@@ -169,6 +176,8 @@ const onColumnClick = (column: TFormColumn) => {
 const onRemoveClick = () => {
   emit('remove', props.modelValue)
 }
+
+const displayValue = computed(() => getProp(field.value, 'modelValue', ctx))
 
 const style = computed(() => ({
   paddingTop: field.value.padding?.top,

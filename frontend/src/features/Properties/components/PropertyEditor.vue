@@ -76,20 +76,21 @@
           <q-btn
             class="q-mr-sm"
             icon="mdi-flash"
-            color="grey-5"
+            :color="isExpr(value) ? 'orange-8' : 'grey-5'"
             size="sm"
             flat
             dense
           >
             <q-popup-edit
               v-model="value"
-              :title="label"
+              :title="`${label} Expression...`"
               auto-save
-              v-slot="scope"
+              @before-show="loadExpr"
+              @before-hide="saveExpr"
             >
               <code-editor
-                v-model="scope.value"
-                style="width: 600px; height: 400px;"
+                v-model="value"
+                style="width: 600px; height: 150px;"
                 lang-js
                 autofocus
                 @keydown="editor.preventSystemUndoRedo"
@@ -217,6 +218,7 @@ import { TSchema, Type } from '@feathersjs/typebox'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { getTypeFor, defaultValueForSchema } from '@/shared/schema'
 import useAppEditor from '@/features/App/store'
+import useFormElements from '@/features/Forms/composites'
 import { AnyData } from '@/shared/interfaces/commons'
 import { ruleTypes } from '@/features/Components/common'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
@@ -317,6 +319,18 @@ const subPropName = (name: string | number) => (
 )
 
 const nonExpandable = computed(() => !['object', 'array'].includes(type.value))
+
+const { isExpr, exprCode, stringToExpr } = useFormElements()
+
+const loadExpr = (): void => {
+  if (isExpr(value.value)) {
+    value.value = exprCode(value.value)
+  }
+}
+
+const saveExpr = (): void => {
+  value.value = stringToExpr(value.value)
+}
 </script>
 
 <style scoped lang="sass">

@@ -38,13 +38,10 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRoute } from 'vue-router'
 import { TSchema } from '@feathersjs/typebox'
 import { TFormColumn, TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 import useFormElements from '@/features/Forms/composites'
-import { useFeathers } from '@/composites/feathers'
-import useVariables from '@/features/Variables/store'
 import FormDisplay from './FormDisplay.vue'
 
 const props = defineProps<{
@@ -61,20 +58,9 @@ const emit = defineEmits<{
 
 const value = useModelValue(props, emit)
 
-const { fieldBinds, style } = useFormElements()
+const { fieldBinds, style, buildCtx } = useFormElements()
 
-const { api } = useFeathers()
-
-const store = useVariables()
-
-const route = useRoute()
-
-const ctx = {
-  api,
-  store,
-  route,
-  doc: value.value,
-}
+const ctx = buildCtx(value.value)
 
 const sections = computed(() => (
   // eslint-disable-next-line no-underscore-dangle

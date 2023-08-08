@@ -32,6 +32,7 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string => {
   if (p.type === 'number') {
     return 'number'
   }
+
   if (p.type === 'string' && p.field === true) {
     return 'field'
   }
@@ -71,9 +72,11 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string => {
   if (p.type === 'string') {
     return 'string'
   }
+
   if (p.type === 'boolean') {
     return 'boolean'
   }
+
   if (p.type === 'array' && p.json === true) {
     return 'json'
   }
@@ -83,6 +86,7 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string => {
   if (p.type === 'array') {
     return 'array'
   }
+
   if (p.type === 'object' && p.query === true) {
     return 'query'
   }
@@ -98,6 +102,7 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string => {
   if (p.type === 'object') {
     return 'object'
   }
+
   if (p.anyOf) {
     return getTypeFor(p.anyOf[0])
   }
@@ -294,12 +299,12 @@ export const fieldToSchema = (field: TableFieldSchema): TSchema => {
   }
 }
 
-export const fieldsToSchema = (fields: TableFieldSchema[], id: string): TSchema => {
-  return Type.Object((fields || []).reduce((acc, f) => ({
+export const fieldsToSchema = (fields: TableFieldSchema[], id: string): TSchema => (
+  Type.Object((fields || []).reduce((acc, f) => ({
     ...acc,
     [f.name]: fieldToSchema(f),
   }), {}), { $id: id })
-}
+)
 
 type TableIndexSchema = Static<typeof tableIndexSchema>
 

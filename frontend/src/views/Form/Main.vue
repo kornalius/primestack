@@ -230,7 +230,14 @@ watch(form, () => {
   }
 }, { immediate: true, deep: true })
 
-const { components, flattenFields } = useFormElements()
+const {
+  components,
+  flattenFields,
+  getProp,
+  buildCtx,
+} = useFormElements()
+
+const ctx = buildCtx()
 
 const defaultValues = computed(() => (
   flattenFields(fields.value)
@@ -260,7 +267,7 @@ const formModelValues = computed(() => {
     if (field.field !== undefined && field.field !== null) {
       // eslint-disable-next-line no-underscore-dangle
       const comp = components.find((c) => c.type === field._type)
-      let v = field.modelValue
+      let v = getProp(field, 'modelValue', ctx)
       if (comp.numericInput && v !== undefined) {
         v = Number(v)
       }
@@ -320,6 +327,11 @@ const tableBinds = computed(() => pick(form.value, formSchema.tableFields))
 
 const qform = ref()
 
+/**
+ * Get or fetch record
+ *
+ * @param id ID of the record
+ */
 const getRecord = async (id: string): Promise<AnyData> => {
   if (table.value) {
     const s = api.service(table.value._id).getFromStore(id, { temps: true })
@@ -366,7 +378,12 @@ const { menuUrl } = useUrl()
 
 const saveDisabled = ref(false)
 
-const toggleSelection = (row) => {
+/**
+ * When a row is selected by clicking on it
+ *
+ * @param row Selected row value
+ */
+const toggleSelection = (row: AnyData): void => {
   router.push(menuUrl(props.menuId, props.tabId, getId(row)))
 }
 
@@ -390,6 +407,9 @@ const refresh = () => {
   router.push(menuUrl(props.menuId, props.tabId))
 }
 
+/**
+ * Submit changes made the currently edited record
+ */
 const submit = async () => {
   const success = await qform.value.validate()
   if (success) {
@@ -399,6 +419,9 @@ const submit = async () => {
   }
 }
 
+/**
+ * Resets the current editing record back to its original value
+ */
 const resetForm = () => {
   quasar.dialog({
     title: 'Unsaved changes',
@@ -424,10 +447,18 @@ const validationError = () => {
   saveDisabled.value = true
 }
 
+/**
+ * Check if the currently edited record has been modified or it's a temp record
+ */
 const hasChanges = computed(() => (
   currentData.value.__isTemp || !isEqual(prevData.value, currentData.value)
 ))
 
+/**
+ * Add a new temp record in the store
+ *
+ * @param value
+ */
 const addRecord = (value?: AnyData) => {
   const r = api.service(table.value._id).new({
     ...defaultValues.value,
@@ -438,6 +469,11 @@ const addRecord = (value?: AnyData) => {
   toggleSelection(r)
 }
 
+/**
+ * Confirm removal of record
+ *
+ * @param value Selected row value from the table
+ */
 const removeRecord = (value: AnyData) => {
   quasar.dialog({
     title: 'Delete record?',
@@ -463,6 +499,9 @@ watch(() => props.create, () => {
   }
 }, { immediate: true })
 
+/**
+ * Watches for route update when there are changes
+ */
 onBeforeRouteUpdate((): boolean => {
   if (hasChanges.value) {
     // eslint-disable-next-line no-alert
@@ -474,6 +513,9 @@ onBeforeRouteUpdate((): boolean => {
   return true
 })
 
+/**
+ * Watches for route leave when there are changes
+ */
 onBeforeRouteLeave((): boolean => {
   if (hasChanges.value) {
     // eslint-disable-next-line no-alert

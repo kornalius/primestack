@@ -125,7 +125,6 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRoute } from 'vue-router'
 import { TSchema } from '@feathersjs/typebox'
 import hexObjectId from 'hex-object-id'
 import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
@@ -135,8 +134,6 @@ import useAppEditor from '@/features/App/store'
 // eslint-disable-next-line import/no-cycle
 import useFormElements from '@/features/Forms/composites'
 import { defaultValueForSchema, defaultValues } from '@/shared/schema'
-import { useFeathers } from '@/composites/feathers'
-import useVariables from '@/features/Variables/store'
 import FieldsEditor from './FieldsEditor.vue'
 
 const props = defineProps<{
@@ -155,20 +152,9 @@ const emit = defineEmits<{
 
 const field = useModelValue(props, emit)
 
-const { fieldBinds, style } = useFormElements()
+const { fieldBinds, style, buildCtx } = useFormElements()
 
-const { api } = useFeathers()
-
-const store = useVariables()
-
-const route = useRoute()
-
-const ctx = {
-  api,
-  store,
-  route,
-  doc: field.value,
-}
+const ctx = buildCtx(field.value)
 
 const sectionIcon = computed(() => (
   props.components.find((c) => c.type === 'card-section').icon
