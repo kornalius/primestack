@@ -1,14 +1,14 @@
 <template>
   <div
     class="row q-gutter-sm"
-    v-bind="fieldBinds(field, schemaForType(field))"
+    v-bind="fieldBinds(field, schemaForType(field), ctx)"
     :style="style(field)"
   >
     <div
       v-for="column in columns"
       :key="column._id"
       :class="{ [colName(column)]: true }"
-      v-bind="fieldBinds(column, schemaForType(column))"
+      v-bind="fieldBinds(column, schemaForType(column), ctx)"
       :style="style(column)"
     >
       <form-display
@@ -21,9 +21,12 @@
 </template>
 
 <script setup lang="ts">
-import { TFormColumn, TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { TSchema } from '@feathersjs/typebox'
+import { useRoute } from 'vue-router'
+import { TFormColumn, TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
+import { useFeathers } from '@/composites/feathers'
+import useVariables from '@/features/Variables/store'
 import useFormElements from '../composites'
 import FormDisplay from './FormDisplay.vue'
 
@@ -42,6 +45,19 @@ const emit = defineEmits<{
 const value = useModelValue(props, emit)
 
 const { fieldBinds, style } = useFormElements()
+
+const { api } = useFeathers()
+
+const store = useVariables()
+
+const route = useRoute()
+
+const ctx = {
+  api,
+  store,
+  route,
+  doc: value.value,
+}
 
 const colName = (column: TFormColumn): string => {
   if (column.col === undefined || column.col === null || column.col === '') {

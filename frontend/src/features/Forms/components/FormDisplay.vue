@@ -16,7 +16,7 @@
       <form-display-card
         v-else-if="isCard(field)"
         v-model="value"
-        v-bind="fieldBinds(field, schemaForType(field))"
+        v-bind="fieldBinds(field, schemaForType(field), ctx)"
         :field="field"
         :columns="field._columns"
         :components="components"
@@ -31,7 +31,7 @@
         :is="componentForField(field)"
         v-else-if="isNumericInput(field)"
         v-model.number="value[field.field]"
-        v-bind="fieldBinds(field, schemaForType(field))"
+        v-bind="fieldBinds(field, schemaForType(field), ctx)"
         :style="style(field)"
         :rules="serializeRules(t, field)"
         lazy-rules
@@ -41,7 +41,7 @@
         :is="componentForField(field)"
         v-else
         v-model="value[field.field]"
-        v-bind="fieldBinds(field, schemaForType(field))"
+        v-bind="fieldBinds(field, schemaForType(field), ctx)"
         :style="style(field)"
         :rules="serializeRules(t, field)"
         lazy-rules
@@ -55,6 +55,7 @@
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
 import { useModelValue } from '@/composites/prop'
+import { useRoute } from 'vue-router'
 import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { useFeathers } from '@/composites/feathers'
 import useSnacks from '@/features/Snacks/store'
@@ -102,6 +103,15 @@ const snacks = useSnacks()
 const userActions = api.service('actions').findOneInStore({ query: {} })?.value.list
 
 const store = useVariables()
+
+const route = useRoute()
+
+const ctx = {
+  api,
+  store,
+  route,
+  doc: value.value,
+}
 
 const callEventAction = (id: string) => {
   const act = userActions.find((a) => a._id === id)

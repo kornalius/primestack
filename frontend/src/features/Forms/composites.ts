@@ -1,6 +1,7 @@
 import { Static, TSchema } from '@feathersjs/typebox'
 import startCase from 'lodash/startCase'
 import omit from 'lodash/omit'
+import expr2fn from 'expr2fn'
 import { TFormColumn, TFormField } from '@/shared/interfaces/forms'
 import { AnyData, T18N } from '@/shared/interfaces/commons'
 import { components, componentForType, componentForField } from '@/features/Components'
@@ -38,6 +39,21 @@ const flattenFields = (fields: FormField[] | FormColumn[]): FormField[] => {
   return flattended
 }
 
+const isExpr = (v: string): boolean => typeof v === 'string' && v.startsWith('```') && v.endsWith('```')
+
+const exprCode = (v: string): string => (isExpr(v) ? v.substring(3, v.length - 3) : undefined)
+
+const runExpr = (v: string, ctx: AnyData): unknown => expr2fn(v)({
+  doc: ctx.doc,
+  var: (name: string): unknown => ctx.store.getVariable(name),
+  route: (): string => ctx.route.path,
+})
+
+const getProp = (field: TFormField | TFormColumn, propName: string, ctx: AnyData): unknown => {
+  const v = field[propName] as string
+  return isExpr(v) ? runExpr(exprCode(v), ctx) : v
+}
+
 export default () => ({
   componentForField,
 
@@ -60,7 +76,7 @@ export default () => ({
 
   flattenFields,
 
-  fieldBinds: (field: TFormField | TFormColumn, schema: TSchema): AnyData => {
+  fieldBinds: (field: TFormField | TFormColumn, schema: TSchema, ctx: AnyData): AnyData => {
     const fieldsToOmit = [
       '_id',
       '_type',
@@ -81,7 +97,8 @@ export default () => ({
 
     scanSchema(schema)
 
-    return omit(field, fieldsToOmit)
+    return Object.keys(omit(field, fieldsToOmit))
+      .reduce((acc, k) => ({ ...acc, [k]: getProp(field, k, ctx) }), {})
   },
 
   schemaForType: (f: TFormField | TFormColumn): TSchema | undefined => (
@@ -130,4 +147,10 @@ export default () => ({
       ...(component.editStyles || {}),
     }
   },
+
+  isExpr,
+
+  exprCode,
+
+  runExpr,
 })

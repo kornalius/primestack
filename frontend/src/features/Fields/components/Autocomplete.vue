@@ -61,7 +61,6 @@ const showResults = ref(false)
 const inputWidth = ref(0)
 
 watch(autocompleteRef, () => {
-  console.log(autocompleteRef.value)
   if (autocompleteRef.value?.$el) {
     inputWidth.value = autocompleteRef.value.$el.offsetWidth
   }

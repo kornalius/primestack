@@ -6,8 +6,10 @@
     style="width: 125px;"
   >
     <property-label
+      v-model="value"
       :multiple-types="multipleTypes"
       :label="label"
+      allow-expr
       @change-type="changeType"
     />
   </div>
@@ -49,8 +51,10 @@
           style="width: 125px;"
         >
           <property-label
+            v-model="value"
             :multiple-types="multipleTypes"
             :label="label"
+            allow-expr
             @change-type="changeType"
           />
         </div>
@@ -66,6 +70,32 @@
             :embed-label="embedLabel"
             property
           />
+        </div>
+
+        <div class="col-auto">
+          <q-btn
+            class="q-mr-sm"
+            icon="mdi-flash"
+            color="grey-5"
+            size="sm"
+            flat
+            dense
+          >
+            <q-popup-edit
+              v-model="value"
+              :title="label"
+              auto-save
+              v-slot="scope"
+            >
+              <code-editor
+                v-model="scope.value"
+                style="width: 600px; height: 400px;"
+                lang-js
+                autofocus
+                @keydown="editor.preventSystemUndoRedo"
+              />
+            </q-popup-edit>
+          </q-btn>
         </div>
       </div>
     </q-item-section>
@@ -138,6 +168,7 @@
           </q-btn>
 
           <property-label
+            v-model="value"
             :multiple-types="multipleTypes"
             :label="label"
             :embed-label="embedLabel"
@@ -185,12 +216,14 @@ import { computed, watch } from 'vue'
 import { TSchema, Type } from '@feathersjs/typebox'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { getTypeFor, defaultValueForSchema } from '@/shared/schema'
+import useAppEditor from '@/features/App/store'
+import { AnyData } from '@/shared/interfaces/commons'
+import { ruleTypes } from '@/features/Components/common'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import PropertyLabel from '@/features/Properties/components/PropertyLabel.vue'
 import PropertySchemaField from '@/features/Properties/components/PropertySchemaField.vue'
-import { AnyData } from '@/shared/interfaces/commons'
-import { ruleTypes } from '@/features/Components/common'
+import CodeEditor from '@/features/Fields/components/CodeEditor.vue'
 
 const props = defineProps<{
   modelValue: unknown
@@ -217,6 +250,8 @@ const emit = defineEmits<{
 }>()
 
 const value = useModelValue(props, emit)
+
+const editor = useAppEditor()
 
 const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
 
