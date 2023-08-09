@@ -12,7 +12,7 @@ export default {
   interactable: true,
   schema: properties([
     commonProperties.state,
-    commonProperties.style,
+    Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
       modelValue: Type.String(),
       placeholder: Type.String(),
@@ -58,8 +58,6 @@ export default {
         'placeholder',
         'minHeight',
         'maxHeight',
-        'disable',
-        'readonly',
       ],
     },
     toolbar: {
@@ -81,7 +79,6 @@ export default {
       names: [
         'square',
         'flat',
-        'dense',
         'padding',
         'margin',
       ],

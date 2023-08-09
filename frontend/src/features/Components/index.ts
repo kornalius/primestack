@@ -29,6 +29,7 @@ import cardActions from './card-actions'
 import progress from './progress'
 import separator from './separator'
 import skeleton from './skeleton'
+import spinner from './spinner'
 
 export const components = [
   label,
@@ -37,6 +38,7 @@ export const components = [
   image,
   video,
   progress,
+  spinner,
   separator,
   skeleton,
   input,

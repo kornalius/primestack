@@ -57,11 +57,7 @@
         v-model="values"
         :item-key="itemKeyFor"
         :sort="reorderable"
-        :group="{
-          name: 'array-editor',
-          pull: false,
-          put: true,
-        }"
+        :group="{ name: hexObjectId() }"
         handle=".drag-handle"
         :animation="150"
         easing="cubic-bezier(1, 0, 0, 1)"
@@ -181,6 +177,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import draggable from 'vuedraggable'
+import hexObjectId from 'hex-object-id'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { AnyData } from '@/shared/interfaces/commons'
 

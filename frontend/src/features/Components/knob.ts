@@ -13,7 +13,7 @@ export default {
   schema: properties([
     commonProperties.state,
     commonProperties.size,
-    commonProperties.style,
+    Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
       modelValue: Type.Number({ min: 0, max: 360 }),
       angle: Type.Number({ min: 0, max: 360 }),
@@ -61,7 +61,6 @@ export default {
     style: {
       icon: styleIcon,
       names: [
-        'dense',
         'size',
         'color',
         'centerColor',

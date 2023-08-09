@@ -20,7 +20,6 @@
             put: false,
           }"
           :sort="false"
-          filter=".array-editor .form-builder .tabs-builder"
           @start="editor.setDragging(true)"
           @end="editor.setDragging(false)"
         >

@@ -72,8 +72,9 @@
           />
         </div>
 
-        <div class="col-auto">
+        <div class="col-auto" style="width: 20px;">
           <q-btn
+            v-if="showExpr"
             class="q-mr-sm"
             icon="mdi-flash"
             :color="isExpr(value) ? 'orange-8' : 'grey-5'"
@@ -216,7 +217,7 @@
 import { computed, watch } from 'vue'
 import { TSchema, Type } from '@feathersjs/typebox'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
-import { getTypeFor, defaultValueForSchema } from '@/shared/schema'
+import { getTypeFor, defaultValueForSchema, validForExpr } from '@/shared/schema'
 import useAppEditor from '@/features/App/store'
 import useFormElements from '@/features/Forms/composites'
 import { AnyData } from '@/shared/interfaces/commons'
@@ -257,18 +258,22 @@ const editor = useAppEditor()
 
 const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
 
-const type = computed((): string => {
+const type = computed((): string | undefined => {
   const p = props.schema
   return getTypeFor(p, currentForcedTypes.value?.[props.propName])
 })
 
 const multipleTypes = computed((): string[] | undefined => {
   const p = props.schema
-  if (p.anyOf) {
+  if (p?.anyOf) {
     return p.anyOf.map((t) => t.type)
   }
   return undefined
 })
+
+const showExpr = computed((): boolean => (
+  validForExpr.indexOf(type.value) !== -1
+))
 
 watch(value, () => {
   // when the value changes to '' and its type is 'string', set it to undefined instead

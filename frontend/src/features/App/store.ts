@@ -90,7 +90,9 @@ export default defineStore('app-editor', () => {
   }
 
   const select = (id: string): void => {
-    states.value.selected = id
+    if (!document.querySelector('.q-popup-edit')) {
+      states.value.selected = id
+    }
   }
 
   const unselect = (id: string): void => {
@@ -130,12 +132,16 @@ export default defineStore('app-editor', () => {
   }
 
   const unselectTab = (): void => {
-    states.value.selectedTab = undefined
+    if (!document.querySelector('.q-popup-edit')) {
+      states.value.selectedTab = undefined
+    }
   }
 
   const selectMenu = (id: string): void => {
-    states.value.selectedMenu = id
-    select(undefined)
+    if (!document.querySelector('.q-popup-edit')) {
+      states.value.selectedMenu = id
+      select(undefined)
+    }
   }
 
   const isMenuSelected = (id: string): boolean => (
@@ -143,8 +149,10 @@ export default defineStore('app-editor', () => {
   )
 
   const selectTab = (id: string): void => {
-    states.value.selectedTab = id
-    select(undefined)
+    if (!document.querySelector('.q-popup-edit')) {
+      states.value.selectedTab = id
+      select(undefined)
+    }
   }
 
   const isTabSelected = (id: string): boolean => (
@@ -152,16 +160,22 @@ export default defineStore('app-editor', () => {
   )
 
   const unselectMenu = (): void => {
-    states.value.selectedMenu = undefined
-    unselectTab()
+    if (!document.querySelector('.q-popup-edit')) {
+      states.value.selectedMenu = undefined
+      unselectTab()
+    }
   }
 
   const selectTable = (id: string): void => {
-    states.value.selectedTable = id
+    if (!document.querySelector('.q-popup-edit')) {
+      states.value.selectedTable = id
+    }
   }
 
   const unselectTable = (): void => {
-    states.value.selectedTable = undefined
+    if (!document.querySelector('.q-popup-edit')) {
+      states.value.selectedTable = undefined
+    }
   }
 
   const isTableSelected = (id: string): boolean => (
@@ -169,11 +183,15 @@ export default defineStore('app-editor', () => {
   )
 
   const selectTableField = (id: string): void => {
-    states.value.selectedTableField = id
+    if (!document.querySelector('.q-popup-edit')) {
+      states.value.selectedTableField = id
+    }
   }
 
   const unselectTableField = (): void => {
-    states.value.selectedTableField = undefined
+    if (!document.querySelector('.q-popup-edit')) {
+      states.value.selectedTableField = undefined
+    }
   }
 
   const isTableFieldSelected = (id: string): boolean => (

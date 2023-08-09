@@ -13,7 +13,6 @@
       style="padding-bottom: 12px;"
       :group="{ name: 'actions-builder' }"
       :animation="150"
-      filter=".array-editor"
       easing="cubic-bezier(1, 0, 0, 1)"
       item-key="_id"
       @start="editor.setDragging(true)"

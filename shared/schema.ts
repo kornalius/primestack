@@ -19,7 +19,11 @@ export const optionsForSchema = (p: TSchema): unknown[] => {
   return p.options || p.items?.options
 }
 
-export const getTypeFor = (p: TSchema, forcedType?: string): string => {
+export const getTypeFor = (p: TSchema, forcedType?: string): string | undefined => {
+  if (!p) {
+    return undefined
+  }
+
   const options = optionsForSchema(p)
 
   if (forcedType) {
@@ -109,6 +113,20 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string => {
 
   return 'string'
 }
+
+export const validForExpr = [
+  'boolean',
+  'number',
+  'string',
+  'color',
+  'field',
+  'tableid',
+  'time',
+  'date',
+  'slider',
+  'select',
+  'icon',
+]
 
 export const columnAlignmentFor = (type: string): string => {
   if (type === 'boolean') {

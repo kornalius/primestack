@@ -4,7 +4,10 @@
     class="row"
   >
     <div class="col">
-      <pre v-html="hljs.highlight(exprCode(value), { language: 'javascript' }).value" />
+      <pre
+        class="no-wrap text-caption"
+        v-html="hljs.highlight(exprCode(value), { language: 'javascript' }).value"
+      />
     </div>
   </div>
 
@@ -235,16 +238,12 @@
     class="ellipsis overflow-hidden"
     :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
   >
-    <span
-      class="no-wrap"
-      :class="{ 'text-negative': disabled }"
-    >
-      <q-tooltip :delay="500">
-        {{ disabledLabel || JSON.stringify(value || {}, undefined, 2) }}
-      </q-tooltip>
-
-      {{ disabledLabel || jsonValue }}
-    </span>
+    <property-highlight
+      :model-value="jsonValue"
+      :disabled="disabled"
+      :disabled-label="disabledLabel"
+      language="json"
+    />
 
     <q-popup-edit
       v-model="value"
@@ -294,16 +293,12 @@
     :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
     style="max-width: 230px;"
   >
-    <span
-      class="no-wrap"
-      :class="{ 'text-negative': disabled }"
-    >
-      <q-tooltip :delay="500">
-        {{ disabledLabel || JSON.stringify(value || {}, undefined, 2) }}
-      </q-tooltip>
-
-      {{ disabledLabel || jsonValue }}
-    </span>
+    <property-highlight
+      :model-value="jsonValue"
+      :disabled="disabled"
+      :disabled-label="disabledLabel"
+      language="json"
+    />
 
     <q-popup-edit
       v-model="value"
@@ -365,16 +360,12 @@
     :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
     style="max-width: 230px;"
   >
-    <span
-      class="no-wrap"
-      :class="{ 'text-negative': disabled }"
-    >
-      <q-tooltip :delay="500">
-        {{ disabledLabel || queryValue }}
-      </q-tooltip>
-
-      {{ disabledLabel || queryValue }}
-    </span>
+    <property-highlight
+      :model-value="queryValue"
+      :disabled="disabled"
+      :disabled-label="disabledLabel"
+      language="basic"
+    />
 
     <q-popup-edit
       v-model="value"
@@ -398,16 +389,12 @@
     :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
     style="max-width: 230px;"
   >
-    <span
-      class="no-wrap"
-      :class="{ 'text-negative': disabled }"
-    >
-      <q-tooltip :delay="500">
-        {{ disabledLabel || jsonValue }}
-      </q-tooltip>
-
-      {{ disabledLabel || jsonValue }}
-    </span>
+    <property-highlight
+      :model-value="jsonValue"
+      :disabled="disabled"
+      :disabled-label="disabledLabel"
+      language="json"
+    />
 
     <q-popup-edit
       v-model="value"
@@ -481,6 +468,7 @@ import TableSelect from '@/features/Fields/components/TableSelect.vue'
 import ServiceSelect from '@/features/Fields/components/ServiceSelect.vue'
 import TableFieldSelect from '@/features/Fields/components/TableFieldSelect.vue'
 import VariableSelect from '@/features/Fields/components/VariableSelect.vue'
+import PropertyHighlight from '@/features/Properties/components/PropertyHighlight.vue'
 
 hljs.registerLanguage('javascript', javascript)
 

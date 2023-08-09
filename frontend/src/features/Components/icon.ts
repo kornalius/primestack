@@ -10,9 +10,8 @@ export default {
   label: 'Icon',
   component: QIcon,
   schema: properties([
-    commonProperties.state,
     commonProperties.size,
-    commonProperties.style,
+    Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
       modelValue: Type.String({ icon: true }),
       left: Type.Boolean(),
@@ -29,14 +28,11 @@ export default {
       names: [
         'modelValue',
         'field',
-        'disable',
-        'readonly',
       ],
     },
     style: {
       icon: styleIcon,
       names: [
-        'dense',
         'size',
         'color',
         'left',

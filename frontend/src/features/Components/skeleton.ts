@@ -11,7 +11,6 @@ export default {
   component: QSkeleton,
   nokey: true,
   schema: properties([
-    commonProperties.state,
     commonProperties.size,
     Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
@@ -55,8 +54,6 @@ export default {
       icon: contentIcon,
       names: [
         'type',
-        'disable',
-        'readonly',
       ],
     },
     style: {

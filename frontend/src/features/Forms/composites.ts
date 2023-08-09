@@ -1,6 +1,7 @@
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
 import { useRoute } from 'vue-router'
+import { LRUCache } from 'lru-cache'
 import { Static, TSchema } from '@feathersjs/typebox'
 import startCase from 'lodash/startCase'
 import omit from 'lodash/omit'
@@ -62,11 +63,28 @@ const stringToExpr = (v: string): string => {
   return `${quotes}${exprToString(v)}${quotes}`
 }
 
-const runExpr = (v: string, ctx: AnyData): unknown => expr2fn(v)({
-  doc: ctx.doc,
-  var: (name: string): unknown => ctx.store.getVariable(name),
-  route: (): string => ctx.route.path,
-})
+const options = {
+  max: 500,
+  ttl: 1000 * 60 * 5,
+  allowStale: false,
+  updateAgeOnGet: false,
+  updateAgeOnHas: false,
+}
+
+const cache = new LRUCache(options)
+
+const runExpr = (v: string, ctx: AnyData): unknown => {
+  let fn = cache.get(v) as (ctx: AnyData) => unknown
+  if (!fn) {
+    fn = expr2fn(v) as (ctx: AnyData) => unknown
+    cache.set(v, fn)
+  }
+  return fn({
+    doc: ctx.doc,
+    var: (name: string): unknown => ctx.store.getVariable(name),
+    route: (): string => ctx.route.path,
+  })
+}
 
 const getProp = (field: TFormField | TFormColumn, propName: string, ctx: AnyData): unknown => {
   const v = field[propName] as string
