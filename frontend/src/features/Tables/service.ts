@@ -7,7 +7,6 @@ type SchemaInterface = Static<typeof schema>
 export default {
   setupInstance: (data: SchemaInterface): SchemaInterface => (
     useInstanceDefaults({
-      userId: undefined,
       list: [],
     }, data)
   ),

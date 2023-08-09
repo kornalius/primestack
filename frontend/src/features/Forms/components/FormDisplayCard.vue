@@ -1,13 +1,13 @@
 <template>
   <q-card
     class="q-gutter-sm"
-    v-bind="fieldBinds(field, schemaForType(field))"
+    v-bind="fieldBinds(field, schemaForType(field), ctx)"
     :style="style(field)"
   >
     <q-card-section
       v-for="section in sections"
       :key="section._id"
-      v-bind="fieldBinds(section, schemaForType(section))"
+      v-bind="fieldBinds(section, schemaForType(section), ctx)"
       :style="style(section)"
     >
       <form-display
@@ -23,7 +23,7 @@
       :class="{
         'card-action': true,
       }"
-      v-bind="fieldBinds(action, schemaForType(action))"
+      v-bind="fieldBinds(action, schemaForType(action), ctx)"
       style="z-index: 1;"
       :style="style(action)"
     >
@@ -58,7 +58,9 @@ const emit = defineEmits<{
 
 const value = useModelValue(props, emit)
 
-const { fieldBinds, style } = useFormElements()
+const { fieldBinds, style, buildCtx } = useFormElements()
+
+const ctx = buildCtx(value.value)
 
 const sections = computed(() => (
   // eslint-disable-next-line no-underscore-dangle

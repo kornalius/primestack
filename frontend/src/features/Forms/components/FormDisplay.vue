@@ -16,7 +16,7 @@
       <form-display-card
         v-else-if="isCard(field)"
         v-model="value"
-        v-bind="fieldBinds(field, schemaForType(field))"
+        v-bind="fieldBinds(field, schemaForType(field), ctx)"
         :field="field"
         :columns="field._columns"
         :components="components"
@@ -31,7 +31,7 @@
         :is="componentForField(field)"
         v-else-if="isNumericInput(field)"
         v-model.number="value[field.field]"
-        v-bind="fieldBinds(field, schemaForType(field))"
+        v-bind="fieldBinds(field, schemaForType(field), ctx)"
         :style="style(field)"
         :rules="serializeRules(t, field)"
         lazy-rules
@@ -41,7 +41,7 @@
         :is="componentForField(field)"
         v-else
         v-model="value[field.field]"
-        v-bind="fieldBinds(field, schemaForType(field))"
+        v-bind="fieldBinds(field, schemaForType(field), ctx)"
         :style="style(field)"
         :rules="serializeRules(t, field)"
         lazy-rules
@@ -69,6 +69,8 @@ const emit = defineEmits<{
   (e: 'update:model-value', value: Record<string, unknown>): void,
 }>()
 
+const { t } = useI18n()
+
 const {
   componentForField,
   fieldBinds,
@@ -79,9 +81,10 @@ const {
   isCard,
   isParagraph,
   serializeRules,
+  buildCtx,
 } = useFormElements()
 
 const value = useModelValue(props, emit)
 
-const { t } = useI18n()
+const ctx = buildCtx(value.value)
 </script>

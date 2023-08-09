@@ -12,7 +12,7 @@
   >
     <div
       v-if="!editor.isDragging && editor.isHovered(field._id)"
-      class="action bg-grey-9 rounded-borders no-pointer-events"
+      class="action-button bg-grey-9 rounded-borders no-pointer-events"
       style="left: 0; width: 18px;"
     >
       <q-icon :name="fieldIcon" color="white" size="xs" />
@@ -20,7 +20,7 @@
 
     <q-btn
       v-if="(isRow || isCard) && !editor.isDragging && editor.isHovered(field._id)"
-      class="action"
+      class="action-button"
       style="right: 26px;"
       icon="mdi-plus"
       color="blue-4"
@@ -35,7 +35,7 @@
 
     <q-btn
       v-else-if="interactable && !editor.isDragging && editor.isHovered(field._id)"
-      class="action"
+      class="action-button"
       style="right: 26px;"
       :icon="activeInteractable ? 'mdi-cursor-pointer' : 'mdi-cursor-move'"
       color="green-4"
@@ -50,7 +50,7 @@
 
     <q-btn
       v-if="!editor.isDragging && editor.isHovered(field._id)"
-      class="action"
+      class="action-button"
       style="right: 0;"
       icon="mdi-trash-can"
       color="red-4"
@@ -83,10 +83,10 @@
 
       <table-editor
         v-else-if="field._type === 'table'"
-        v-model="field.modelValue"
         v-model:columns="field.columns"
         v-model:visible-columns="field.visibleColumns"
-        v-bind="fieldBinds(field, schemaForType(field))"
+        :model-value="displayValue"
+        v-bind="fieldBinds(field, schemaForType(field), ctx)"
         :query="queryToMongo(field.query?.groups)"
         :style="style"
       />
@@ -94,8 +94,8 @@
       <component
         :is="componentForField(field)"
         v-else
-        v-model="field.modelValue"
-        v-bind="fieldBinds(field, schemaForType(field))"
+        :model-value="displayValue"
+        v-bind="fieldBinds(field, schemaForType(field), ctx)"
         :style="style"
       />
 
@@ -134,9 +134,16 @@ const emit = defineEmits<{
   (e: 'update:model-value', value: TFormField): void,
 }>()
 
-const { componentForField, fieldBinds } = useFormElements()
+const {
+  componentForField,
+  fieldBinds,
+  getProp,
+  buildCtx,
+} = useFormElements()
 
 const field = useModelValue(props, emit)
+
+const ctx = buildCtx()
 
 const { queryToMongo } = useQuery()
 
@@ -169,6 +176,8 @@ const onColumnClick = (column: TFormColumn) => {
 const onRemoveClick = () => {
   emit('remove', props.modelValue)
 }
+
+const displayValue = computed(() => getProp(field.value, 'modelValue', ctx))
 
 const style = computed(() => ({
   paddingTop: field.value.padding?.top,
@@ -210,7 +219,7 @@ const toggleInteractable = () => {
 .card
   padding: 4px 0
 
-.action
+.action-button
   position: absolute
   top: 0
   z-index: 5

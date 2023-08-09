@@ -8,6 +8,7 @@ import users from '@/features/Users/service'
 import tables from '@/features/Tables/service'
 import menus from '@/features/Menus/service'
 import forms from '@/features/Forms/service'
+import actions from '@/features/Actions/service'
 
 export const pinia = createPinia()
 
@@ -49,5 +50,6 @@ export const api = createPiniaClient(feathersClient, {
     tables,
     menus,
     forms,
+    actions,
   },
 })

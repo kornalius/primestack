@@ -15,7 +15,7 @@
       reorderable
       @click.stop=""
     >
-      <template #default="{ value: t }">
+      <template #default="{ value: t }: { value: AnyData }">
         <q-route-tab
           :name="t._id"
           :label="t.label"
@@ -36,6 +36,7 @@ import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
 import { tabSchema, menuSchema } from '@/shared/schemas/menu'
 import useAppEditor from '@/features/App/store'
+import { AnyData } from '@/shared/interfaces/commons'
 import { useUrl } from '@/composites/url'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 

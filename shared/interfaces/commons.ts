@@ -1,3 +1,5 @@
+import { Type } from '@feathersjs/typebox'
+
 type Id = string;
 type NullableString = string | null;
 type Timestamp = NullableString;
@@ -21,3 +23,15 @@ export interface BaseInterface extends FeathersTempRecordInterface {
 }
 
 export type T18N = (path: string, args?) => string
+
+export const sizeString = Type.String({
+  options: [
+    { value: 'xs', icon: 'mdi-size-xs' },
+    { value: 'sm', icon: 'mdi-size-s' },
+    { value: 'md', icon: 'mdi-size-m' },
+    { value: 'lg', icon: 'mdi-size-l' },
+    { value: 'xl', icon: 'mdi-size-xl' },
+  ],
+  toggles: true,
+  clearable: true,
+})

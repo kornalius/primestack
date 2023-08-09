@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import { registerPlugins } from './plugins'
 import './feathers'
 import './styles/main.sass'
+import 'highlight.js/scss/hybrid.scss'
 import './shortcuts'
 import App from './App.vue'
 

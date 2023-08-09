@@ -4,7 +4,6 @@
       :list="fields"
       class="form-builder-container"
       :group="{ name: 'form-builder' }"
-      filter=".form-element-header .overlay"
       :animation="150"
       easing="cubic-bezier(1, 0, 0, 1)"
       item-key="_id"

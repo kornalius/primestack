@@ -1,13 +1,13 @@
 <template>
   <q-card
     class="card"
-    v-bind="fieldBinds(field, schemaForType(field))"
+    v-bind="fieldBinds(field, schemaForType(field), ctx)"
     :style="style(field)"
   >
     <q-card-section
       v-for="section in sections"
       :key="section._id"
-      v-bind="fieldBinds(section, schemaForType(section))"
+      v-bind="fieldBinds(section, schemaForType(section), ctx)"
       :class="{
         'card-section': true,
         selected: editor.isSelected(section._id),
@@ -28,7 +28,7 @@
 
       <div
         v-if="!editor.isDragging && editor.isHovered(section._id)"
-        class="action bg-grey-9 rounded-borders no-pointer-events"
+        class="action-button bg-grey-9 rounded-borders no-pointer-events"
         style="left: 0; width: 18px;"
       >
         <q-icon :name="sectionIcon" color="white" size="xs" />
@@ -36,7 +36,7 @@
 
       <q-btn
         v-if="!editor.isDragging && editor.isHovered(section._id)"
-        class="action"
+        class="action-button"
         style="right: 0;"
         icon="mdi-trash-can"
         color="red-4"
@@ -58,7 +58,7 @@
     <q-card-actions
       v-for="action in actions"
       :key="action._id"
-      v-bind="fieldBinds(action, schemaForType(action))"
+      v-bind="fieldBinds(action, schemaForType(action), ctx)"
       :class="{
         'card-action': true,
         selected: editor.isSelected(action._id),
@@ -79,7 +79,7 @@
 
       <div
         v-if="!editor.isDragging && editor.isHovered(action._id)"
-        class="action bg-grey-9 rounded-borders no-pointer-events"
+        class="action-button bg-grey-9 rounded-borders no-pointer-events"
         style="left: 0; width: 18px;"
       >
         <q-icon :name="actionIcon" color="white" size="xs" />
@@ -87,7 +87,7 @@
 
       <q-btn
         v-if="!editor.isDragging && editor.isHovered(action._id)"
-        class="action"
+        class="action-button"
         style="right: 26px;"
         icon="mdi-plus"
         color="blue-4"
@@ -102,7 +102,7 @@
 
       <q-btn
         v-if="!editor.isDragging && editor.isHovered(action._id)"
-        class="action"
+        class="action-button"
         style="right: 0;"
         icon="mdi-trash-can"
         color="red-4"
@@ -129,10 +129,11 @@ import { TSchema } from '@feathersjs/typebox'
 import hexObjectId from 'hex-object-id'
 import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
+// eslint-disable-next-line import/no-cycle
 import useAppEditor from '@/features/App/store'
-import { defaultValueForSchema, defaultValues } from '@/shared/schema'
 // eslint-disable-next-line import/no-cycle
 import useFormElements from '@/features/Forms/composites'
+import { defaultValueForSchema, defaultValues } from '@/shared/schema'
 import FieldsEditor from './FieldsEditor.vue'
 
 const props = defineProps<{
@@ -151,7 +152,9 @@ const emit = defineEmits<{
 
 const field = useModelValue(props, emit)
 
-const { fieldBinds, style } = useFormElements()
+const { fieldBinds, style, buildCtx } = useFormElements()
+
+const ctx = buildCtx(field.value)
 
 const sectionIcon = computed(() => (
   props.components.find((c) => c.type === 'card-section').icon
@@ -255,7 +258,7 @@ const onRemoveClick = (column: TFormColumn) => {
   &.hovered
     outline: 1px dashed $blue-grey-5
 
-.action
+.action-button
   position: absolute
   top: 0
   z-index: 5

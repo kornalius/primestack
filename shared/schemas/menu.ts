@@ -12,6 +12,7 @@ export const tabSchema = Type.Object(
     formId: Type.String({ objectid: true, service: 'forms' }),
   },
   {
+    $id: 'Tab',
     additionalProperties: false,
     categories: {
       content: {
@@ -37,6 +38,7 @@ export const menuSchema = Type.Object(
     tabs: Type.Array(tabSchema),
   },
   {
+    $id: 'Menu',
     additionalProperties: false,
     categories: {
       content: {
@@ -58,5 +60,5 @@ export const schema = Type.Object(
     userId: Type.Optional(Type.String({ objectid: true })),
     list: Type.Array(menuSchema),
   },
-  { $id: 'Menu', additionalProperties: false },
+  { $id: 'MenuList', additionalProperties: false },
 )

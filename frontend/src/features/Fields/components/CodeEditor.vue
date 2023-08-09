@@ -12,12 +12,15 @@
 import { shallowRef } from 'vue'
 import { Codemirror } from 'vue-codemirror'
 import { json } from '@codemirror/lang-json'
+import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { useModelValue } from '@/composites/prop'
 
 const props = defineProps<{
   modelValue: string | null | undefined
   langJson?: boolean
+  langJs?: boolean
+  dark?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -26,10 +29,17 @@ const emit = defineEmits<{
   (e: 'update:model-value', value: string | null | undefined): void,
 }>()
 
-const extensions = [oneDark]
+const extensions = []
+
+if (props.dark) {
+  extensions.push(oneDark)
+}
 
 if (props.langJson) {
   extensions.push(json())
+}
+if (props.langJs) {
+  extensions.push(javascript())
 }
 
 const value = useModelValue(props, emit)

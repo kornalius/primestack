@@ -10,9 +10,8 @@ export default {
   label: 'Image',
   component: QImg,
   schema: properties([
-    commonProperties.state,
     commonProperties.size,
-    commonProperties.style,
+    Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
       src: Type.String(),
       srcset: Type.String(),
@@ -63,8 +62,6 @@ export default {
     content: {
       icon: contentIcon,
       names: [
-        'disable',
-        'readonly',
         'src',
         'srcset',
         'alt',
@@ -80,7 +77,6 @@ export default {
     style: {
       icon: styleIcon,
       names: [
-        'dense',
         'size',
         'width',
         'height',

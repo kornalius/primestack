@@ -1,4 +1,6 @@
 <template>
+  <!-- Horizontal layout with label but no embedded -->
+
   <div
     v-if="horizontal && label && !embedLabel"
     class="col-auto q-mr-md"
@@ -6,11 +8,15 @@
     style="width: 125px;"
   >
     <property-label
+      v-model="value"
       :multiple-types="multipleTypes"
       :label="label"
+      allow-expr
       @change-type="changeType"
     />
   </div>
+
+  <!-- Horizontal layout -->
 
   <div
     v-if="horizontal"
@@ -28,6 +34,8 @@
     />
   </div>
 
+  <!-- Non-expandable section -->
+
   <q-item
     v-else-if="nonExpandable"
     style="padding: 2px 0 !important;"
@@ -42,6 +50,8 @@
           'items-center': true,
         }"
       >
+        <!-- Label column -->
+
         <div
           v-if="label && !embedLabel"
           class="col-auto q-mr-md"
@@ -49,11 +59,15 @@
           style="width: 125px;"
         >
           <property-label
+            v-model="value"
             :multiple-types="multipleTypes"
             :label="label"
+            allow-expr
             @change-type="changeType"
           />
         </div>
+
+        <!-- Value column -->
 
         <div class="col">
           <property-schema-field
@@ -67,9 +81,41 @@
             property
           />
         </div>
+
+        <!-- Expression button column -->
+
+        <div class="col-auto" style="width: 20px;">
+          <q-btn
+            v-if="showExpr"
+            class="q-mr-sm"
+            icon="mdi-flash"
+            :color="isExpr(value) ? 'orange-8' : 'grey-5'"
+            size="sm"
+            flat
+            dense
+          >
+            <q-popup-edit
+              v-model="value"
+              :title="`${label} Expression...`"
+              auto-save
+              @before-show="loadExpr"
+              @before-hide="saveExpr"
+            >
+              <code-editor
+                v-model="value"
+                style="width: 600px; height: 150px;"
+                lang-js
+                autofocus
+                @keydown="editor.preventSystemUndoRedo"
+              />
+            </q-popup-edit>
+          </q-btn>
+        </div>
       </div>
     </q-item-section>
   </q-item>
+
+  <!-- Expandable section (Array or Object types)  -->
 
   <q-expansion-item
     v-else
@@ -83,6 +129,8 @@
           class="col-auto q-mr-md"
           style="width: 125px;"
         >
+          <!-- Popup array edit button -->
+
           <q-btn
             v-if="type === 'array' && Array.isArray(value)"
             style="position: absolute; left: 8px; top: 14px;"
@@ -138,6 +186,7 @@
           </q-btn>
 
           <property-label
+            v-model="value"
             :multiple-types="multipleTypes"
             :label="label"
             :embed-label="embedLabel"
@@ -155,12 +204,16 @@
           'items-center': type !== 'array',
         }"
       >
+        <!-- Label column -->
+
         <div
           v-if="label && !embedLabel"
           class="col-auto q-mr-md"
           :class="{ 'q-mt-sm': type === 'array' }"
           style="width: 125px;"
         />
+
+        <!-- Value column -->
 
         <div class="col">
           <property-schema-field
@@ -184,21 +237,29 @@
 import { computed, watch } from 'vue'
 import { TSchema, Type } from '@feathersjs/typebox'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
-import { getTypeFor, defaultValueForSchema } from '@/shared/schema'
+import { getTypeFor, defaultValueForSchema, validForExpr } from '@/shared/schema'
+import useAppEditor from '@/features/App/store'
+import useFormElements from '@/features/Forms/composites'
+import { AnyData } from '@/shared/interfaces/commons'
+import { ruleTypes } from '@/features/Components/common'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import PropertyLabel from '@/features/Properties/components/PropertyLabel.vue'
 import PropertySchemaField from '@/features/Properties/components/PropertySchemaField.vue'
-import { AnyData } from '@/shared/interfaces/commons'
-import { ruleTypes } from '@/features/Components/common'
+import CodeEditor from '@/features/Fields/components/CodeEditor.vue'
 
 const props = defineProps<{
+  // property value
   modelValue: unknown
+  // is the property disabled?
   disable?: boolean
   // parent object containing the modelValue
   parent: unknown
+  // schema for this property
   schema: TSchema
+  // is the property required?
   required?: boolean
+  // label to show for the property in the editor
   label?: string
   // embed the label inside the input
   embedLabel?: boolean
@@ -218,21 +279,41 @@ const emit = defineEmits<{
 
 const value = useModelValue(props, emit)
 
+const editor = useAppEditor()
+
+const { isExpr, exprCode, stringToExpr } = useFormElements()
+
 const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
 
-const type = computed((): string => {
+/**
+ * Computes the type of the property from the schema
+ */
+const type = computed((): string | undefined => {
   const p = props.schema
   return getTypeFor(p, currentForcedTypes.value?.[props.propName])
 })
 
+/**
+ * Computes the types allowed for a property in the schema
+ */
 const multipleTypes = computed((): string[] | undefined => {
   const p = props.schema
-  if (p.anyOf) {
+  if (p?.anyOf) {
     return p.anyOf.map((t) => t.type)
   }
   return undefined
 })
 
+/**
+ * Should we show the expression button next to the property?
+ */
+const showExpr = computed((): boolean => (
+  validForExpr.indexOf(type.value) !== -1
+))
+
+/**
+ * When value changes, we check if it's an empty string, if so, set its value to `undefined`
+ */
 watch(value, () => {
   // when the value changes to '' and its type is 'string', set it to undefined instead
   if (value.value === '' && type.value === 'string') {
@@ -240,6 +321,9 @@ watch(value, () => {
   }
 })
 
+/**
+ * Computes the array schema for the property
+ */
 const arraySchema = computed(() => props.schema.items)
 
 const dynamicArraySchema = (val: AnyData): TSchema => {
@@ -255,33 +339,85 @@ const dynamicArraySchema = (val: AnyData): TSchema => {
   return arraySchema.value
 }
 
+/**
+ * Is the property part of an horizontal layout?
+ */
 const arrayIsHorizontalPopup = computed(() => arraySchema.value?.horizontalPopup)
 
+/**
+ * Is the array schema for this property considered an object?
+ */
 const arraySchemaIsObject = computed(() => (
   getTypeFor(arraySchema.value, currentForcedTypes.value[props.propName]) === 'object'
 ))
 
+/**
+ * Add a new item to the array value of the property
+ *
+ * @param arr Array to add to
+ *
+ * @returns {unknown | undefined} The newly added item
+ */
 const addItem = (arr: unknown[]): unknown | undefined => {
   const newValue = defaultValueForSchema(arraySchema.value)
   arr.push(newValue)
   return newValue
 }
 
+/**
+ * Remove an item from the value array of the property
+ *
+ * @param arr Array to remove from
+ * @param index Index of the item
+ *
+ * @returns {boolean} True if the item was removed
+ */
 const removeItem = (arr: unknown[], index: number): boolean => {
   arr.splice(index, 1)
   return true
 }
 
+/**
+ * Change the type the property to another
+ *
+ * @param t New type assigned to the property
+ */
 const changeType = (t: string) => {
   currentForcedTypes.value[props.propName] = t
   emit('update:model-value', undefined)
 }
 
-const subPropName = (name: string | number) => (
+/**
+ * Build a property sub-name from the current property name (ex: a new item in an object)
+ *
+ * @param name Name of the item
+ *
+ * @returns {string} New item name
+ */
+const subPropName = (name: string | number): string => (
   props.propName ? `${props.propName}.${name.toString()}` : name.toString()
 )
 
+/**
+ * Is the property non-expandable?
+ */
 const nonExpandable = computed(() => !['object', 'array'].includes(type.value))
+
+/**
+ * Convert the property value expression into the code editor
+ */
+const loadExpr = () => {
+  if (isExpr(value.value)) {
+    value.value = exprCode(value.value)
+  }
+}
+
+/**
+ * Convert the expression from the code editor back into the property value
+ */
+const saveExpr = () => {
+  value.value = stringToExpr(value.value)
+}
 </script>
 
 <style scoped lang="sass">

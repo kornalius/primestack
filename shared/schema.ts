@@ -19,7 +19,11 @@ export const optionsForSchema = (p: TSchema): unknown[] => {
   return p.options || p.items?.options
 }
 
-export const getTypeFor = (p: TSchema, forcedType?: string): string => {
+export const getTypeFor = (p: TSchema, forcedType?: string): string | undefined => {
+  if (!p) {
+    return undefined
+  }
+
   const options = optionsForSchema(p)
 
   if (forcedType) {
@@ -32,11 +36,15 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string => {
   if (p.type === 'number') {
     return 'number'
   }
+
   if (p.type === 'string' && p.field === true) {
     return 'field'
   }
   if (p.type === 'string' && p.objectid === true && p.tableid === true) {
     return 'tableid'
+  }
+  if (p.type === 'string' && p.objectid === true && p.action === true) {
+    return 'action'
   }
   if (p.type === 'string' && p.objectid === true) {
     return 'objectid'
@@ -53,6 +61,9 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string => {
   if (p.type === 'string' && Array.isArray(options)) {
     return 'select'
   }
+  if (p.type === 'string' && p.variable) {
+    return 'variable'
+  }
   if (p.type === 'string' && p.color) {
     return 'color'
   }
@@ -65,9 +76,11 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string => {
   if (p.type === 'string') {
     return 'string'
   }
+
   if (p.type === 'boolean') {
     return 'boolean'
   }
+
   if (p.type === 'array' && p.json === true) {
     return 'json'
   }
@@ -77,6 +90,7 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string => {
   if (p.type === 'array') {
     return 'array'
   }
+
   if (p.type === 'object' && p.query === true) {
     return 'query'
   }
@@ -92,12 +106,27 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string => {
   if (p.type === 'object') {
     return 'object'
   }
+
   if (p.anyOf) {
     return getTypeFor(p.anyOf[0])
   }
 
   return 'string'
 }
+
+export const validForExpr = [
+  'boolean',
+  'number',
+  'string',
+  'color',
+  'field',
+  'tableid',
+  'time',
+  'date',
+  'slider',
+  'select',
+  'icon',
+]
 
 export const columnAlignmentFor = (type: string): string => {
   if (type === 'boolean') {
@@ -288,12 +317,12 @@ export const fieldToSchema = (field: TableFieldSchema): TSchema => {
   }
 }
 
-export const fieldsToSchema = (fields: TableFieldSchema[], id: string): TSchema => {
-  return Type.Object((fields || []).reduce((acc, f) => ({
+export const fieldsToSchema = (fields: TableFieldSchema[], id: string): TSchema => (
+  Type.Object((fields || []).reduce((acc, f) => ({
     ...acc,
     [f.name]: fieldToSchema(f),
   }), {}), { $id: id })
-}
+)
 
 type TableIndexSchema = Static<typeof tableIndexSchema>
 

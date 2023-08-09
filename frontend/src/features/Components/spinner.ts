@@ -12,7 +12,7 @@ export default {
   nokey: true,
   schema: properties([
     commonProperties.size,
-    commonProperties.style,
+    Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
       color: Type.String({ color: true }),
       thickness: Type.Number(),
@@ -20,13 +20,12 @@ export default {
   ], false),
   defaultValues: {
     color: 'primary',
-    thickness: 5,
+    size: 'sm',
   },
   categories: {
     style: {
       icon: styleIcon,
       names: [
-        'dense',
         'size',
         'color',
         'thickness',

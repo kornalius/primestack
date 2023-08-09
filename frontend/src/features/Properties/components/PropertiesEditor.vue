@@ -1,4 +1,6 @@
 <template>
+  <!-- Categories tabs -->
+
   <q-tabs
     v-if="categories"
     v-model="category"
@@ -14,6 +16,8 @@
       :icon="categories[k].icon"
     />
   </q-tabs>
+
+  <!-- Horizontal layout -->
 
   <div
     v-if="horizontal"
@@ -34,6 +38,8 @@
       horizontal
     />
   </div>
+
+  <!-- Vertical layout -->
 
   <q-list
     v-else
@@ -66,9 +72,11 @@ import PropertyEditor from '@/features/Properties/components/PropertyEditor.vue'
 import { TFormFieldCategory } from '@/shared/interfaces/forms'
 
 const props = defineProps<{
+  // object's value
   modelValue: Record<string, unknown>
   // schema to extract property definitions from
   schema: TSchema
+  // is the editor disabled?
   disable?: boolean
   // remove cells borders
   flat?: boolean
@@ -96,19 +104,33 @@ const currentForcedTypes = props.forcedTypes
   ? useSyncedProp(props, 'forcedTypes', emit)
   : ref({})
 
+// Selected category name
 const category = ref()
 
-const names = computed(() => {
+/**
+ * Computes the property names that appear in the selected category or all property names
+ */
+const names = computed((): string[] => {
   if (props.categories) {
     return props.categories[category.value].names
   }
   return Object.keys(props.schema.properties)
 })
 
-const subPropName = (name: string) => (
-  props.propName ? `${props.propName}.${name}` : name
+/**
+ * Build a property sub-name from the current property name (ex: a new item in an object)
+ *
+ * @param name Name of the item
+ *
+ * @returns {string} New item name
+ */
+const subPropName = (name: string | number): string => (
+  props.propName ? `${props.propName}.${name}` : name.toString()
 )
 
+/**
+ * When the properties change, select the first one
+ */
 watch(() => props.categories, () => {
   if (Object.keys(props.categories || {}).length) {
     // eslint-disable-next-line prefer-destructuring

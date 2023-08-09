@@ -75,6 +75,7 @@ export const tableFieldSchema = Type.Object(
     )),
   },
   {
+    $id: 'TableField',
     additionalProperties: false,
     categories: {
       content: {
@@ -119,6 +120,7 @@ export const tableIndexSchema = Type.Object(
     sparse: Type.Boolean(),
   },
   {
+    $id: 'TableIndex',
     additionalProperties: false,
     categories: {
       content: {
@@ -147,6 +149,7 @@ export const tableSchema = Type.Object(
     indexes: Type.Array(tableIndexSchema),
   },
   {
+    $id: 'Table',
     additionalProperties: false,
     categories: {
       content: {
@@ -170,5 +173,5 @@ export const schema = Type.Object(
     userId: Type.Optional(Type.String({ objectid: true })),
     list: Type.Array(tableSchema),
   },
-  { $id: 'Table', additionalProperties: false },
+  { $id: 'TableList', additionalProperties: false },
 )
