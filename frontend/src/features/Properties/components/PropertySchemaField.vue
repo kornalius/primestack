@@ -1,4 +1,6 @@
 <template>
+  <!-- Expression -->
+
   <div
     v-if="isExpr(value)"
     class="row"
@@ -11,6 +13,8 @@
     </div>
   </div>
 
+  <!-- Regular string input -->
+
   <q-input
     v-else-if="type === 'string'"
     v-model="value"
@@ -21,6 +25,8 @@
     @keydown="editor.preventSystemUndoRedo"
   >
     <template #append>
+      <!-- Popup edit -->
+
       <q-icon
         :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
         name="mdi-pencil"
@@ -46,6 +52,8 @@
     </template>
   </q-input>
 
+  <!-- Action -->
+
   <div
     v-else-if="type === 'action'"
     class="action-input row items-center"
@@ -61,6 +69,8 @@
     <q-icon name="mdi-flash" />
   </div>
 
+  <!-- Boolean -->
+
   <q-checkbox
     v-else-if="type === 'boolean'"
     v-model="value"
@@ -69,6 +79,8 @@
     :disable="disabled"
     dense
   />
+
+  <!-- Numeric slider -->
 
   <q-slider
     v-else-if="type === 'slider'"
@@ -84,6 +96,8 @@
     dense
   />
 
+  <!-- Number -->
+
   <q-input
     v-else-if="type === 'number'"
     v-model.number="value"
@@ -98,6 +112,8 @@
     @keydown="editor.preventSystemUndoRedo"
   />
 
+  <!-- Date -->
+
   <date-field
     v-else-if="type === 'date'"
     v-model="value"
@@ -109,6 +125,8 @@
     @keydown="editor.preventSystemUndoRedo"
   />
 
+  <!-- Time -->
+
   <time-field
     v-else-if="type === 'time'"
     v-model="value"
@@ -119,6 +137,8 @@
     dense
     @keydown="editor.preventSystemUndoRedo"
   />
+
+  <!-- Select -->
 
   <q-select
     v-else-if="type === 'select'"
@@ -140,6 +160,8 @@
     @keydown="editor.preventSystemUndoRedo"
   />
 
+  <!-- Toggles -->
+
   <q-btn-toggle
     v-else-if="type === 'toggles'"
     v-model="value"
@@ -153,6 +175,8 @@
     dense
   />
 
+  <!-- Icon -->
+
   <icon-field
     v-else-if="type === 'icon'"
     v-model="value"
@@ -165,6 +189,8 @@
     @keydown="editor.preventSystemUndoRedo"
   />
 
+  <!-- Color -->
+
   <color-field
     v-else-if="type === 'color'"
     v-model="value"
@@ -175,6 +201,8 @@
     dense
     @keydown="editor.preventSystemUndoRedo"
   />
+
+  <!-- Variable -->
 
   <variable-select
     v-else-if="type === 'variable'"
@@ -189,6 +217,8 @@
     @keydown="editor.preventSystemUndoRedo"
   />
 
+  <!-- Table -->
+
   <table-select
     v-else-if="type === 'tableid'"
     v-model="value"
@@ -201,6 +231,8 @@
     @create="$emit('create-new')"
     @keydown="editor.preventSystemUndoRedo"
   />
+
+  <!-- Table field -->
 
   <table-field-select
     v-else-if="type === 'field'"
@@ -218,6 +250,8 @@
     @keydown="editor.preventSystemUndoRedo"
   />
 
+  <!-- Service -->
+
   <service-select
     v-else-if="type === 'objectid'"
     v-model="value"
@@ -232,6 +266,8 @@
     @create="$emit('create-new')"
     @keydown="editor.preventSystemUndoRedo"
   />
+
+  <!-- JSON -->
 
   <div
     v-else-if="type === 'json'"
@@ -263,17 +299,23 @@
     </q-popup-edit>
   </div>
 
+  <!-- Paddings -->
+
   <padding-editor
     v-else-if="type === 'padding' && value"
     v-model="value"
     :disable="disabled"
   />
 
+  <!-- Margins -->
+
   <margin-editor
     v-else-if="type === 'margin' && value"
     v-model="value"
     :disable="disabled"
   />
+
+  <!-- Object in complex UI -->
 
   <properties-editor
     v-else-if="type === 'object' && typeof value === 'object' && property"
@@ -286,6 +328,8 @@
     embed-label
     flat
   />
+
+  <!-- Object in normal expandable UI -->
 
   <div
     v-else-if="type === 'object' && !property"
@@ -318,6 +362,8 @@
       />
     </q-popup-edit>
   </div>
+
+  <!-- Array in complex UI -->
 
   <array-editor
     v-else-if="type === 'array' && Array.isArray(value) && property"
@@ -354,34 +400,7 @@
     </template>
   </array-editor>
 
-  <div
-    v-else-if="type === 'query' && property"
-    class="overflow-hidden ellipsis"
-    :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
-    style="max-width: 230px;"
-  >
-    <property-highlight
-      :model-value="queryValue"
-      :disabled="disabled"
-      :disabled-label="disabledLabel"
-      language="basic"
-    />
-
-    <q-popup-edit
-      v-model="value"
-      :title="label"
-      :disable="disabled"
-      auto-save
-      v-slot="scope"
-    >
-      <query-editor
-        v-model="scope.value"
-        style="min-width: 600px; min-height: 400px;"
-        :table-id="parent.tableId"
-        :hide-table-select="!!parent.tableId"
-      />
-    </q-popup-edit>
-  </div>
+  <!-- Array in normal expandable UI -->
 
   <div
     v-else-if="type === 'array' && Array.isArray(value) && !property"
@@ -438,18 +457,50 @@
       </array-editor>
     </q-popup-edit>
   </div>
+
+  <!-- Query -->
+
+  <div
+    v-else-if="type === 'query' && property"
+    class="overflow-hidden ellipsis"
+    :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
+    style="max-width: 230px;"
+  >
+    <property-highlight
+      :model-value="queryValue"
+      :disabled="disabled"
+      :disabled-label="disabledLabel"
+      language="basic"
+    />
+
+    <q-popup-edit
+      v-model="value"
+      :title="label"
+      :disable="disabled"
+      auto-save
+      v-slot="scope"
+    >
+      <query-editor
+        v-model="scope.value"
+        style="min-width: 600px; min-height: 400px;"
+        :table-id="parent.tableId"
+        :hide-table-select="!!parent.tableId"
+      />
+    </q-popup-edit>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import omit from 'lodash/omit'
-import { TSchema, Type } from '@feathersjs/typebox'
+import { Static, TSchema, Type } from '@feathersjs/typebox'
 import hljs from 'highlight.js'
 import javascript from 'highlight.js/lib/languages/javascript'
 import { defaultValueForSchema, getTypeFor, optionsForSchema } from '@/shared/schema'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { useQuery } from '@/features/Query/composites'
 import { AnyData } from '@/shared/interfaces/commons'
+import { actionSchema } from '@/shared/schemas/actions'
 import { ruleTypes } from '@/features/Components/common'
 import useAppEditor from '@/features/App/store'
 import useFormElements from '@/features/Forms/composites'
@@ -470,9 +521,12 @@ import TableFieldSelect from '@/features/Fields/components/TableFieldSelect.vue'
 import VariableSelect from '@/features/Fields/components/VariableSelect.vue'
 import PropertyHighlight from '@/features/Properties/components/PropertyHighlight.vue'
 
+type Action = Static<typeof actionSchema>
+
 hljs.registerLanguage('javascript', javascript)
 
 const props = defineProps<{
+  // value of the property
   modelValue: unknown
   // is the property disabled or not?
   disable?: boolean
@@ -482,6 +536,7 @@ const props = defineProps<{
   schema: TSchema
   // complex UI for PropertyEditor mainly
   property?: boolean
+  // is the property required?
   required?: boolean
   // label
   label?: string
@@ -502,6 +557,8 @@ const emit = defineEmits<{
 
 const value = useModelValue(props, emit, defaultValueForSchema(props.schema))
 
+const tempJson = ref()
+
 const editor = useAppEditor()
 
 const { isExpr, exprCode } = useFormElements()
@@ -510,11 +567,17 @@ const { queryToString } = useQuery()
 
 const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
 
+/**
+ * Computes the type of the property from the schema
+ */
 const type = computed((): string => {
   const p = props.schema
   return getTypeFor(p, currentForcedTypes.value?.[props.keyName])
 })
 
+/**
+ * Computes the options from the schema
+ */
 const options = computed((): unknown[] | undefined => {
   const p = props.schema
   return optionsForSchema(p)
@@ -547,31 +610,49 @@ interface ToggleOption {
   [props: string]: any | undefined
 }
 
+/**
+ * Computes toggle options from the schema
+ */
 const toggleOptions = computed((): ToggleOption[] => {
   const p = props.schema
   return p.options
 })
 
+/**
+ * Are the toggle options clearable?
+ */
 const clearableToggle = computed((): boolean | undefined => {
   const p = props.schema
   return p.clearable
 })
 
+/**
+ * What field is used for the option's value (select)
+ */
 const optionValue = computed((): string | undefined => {
   const p = props.schema
   return p.optionValue || p.items?.optionValue
 })
 
+/**
+ * What field is used for the option's label (select)
+ */
 const optionLabel = computed((): string | undefined => {
   const p = props.schema
   return p.optionLabel || p.items?.optionLabel
 })
 
+/**
+ * Should allow multiple selection for a select type property?
+ */
 const multiple = computed((): boolean => {
   const p = props.schema
   return p.type === 'array'
 })
 
+/**
+ * Schema for an array property
+ */
 const arraySchema = computed(() => props.schema.items)
 
 const dynamicArraySchema = (val: AnyData): TSchema => {
@@ -587,48 +668,95 @@ const dynamicArraySchema = (val: AnyData): TSchema => {
   return arraySchema.value
 }
 
+/**
+ * Schema for an object property
+ */
 const objectSchema = computed(() => props.schema)
 
+/**
+ * Computes if the schema of the array is an object type
+ */
 const arraySchemaIsObject = computed(() => (
   getTypeFor(arraySchema.value, currentForcedTypes.value?.[props.keyName]) === 'object'
 ))
 
+/**
+ * Computes if we use an horizontal layout for the array
+ */
 const arrayIsHorizontal = computed(() => arraySchema.value?.horizontal)
 
+/**
+ * Computes if we use an horizontal layout for editing an array in a popup
+ */
 const arrayIsHorizontalPopup = computed(() => arraySchema.value?.horizontalPopup)
 
+/**
+ * Computes if we use an horizontal layout for the object
+ */
 const objectIsHorizontal = computed(() => objectSchema.value?.horizontal)
 
+/**
+ * Computes if we use an horizontal layout for editing an object in a popup
+ */
 const objectIsHorizontalPopup = computed(() => objectSchema.value?.horizontalPopup)
 
-const subPropName = (name: string | number) => (
+/**
+ * Build a property sub-name from the current property name (ex: a new item in an object)
+ *
+ * @param name Name of the item
+ *
+ * @returns {string} New item name
+ */
+const subPropName = (name: string | number): string => (
   props.keyName ? `${props.keyName}.${name.toString()}` : name.toString()
 )
 
+/**
+ * Add a new item to the value when of type array
+ *
+ * @param arr Array to add item to
+ *
+ * @returns {unknown|undefined} The new item added
+ */
 const addItem = (arr: unknown[]): unknown | undefined => {
   const newValue = defaultValueForSchema(arraySchema.value)
   arr.push(newValue)
   return newValue
 }
 
+/**
+ * Removes an item from the value when it's of type array
+ *
+ * @param arr Array to remove from
+ * @param index Index of the item
+ *
+ * @returns {boolean} True when item is removed
+ */
 const removeItem = (arr: unknown[], index: number): boolean => {
   arr.splice(index, 1)
   return true
 }
 
-const tempJson = ref()
-
+/**
+ * Computes the user's table from the parent data
+ */
 const table = computed(() => (
   editor.tables?.find((s) => s._id === props.parent?.tableId)
 ))
 
-const queryValue = computed(() => (
+/**
+ * Computes the query value as a string
+ */
+const queryValue = computed((): string => (
   type.value === 'query' && props.property
     ? queryToString(value.value || { groups: [] }, table.value) || '()'
     : '()'
 ))
 
-const jsonValue = computed(() => {
+/**
+ * Computes the json value as a string
+ */
+const jsonValue = computed((): string => {
   if (type.value === 'object' && !props.property) {
     return JSON.stringify(value.value || {})
   }
@@ -641,6 +769,9 @@ const jsonValue = computed(() => {
   return ''
 })
 
+/**
+ * Is editing disabled?
+ */
 const disabled = computed((): boolean => {
   if (props.disable) {
     return true
@@ -651,31 +782,49 @@ const disabled = computed((): boolean => {
   return false
 })
 
+/**
+ * When disabled, extract the label to display from the schema
+ */
 const disabledLabel = computed((): string | undefined => (
   disabled.value
     ? props.schema?.disable?.(value.value, props.parent)
     : undefined
 ))
 
+/**
+ * Computes the currently edited user's form
+ */
 const form = computed(() => (
   editor.forms.find((f) => f._id === editor.formId)
 ))
 
+/**
+ * Computes the user's table id from the schema of the form's tableId
+ */
 const tableId = computed(() => (
   (props.schema.tableProp && value.value[props.schema.tableProp]) || form.value.tableId
 ))
 
+/**
+ * Computes the fields from the form's data property
+ */
 const extraFields = computed(() => (
   Object.keys(form.value?.data || {}).map((k) => ({ _id: k, name: k }))
 ))
 
-const createAction = () => {
+/**
+ * Creates a new user's action
+ *
+ * @returns {Action} The new user's action
+ */
+const createAction = (): Action => {
   const a = editor.createAction(
     value.value,
     omit(props.schema, ['properties', 'type', 'objectid', 'action']),
     true,
   )
   value.value = a._id
+  return a
 }
 </script>
 

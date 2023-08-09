@@ -33,6 +33,9 @@ const props = defineProps<{
   disabledLabel?: string
 }>()
 
+/**
+ * When language prop changes, register the correct language into hljs
+ */
 watch(() => props.language, () => {
   if (props.language === 'javascript') {
     hljs.registerLanguage('javascript', javascript)

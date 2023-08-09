@@ -4,6 +4,8 @@
     style="max-height: 40px; overflow-y: hidden;"
   >
     <div class="col-auto">
+      <!-- Multitypes button to offer a menu -->
+
       <q-btn
         v-if="multipleTypes"
         class="q-ml-sm"
@@ -29,6 +31,8 @@
       </q-btn>
     </div>
 
+    <!-- Label -->
+
     <span
       class="text-bold"
       style="margin-left: 36px; text-align: end; cursor: default;"
@@ -43,7 +47,9 @@
 
 <script setup lang="ts">
 defineProps<{
+  // label to display
   label: string
+  // multiple types to allow selecting from
   multipleTypes?: string[]
 }>()
 

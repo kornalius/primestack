@@ -103,6 +103,7 @@ module.exports = {
       ],
     }],
     'vue/this-in-template': ['error', 'never'],
+    'vue/comma-dangle': ['error', 'only-multiline'],
     'vue/valid-v-model': 0,
     'vue/html-indent': ['error', 2, {
       attribute: 1,
