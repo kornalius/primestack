@@ -4,11 +4,15 @@
     :width="400"
     side="right"
   >
+    <!-- Title -->
+
     <section-title
       title="Property Editor"
       class="text-bold"
       color="blue-grey-4"
     />
+
+    <!-- Action Element properties -->
 
     <properties-editor
       v-if="showActionElementProperties"
@@ -19,6 +23,8 @@
       :categories="selectedAction.categories"
     />
 
+    <!-- Form Field properties -->
+
     <properties-editor
       v-else-if="showFieldProperties"
       v-model="selectedField"
@@ -28,6 +34,8 @@
       :categories="selectedComponent.categories"
     />
 
+    <!-- Table properties -->
+
     <properties-editor
       v-else-if="showTableProperties"
       v-model="selectedTable"
@@ -36,6 +44,8 @@
       :schema="selectedTableSchema"
       :categories="selectedTableSchema.categories"
     />
+
+    <!-- Table Field properties -->
 
     <properties-editor
       v-else-if="showTableFieldProperties"
@@ -47,19 +57,25 @@
     />
 
     <template v-else-if="!editor.actionId">
+      <!-- Menu title -->
+
       <section-title
         v-if="showMenuProperties"
         title="Menu"
         icon="mdi-menu"
       />
 
+      <!-- Menu properties -->
+
       <properties-editor
         v-if="showMenuProperties"
-        v-model="selectedMenuObject"
+        v-model="selectedMenu"
         :prop-name="''"
         :schema="selectedMenuSchema"
         :categories="selectedMenuSchema.categories"
       />
+
+      <!-- Tab title -->
 
       <section-title
         v-if="showTabProperties"
@@ -67,13 +83,17 @@
         icon="mdi-tab"
       />
 
+      <!-- Tab properties -->
+
       <properties-editor
         v-if="showTabProperties"
-        v-model="selectedMenuObject.tabs[selectedTabIndex]"
+        v-model="selectedMenu.tabs[selectedTabIndex]"
         :prop-name="''"
         :schema="selectedTabSchema"
         :categories="selectedTabSchema.categories"
       />
+
+      <!-- Form title -->
 
       <section-title
         v-if="showFormProperties"
@@ -81,12 +101,14 @@
         icon="mdi-window-maximize"
       />
 
+      <!-- Form properties -->
+
       <properties-editor
         v-if="showFormProperties"
         v-model="form"
         :prop-name="''"
-        :schema="filteredFormSchema"
-        :categories="filteredFormSchema.categories"
+        :schema="selectedFormSchema"
+        :categories="selectedFormSchema.categories"
       />
     </template>
   </q-drawer>
@@ -105,7 +127,9 @@ import SectionTitle from '@/features/Fields/components/SectionTitle.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 
 const props = defineProps<{
+  // global components
   components?: TFormComponent[]
+  // global actions
   actions?: TAction[]
 }>()
 
@@ -117,44 +141,69 @@ const editor = useAppEditor()
  * Menus
  */
 
-const selectedMenuObject = computed(() => editor.menuInstance(editor.selectedMenu))
+/**
+ * Computes the selected menu instance
+ */
+const selectedMenu = computed(() => editor.menuInstance(editor.selectedMenu))
 
+/**
+ * Computes the selected menu schema
+ */
 const selectedMenuSchema = computed(() => (
   editor.selectedMenu
     ? menuSchema
     : undefined
 ))
 
+/**
+ * Should we show menu properties?
+ */
 const showMenuProperties = computed(() => (
-  selectedMenuObject.value && selectedMenuSchema.value
+  selectedMenu.value && selectedMenuSchema.value
 ))
 
 /**
  * Tabs
  */
 
+/**
+ * Computes the selected tab index in the selected menu instance
+ */
 const selectedTabIndex = computed(() => (
-  (selectedMenuObject.value || { tabs: [] }).tabs.findIndex((t) => t._id === editor.selectedTab)
+  (selectedMenu.value || { tabs: [] }).tabs.findIndex((t) => t._id === editor.selectedTab)
 ))
 
+/**
+ * Computes the selected tab schema
+ */
 const selectedTabSchema = computed(() => (
   editor.selectedTab
     ? tabSchema
     : undefined
 ))
 
+/**
+ * Should we show the tab properties?
+ */
 const showTabProperties = computed(() => (
-  selectedMenuObject.value && selectedTabIndex.value !== -1 && selectedTabSchema.value
+  selectedMenu.value && selectedTabIndex.value !== -1 && selectedTabSchema.value
 ))
 
 /**
  * Form
  */
 
+/**
+ * Computes the selected form instance
+ */
 const form = computed(() => editor.formInstance(editor.formId))
 
+// holds form fields
 const fields = ref([])
 
+/**
+ * When the form instance changes, set the fields
+ */
 watch(form, () => {
   if (form.value) {
     // eslint-disable-next-line no-underscore-dangle
@@ -162,47 +211,80 @@ watch(form, () => {
   }
 }, { immediate: true })
 
+/**
+ * Computes the selected form field instance
+ */
 const selectedField = computed(() => editor.formFieldInstance(editor.selected))
 
+/**
+ * Computes the selected form field component
+ */
 const selectedComponent = computed(() => (
   // eslint-disable-next-line no-underscore-dangle
   props.components.find((c) => c.type === selectedField.value?._type)
 ))
 
+/**
+ * Should we show the form properties?
+ */
 const showFormProperties = computed(() => !!form.value)
 
+/**
+ * Should we show the form field properties?
+ */
 const showFieldProperties = computed(() => (
   props.components && selectedComponent.value && selectedField.value
 ))
 
-const filteredFormSchema = computed(() => (
+/**
+ * Computes the selected form schema
+ */
+const selectedFormSchema = computed(() => (
   formSchema
 ))
 
 /**
- * Schema
+ * Table
  */
 
+/**
+ * Computes the selected table instance
+ */
 const selectedTable = computed(() => editor.tableInstance(editor.selectedTable))
 
+/**
+ * Computes the selected table field instance
+ */
 const selectedTableField = computed(() => (
   editor.tableFieldInstance(editor.selectedTableField)
 ))
 
+/**
+ * Should we show the table properties?
+ */
 const showTableProperties = computed(() => (
   selectedTable.value && !selectedTableField.value
 ))
 
+/**
+ * Should we show the table field properties?
+ */
 const showTableFieldProperties = computed(() => (
   selectedTable.value && selectedTableField.value
 ))
 
+/**
+ * Computes the selected table schema
+ */
 const selectedTableSchema = computed(() => (
   selectedTable.value
     ? omitFields(tableSchema, ['_id', 'fields', 'indexes'])
     : undefined
 ))
 
+/**
+ * Computes the selected table field schema
+ */
 const selectedSchemaFieldSchema = computed(() => (
   selectedTableField.value
     ? omitFields(tableFieldSchema, ['_id'])
@@ -213,13 +295,22 @@ const selectedSchemaFieldSchema = computed(() => (
  * Actions
  */
 
+/**
+ * Computes the selected action element instance
+ */
 const selectedActionElement = computed(() => editor.actionElementInstance(editor.selectedActionElement))
 
+/**
+ * Computes the selected action element action type
+ */
 const selectedAction = computed(() => (
   // eslint-disable-next-line no-underscore-dangle
   props.actions.find((a) => a.type === selectedActionElement.value?._type)
 ))
 
+/**
+ * Should we show the action element properties?
+ */
 const showActionElementProperties = computed(() => (
   selectedActionElement.value && selectedAction.value
 ))
