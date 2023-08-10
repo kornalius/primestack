@@ -186,7 +186,7 @@ const filteredFormSchema = computed(() => (
 const selectedTable = computed(() => editor.tableInstance(editor.selectedTable))
 
 const selectedTableField = computed(() => (
-  editor.tableFieldInstance(editor.selectedTableField, selectedTable.value)
+  editor.tableFieldInstance(editor.selectedTableField)
 ))
 
 const showTableProperties = computed(() => (

@@ -818,8 +818,13 @@ const extraFields = computed(() => (
  * @returns {Action} The new user's action
  */
 const createAction = (): Action => {
+  const act = editor.actionInstance(value.value)
+  if (act) {
+    editor.setActionId(act._id)
+    return act
+  }
+
   const a = editor.createAction(
-    value.value,
     omit(props.schema, ['properties', 'type', 'objectid', 'action']),
     true,
   )

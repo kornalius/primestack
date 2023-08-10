@@ -109,7 +109,7 @@ watch(() => props.id, () => {
 
 watch(() => props.fieldId, () => {
   if (props.fieldId) {
-    selectedTableField.value = [editor.tableFieldInstance(props.fieldId, selectedTable.value?.[0])]
+    selectedTableField.value = [editor.tableFieldInstance(props.fieldId)]
   }
 }, { immediate: true })
 
