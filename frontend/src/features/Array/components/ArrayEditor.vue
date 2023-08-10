@@ -5,6 +5,8 @@
       'items-center': horizontal,
     }"
   >
+    <!-- Start action buttons -->
+
     <div
       v-if="addButton === 'start' || addButton === undefined"
       :class="{
@@ -16,6 +18,8 @@
     >
       <div class="col">
         <slot name="actions" />
+
+        <!-- Clear button -->
 
         <q-btn
           v-if="clearable"
@@ -30,6 +34,8 @@
           @click="clear"
         />
 
+        <!-- Add button -->
+
         <q-btn
           :label="addLabel"
           :disable="disable || addDisable"
@@ -43,6 +49,8 @@
         />
       </div>
     </div>
+
+    <!-- Draggable area -->
 
     <div
       :class="{ 'inline-block': horizontal }"
@@ -78,6 +86,8 @@
             @focus="hover = index as number"
             @blur="hover = -1"
           >
+            <!-- Drag handle -->
+
             <div
               v-if="reorderable"
               class="q-mr-sm"
@@ -86,6 +96,8 @@
             >
               <q-icon class="drag-handle" name="mdi-drag" size="large" />
             </div>
+
+            <!-- Selection checkbox -->
 
             <div
               v-if="selectable && isItemSelectable(value)"
@@ -96,6 +108,8 @@
                 :val="itemKeyFor(value)"
               />
             </div>
+
+            <!-- Item -->
 
             <div
               :class="{ col: !horizontal, 'inline-block': horizontal }"
@@ -109,6 +123,8 @@
                 <div>{{ display(value) }}</div>
               </slot>
             </div>
+
+            <!-- Remove button -->
 
             <div
               class="q-mx-sm"
@@ -131,6 +147,8 @@
       </draggable>
     </div>
 
+    <!-- End actions -->
+
     <div
       v-if="addButton === 'end'"
       :class="{
@@ -144,6 +162,8 @@
       <div :class="{ col: !horizontal, 'inline-block': horizontal }">
         <slot name="actions" />
 
+        <!-- Clear button -->
+
         <q-btn
           v-if="clearable"
           class="q-mr-sm"
@@ -156,6 +176,8 @@
           flat
           @click="clear"
         />
+
+        <!-- Add button -->
 
         <q-btn
           :class="{ 'q-ml-sm': horizontal }"
@@ -182,6 +204,7 @@ import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { AnyData } from '@/shared/interfaces/commons'
 
 const props = defineProps<{
+  // Array to be edited
   modelValue: unknown[]
   // synched value for validifity of the array
   valid?: boolean
@@ -261,12 +284,24 @@ const emit = defineEmits<{
 
 const values = useModelValue(props, emit)
 
+/**
+ * Occurs when items order is changed
+ *
+ * @param evt
+ */
 const onChange = (evt: AnyData) => {
   if (evt.moved) {
     emit('moved', evt.moved.oldIndex, evt.moved.newIndex)
   }
 }
 
+/**
+ * Returns a computed item key
+ *
+ * @param item Item to get the item key from
+ *
+ * @returns {string} Key for the item
+ */
 const itemKeyFor = (item: unknown): string => (
   props.itemKey
     ? (props.itemKey as (item: unknown) => void)(item)
@@ -279,27 +314,52 @@ const hover = ref(-1)
  * Mutation methods
  */
 
-const addItem = () => {
+/**
+ * Add an item to the array
+ *
+ * @returns {unknown} Newly added item
+ */
+const addItem = (): unknown => {
   const newValue = props.addFunction()
   if (newValue) {
     emit('add', newValue)
   }
+  return newValue
 }
 
-const removeItem = (value: unknown) => {
+/**
+ * Removes an item from the array
+ *
+ * @param value Item to be removed
+ *
+ * @returns {boolean} True when successful
+ */
+const removeItem = (value: unknown): boolean => {
   const idx = values.value.indexOf(value)
   if (idx !== -1 && (!props.canRemove || props.canRemove(value))) {
     if (props.removeFunction) {
       props.removeFunction(value, idx)
     }
     emit('remove', value, idx)
+    return true
   }
+  return false
 }
 
+/**
+ * Emits a clear event
+ */
 const clear = () => {
   emit('clear')
 }
 
+/**
+ * Returns a display string for the item
+ *
+ * @param value Item to generate a display string from
+ *
+ * @returns {string} Display string for the item
+ */
 const display = (value: unknown): string => {
   if (typeof props.displayValue === 'string') {
     return value[props.displayValue] as string
@@ -309,15 +369,22 @@ const display = (value: unknown): string => {
   }
   return value as string
 }
+
 /**
  * Array validity
  */
 
-const isValid = computed(() => (
+/**
+ * Computes if the array is valid by checking for minimum and maximum length
+ */
+const isValid = computed((): boolean => (
   (props.min === 0 || values.value.length >= props.min)
   && (props.max === 0 || values.value.length <= props.max)
 ))
 
+/**
+ * When isValid changes, update its attached prop
+ */
 watch(isValid, () => {
   emit('update:valid', isValid.value)
 }, { immediate: true })
@@ -328,10 +395,20 @@ watch(isValid, () => {
 
 const currentSelection = useSyncedProp(props, 'selection', emit)
 
+/**
+ * Checks if an item is selectable
+ *
+ * @param value Item to check upon
+ *
+ * @returns {boolean} True if selectable
+ */
 const isItemSelectable = (value: unknown): boolean => (
   !props.canSelect || props.canSelect(value)
 )
 
+/**
+ * When the selection changes
+ */
 watch(currentSelection, (newValue, oldValue) => {
   newValue.forEach((v) => {
     if (!oldValue.includes(v)) {
