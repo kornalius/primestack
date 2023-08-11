@@ -1,0 +1,63 @@
+// Login
+POST http://localhost:3030/authentication
+Content-Type: application/json
+
+{
+  "strategy": "local",
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+> {% client.global.set("token", response.body.accessToken); %}
+###
+
+// List plans
+GET http://localhost:3030/plans
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+###
+
+// Create plans
+POST http://localhost:3030/plans
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "name": "Free",
+  "description": "Free plan",
+  "price": 0.0,
+  "items": [
+    "1 share",
+    "5 tables",
+    "100 records per table",
+    "25 files",
+    "10MB maximum file size"
+  ],
+  "maxShares": 1,
+  "maxTables": 5,
+  "maxRecords": 100,
+  "maxFiles": 25,
+  "maxFileSize": 10000
+}
+
+> {%
+  // client.log(response.body._id)
+  client.global.set("planId", response.body._id);
+%}
+###
+
+// Patch plans
+PATCH http://localhost:3030/plans/{{planId}}
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "_id": "{{planId}}",
+  "bestValue": true,
+  "color": "blue-1"
+}
+###

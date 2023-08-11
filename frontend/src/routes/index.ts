@@ -5,8 +5,9 @@ import Login from './login'
 import Menu from './menu'
 import Table from './table'
 import User from './user'
+import Plan from './plan'
 
-function lazyLoad(view) {
+function lazyLoad(view: string) {
   const dynamicPath = `../${view}.vue`
   return () => import(/* @vite-ignore */ dynamicPath)
 }
@@ -22,6 +23,7 @@ const routes = [
   ...Menu(lazyLoad),
   ...Table(lazyLoad),
   ...User(lazyLoad),
+  ...Plan(lazyLoad),
   // Always leave this as last one,
   // but you can also remove it
   {
