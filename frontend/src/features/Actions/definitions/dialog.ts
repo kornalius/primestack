@@ -2,7 +2,7 @@ import { Static } from '@feathersjs/typebox'
 import { AnyData } from '@/shared/interfaces/commons'
 import { actionElementSchema } from '@/shared/schemas/actions'
 import globalDialog from '@/shared/actions/dialog'
-import dialog from '../components/dialog.vue'
+import Dialog from '../components/dialog.vue'
 import { TFrontAction } from '../interface'
 // eslint-disable-next-line import/no-cycle
 import useActions from '../composites'
@@ -12,10 +12,10 @@ type ActionElement = Static<typeof actionElementSchema>
 export default {
   ...globalDialog,
   icon: 'mdi-dock-window',
-  color: 'red-4',
+  color: 'blue-4',
   childrenMessage: 'When user press the OK button...',
-  component: dialog,
-  exec: (args) => {
+  component: Dialog,
+  exec: async (args) => {
     args.quasar.dialog({
       title: args.title as string,
       persistent: true,

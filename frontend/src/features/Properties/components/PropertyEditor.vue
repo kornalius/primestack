@@ -207,7 +207,7 @@
         <!-- Label column -->
 
         <div
-          v-if="label && !embedLabel"
+          v-if="label && !embedLabel && type !== 'array'"
           class="col-auto q-mr-md"
           :class="{ 'q-mt-sm': type === 'array' }"
           style="width: 125px;"

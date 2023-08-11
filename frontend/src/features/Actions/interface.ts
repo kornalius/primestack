@@ -1,4 +1,5 @@
 import { QVueGlobals } from 'quasar'
+import { RouteLocationNormalizedLoaded, Router } from 'vue-router'
 import { Application } from '@feathersjs/client'
 import { Static } from '@feathersjs/typebox'
 import { TAction, TActionCategory } from '@/shared/interfaces/actions'
@@ -14,6 +15,8 @@ export interface TFrontActionExecOptions {
   api: Application<any, any>
   snacks: AnyData
   store: AnyData
+  route: RouteLocationNormalizedLoaded,
+  router: Router,
   [key: string]: unknown
 }
 
@@ -33,5 +36,5 @@ export interface TFrontAction extends TAction {
   // split schema keys into different categories and order items in the properties list
   categories?: Record<string, TActionCategory>
   // execute action command
-  exec?: (options: TFrontActionExecOptions) => void
+  exec?: (options: TFrontActionExecOptions) => Promise<void>
 }

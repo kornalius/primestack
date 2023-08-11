@@ -12,9 +12,9 @@ export interface TAction {
   // label for the action
   label: string | ((value?: AnyData) => string)
   // description for the action
-  description: string | ((value?: AnyData) => string)
+  description?: string | ((value?: AnyData) => string)
   // schema for the arguments for the action
-  schema: TSchema
+  schema?: TSchema
   // split schema keys into different categories and order items in the properties list
   categories?: Record<string, TActionCategory>
   // does this action accepts children element?

@@ -2,12 +2,15 @@ import omit from 'lodash/omit'
 import { Static } from '@feathersjs/typebox'
 import { AnyData } from '@/shared/interfaces/commons'
 import { actionElementSchema } from '@/shared/schemas/actions'
+import { fieldSchema } from '@/shared/actions/insert'
 // eslint-disable-next-line import/no-cycle
 import { actions } from './definitions'
 
 type ActionElement = Static<typeof actionElementSchema>
 
 type Action = Static<typeof actionElementSchema>
+
+type Field = Static<typeof fieldSchema>
 
 const actionsByType = (
   actions.reduce((acc, a) => (
@@ -91,4 +94,10 @@ export default () => ({
   },
 
   exec,
+
+  fieldsArrayToObject: (fields: Field[]): AnyData => (
+    fields.reduce((acc, f) => (
+      { ...acc, [f.name]: f.value }
+    ), {})
+  ),
 })

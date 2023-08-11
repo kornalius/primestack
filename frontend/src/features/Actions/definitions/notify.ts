@@ -1,7 +1,7 @@
 import hexObjectId from 'hex-object-id'
 import { TFrontAction } from '@/features/Actions/interface'
 import globalNotify from '@/shared/actions/notify'
-import notify from '../components/notify.vue'
+import Notify from '../components/notify.vue'
 
 export default {
   ...globalNotify,
@@ -24,8 +24,8 @@ export default {
     }
   },
   color: 'green-4',
-  component: notify,
-  exec: ({
+  component: Notify,
+  exec: async ({
     level,
     message,
     snacks,

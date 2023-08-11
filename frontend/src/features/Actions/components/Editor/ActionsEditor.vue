@@ -24,8 +24,27 @@
           @end="editor.setDragging(false)"
         >
           <template #item="{ element: value }">
+            <div
+              v-if="value.type === 'separator'"
+              class="row q-pa-sm q-my-sm bg-grey-8 items-center"
+            >
+              <div class="col-auto">
+                <q-icon
+                  :name="actionIcon(value)"
+                  :color="actionIconColor(value)"
+                  size="sm"
+                />
+              </div>
+
+              <div class="col q-ml-sm">
+                <span :class="`text-${actionColor(value)} text-bold`">
+                  {{ actionLabel(value) }}
+                </span>
+              </div>
+            </div>
+
             <q-btn
-              v-if="value.type !== ''"
+              v-else-if="value.type !== ''"
               class="action-button q-mx-sm"
               type="button"
               size="12px"
@@ -119,6 +138,13 @@ const unselectAll = () => {
   }
 }
 
+const actionColor = (action: TFrontAction) => {
+  if (typeof action.color === 'function') {
+    return action.color()
+  }
+  return action.color
+}
+
 const actionIconColor = (action: TFrontAction) => {
   if (typeof action.iconColor === 'function') {
     return action.iconColor()
@@ -126,10 +152,7 @@ const actionIconColor = (action: TFrontAction) => {
   if (action.iconColor) {
     return action.iconColor
   }
-  if (typeof action.color === 'function') {
-    return action.color()
-  }
-  return action.color
+  return actionColor(action)
 }
 
 const actionDescription = (action: TAction) => {

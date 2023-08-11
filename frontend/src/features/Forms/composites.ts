@@ -1,6 +1,6 @@
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { LRUCache } from 'lru-cache'
 import { Static, TSchema } from '@feathersjs/typebox'
 import startCase from 'lodash/startCase'
@@ -134,11 +134,11 @@ export default () => ({
 
     const userActions = ctx.api.service('actions').findOneInStore({ query: {} })?.value.list
 
-    const callEventAction = (id: string) => () => {
+    const callEventAction = (id: string) => async () => {
       const act = userActions.find((a: Action) => a._id === id)
       if (act) {
         // eslint-disable-next-line no-underscore-dangle
-        ctx.exec(act._actions, ctx)
+        await ctx.exec(act._actions, ctx)
       }
     }
 
@@ -220,6 +220,7 @@ export default () => ({
     const snacks = useSnacks()
     const store = useVariables()
     const route = useRoute()
+    const router = useRouter()
     const editor = useAppEditor()
 
     return {
@@ -230,6 +231,7 @@ export default () => ({
       t,
       store,
       route,
+      router,
       exec,
       doc,
     }
