@@ -9,10 +9,13 @@ export const schema = Type.Object(
     email: Type.String({ email: true }),
     // menuId to share
     menuid: Type.String({ objectid: true }),
-    read: Type.Boolean(),
-    create: Type.Boolean(),
-    update: Type.Boolean(),
-    delete: Type.Boolean(),
+    rules: Type.Array(Type.Object({
+      tableId: Type.String({ objectid: true, tableid: true }),
+      read: Type.Boolean(),
+      create: Type.Boolean(),
+      update: Type.Boolean(),
+      delete: Type.Boolean(),
+    })),
     disabled: Type.Boolean(),
     validFrom: Type.Optional(Type.String({ date: true })),
     validUntil: Type.Optional(Type.String({ date: true })),
