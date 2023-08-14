@@ -4,6 +4,7 @@ import health from './health/health.service'
 import users from './users/users.service'
 import groups from './groups/groups.service'
 import plans from './plans/plans.service'
+import shares from './shares/shares.service'
 import tables from './tables/tables.service'
 import menus from './menus/menus.service'
 import forms from './forms/forms.service'
@@ -21,6 +22,9 @@ export default function (app: Application): void {
 
   info('    - Plans')
   app.configure(plans)
+
+  info('    - Shares')
+  app.configure(shares)
 
   info('    - Tables')
   app.configure(tables)

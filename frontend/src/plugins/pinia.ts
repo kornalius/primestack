@@ -7,6 +7,7 @@ import health from '@/features/Health/service'
 import users from '@/features/Users/service'
 import groups from '@/features/Groups/service'
 import plans from '@/features/Plans/service'
+import shares from '@/features/Shares/service'
 import tables from '@/features/Tables/service'
 import menus from '@/features/Menus/service'
 import forms from '@/features/Forms/service'
@@ -51,6 +52,7 @@ export const api = createPiniaClient(feathersClient, {
     users,
     groups,
     plans,
+    shares,
     tables,
     menus,
     forms,

@@ -1,0 +1,53 @@
+// Login
+POST http://localhost:3030/authentication
+Content-Type: application/json
+
+{
+  "strategy": "local",
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+> {% client.global.set("token", response.body.accessToken); %}
+###
+
+// List shares
+GET http://localhost:3030/shares
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+###
+
+// Create shares
+POST http://localhost:3030/shares
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "userId": "",
+  "menuId": "",
+  "targetUserId": "",
+  "read": true,
+  "create": true,
+  "update": true,
+  "delete": true
+}
+
+> {%
+  // client.log(response.body._id)
+  client.global.set("shareId", response.body._id);
+%}
+###
+
+// Patch shares
+PATCH http://localhost:3030/shares/{{shareId}}
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "_id": "{{shareId}}"
+}
+###
