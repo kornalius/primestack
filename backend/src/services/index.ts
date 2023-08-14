@@ -2,6 +2,7 @@ import { Application } from '@/declarations'
 import { info } from '@/logger'
 import health from './health/health.service'
 import users from './users/users.service'
+import groups from './groups/groups.service'
 import plans from './plans/plans.service'
 import tables from './tables/tables.service'
 import menus from './menus/menus.service'
@@ -14,6 +15,9 @@ export default function (app: Application): void {
 
   info('    - Users')
   app.configure(users)
+
+  info('    - Groups')
+  app.configure(groups)
 
   info('    - Plans')
   app.configure(plans)

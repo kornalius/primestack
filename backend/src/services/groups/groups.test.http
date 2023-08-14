@@ -1,0 +1,57 @@
+// Login
+POST http://localhost:3030/authentication
+Content-Type: application/json
+
+{
+  "strategy": "local",
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+> {% client.global.set("token", response.body.accessToken); %}
+###
+
+// List groups
+GET http://localhost:3030/groups
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+###
+
+// Create groups
+POST http://localhost:3030/groups
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "name": "Admin",
+  "description": "Administrators",
+  "maxShares": -1,
+  "maxTables": -1,
+  "maxRecords": -1,
+  "maxFiles": -1,
+  "maxFileSize": -1,
+  "read": ["*"],
+  "create": ["*"],
+  "update": ["*"],
+  "delete": ["*"]
+}
+
+> {%
+  // client.log(response.body._id)
+  client.global.set("groupId", response.body._id);
+%}
+###
+
+// Patch groups
+PATCH http://localhost:3030/groups/{{groupId}}
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "_id": "{{groupId}}"
+}
+###
