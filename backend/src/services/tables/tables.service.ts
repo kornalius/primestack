@@ -11,6 +11,7 @@ import { AnyData } from '@/shared/interfaces/commons'
 import { info } from '@/logger'
 import diff from '@/diff-arrays'
 import { checkRule } from '@/hooks/checkRule'
+import { checkMaxRecords, checkMaxTables } from './tables.hooks'
 
 dataValidator.addSchema(schema)
 
@@ -18,6 +19,30 @@ const path = 'tables'
 const collection = 'tables'
 
 class Service extends MongoService {}
+
+const createDynamicService = (app: Application, id: string, t: AnyData) => {
+  info(`Creating user service ${id}...`)
+
+  createService(id, Service, {
+    collection: id,
+    schema: fieldsToSchema(t.fields, id) as TObject,
+    indexes: indexesToMongo(t.indexes),
+    methods: t.methods,
+    created: t.created,
+    updated: t.updated,
+    user: t.user,
+    hooks: {
+      before: {
+        all: [
+          checkRule,
+        ],
+        create: [
+          checkMaxRecords,
+        ]
+      }
+    }
+  }).init(app, {})
+}
 
 const updateCollections = (context: HookContext) => {
   if (context.data?.list) {
@@ -31,21 +56,14 @@ const updateCollections = (context: HookContext) => {
     const toUpdate: AnyData[] = [...d.added, ...d.updated]
 
     toRemove.forEach(async (t) => {
+      info(`Unusing user service ${t._id.toString()}...`)
       await context.app.unuse(t._id.toString())
     })
 
     toUpdate.forEach(async (t) => {
       const id = t._id.toString()
       await context.app.unuse(id)
-      createService(id, Service, {
-        collection: id,
-        schema: fieldsToSchema(t.fields, id) as TObject,
-        indexes: indexesToMongo(t.indexes),
-        methods: t.methods,
-        created: t.created,
-        updated: t.updated,
-        user: t.user,
-      }).init(context.app, {})
+      createDynamicService(context.app, id, t)
     })
   }
 
@@ -70,7 +88,13 @@ export default function (app: Application): void {
     hooks: {
       before: {
         all: [],
-        patch: [loadPrev, updateCollections],
+        create: [
+          checkMaxTables,
+        ],
+        patch: [
+          loadPrev,
+          updateCollections,
+        ],
       },
     },
   }).init(app, {})
@@ -81,23 +105,7 @@ export default function (app: Application): void {
       data.forEach((d: AnyData) => {
         d.list.forEach((t: AnyData) => {
           const id = t._id.toString()
-          info(`Creating user service ${id}...`)
-          createService(id, Service, {
-            collection: id,
-            schema: fieldsToSchema(t.fields, id) as TObject,
-            indexes: indexesToMongo(t.indexes),
-            methods: t.methods,
-            created: t.created,
-            updated: t.updated,
-            user: t.user,
-            hooks: {
-              before: {
-                all: [
-                  checkRule,
-                ]
-              }
-            }
-          }).init(app, {})
+          createDynamicService(app, id, t)
         })
       })
     })

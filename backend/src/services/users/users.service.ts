@@ -20,109 +20,147 @@ class Service extends MongoService {}
 type Rule = Static<typeof ruleSchema>
 type Maxes = Static<typeof maxSchema>
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const getItems = (context: HookContext): any => {
+  const items = context.type === 'before' ? context.data : context.result
+  return items && (context.method === 'find' ? (items.data || items) : items)
+}
+
 /**
  * Aggregates the user's plan, group, share and its own rules into a single array of rules
  *
  * @param shareRules Optional share rules array
  */
-const aggregateRules = (shareRules: Rule[] = []) => async (context: HookContext): Promise<HookContext> => {
-  const planRules = context.result.planId
-    ? (await context.app.service('plans').get(context.result.planId))?.rules || []
-    : []
-
-  const groupRules = context.result.groupId
-    ? (await context.app.service('groups').get(context.result.groupId))?.rules || []
-    : []
-
-  const userRules = context.result.rules || []
-
-  const rules: Rule[] = []
-
-  const mixRules = (rulesToMix: Rule[], sharedRules?: boolean) => {
-    const mixRule = (a: boolean, b: boolean): boolean => {
-      if (a && !b) {
-        return false
-      }
-      return !a && b
+const aggregateRules = (shareRules: Rule[] = []) => (
+  async (context: HookContext): Promise<HookContext> => {
+    if (context.method === 'remove') {
+      return context
     }
 
-    rulesToMix.forEach((r) => {
-      // means all tables (all tables in shared rules should not be possible)
-      if (r.tableId === undefined && !sharedRules) {
-        rules.length = 0
-        rules.push(r)
-        return
+    const mixItem = async (item: AnyData) => {
+      const userRules = item.rules || []
+
+      const rules: Rule[] = []
+
+      const mixRules = (rulesToMix: Rule[], sharedRules?: boolean) => {
+        const mixRule = (a: boolean, b: boolean): boolean => {
+          if (a && !b) {
+            return false
+          }
+          return !a && b
+        }
+
+        rulesToMix.forEach((r) => {
+          // means all tables (all tables in shared rules should not be possible)
+          if (r.tableId === undefined && !sharedRules) {
+            rules.length = 0
+            rules.push(r)
+            return
+          }
+
+          const found = rules.find((rr) => rr.tableId === r.tableId)
+          if (found) {
+            found.read = mixRule(found.read, r.read)
+            found.create = mixRule(found.create, r.create)
+            found.update = mixRule(found.update, r.update)
+            found.delete = mixRule(found.delete, r.delete)
+            return
+          }
+
+          rules.push(r)
+        })
       }
 
-      const found = rules.find((rr) => rr.tableId === r.tableId)
-      if (found) {
-        found.read = mixRule(found.read, r.read)
-        found.create = mixRule(found.create, r.create)
-        found.update = mixRule(found.update, r.update)
-        found.delete = mixRule(found.delete, r.delete)
-        return
-      }
+      const planRules = item.planId
+        ? (await context.app.service('plans').get(item.planId))?.rules || []
+        : []
 
-      rules.push(r)
-    })
+      const groupRules = item.groupId
+        ? (await context.app.service('groups').get(item.groupId))?.rules || []
+        : []
+
+      mixRules(planRules)
+      mixRules(groupRules)
+      mixRules(shareRules, true)
+      mixRules(userRules)
+
+      // eslint-disable-next-line no-param-reassign
+      item.rights = { rules }
+    }
+
+    const items = getItems(context)
+
+    if (Array.isArray(items)) {
+      await Promise.all(items.map((i) => mixItem(i)))
+    } else {
+      await mixItem(items)
+    }
+
+    return context
   }
-
-  mixRules(planRules)
-  mixRules(groupRules)
-  mixRules(shareRules, true)
-  mixRules(userRules)
-
-  context.result.rules = rules
-
-  return context
-}
+)
 
 /**
  * Aggregates the user's plan, group, share and its own maximums into a single array of maximums
  */
 const aggregateMaxes = () => async (context: HookContext): Promise<HookContext> => {
-  const plan = context.result.planId
-    ? await context.app.service('plans').get(context.result.planId)
-    : undefined
-
-  const group = context.result.groupId
-    ? await context.app.service('groups').get(context.result.groupId)
-    : undefined
-
-  const user = context.result
-
-  const maxes: Maxes = {
-    maxShares: 0,
-    maxRecords: 0,
-    maxTables: 0,
-    maxFiles: 0,
-    maxFileSize: 0,
+  if (context.method === 'remove') {
+    return context
   }
 
-  const mixMaxes = (maxesToMix: Maxes) => {
-    const mixMax = (a: number, b: number) => {
-      if (b !== -1 && (a === -1 || a > b)) {
-        return a
-      }
-      return b
+  const mixItem = async (item: AnyData) => {
+    const plan = item.planId
+      ? await context.app.service('plans').get(item.planId)
+      : undefined
+
+    const group = item.groupId
+      ? await context.app.service('groups').get(item.groupId)
+      : undefined
+
+    const user = item
+
+    const maxes: Maxes = {
+      maxShares: 0,
+      maxRecords: 0,
+      maxTables: 0,
+      maxFiles: 0,
+      maxFileSize: 0,
     }
 
-    maxes.maxShares = mixMax(maxesToMix.maxShares, maxes.maxShares)
-    maxes.maxRecords = mixMax(maxesToMix.maxRecords, maxes.maxRecords)
-    maxes.maxTables = mixMax(maxesToMix.maxTables, maxes.maxTables)
-    maxes.maxFiles = mixMax(maxesToMix.maxFiles, maxes.maxFiles)
-    maxes.maxFileSize = mixMax(maxesToMix.maxFileSize, maxes.maxFileSize)
+    const mixMaxes = (maxesToMix: AnyData) => {
+      const mixMax = (a: number, b: number) => {
+        if (b !== -1 && (a === -1 || a > b)) {
+          return a
+        }
+        return b
+      }
+
+      maxes.maxShares = mixMax(maxesToMix.maxShares, maxes.maxShares)
+      maxes.maxRecords = mixMax(maxesToMix.maxRecords, maxes.maxRecords)
+      maxes.maxTables = mixMax(maxesToMix.maxTables, maxes.maxTables)
+      maxes.maxFiles = mixMax(maxesToMix.maxFiles, maxes.maxFiles)
+      maxes.maxFileSize = mixMax(maxesToMix.maxFileSize, maxes.maxFileSize)
+    }
+
+    if (plan) {
+      mixMaxes(plan)
+    }
+    if (group) {
+      mixMaxes(group)
+    }
+    mixMaxes(user)
+
+    // eslint-disable-next-line no-param-reassign
+    item.rights.maxes = maxes
   }
 
-  if (plan) {
-    mixMaxes(plan)
-  }
-  if (group) {
-    mixMaxes(group)
-  }
-  mixMaxes(user)
+  const items = getItems(context)
 
-  context.result.maxes = maxes
+  if (Array.isArray(items)) {
+    await Promise.all(items.map((i) => mixItem(i)))
+  } else {
+    await mixItem(items)
+  }
 
   return context
 }
@@ -173,8 +211,10 @@ const service = createService(path, Service, {
       remove: [authenticate('jwt')]
     },
     after: {
-      all: [],
-      get: [aggregateRules(), aggregateMaxes()],
+      all: [
+        aggregateRules(),
+        aggregateMaxes(),
+      ],
     },
   }
 })
