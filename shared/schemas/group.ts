@@ -1,19 +1,12 @@
 import { Type } from '@feathersjs/typebox'
+import { schema as maxSchema, ruleSchema } from './rule'
 
-export const schema = Type.Object(
-  {
+export const schema = Type.Intersect([
+  Type.Object({
     _id: Type.String({ objectid: true }),
     name: Type.String(),
     description: Type.String(),
-    maxShares: Type.Integer(),
-    maxTables: Type.Integer(),
-    maxRecords: Type.Integer(),
-    maxFiles: Type.Integer(),
-    maxFileSize: Type.Integer(),
-    read: Type.Array(Type.String()),
-    create: Type.Array(Type.String()),
-    update: Type.Array(Type.String()),
-    delete: Type.Array(Type.String()),
-  },
-  { $id: 'Group', additionalProperties: false },
-)
+    rules: Type.Array(ruleSchema),
+  }),
+  maxSchema,
+], { $id: 'Group', additionalProperties: false })

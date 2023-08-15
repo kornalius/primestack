@@ -1,4 +1,5 @@
 import { Type } from '@feathersjs/typebox'
+import { schema as ruleSchema } from './rule'
 
 export const schema = Type.Object(
   {
@@ -9,13 +10,7 @@ export const schema = Type.Object(
     email: Type.String({ email: true }),
     // menuId to share
     menuid: Type.String({ objectid: true }),
-    rules: Type.Array(Type.Object({
-      tableId: Type.String({ objectid: true, tableid: true }),
-      read: Type.Boolean(),
-      create: Type.Boolean(),
-      update: Type.Boolean(),
-      delete: Type.Boolean(),
-    })),
+    rules: Type.Array(ruleSchema),
     disabled: Type.Boolean(),
     validFrom: Type.Optional(Type.String({ date: true })),
     validUntil: Type.Optional(Type.String({ date: true })),
