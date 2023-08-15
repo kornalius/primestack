@@ -1,10 +1,20 @@
-// Get version
+// Create test user
+// Don't forget to create the admin group first
 POST http://localhost:3030/users
 Accept: application/json
 Content-Type: application/json
 
 {
   "email": "arianesoftinc@gmail.com",
-  "password": "molson"
+  "password": "molson",
+  "firstname": "Alain",
+  "lastname": "Deschênes",
+  "groupid": "{{groupId}}",
+  "maxShares": 0,
+  "maxTables": 0,
+  "maxRecords": 0,
+  "maxFiles": 0,
+  "maxFileSize": 0,
+  "rules": []
 }
 ###

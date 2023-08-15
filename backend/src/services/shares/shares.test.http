@@ -29,10 +29,15 @@ Authorization: {{token}}
   "userId": "",
   "menuId": "",
   "targetUserId": "",
-  "read": true,
-  "create": true,
-  "update": true,
-  "delete": true
+  "rules": [
+    {
+      "tableId": "",
+      "read": true,
+      "create": true,
+      "update": true,
+      "delete": true
+    }
+  ]
 }
 
 > {%

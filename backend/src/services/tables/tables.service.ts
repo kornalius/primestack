@@ -10,6 +10,7 @@ import { fieldsToSchema, indexesToMongo } from '@/shared/schema'
 import { AnyData } from '@/shared/interfaces/commons'
 import { info } from '@/logger'
 import diff from '@/diff-arrays'
+import { checkRule } from '@/hooks/checkRule'
 
 dataValidator.addSchema(schema)
 
@@ -89,6 +90,13 @@ export default function (app: Application): void {
             created: t.created,
             updated: t.updated,
             user: t.user,
+            hooks: {
+              before: {
+                all: [
+                  checkRule,
+                ]
+              }
+            }
           }).init(app, {})
         })
       })

@@ -33,10 +33,14 @@ Authorization: {{token}}
   "maxRecords": -1,
   "maxFiles": -1,
   "maxFileSize": -1,
-  "read": ["*"],
-  "create": ["*"],
-  "update": ["*"],
-  "delete": ["*"]
+  "rules": [
+    {
+      "read": true,
+      "create": true,
+      "update": true,
+      "delete": true
+    }
+  ]
 }
 
 > {%

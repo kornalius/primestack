@@ -1,7 +1,8 @@
 import { Type } from '@feathersjs/typebox'
+import { schema as maxSchema, ruleSchema } from './rule'
 
-export const schema = Type.Object(
-  {
+export const schema = Type.Intersect([
+  Type.Object({
     _id: Type.String({ objectid: true }),
     email: Type.String({ format: 'email' }),
     password: Type.Optional(Type.String()),
@@ -13,6 +14,9 @@ export const schema = Type.Object(
     twitterId: Type.Optional(Type.String()),
     githubId: Type.Optional(Type.String()),
     auth0Id: Type.Optional(Type.String()),
-  },
-  { $id: 'User', additionalProperties: false }
-)
+    planId: Type.Optional(Type.String({ objectid: true, service: 'plans' })),
+    groupId: Type.Optional(Type.String({ objectid: true, service: 'groups' })),
+    rules: Type.Array(ruleSchema),
+  }),
+  maxSchema,
+], { $id: 'User', additionalProperties: false })

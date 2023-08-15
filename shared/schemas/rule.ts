@@ -14,4 +14,4 @@ export const schema = Type.Object({
   maxRecords: Type.Integer(),
   maxFiles: Type.Integer(),
   maxFileSize: Type.Integer(),
-}, { $id: 'Rule', additionalProperties: false })
+}, { $id: 'Max', additionalProperties: false })
