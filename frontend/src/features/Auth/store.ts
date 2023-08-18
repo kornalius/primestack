@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { feathersClient as app } from '@/feathers'
 import { AnyData } from '@/shared/interfaces/commons'
 
-export default defineStore('auth', () => {
+export const useAuth = defineStore('auth', () => {
   const states = ref({
     processing: false,
     authenticated: false,

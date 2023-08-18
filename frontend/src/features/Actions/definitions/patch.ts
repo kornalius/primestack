@@ -3,7 +3,7 @@ import globalPatch from '@/shared/actions/patch'
 import { useQuery } from '@/features/Query/composites'
 import { QueryGroup } from '@/shared/interfaces/query'
 // eslint-disable-next-line import/no-cycle
-import useActions from '../composites'
+import { useActions } from '../composites'
 
 export default {
   ...globalPatch,

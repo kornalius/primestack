@@ -1,5 +1,5 @@
 import hotkeys from 'hotkeys-js'
-import useAppEditor from '@/features/App/store'
+import { useAppEditor } from '@/features/App/store'
 
 hotkeys.setScope('app')
 

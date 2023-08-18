@@ -25,7 +25,7 @@ import { computed } from 'vue'
 import hljs from 'highlight.js'
 import json from 'highlight.js/lib/languages/json'
 // eslint-disable-next-line import/no-cycle
-import useActions from '@/features/Actions/composites'
+import { useActions } from '@/features/Actions/composites'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useFeathers } from '@/composites/feathers'
 

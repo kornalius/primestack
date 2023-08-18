@@ -60,9 +60,9 @@ import { TSchema } from '@feathersjs/typebox'
 import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 // eslint-disable-next-line import/no-cycle
-import useAppEditor from '@/features/App/store'
+import { useAppEditor } from '@/features/App/store'
 // eslint-disable-next-line import/no-cycle
-import useFormElements from '@/features/Forms/composites'
+import { useFormElements } from '@/features/Forms/composites'
 import FieldsEditor from './FieldsEditor.vue'
 
 const props = defineProps<{

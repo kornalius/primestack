@@ -41,7 +41,7 @@ import { computed } from 'vue'
 import { TSchema } from '@feathersjs/typebox'
 import { TFormColumn, TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
-import useFormElements from '@/features/Forms/composites'
+import { useFormElements } from '@/features/Forms/composites'
 import FormDisplay from './FormDisplay.vue'
 
 const props = defineProps<{

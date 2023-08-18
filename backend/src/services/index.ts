@@ -9,6 +9,8 @@ import tables from './tables/tables.service'
 import menus from './menus/menus.service'
 import forms from './forms/forms.service'
 import actions from './actions/actions.service'
+import files from './files/files.service'
+import uploads from './uploads/uploads.service'
 
 export default function (app: Application): void {
   info('    - Health Check')
@@ -37,4 +39,10 @@ export default function (app: Application): void {
 
   info('    - Actions')
   app.configure(actions)
+
+  info('    - Uploads')
+  app.configure(uploads)
+
+  info('    - Files')
+  app.configure(files)
 }

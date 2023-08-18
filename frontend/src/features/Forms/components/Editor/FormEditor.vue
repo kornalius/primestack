@@ -66,7 +66,7 @@ import { useModelValue } from '@/composites/prop'
 import { formSchema } from '@/shared/schemas/form'
 import { tableFieldSchema } from '@/shared/schemas/table'
 import { AnyData } from '@/shared/interfaces/commons'
-import useAppEditor from '@/features/App/store'
+import { useAppEditor } from '@/features/App/store'
 import FieldsEditor from './FieldsEditor.vue'
 
 type Form = Static<typeof formSchema>

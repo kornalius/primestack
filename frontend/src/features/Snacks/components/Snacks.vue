@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import useSnacks from '@/features/Snacks/store'
+import { useSnacks } from '@/features/Snacks/store'
 
 const {
   snacks,

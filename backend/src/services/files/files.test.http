@@ -1,0 +1,50 @@
+// Login
+POST http://localhost:3030/authentication
+Content-Type: application/json
+
+{
+  "strategy": "local",
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+> {% client.global.set("token", response.body.accessToken); %}
+###
+
+// List files
+GET http://localhost:3030/files
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+###
+
+// Create files
+POST http://localhost:3030/files
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "originalFilename": "Myfile.txt",
+  "mimetype": "text/plain",
+  "size": 10,
+  "encoding": "utf-8"
+}
+
+> {%
+  // client.log(response.body._id)
+  client.global.set("fileId", response.body._id);
+%}
+###
+
+// Patch files
+PATCH http://localhost:3030/files/{{fileId}}
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "_id": "{{fileId}}"
+}
+###

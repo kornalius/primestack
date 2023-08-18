@@ -6,6 +6,7 @@ import Menu from './menu'
 import Table from './table'
 import User from './user'
 import Plan from './plan'
+import Upload from './upload'
 
 function lazyLoad(view: string) {
   const dynamicPath = `../${view}.vue`
@@ -24,6 +25,7 @@ const routes = [
   ...Table(lazyLoad),
   ...User(lazyLoad),
   ...Plan(lazyLoad),
+  ...Upload(lazyLoad),
   // Always leave this as last one,
   // but you can also remove it
   {

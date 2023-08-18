@@ -3,7 +3,7 @@ import omit from 'lodash/omit'
 import cloneDeep from 'lodash/cloneDeep'
 import difference from 'lodash/difference'
 // eslint-disable-next-line import/no-cycle
-import { CreateServiceOptions, HookContext } from '@/declarations'
+import { CreateSchemalessServiceOptions, CreateServiceOptions, HookContext } from '@/declarations'
 import {
   getValidator, querySyntax, Static, Type
 } from '@feathersjs/typebox'
@@ -31,7 +31,7 @@ export interface ServiceOptions {
 }
 
 export class BaseService {
-  private app: Application
+  public app: Application
 
   constructor(options: ServiceOptions) {
     this.app = options.app
@@ -43,7 +43,7 @@ export class BaseService {
 export class MongoService<ServiceParams extends Params = Params> extends MongoDBService<
   AnyData,
   AnyData,
-  AnyData,
+  Params,
   AnyData
 > {}
 
@@ -438,6 +438,147 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
       app.use(name, new klass(o), {
         methods: options.methods,
         events: [],
+        koa: options.middlewares,
+      })
+
+      // Get our initialized service so that we can register hooks
+      app.service(name)
+        .hooks(hooks)
+    }
+  }
+}
+
+export const createSchemalessService = (name: string, klass: Newable<AnyData>, options: CreateSchemalessServiceOptions) => {
+  /**
+   * Hooks
+   */
+
+  const expandHooks = (path: string): HookFunction<Application, AnyData>[] => {
+    const h = get(options.hooks, path)
+    if (!h) {
+      return []
+    }
+    return Array.isArray(h) ? h : [h]
+  }
+
+  const hooks = {
+    around: {
+      all: [
+        options.authentication
+          ? authenticate('jwt')
+          : (context: HookContext, next: NextFunction) => next(),
+        ...(options.hooks?.around?.all || []),
+      ],
+      find: [
+        ...(options.hooks?.around?.find || []),
+      ],
+      get: [
+        ...(options.hooks?.around?.get || []),
+      ],
+      create: [
+        ...(options.hooks?.around?.create || []),
+      ],
+      update: [
+        ...(options.hooks?.around?.update || []),
+      ],
+      patch: [
+        ...(options.hooks?.around?.patch || []),
+      ],
+      remove: [
+        ...(options.hooks?.around?.remove || []),
+      ],
+    },
+    before: {
+      all: [
+        ...expandHooks('before.all'),
+      ],
+      find: [
+        ...expandHooks('before.find'),
+      ],
+      get: [
+        ...expandHooks('before.get'),
+      ],
+      create: [
+        ...expandHooks('before.create'),
+      ],
+      update: [
+        ...expandHooks('before.update'),
+      ],
+      patch: [
+        ...expandHooks('before.patch'),
+      ],
+      remove: [
+        ...(options.softDelete ? [softDelete] : []),
+        ...expandHooks('before.remove'),
+      ],
+    },
+    after: {
+      all: [
+        ...expandHooks('after.all'),
+      ],
+      find: [
+        ...expandHooks('after.find'),
+      ],
+      get: [
+        ...expandHooks('after.get'),
+      ],
+      create: [
+        ...expandHooks('after.create'),
+      ],
+      update: [
+        ...expandHooks('after.update'),
+      ],
+      patch: [
+        ...expandHooks('after.patch'),
+      ],
+      remove: [
+        ...expandHooks('after.remove'),
+      ],
+    },
+    error: {
+      all: [
+        ...expandHooks('error.all'),
+      ],
+      find: [
+        ...expandHooks('error.find'),
+      ],
+      get: [
+        ...expandHooks('error.get'),
+      ],
+      create: [
+        ...expandHooks('error.create'),
+      ],
+      update: [
+        ...expandHooks('error.update'),
+      ],
+      patch: [
+        ...expandHooks('error.patch'),
+      ],
+      remove: [
+        ...expandHooks('error.remove'),
+      ],
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } as any
+
+  return {
+    hooks,
+
+    init: (app: Application, _options: AnyData): void => {
+      const { paginate } = options
+
+      const o = {
+        app,
+        paginate: paginate || app.get('paginate'),
+        ..._options,
+      }
+
+      // Initialize our service with any options it requires
+      // eslint-disable-next-line new-cap
+      app.use(name, new klass(o), {
+        methods: options.methods,
+        events: [],
+        koa: options.middlewares,
       })
 
       // Get our initialized service so that we can register hooks

@@ -102,7 +102,7 @@
 import { computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import draggable from 'vuedraggable'
-import useAppEditor from '@/features/App/store'
+import { useAppEditor } from '@/features/App/store'
 import { TAction } from '@/shared/interfaces/actions'
 import { useModelValue } from '@/composites/prop'
 import { actionElementSchema } from '@/shared/schemas/actions'

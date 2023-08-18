@@ -56,7 +56,7 @@ import {
 } from 'vue'
 import { useRouter } from 'vue-router'
 import { Static } from '@feathersjs/typebox'
-import useAppEditor from '@/features/App/store'
+import { useAppEditor } from '@/features/App/store'
 import { useUrl } from '@/composites/url'
 import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
 import SchemaTable from '@/features/Fields/components/SchemaTable.vue'

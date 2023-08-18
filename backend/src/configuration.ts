@@ -11,6 +11,7 @@ export const configurationSchema = Type.Intersect([
     host: Type.String(),
     port: Type.Number(),
     public: Type.String(),
+    uploadsPath: Type.String(),
     debug: Type.Optional(Type.String()),
     socketsListeners: Type.Optional(Type.Number()),
     wsPath: Type.Optional(Type.String()),

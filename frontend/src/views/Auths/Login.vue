@@ -73,12 +73,12 @@
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import useAuth from '@/features/Auth/store'
-import useValidator from '@/features/Validation/composites'
+import { useAuth } from '@/features/Auth/store'
+import { useValidators } from '@/features/Validation/composites'
 
 const { t } = useI18n()
 
-const { required: isRequired, email: isEmail } = useValidator()
+const { required: isRequired, email: isEmail } = useValidators()
 
 const auth = useAuth()
 

@@ -66,7 +66,7 @@ import { useModelValue } from '@/composites/prop'
 import { tableFieldSchema } from '@/shared/schemas/table'
 import { defaultValueForSchema } from '@/shared/schema'
 import { QueryCriteria } from '@/shared/interfaces/query'
-import useAppEditor from '@/features/App/store'
+import { useAppEditor } from '@/features/App/store'
 import TableFieldSelect from '@/features/Fields/components/TableFieldSelect.vue'
 
 type TableFieldSchema = Static<typeof tableFieldSchema>

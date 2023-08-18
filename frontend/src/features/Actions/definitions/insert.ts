@@ -1,7 +1,7 @@
 import { TFrontAction } from '@/features/Actions/interface'
 import globalInsert from '@/shared/actions/insert'
 // eslint-disable-next-line import/no-cycle
-import useActions from '../composites'
+import { useActions } from '../composites'
 import Insert from '../components/insert.vue'
 
 export default {

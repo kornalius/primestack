@@ -9,16 +9,16 @@ import expr2fn from 'expr2fn'
 import { TFormColumn, TFormField } from '@/shared/interfaces/forms'
 import { AnyData, T18N } from '@/shared/interfaces/commons'
 import { components, componentForType, componentForField } from '@/features/Components'
-import useValidators from '@/features/Validation/composites'
+import { useValidators } from '@/features/Validation/composites'
 import { columnSchema, fieldSchema } from '@/shared/schemas/form'
 import { getTypeFor } from '@/shared/schema'
 import { actionSchema } from '@/shared/schemas/actions'
 import { useFeathers } from '@/composites/feathers'
-import useActions from '@/features/Actions/composites'
-import useSnacks from '@/features/Snacks/store'
-import useVariables from '@/features/Variables/store'
+import { useActions } from '@/features/Actions/composites'
+import { useSnacks } from '@/features/Snacks/store'
+import { useVariables } from '@/features/Variables/store'
 // eslint-disable-next-line import/no-cycle
-import useAppEditor from '@/features/App/store'
+import { useAppEditor } from '@/features/App/store'
 
 type FormField = Static<typeof fieldSchema>
 type FormColumn = Static<typeof columnSchema>
@@ -91,7 +91,7 @@ const getProp = (field: TFormField | TFormColumn, propName: string, ctx: AnyData
   return isExpr(v) ? runExpr(exprCode(v), ctx) : v
 }
 
-export default () => ({
+export const useFormElements = () => ({
   componentForField,
 
   componentForType,

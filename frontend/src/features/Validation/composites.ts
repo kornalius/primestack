@@ -29,7 +29,7 @@ import semver from './rules/semver'
 import latlong from './rules/latlong'
 import postalcode from './rules/postalcode'
 
-export default () => ({
+export const useValidators = () => ({
   required,
   email,
   phone,

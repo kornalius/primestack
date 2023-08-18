@@ -3,7 +3,7 @@ import { stripSlashes } from '@feathersjs/commons'
 import socketio from '@feathersjs/socketio-client'
 import authentication from '@feathersjs/authentication-client'
 import io from 'socket.io-client'
-import useSnacks from '@/features/Snacks/store'
+import { useSnacks } from '@/features/Snacks/store'
 import { getEnv } from './utils/variables'
 
 const API_URL = getEnv(import.meta.env.VITE_API_URL) as string
@@ -54,11 +54,11 @@ export const hooks = {
   populateHeader() {
     return (context: HookContext): HookContext => {
       const { app, params: { token } } = context
-      const { authentication } = app
+      const { authentication: auth } = app
 
       // Set REST header if necessary
       if (app.rest && token) {
-        const { scheme, header } = authentication.options
+        const { scheme, header } = auth.options
         const authHeader = `${scheme} ${token}`
 
         // eslint-disable-next-line no-param-reassign

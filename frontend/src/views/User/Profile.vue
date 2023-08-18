@@ -115,7 +115,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useFeathers } from '@/composites/feathers'
-import useAuth from '@/features/Auth/store'
+import { useAuth } from '@/features/Auth/store'
 
 const { api } = useFeathers()
 

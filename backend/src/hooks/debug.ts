@@ -3,6 +3,12 @@ import { HookContext } from '@/declarations'
 import { info } from '@/logger'
 
 export const debug = async (context: HookContext, next: NextFunction) => {
+  // internal calls
+  if (context.params.provider === undefined) {
+    await next()
+    return
+  }
+
   const startTime = Date.now()
 
   const {

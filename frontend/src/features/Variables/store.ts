@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 
-export default defineStore('variables', () => {
+export const useVariables = defineStore('variables', () => {
   const states = ref({})
 
   const variableNames = computed(() => Object.keys(states.value))

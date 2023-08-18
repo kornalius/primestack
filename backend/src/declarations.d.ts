@@ -6,7 +6,7 @@ import {
   NextFunction,
   PaginationOptions,
 } from '@feathersjs/feathers'
-import { Application as FeathersApplication } from '@feathersjs/koa'
+import { Application as FeathersApplication, Middleware } from '@feathersjs/koa'
 import { TObject } from '@feathersjs/typebox'
 import { Index } from '@/shared/schema'
 // eslint-disable-next-line import/no-cycle
@@ -116,4 +116,11 @@ export interface CreateServiceOptions {
   validators?: CreateServiceValidators
   // service resolvers
   resolvers?: CreateServiceResolvers
+  // service middlewares
+  middlewares?: {
+    before?: Middleware[]
+    after?: Middleware[]
+  }
 }
+
+export type CreateSchemalessServiceOptions = Omit<CreateServiceOptions, 'schema'>

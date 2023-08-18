@@ -64,7 +64,7 @@ import { ref } from 'vue'
 import draggable from 'vuedraggable'
 import startCase from 'lodash/startCase'
 import { useSyncedProp } from '@/composites/prop'
-import useAppEditor from '@/features/App/store'
+import { useAppEditor } from '@/features/App/store'
 import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
 
 const props = defineProps<{

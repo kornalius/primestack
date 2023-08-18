@@ -71,7 +71,7 @@ const flattenActions = (acts: ActionElement[]): ActionElement[] => {
   return flattended
 }
 
-export default () => ({
+export const useActions = () => ({
   componentForAction,
 
   actionsByType,

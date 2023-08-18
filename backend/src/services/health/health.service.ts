@@ -27,7 +27,7 @@ export default function (app: Application): void {
   createService(path, Service, {
     schema,
     methods: ['get'],
-  }).init(app, { app })
+  }).init(app, {})
 }
 
 // Add this service to the service type index

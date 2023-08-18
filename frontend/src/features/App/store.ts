@@ -9,11 +9,11 @@ import { defineStore } from 'pinia'
 import hotkeys from 'hotkeys-js'
 import { useFeathers } from '@/composites/feathers'
 import cloneDeep from 'lodash/cloneDeep'
-import useSnacks from '@/features/Snacks/store'
+import { useSnacks } from '@/features/Snacks/store'
 import { AnyData } from '@/shared/interfaces/commons'
 // eslint-disable-next-line import/no-cycle
-import useFormElements from '@/features/Forms/composites'
-import useActions from '@/features/Actions/composites'
+import { useFormElements } from '@/features/Forms/composites'
+import { useActions } from '@/features/Actions/composites'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
 import { fieldSchema, formSchema } from '@/shared/schemas/form'
 import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
@@ -42,7 +42,7 @@ const { flattenActions } = useActions()
 
 const { flattenFields } = useFormElements()
 
-export default defineStore('app-editor', () => {
+export const useAppEditor = defineStore('app-editor', () => {
   const states = ref({
     // are we in an editing session or not?
     active: false,

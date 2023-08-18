@@ -5,7 +5,7 @@ import { Snack } from '@/shared/interfaces/snacks'
 
 const hideDelay = 5000
 
-export default defineStore('snacks', () => {
+export const useSnacks = defineStore('snacks', () => {
   const states = ref([])
 
   const snacks = computed(() => states.value)

@@ -5,7 +5,7 @@ import globalDialog from '@/shared/actions/dialog'
 import Dialog from '../components/dialog.vue'
 import { TFrontAction } from '../interface'
 // eslint-disable-next-line import/no-cycle
-import useActions from '../composites'
+import { useActions } from '../composites'
 
 type ActionElement = Static<typeof actionElementSchema>
 

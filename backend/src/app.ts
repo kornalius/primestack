@@ -1,9 +1,12 @@
 import {
-  koa, rest, bodyParser, errorHandler, parseAuthentication, cors, serveStatic,
+  koa, rest, bodyParser, errorHandler, parseAuthentication, cors, serveStatic, Koa,
 } from '@feathersjs/koa'
+import path from 'path'
 import { feathers } from '@feathersjs/feathers'
+import { FeathersKoaContext } from '@feathersjs/koa/src/declarations'
 import configuration from '@feathersjs/configuration'
 import socketio from '@feathersjs/socketio'
+import { AnyData } from '@/shared/interfaces/commons'
 import { Application, ServiceTypes } from './declarations'
 import { configurationValidator } from './configuration'
 import logger, { info } from './logger'
@@ -35,8 +38,27 @@ app.use(errorHandler())
 info('  - Authentication parser')
 app.use(parseAuthentication())
 
-info('  - JSON payload parser')
-app.use(bodyParser())
+const storagePath = path.resolve(app.get('uploadsPath') as string)
+
+info('  - JSON/Files payload parser')
+app.use(bodyParser({
+  formidable: {
+    uploadDir: storagePath,
+    allowEmptyFiles: false,
+    keepExtensions: true,
+  },
+  multipart: true,
+  urlencoded: true,
+}))
+
+// another middleware, this time to transfer the received files to feathers
+app.use(async (ctx: FeathersKoaContext, next: Koa.Next) => {
+  ctx.feathers = {
+    ...ctx.feathers,
+    file: ctx.request.files?.file,
+  } as AnyData
+  await next()
+})
 
 info('  - REST')
 app.configure(rest())
