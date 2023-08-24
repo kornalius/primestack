@@ -1,8 +1,8 @@
 <template>
-  <q-card class="q-pa-sm q-ma-sm" flat bordered>
+  <q-card class="q-pa-sm q-mb-sm" flat bordered>
     <div class="row">
       <div class="col-auto" style="width: 44px;">
-        <q-icon :name="icon" size="lg" />
+        <q-icon :name="icon" color="grey-7" size="lg" />
       </div>
 
       <div class="col">
@@ -11,11 +11,11 @@
             {{ name }}
           </div>
 
-          <div class="col q-ml-md">
+          <div class="col q-ml-md text-caption text-grey-6 text-right">
             {{ size }}
           </div>
 
-          <div class="col-auto">
+          <div class="col-auto q-ml-md">
             <q-btn
               icon="mdi-close"
               size="xs"
@@ -31,7 +31,7 @@
         </div>
 
         <div class="row q-mt-xs">
-          <div class="col">
+          <div v-if="isProgressing" class="col">
             <q-linear-progress :value="progress" />
           </div>
         </div>
@@ -40,7 +40,7 @@
 
     <div class="row">
       <div class="col-auto" style="width: 44px;" />
-      <div class="col">
+      <div v-if="isProgressing" class="col">
         <span :class="hasError">{{ state }}</span>
       </div>
     </div>
@@ -91,6 +91,11 @@ const name = computed(() => file.value.originalFilename)
 const size = computed(() => formatSize(file.value.size))
 
 const progress = computed(() => file.value.progress)
+
+const isProgressing = computed(() => (
+  ![fileStates.COMPLETED, fileStates.NONE, fileStates.ERROR]
+    .includes(file.value.state)
+))
 
 const state = computed(() => {
   if (file.value.state === fileStates.ERROR) {

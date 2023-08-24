@@ -32,5 +32,62 @@
     "semver": "Valeur de version sémantique invalide",
     "latlong": "Format de latitude et longitude invalide",
     "postalcode": "Code postal invalide"
+  },
+  "uploader": {
+    "remove": "Effacer",
+    "tooManyFiles": "Trop de fichiers, svp considerez passer à un plan supérieur",
+    "fileTooBig": "Fichier trop gros, svp considerez passer à un plan supérieur",
+    "incorrectType": "Type de fichier incorrecte",
+    "alreadyExist": "Fichier existe déjà",
+    "loadStart": "Chargement",
+    "loadProgress": "Chargement...",
+    "loadEnd": "Chargé",
+    "uploadStart": "Téléchargement",
+    "uploadProgress": "Téléchargement...",
+    "uploadEnd": "Téléchargé",
+    "completed": "Complèté",
+    "notFound":  "Fichier non-trouvé",
+    "notReadable": "Le fichier ne peut être lu",
+    "fileLocked":  "Le fichier est barré",
+    "readAborted": "Lecture du fichier cancellé",
+    "somethingWrong": "Quelque chose d'horrible est arrivé",
+    "done": "Terminé"
+  },
+  "dialog": {
+    "areyousure": "Êtes-vous certain?",
+    "ok": "Ok",
+    "yes": "Oui",
+    "cancel": "Annulé",
+    "no": "Non",
+    "delete": "Effacer",
+    "confirm": "Confirmer"
+  },
+  "record": {
+    "dialog": {
+      "delete": {
+        "title": "Effacer un enregistrement",
+        "message": "Voulez-vous vraiment effacer cet enregistrement?"
+      }
+    }
+  },
+  "file": {
+    "dialog": {
+      "delete": {
+        "title": "Effacer un fichier",
+        "message": "Voulez-vous vraiment effacer ce fichier?"
+      }
+    }
+  },
+  "form": {
+    "dialog": {
+      "autogenerate": {
+        "title": "Generation automatique",
+        "message": "Voulez-vous automatiquement générer un formulaire pour cette table?"
+      },
+      "unsaved": {
+        "title": "Changements non-sauvegardés",
+        "message": "Il y a des changements non sauvegardés. Êtes-vous certain de vouloir annuler?"
+      }
+    }
   }
 }

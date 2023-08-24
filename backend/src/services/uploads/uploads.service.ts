@@ -9,8 +9,6 @@ const path = 'uploads'
 class Service extends BaseService {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async create(data: any, params?: Params) {
-    // console.log(params)
-
     const { file } = params as AnyData
     const { filepath } = file
 

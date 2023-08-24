@@ -1,10 +1,14 @@
 import fs from 'fs'
 import { Application } from '@feathersjs/koa'
+import { Static } from '@feathersjs/typebox'
+import { AdapterId } from '@feathersjs/mongodb'
+import { NullableAdapterId } from '@feathersjs/mongodb/src/adapter'
+import { Params } from '@feathersjs/feathers'
 // eslint-disable-next-line import/no-cycle
 import { createService, MongoService } from '@/service'
 import { schema } from '@/shared/schemas/file'
 import { dataValidator } from '@/validators'
-import { Static } from '@feathersjs/typebox'
+import { checkMaxFiles, checkMaxFileSize } from './files.hooks'
 
 dataValidator.addSchema(schema)
 
@@ -40,6 +44,19 @@ export const readFiles = async (files: FileInterface[]): Promise<FileInterface[]
 }
 
 class Service extends MongoService {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async remove(id: NullableAdapterId, params?: Params): Promise<any> {
+    // eslint-disable-next-line no-underscore-dangle
+    const f = await this._get(id as AdapterId)
+    if (f) {
+      try {
+        fs.unlinkSync(f.filepath)
+      } catch (e) {
+        //
+      }
+    }
+    return super.remove(id, params)
+  }
 }
 
 export default function (app: Application): void {
@@ -48,7 +65,16 @@ export default function (app: Application): void {
     schema,
     created: true,
     updated: true,
-    methods: ['find', 'get', 'create', 'patch', 'remove'],
+    methods: ['find', 'get', 'create', 'remove'],
+    hooks: {
+      before: {
+        all: [],
+        create: [
+          checkMaxFiles,
+          checkMaxFileSize,
+        ]
+      }
+    }
   }).init(app, {})
 }
 

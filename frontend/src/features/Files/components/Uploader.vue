@@ -35,7 +35,7 @@
       </div>
     </div>
 
-    <div class="col">
+    <div class="col q-ml-md">
       <files-list
         :query="query"
         @remove="removeFile"
@@ -46,6 +46,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useQuasar } from 'quasar'
 import { Static } from '@feathersjs/typebox'
 import { useI18n } from 'vue-i18n'
 import { useSnacks } from '@/features/Snacks/store'
@@ -101,6 +102,8 @@ const { t } = useI18n()
 
 const snacks = useSnacks()
 
+const quasar = useQuasar()
+
 const {
   formatSize,
   fileStates,
@@ -116,7 +119,7 @@ find()
  * @param filename Filename to check
  */
 const fileExists = (filename: string): boolean => (
-  !!files.value.find((f) => f.filename === filename)
+  !!files.value.find((f) => f.originalFilename === filename)
 )
 
 /**
@@ -157,7 +160,7 @@ const isValidFile = (file: StoreFile): boolean => {
 
 const handleFileChange = (e) => {
   if (e.target.files) {
-    e.target.files.forEach((file: File) => {
+    e.target.files.forEach(async (file: File) => {
       const def = {
         newFilename: null,
         originalFilename: file.name,
@@ -173,7 +176,11 @@ const handleFileChange = (e) => {
         f.createInStore()
 
         // stream upload file directly to uploads service
-        uploadFile(f, file)
+        await uploadFile(f, file)
+
+        if (f.state === fileStates.UPLOAD_END) {
+          f.removeFromStore()
+        }
       }
     })
   }
@@ -189,9 +196,24 @@ const handleFileChange = (e) => {
  * @param file File to remove
  */
 const removeFile = (file: StoreFile) => {
-  const ff = files.value.find((f) => f.filename === file.originalFilename)
+  const ff = files.value.find((f) => f._id === file._id)
   if (ff) {
-    ff.remove()
+    quasar.dialog({
+      title: t('file.dialog.delete.title'),
+      persistent: true,
+      message: t('file.dialog.delete.message'),
+      ok: {
+        label: t('dialog.delete'),
+        color: 'negative',
+        outline: true,
+      },
+      cancel: {
+        label: t('dialog.cancel'),
+        outline: true,
+      },
+    }).onOk(() => {
+      ff.remove()
+    })
   }
 }
 </script>

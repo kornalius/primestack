@@ -163,6 +163,7 @@ import FormEditor from '@/features/Forms/components/Editor/FormEditor.vue'
 import FormDisplay from '@/features/Forms/components/FormDisplay.vue'
 import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
 import ActionsEditor from '@/features/Actions/components/Editor/ActionsEditor.vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   menuId: string
@@ -179,6 +180,8 @@ const router = useRouter()
 
 const quasar = useQuasar()
 
+const { t } = useI18n()
+
 /**
  * Menu
  */
@@ -192,7 +195,7 @@ const menu = computed(() => (
 ))
 
 const tab = computed(() => (
-  menu.value?.tabs.find((t) => t._id === props.tabId)
+  menu.value?.tabs.find((tt) => tt._id === props.tabId)
 ))
 
 /**
@@ -316,7 +319,7 @@ const selected = ref([])
 const userTable = api.service('tables').findOneInStore({ query: {} })
 
 const table = computed(() => (
-  userTable.value?.list.find((t) => t._id === form.value?.tableId)
+  userTable.value?.list.find((tt) => tt._id === form.value?.tableId)
 ))
 
 const tableBinds = computed(() => pick(form.value, formSchema.tableFields))
@@ -424,11 +427,19 @@ const submit = async () => {
  */
 const resetForm = () => {
   quasar.dialog({
-    title: 'Unsaved changes',
+    title: t('form.dialog.unsaved.title'),
     persistent: true,
-    message: 'There are unsaved changes. Are you sure you want to cancel?',
-    ok: { color: 'green', outline: true },
-    cancel: { color: 'negative', outline: true },
+    message: t('form.dialog.unsaved.message'),
+    ok: {
+      label: t('dialog.ok'),
+      color: 'green',
+      outline: true,
+    },
+    cancel: {
+      label: t('dialog.cancel'),
+      color: 'negative',
+      outline: true,
+    },
   }).onOk(() => {
     if (currentData.value.__isTemp) {
       currentData.value.remove()
@@ -476,11 +487,19 @@ const addRecord = (value?: AnyData) => {
  */
 const removeRecord = (value: AnyData) => {
   quasar.dialog({
-    title: 'Delete record?',
+    title: t('record.dialog.delete.title'),
     persistent: true,
-    message: 'Are you sure you want to delete this record?',
-    ok: { color: 'green', outline: true },
-    cancel: { color: 'negative', outline: true },
+    message: t('record.dialog.delete.message'),
+    ok: {
+      label: t('dialog.ok'),
+      color: 'green',
+      outline: true,
+    },
+    cancel: {
+      label: t('dialog.cancel'),
+      color: 'negative',
+      outline: true,
+    },
   }).onOk(async () => {
     const r = await getRecord(getId(value))
     if (r) {

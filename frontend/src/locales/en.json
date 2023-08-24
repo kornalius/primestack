@@ -32,5 +32,62 @@
     "semver": "Invalid semantic version",
     "latlong": "Invalid latitude and longitude format",
     "postalcode": "Invalid postal/zip code"
+  },
+  "uploader": {
+    "remove": "Remove",
+    "tooManyFiles": "Too many files, please consider upgrading your plan",
+    "fileTooBig": "File is too big, please consider upgrading your plan",
+    "incorrectType": "Incorrect file type",
+    "alreadyExist": "File already exists",
+    "loadStart": "Loading started",
+    "loadProgress": "Loading...",
+    "loadEnd": "Loaded",
+    "uploadStart": "Upload starting",
+    "uploadProgress": "Uploading...",
+    "uploadEnd": "Uploaded",
+    "completed": "Completed",
+    "notFound":  "File not found",
+    "notReadable": "File is not readable",
+    "fileLocked":  "File is locked",
+    "readAborted": "Reading of file aborted",
+    "somethingWrong": "Something wrong happened",
+    "done": "Done"
+  },
+  "dialog": {
+    "areyousure": "Are you sure?",
+    "ok": "Ok",
+    "yes": "Yes",
+    "cancel": "Cancel",
+    "no": "No",
+    "delete": "Delete",
+    "confirm": "Confirm"
+  },
+  "record": {
+    "dialog": {
+      "delete": {
+        "title": "Delete a record",
+        "message": "Are you sure you want to delete this record?"
+      }
+    }
+  },
+  "file": {
+    "dialog": {
+      "delete": {
+        "title": "Delete a file",
+        "message": "Are you sure you want to delete this file?"
+      }
+    }
+  },
+  "form": {
+    "dialog": {
+      "autogenerate": {
+        "title": "Auto generate form",
+        "message": "Would you like to automatically generate a form with the schema of this table?"
+      },
+      "unsaved": {
+        "title": "Unsaved changes",
+        "message": "There are unsaved changes. Are you sure you want to cancel?"
+      }
+    }
   }
 }

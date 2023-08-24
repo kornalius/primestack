@@ -20,13 +20,13 @@
             dense
           >
             <q-route-tab
-              v-for="t in routeTabs"
-              :key="t._id"
-              :name="t._id"
-              :label="t.label"
-              :icon="t.icon"
-              :content-class="`text-${t.color}`"
-              :to="menuUrl(routeMenu._id, t._id)"
+              v-for="r in routeTabs"
+              :key="r._id"
+              :name="r._id"
+              :label="r.label"
+              :icon="r.icon"
+              :content-class="`text-${r.color}`"
+              :to="menuUrl(routeMenu._id, r._id)"
             />
           </q-tabs>
         </q-toolbar-title>
@@ -325,10 +325,13 @@ import MenusEditor from '@/features/Menus/components/MenusEditor.vue'
 import AppProperties from '@/features/App/components/AppProperties.vue'
 import { useUrl } from '@/composites/url'
 import { useFeathers } from '@/composites/feathers'
+import { useI18n } from 'vue-i18n'
 
 const quasar = useQuasar()
 
 const { api } = useFeathers()
+
+const { t } = useI18n()
 
 // const snacks = useSnacks()
 
@@ -489,11 +492,19 @@ const save = async () => {
 const cancel = () => {
   if (editor.isModified) {
     quasar.dialog({
-      title: 'Unsaved changes',
+      title: t('form.dialog.unsaved.title'),
       persistent: true,
-      message: 'There are unsaved changes. Are you sure you want to cancel?',
-      ok: { color: 'green', outline: true },
-      cancel: { color: 'negative', outline: true },
+      message: t('form.dialog.unsaved.message'),
+      ok: {
+        label: t('dialog.ok'),
+        color: 'green',
+        outline: true,
+      },
+      cancel: {
+        label: t('dialog.cancel'),
+        color: 'negative',
+        outline: true,
+      },
     }).onOk(() => {
       endEdit()
     })

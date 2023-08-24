@@ -60,6 +60,7 @@
 import { computed, watch } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 import draggable from 'vuedraggable'
 import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
@@ -88,6 +89,8 @@ const emit = defineEmits<{
 }>()
 
 const quasar = useQuasar()
+
+const { t } = useI18n()
 
 const fields = useModelValue(props, emit)
 
@@ -147,11 +150,19 @@ const autoGenerateForm = (tableId: string): void => {
 watch(() => props.form?.tableId, (newValue, oldValue) => {
   if (!oldValue && newValue && fields.value.length === 0) {
     quasar.dialog({
-      title: 'Auto generate form?',
+      title: t('form.dialog.autogenerate.title'),
       persistent: true,
-      message: 'Would you like to automatically generate a form with the schema of this table?',
-      ok: { color: 'green', outline: true },
-      cancel: { color: 'negative', outline: true },
+      message: t('form.dialog.autogenerate.message'),
+      ok: {
+        label: t('dialog.ok'),
+        color: 'green',
+        outline: true,
+      },
+      cancel: {
+        label: t('dialog.ok'),
+        color: 'negative',
+        outline: true,
+      },
     }).onOk(() => {
       autoGenerateForm(newValue)
     })

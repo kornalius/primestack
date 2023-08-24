@@ -6,18 +6,18 @@ export const checkMaxTables = async (context: HookContext): Promise<HookContext>
   const m = context.params?.user?.rights?.maxes?.maxTables
   if (m !== -1 && count >= m) {
     throw new Forbidden(
-      `Your plan only supports ${m} tables, please consider upgrading to create more`
+      `Your plan only supports ${m} tables, please consider upgrading`
     )
   }
   return context
 }
 
 export const checkMaxRecords = async (context: HookContext): Promise<HookContext> => {
-  const { count } = await context.app.service(context.service).find({ query: { $limit: 0 } })
+  const { count } = await context.app.service(context.path).find({ query: { $limit: 0 } })
   const m = context.params?.user?.rights?.maxes?.maxRecords
   if (m !== -1 && count >= m) {
     throw new Forbidden(
-      `Your plan only supports ${m} records per table, please consider upgrading to create more`
+      `Your plan only supports ${m} records per table, please consider upgrading`
     )
   }
   return context
