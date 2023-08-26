@@ -1,3 +1,4 @@
+import compact from 'lodash/compact'
 import { Static } from '@feathersjs/typebox'
 import { Query, QueryCriteria, QueryGroup } from '@/shared/interfaces/query'
 import { AnyData } from '@/shared/interfaces/commons'
@@ -14,7 +15,37 @@ const mongoOperators = {
   '>=': '$ge',
 }
 
-const queryToMongo = (q: QueryGroup[]): AnyData => {
+const cleanupQuery = (q: AnyData): AnyData => {
+  if (!q) {
+    return q
+  }
+
+  if (q.$and) {
+    // eslint-disable-next-line no-param-reassign
+    q.$and = compact(q.$and)
+  }
+
+  if (q.$and?.length === 0) {
+    // eslint-disable-next-line no-param-reassign
+    delete q.$and
+  }
+
+  while (q.$and?.length === 1 && q.$and[0].$and) {
+    // eslint-disable-next-line no-param-reassign
+    q.$and = q.$and[0].$and
+  }
+
+  if (q.$and?.length === 1) {
+    // eslint-disable-next-line no-param-reassign
+    q = {
+      ...q.$and[0],
+    }
+  }
+
+  return q
+}
+
+const queryToMongo = (q: Query, schema: TableSchema): AnyData => {
   const cleanExpr = (expr: AnyData): AnyData => {
     if (expr.$and.length === 0) {
       // eslint-disable-next-line no-param-reassign
@@ -29,13 +60,14 @@ const queryToMongo = (q: QueryGroup[]): AnyData => {
 
   const reduceCriteria = (c: QueryCriteria): AnyData | undefined => {
     if (c.fieldId && c.op && c.value !== null && c.value !== undefined) {
+      const n = schema?.fields.find((f) => f._id === c.fieldId)?.name
       if (c.op === 'like') {
-        return { [c.fieldId]: new RegExp(c.value, 'i') }
+        return { [n]: new RegExp(c.value, 'i') }
       }
       if (c.op !== '=') {
-        return { [c.fieldId]: { [mongoOperators[c.op]]: c.value } }
+        return { [n]: { [mongoOperators[c.op]]: c.value } }
       }
-      return { [c.fieldId]: c.value }
+      return { [n]: c.value }
     }
 
     return undefined
@@ -47,7 +79,7 @@ const queryToMongo = (q: QueryGroup[]): AnyData => {
       $or: [],
     }
 
-    let prevLogicOp
+    let prevLogicOp: string
     criterias.forEach((c, index) => {
       const crit = reduceCriteria(c)
       if (crit) {
@@ -68,7 +100,7 @@ const queryToMongo = (q: QueryGroup[]): AnyData => {
       $or: [],
     }
 
-    let prevLogicOp
+    let prevLogicOp: string
     groups.forEach((g, index) => {
       const crits = reduceCriterias(g.criterias)
       if (Object.keys(crits).length) {
@@ -88,7 +120,11 @@ const queryToMongo = (q: QueryGroup[]): AnyData => {
     return cleanExpr(expr)
   }
 
-  return reduceGroups(q)
+  return {
+    $limit: Number(q.limit),
+    $skip: Number(q.skip),
+    ...cleanupQuery(reduceGroups(q.groups)),
+  }
 }
 
 const queryToString = (query: Query, schema: TableSchema): string => {
@@ -132,6 +168,7 @@ const queryToString = (query: Query, schema: TableSchema): string => {
 }
 
 export const useQuery = () => ({
+  cleanupQuery,
   queryToMongo,
   queryToString,
 })

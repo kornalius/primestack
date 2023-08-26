@@ -146,6 +146,7 @@ import {
 } from 'vue'
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 import pick from 'lodash/pick'
 import cloneDeep from 'lodash/cloneDeep'
 import isEqual from 'lodash/isEqual'
@@ -157,13 +158,13 @@ import { useFeathers } from '@/composites/feathers'
 import { formSchema } from '@/shared/schemas/form'
 import { useUrl } from '@/composites/url'
 import { getId } from '@/composites/utilities'
+import { useQuery } from '@/features/Query/composites'
 import { TFormColumn, TFormField } from '@/shared/interfaces/forms'
 import { AnyData } from '@/shared/interfaces/commons'
 import FormEditor from '@/features/Forms/components/Editor/FormEditor.vue'
 import FormDisplay from '@/features/Forms/components/FormDisplay.vue'
 import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
 import ActionsEditor from '@/features/Actions/components/Editor/ActionsEditor.vue'
-import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   menuId: string
@@ -181,6 +182,8 @@ const router = useRouter()
 const quasar = useQuasar()
 
 const { t } = useI18n()
+
+const { queryToMongo } = useQuery()
 
 /**
  * Menu
@@ -322,7 +325,13 @@ const table = computed(() => (
   userTable.value?.list.find((tt) => tt._id === form.value?.tableId)
 ))
 
-const tableBinds = computed(() => pick(form.value, formSchema.tableFields))
+const tableBinds = computed(() => {
+  const r = pick(form.value, formSchema.tableFields)
+  if (typeof r.query === 'object' && Array.isArray(r.query.groups)) {
+    r.query = queryToMongo(r.query, table.value)
+  }
+  return r
+})
 
 /**
  * Form editing & validations

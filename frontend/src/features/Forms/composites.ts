@@ -132,7 +132,7 @@ export const useFormElements = () => ({
 
     scanSchema(schema)
 
-    const userActions = ctx.api.service('actions').findOneInStore({ query: {} })?.value.list
+    const userActions = ctx.api.service('actions').findOneInStore({ query: {} })?.value?.list || []
 
     const callEventAction = (id: string) => async () => {
       const act = userActions.find((a: Action) => a._id === id)

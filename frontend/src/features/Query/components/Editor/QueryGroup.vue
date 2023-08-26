@@ -1,5 +1,5 @@
 <template>
-  <q-card class="q-ma-sm" outlined>
+  <q-card class="q-my-sm" flat bordered>
     <div :class="['row', 'title', color]">
       <div class="col text-subtitle1">
         {{ label }}

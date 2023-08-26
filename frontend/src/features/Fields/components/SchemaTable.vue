@@ -135,16 +135,17 @@
 import {
   computed, ref, useAttrs, watch,
 } from 'vue'
+import omit from 'lodash/omit'
 import sift from 'sift'
 import startCase from 'lodash/startCase'
-import compact from 'lodash/compact'
 import { TSchema } from '@feathersjs/typebox'
 import { useSyncedProp } from '@/composites/prop'
 import { columnAlignmentFor, getTypeFor } from '@/shared/schema'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useFeathers } from '@/composites/feathers'
-import PropertySchemaField from '@/features/Properties/components/PropertySchemaField.vue'
+import { useQuery } from '@/features/Query/composites'
 import { filterToMongo } from '@/composites/filter'
+import PropertySchemaField from '@/features/Properties/components/PropertySchemaField.vue'
 
 const attrs = useAttrs()
 
@@ -199,6 +200,8 @@ const currentSelected = useSyncedProp(props, 'selected', emit)
 
 const currentFilter = useSyncedProp(props, 'filter', emit)
 
+const { cleanupQuery } = useQuery()
+
 const columns = computed(() => {
   if (!props.schema) {
     return attrs.columns
@@ -233,19 +236,26 @@ watch([
 ], () => {
   const f = filterToMongo(currentFilter.value || '') || {}
 
-  const q = {
-    $and: compact([
-      Object.keys(props.query || {}).length ? props.query : undefined,
+  const { $limit, $skip } = props.query || {}
+  const pq = omit(props.query || {}, ['$limit', '$skip'])
+
+  const q: AnyData = cleanupQuery({
+    $and: [
+      Object.keys(pq).length ? pq : undefined,
       Object.keys(f).length ? f : undefined,
-    ]),
+    ],
+  })
+
+  if ($limit !== undefined) {
+    q.$limit = $limit
   }
-  if (q.$and?.length === 0) {
-    delete q.$and
+  if ($skip !== undefined) {
+    q.$skip = $skip
   }
 
   if (props.tableId) {
     const dataFind = api.service(props.tableId).useFind({ query: q, temps: props.temps })
-    dataFind.find()
+    dataFind.find({ query: q })
     watch(dataFind.data, () => {
       data.value = dataFind.data.value
     }, { immediate: true })

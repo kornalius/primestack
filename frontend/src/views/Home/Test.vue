@@ -108,12 +108,13 @@
 
 <script setup lang="ts">
 import {
-  computed, ref,
+  computed, Ref, ref,
 } from 'vue'
 import hexObjectId from 'hex-object-id'
 import { Type } from '@feathersjs/typebox'
 import { useQuery } from '@/features/Query/composites'
 import { useFeathers } from '@/composites/feathers'
+import { Query } from '@/shared/interfaces/query'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import QueryEditor from '@/features/Query/components/Editor/QueryEditor.vue'
@@ -235,16 +236,6 @@ const valid = ref(false)
 const selection = ref([])
 
 /**
- * Query
- */
-
-const { queryToMongo } = useQuery()
-
-const query = ref({ groups: [] })
-
-const mongoQuery = computed(() => queryToMongo(query.value.groups))
-
-/**
  * Schema
  */
 
@@ -253,6 +244,16 @@ const { data: tables } = api.service('tables').useFind({
 })
 
 const userTable = computed(() => tables.value?.[0])
+
+/**
+ * Query
+ */
+
+const { queryToMongo } = useQuery()
+
+const query = ref({ limit: 10, skip: 0, groups: [] }) as Ref<Query>
+
+const mongoQuery = computed(() => queryToMongo(query.value, userTable.value))
 
 /**
  * Table

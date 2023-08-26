@@ -87,7 +87,7 @@
         v-model:visible-columns="field.visibleColumns"
         :model-value="displayValue"
         v-bind="fieldBinds(field, schemaForType(field), ctx)"
-        :query="queryToMongo(field.query?.groups)"
+        :query="queryToMongo(field.query, fieldTable)"
         :style="style"
       />
 
@@ -115,8 +115,8 @@ import { TSchema } from '@feathersjs/typebox'
 import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 import { useAppEditor } from '@/features/App/store'
-import TableEditor from '@/features/Forms/components/Editor/TableEditor.vue'
 import { useQuery } from '@/features/Query/composites'
+import TableEditor from '@/features/Forms/components/Editor/TableEditor.vue'
 import { useFormElements } from '../../composites'
 import FormElementRow from './FormElementRow.vue'
 import FormElementCard from './FormElementCard.vue'
@@ -152,6 +152,12 @@ const editor = useAppEditor()
 const component = computed(() => (
   // eslint-disable-next-line no-underscore-dangle
   props.components.find((c) => c.type === props.modelValue._type)
+))
+
+const fieldTable = computed(() => (
+  field.value.tableId
+    ? editor.tables.find((t) => t._id === field.value.tableId)
+    : undefined
 ))
 
 const fieldIcon = computed(() => component.value?.icon)

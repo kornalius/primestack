@@ -15,6 +15,31 @@
       </div>
     </div>
 
+    <div
+      v-if="showLimits"
+      class="row q-gutter-sm"
+    >
+      <div class="col-3">
+        <q-input
+          v-model="query.limit"
+          label="Limit"
+          type="number"
+          dense
+          outlined
+        />
+      </div>
+
+      <div class="col-3">
+        <q-input
+          v-model="query.skip"
+          label="Skip"
+          type="number"
+          dense
+          outlined
+        />
+      </div>
+    </div>
+
     <array-editor
       v-model="query.groups"
       add-button="end"
@@ -69,6 +94,8 @@ const props = defineProps<{
   disable?: boolean
   // hide the table selector
   hideTableSelect?: boolean
+  // show limit and skip inputs
+  showLimits?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits

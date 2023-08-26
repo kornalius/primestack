@@ -1,5 +1,7 @@
 export interface Query {
   tableId: string
+  limit?: number
+  skip?: number
   // eslint-disable-next-line no-use-before-define
   groups: QueryGroup[]
 }

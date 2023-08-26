@@ -14,7 +14,17 @@ const methodToRuleName: Record<string, string> = {
   remove: 'delete',
 }
 export const checkRule = async (context: HookContext) => {
-  const { service, method, params } = context
+  const {
+    path,
+    method,
+    params,
+  } = context
+
+  // skip check if from internal server
+  if (!params.connection) {
+    return context
+  }
+
   const { user } = params
   const { rules } = user
 
@@ -27,7 +37,7 @@ export const checkRule = async (context: HookContext) => {
     }
   } else {
     // if find table but method is false or if does not find table in rules
-    const rule = rules.find((r: Rule) => r.tableId === service)
+    const rule = rules.find((r: Rule) => r.tableId === path)
     if (!rule || !rule[m]) {
       throw new Forbidden()
     }

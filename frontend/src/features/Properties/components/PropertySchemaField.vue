@@ -485,6 +485,7 @@
         style="min-width: 600px; min-height: 400px;"
         :table-id="parent.tableId"
         :hide-table-select="!!parent.tableId"
+        show-limits
       />
     </q-popup-edit>
   </div>
@@ -749,7 +750,7 @@ const table = computed(() => (
  */
 const queryValue = computed((): string => (
   type.value === 'query' && props.property
-    ? queryToString(value.value || { groups: [] }, table.value) || '()'
+    ? queryToString(value.value || { limit: 10, skip: 0, groups: [] }, table.value) || '()'
     : '()'
 ))
 

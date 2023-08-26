@@ -2,6 +2,11 @@ import { HookContext } from '@feathersjs/feathers'
 import { Forbidden } from '@feathersjs/errors'
 
 export const checkMaxShares = async (context: HookContext): Promise<HookContext> => {
+  // skip check if from internal server
+  if (!context.params.connection) {
+    return context
+  }
+
   const user = context.params?.user
   const { count } = await context.app.service('shares').find({
     query: {
