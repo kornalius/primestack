@@ -25,8 +25,8 @@
         >
           <template #item="{ element: value }">
             <div
-              v-if="value.type === 'separator'"
-              class="row q-pa-sm q-my-sm bg-grey-8 items-center"
+              v-if="value.type === '$separator'"
+              class="row q-pa-xs q-my-sm bg-grey-8 items-center"
             >
               <div class="col-auto">
                 <q-icon

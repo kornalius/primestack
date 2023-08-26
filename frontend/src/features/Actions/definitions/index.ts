@@ -10,7 +10,7 @@ import patch from './patch'
 import remove from './remove'
 
 const separator = (label: string, icon: string, color?: string): TFrontAction => ({
-  type: 'separator',
+  type: '$separator',
   label,
   icon,
   color: color || 'white',

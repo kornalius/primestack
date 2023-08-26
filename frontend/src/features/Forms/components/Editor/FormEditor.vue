@@ -25,11 +25,30 @@
           @end="editor.setDragging(false)"
         >
           <template #item="{ element: value }">
+            <div
+              v-if="value.type === '$separator'"
+              class="row q-pa-xs q-my-sm bg-grey-8 items-center"
+            >
+              <div class="col-auto">
+                <q-icon
+                  :name="componentIcon(value)"
+                  :color="componentColor(value)"
+                  size="sm"
+                />
+              </div>
+
+              <div class="col q-ml-sm">
+                <span :class="`text-${componentColor(value)} text-bold`">
+                  {{ componentLabel(value) }}
+                </span>
+              </div>
+            </div>
+
             <q-btn
-              v-if="value.type !== ''"
+              v-else-if="value.type !== ''"
               class="form-component q-mx-sm"
-              :icon="value.icon"
-              :label="value.label"
+              :icon="componentIcon(value)"
+              :label="componentLabel(value)"
               type="button"
               size="12px"
               align="left"
@@ -174,6 +193,28 @@ const unselectAll = () => {
     editor.unselectAll()
   }
 }
+
+const componentColor = (c: TFormComponent) => {
+  if (typeof c.color === 'function') {
+    return c.color()
+  }
+  return c.color
+}
+
+const componentIcon = (c: TFormComponent) => {
+  if (typeof c.icon === 'function') {
+    return c.icon()
+  }
+  return c.icon
+}
+
+const componentLabel = (c: TFormComponent) => {
+  if (typeof c.label === 'function') {
+    return c.label()
+  }
+  return c.label
+}
+
 </script>
 
 <style scoped lang="sass">

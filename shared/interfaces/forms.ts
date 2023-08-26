@@ -14,17 +14,19 @@ export interface TFormComponent {
   // use the component as a col or card-section
   col?: boolean
   // label for the component
-  label: string
+  label: string | ((value?: AnyData) => string)
+  // color for separator
+  color?: string | ((value?: AnyData) => string)
   // component to use
   component?: unknown
   // icon for the component
-  icon: string
+  icon: string | ((value?: AnyData) => string)
   // don't create a key for preview data
   nokey?: boolean
   // should we hide the component from the palette?
   hidden?: boolean
   // component properties schema
-  schema: TSchema
+  schema?: TSchema
   // default values for properties
   defaultValues?: AnyData
   // edit mode styles to add to component
