@@ -49,6 +49,7 @@ export default {
     model: {
       icon: modelIcon,
       names: [
+        'name',
         'modelValue',
         'field',
         'reverse',

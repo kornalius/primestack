@@ -12,7 +12,7 @@ import cloneDeep from 'lodash/cloneDeep'
 import { useSnacks } from '@/features/Snacks/store'
 import { AnyData } from '@/shared/interfaces/commons'
 // eslint-disable-next-line import/no-cycle
-import { useFormElements } from '@/features/Forms/composites'
+import { newNameForField, useFormElements } from '@/features/Forms/composites'
 import { useActions } from '@/features/Actions/composites'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
 import { fieldSchema, formSchema } from '@/shared/schemas/form'
@@ -897,18 +897,26 @@ export const useAppEditor = defineStore('app-editor', () => {
    *
    * @returns {TFormField} New form field
    */
-  const createFormField = (component: TFormComponent, options?: AnyData): TFormField => ({
-    _id: hexObjectId(),
-    _type: component.type,
-    _columns: component.row ? [] : undefined,
-    _fields: component.col ? [] : undefined,
-    ...Object.keys(component.schema?.properties || {})
-      .reduce((acc, k) => (
-        { ...acc, [k]: defaultValueForSchema(component.schema.properties[k]) }
-      ), {}),
-    ...(defaultValues(component.defaultValues) || {}),
-    ...(options || {}),
-  })
+  const createFormField = (component: TFormComponent, options?: AnyData): TFormField | undefined => {
+    const form = states.value.forms.find((f) => f._id === states.value.formId)
+    if (form) {
+      return {
+        _id: hexObjectId(),
+        _type: component.type,
+        _columns: component.row ? [] : undefined,
+        _fields: component.col ? [] : undefined,
+        ...Object.keys(component.schema?.properties || {})
+          .reduce((acc, k) => (
+            { ...acc, [k]: defaultValueForSchema(component.schema.properties[k]) }
+          ), {}),
+        ...(defaultValues(component.defaultValues) || {}),
+        ...(options || {}),
+        // eslint-disable-next-line no-underscore-dangle
+        name: newNameForField(component.type, form._fields),
+      }
+    }
+    return undefined
+  }
 
   /**
    * Adds a new field to the edited form
@@ -922,12 +930,14 @@ export const useAppEditor = defineStore('app-editor', () => {
     const form = states.value.forms.find((f) => f._id === states.value.formId)
     if (form) {
       const field = createFormField(component, options)
-      // eslint-disable-next-line no-underscore-dangle
-      form._fields.push(field)
-      setTimeout(() => {
-        select(field._id)
-      }, 100)
-      return field
+      if (field) {
+        // eslint-disable-next-line no-underscore-dangle
+        form._fields.push(field)
+        setTimeout(() => {
+          select(field._id)
+        }, 100)
+        return field
+      }
     }
     return undefined
   }

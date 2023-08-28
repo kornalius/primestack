@@ -1,6 +1,6 @@
 import { QSpinnerIos } from 'quasar'
 import { Type } from '@feathersjs/typebox'
-import { styleIcon } from '@/shared/icons'
+import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { properties, commonProperties } from './common'
 
@@ -23,6 +23,12 @@ export default {
     size: 'sm',
   },
   categories: {
+    content: {
+      icon: contentIcon,
+      names: [
+        'name',
+      ],
+    },
     style: {
       icon: styleIcon,
       names: [

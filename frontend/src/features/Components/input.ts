@@ -78,9 +78,10 @@ export default {
     model: {
       icon: modelIcon,
       names: [
-        'type',
+        'name',
         'modelValue',
         'field',
+        'type',
         'rules',
         'clearable',
         'mask',

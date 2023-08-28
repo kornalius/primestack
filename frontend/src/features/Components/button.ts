@@ -14,7 +14,6 @@ export default {
     commonProperties.size,
     commonProperties.style,
     Type.Object({
-      modelValue: Type.String(),
       label: Type.String(),
       color: Type.String({ color: true }),
       textColor: Type.String({ color: true }),
@@ -56,8 +55,7 @@ export default {
     content: {
       icon: contentIcon,
       names: [
-        'modelValue',
-        'field',
+        'name',
         'disable',
         'readonly',
         'label',

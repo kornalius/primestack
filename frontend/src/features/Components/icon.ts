@@ -10,6 +10,7 @@ export default {
   label: 'Icon',
   component: QIcon,
   schema: properties([
+    Type.Omit(commonProperties.field, ['field']),
     commonProperties.size,
     Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
@@ -26,6 +27,7 @@ export default {
     content: {
       icon: contentIcon,
       names: [
+        'name',
         'modelValue',
         'field',
       ],

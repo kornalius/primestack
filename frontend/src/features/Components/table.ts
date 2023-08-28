@@ -121,6 +121,7 @@ export default {
     content: {
       icon: contentIcon,
       names: [
+        'name',
         'title',
         'rows',
         'rowKey',

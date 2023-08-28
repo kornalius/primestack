@@ -62,6 +62,7 @@ export default {
     content: {
       icon: contentIcon,
       names: [
+        'name',
         'src',
         'srcset',
         'alt',

@@ -121,7 +121,7 @@ const visibleComponents = computed(() => props.components.filter((c) => !c.hidde
 
 const editor = useAppEditor()
 
-const cloneComponent = (component: TFormComponent) => editor.createFormField(component)
+const cloneComponent = (component: TFormComponent): TFormField | undefined => editor.createFormField(component)
 
 const autoGenerateForm = (tableId: string): void => {
   const addFieldToForm = (type: string, f: TableField, options?: AnyData): TFormField => {

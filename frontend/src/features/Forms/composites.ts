@@ -91,6 +91,19 @@ const getProp = (field: TFormField | TFormColumn, propName: string, ctx: AnyData
   return isExpr(v) ? runExpr(exprCode(v), ctx) : v
 }
 
+export const newNameForField = (type: string, fields: AnyData[]): string => {
+  let index = 1
+  let newName = `${startCase(type)}${index}`
+  let field = fields.find((f) => f.name === newName)
+  while (field) {
+    index += 1
+    newName = `${startCase(type)}${index}`
+    // eslint-disable-next-line @typescript-eslint/no-loop-func
+    field = fields.find((f) => f.name === newName)
+  }
+  return newName
+}
+
 export const useFormElements = () => ({
   componentForField,
 
@@ -98,18 +111,7 @@ export const useFormElements = () => ({
 
   components,
 
-  newNameForField: (type: string, fields: AnyData[]): string => {
-    let index = 1
-    let newName = `${startCase(type)}${index}`
-    let field = fields.find((f) => f.name === newName)
-    while (field) {
-      index += 1
-      newName = `${startCase(type)}${index}`
-      // eslint-disable-next-line @typescript-eslint/no-loop-func
-      field = fields.find((f) => f.name === newName)
-    }
-    return newName
-  },
+  newNameForField,
 
   flattenFields,
 
