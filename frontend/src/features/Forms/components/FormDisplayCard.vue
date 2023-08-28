@@ -41,7 +41,8 @@ import { computed } from 'vue'
 import { TSchema } from '@feathersjs/typebox'
 import { TFormColumn, TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
-import { useFormElements } from '@/features/Forms/composites'
+import { useExpression } from '@/features/Expression/composites'
+import { useFormElements } from '../composites'
 import FormDisplay from './FormDisplay.vue'
 
 const props = defineProps<{
@@ -58,9 +59,11 @@ const emit = defineEmits<{
 
 const value = useModelValue(props, emit)
 
-const { fieldBinds, style, buildCtx } = useFormElements()
+const { fieldBinds, style } = useFormElements()
 
-const ctx = buildCtx(value.value)
+const { buildCtx } = useExpression()
+
+const ctx = buildCtx()
 
 const sections = computed(() => (
   // eslint-disable-next-line no-underscore-dangle

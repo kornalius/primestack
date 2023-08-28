@@ -24,6 +24,7 @@
 import { TSchema } from '@feathersjs/typebox'
 import { TFormColumn, TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
+import { useExpression } from '@/features/Expression/composites'
 import { useFormElements } from '../composites'
 import FormDisplay from './FormDisplay.vue'
 
@@ -41,9 +42,11 @@ const emit = defineEmits<{
 
 const value = useModelValue(props, emit)
 
-const { fieldBinds, style, buildCtx } = useFormElements()
+const { fieldBinds, style } = useFormElements()
 
-const ctx = buildCtx(value.value)
+const { buildCtx } = useExpression()
+
+const ctx = buildCtx()
 
 const colName = (column: TFormColumn): string => {
   if (column.col === undefined || column.col === null || column.col === '') {

@@ -2,7 +2,7 @@ import { Type } from '@feathersjs/typebox'
 import { TAction } from '../interfaces/actions'
 
 export const fieldSchema = Type.Object({
-  name: Type.String(),
+  name: Type.String({ field: true }),
   value: Type.Union([Type.String(), Type.Number(), Type.Boolean()]),
 }, { additionalProperties: false, horizontal: true, horizontalPopup: true })
 

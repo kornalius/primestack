@@ -34,6 +34,38 @@
     />
   </div>
 
+  <div
+    v-if="horizontal"
+    class="col-auto"
+    style="width: 20px;"
+  >
+    <q-btn
+      v-if="showExpr"
+      class="q-mr-sm"
+      icon="mdi-flash"
+      :color="isExpr(value) ? 'orange-8' : 'grey-5'"
+      size="sm"
+      flat
+      dense
+    >
+      <q-popup-edit
+        v-model="value"
+        :title="`${label} Expression...`"
+        auto-save
+        @before-show="loadExpr"
+        @before-hide="saveExpr"
+      >
+        <code-editor
+          v-model="value"
+          style="width: 600px; height: 150px;"
+          lang-js
+          autofocus
+          @keydown="editor.preventSystemUndoRedo"
+        />
+      </q-popup-edit>
+    </q-btn>
+  </div>
+
   <!-- Non-expandable section -->
 
   <q-item
@@ -239,7 +271,7 @@ import { TSchema, Type } from '@feathersjs/typebox'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { getTypeFor, defaultValueForSchema, validForExpr } from '@/shared/schema'
 import { useAppEditor } from '@/features/App/store'
-import { useFormElements } from '@/features/Forms/composites'
+import { useExpression } from '@/features/Expression/composites'
 import { AnyData } from '@/shared/interfaces/commons'
 import { ruleTypes } from '@/features/Components/common'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
@@ -281,7 +313,7 @@ const value = useModelValue(props, emit)
 
 const editor = useAppEditor()
 
-const { isExpr, exprCode, stringToExpr } = useFormElements()
+const { isExpr, exprCode, stringToExpr } = useExpression()
 
 const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
 

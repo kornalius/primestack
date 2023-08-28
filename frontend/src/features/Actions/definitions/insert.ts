@@ -12,7 +12,9 @@ export default {
   exec: async (ctx) => {
     const { fieldsArrayToObject } = useActions()
 
+    const data = fieldsArrayToObject(ctx.fields as [], ctx)
+
     await ctx.api.service(ctx.tableId as string)
-      .create(fieldsArrayToObject(ctx.fields as []), {})
+      .create(data, {})
   },
 } as TFrontAction

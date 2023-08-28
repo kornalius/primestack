@@ -15,7 +15,7 @@
       class="action-button bg-grey-9 rounded-borders no-pointer-events"
       style="left: 0; width: 18px;"
     >
-      <q-icon :name="fieldIcon" color="white" size="xs" />
+      <q-icon :name="stringValue(component?.icon)" color="white" size="xs" />
     </div>
 
     <q-btn
@@ -116,7 +116,9 @@ import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/for
 import { useModelValue } from '@/composites/prop'
 import { useAppEditor } from '@/features/App/store'
 import { useQuery } from '@/features/Query/composites'
+import { useExpression } from '@/features/Expression/composites'
 import TableEditor from '@/features/Forms/components/Editor/TableEditor.vue'
+import { stringValue } from '@/composites/utilities'
 import { useFormElements } from '../../composites'
 import FormElementRow from './FormElementRow.vue'
 import FormElementCard from './FormElementCard.vue'
@@ -137,9 +139,9 @@ const emit = defineEmits<{
 const {
   componentForField,
   fieldBinds,
-  getProp,
-  buildCtx,
 } = useFormElements()
+
+const { buildCtx, getProp } = useExpression()
 
 const field = useModelValue(props, emit)
 
@@ -159,8 +161,6 @@ const fieldTable = computed(() => (
     ? editor.tables.find((t) => t._id === field.value.tableId)
     : undefined
 ))
-
-const fieldIcon = computed(() => component.value?.icon)
 
 const isRow = computed(() => component.value.type === 'row')
 
@@ -183,7 +183,7 @@ const onRemoveClick = () => {
   emit('remove', props.modelValue)
 }
 
-const displayValue = computed(() => getProp(field.value, 'modelValue', ctx))
+const displayValue = computed(() => getProp(field.value.modelValue, ctx))
 
 const style = computed(() => ({
   paddingTop: field.value.padding?.top,

@@ -425,6 +425,10 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
                   collection.createIndex(index.fields, omit(index, ['fields']))
                     // eslint-disable-next-line @typescript-eslint/no-empty-function
                     .then(() => {})
+                    .catch((e) => {
+                      // eslint-disable-next-line no-console
+                      console.error(e)
+                    })
                 })
               }
               return collection

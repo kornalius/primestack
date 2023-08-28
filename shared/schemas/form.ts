@@ -5,11 +5,13 @@ import { AnyData } from '../interfaces/commons'
 export const columnSchema = Type.Recursive((self) => Type.Object(
   {
     _id: Type.String({ objectid: true }),
+    name: Type.String(),
     _type: Type.String(),
     size: Type.Optional(Type.Number()),
     _fields: Type.Array(Type.Object(
       {
         _id: Type.String({ objectid: true }),
+        name: Type.String(),
         _type: Type.String(),
         _columns: Type.Optional(Type.Array(self)),
       },

@@ -13,15 +13,15 @@ export default {
     const { queryToMongo } = useQuery()
     const { fieldsArrayToObject } = useActions()
 
+    const data = fieldsArrayToObject(ctx.fields as [], ctx)
+
     if (ctx.id) {
       await ctx.api.service(ctx.tableId as string)
-        .update(ctx.id as string, fieldsArrayToObject(ctx.fields as []), {})
+        .update(ctx.id as string, data, {})
     } else {
       const table = await ctx.api.service('tables').get(ctx.tableId as string)
       await ctx.api.service(ctx.tableId as string)
-        .update(null, fieldsArrayToObject(ctx.fields as []), {
-          query: queryToMongo(ctx.query as Query, table),
-        })
+        .update(null, data, { query: queryToMongo(ctx.query as Query, table) })
     }
   },
 } as TFrontAction

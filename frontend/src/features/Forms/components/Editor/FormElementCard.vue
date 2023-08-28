@@ -132,8 +132,10 @@ import { useModelValue } from '@/composites/prop'
 // eslint-disable-next-line import/no-cycle
 import { useAppEditor } from '@/features/App/store'
 // eslint-disable-next-line import/no-cycle
-import { useFormElements } from '@/features/Forms/composites'
 import { defaultValueForSchema, defaultValues } from '@/shared/schema'
+import { useExpression } from '@/features/Expression/composites'
+import { stringValue } from '@/composites/utilities'
+import { useFormElements } from '../../composites'
 import FieldsEditor from './FieldsEditor.vue'
 
 const props = defineProps<{
@@ -152,16 +154,18 @@ const emit = defineEmits<{
 
 const field = useModelValue(props, emit)
 
-const { fieldBinds, style, buildCtx } = useFormElements()
+const { fieldBinds, style } = useFormElements()
 
-const ctx = buildCtx(field.value)
+const { buildCtx } = useExpression()
+
+const ctx = buildCtx()
 
 const sectionIcon = computed(() => (
-  props.components.find((c) => c.type === 'card-section').icon
+  stringValue(props.components.find((c) => c.type === 'card-section')?.icon)
 ))
 
 const actionIcon = computed(() => (
-  props.components.find((c) => c.type === 'card-actions').icon
+  stringValue(props.components.find((c) => c.type === 'card-actions')?.icon)
 ))
 
 const sections = computed(() => (

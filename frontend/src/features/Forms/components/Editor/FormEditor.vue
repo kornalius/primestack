@@ -87,6 +87,7 @@ import { formSchema } from '@/shared/schemas/form'
 import { tableFieldSchema } from '@/shared/schemas/table'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useAppEditor } from '@/features/App/store'
+import { stringValue } from '@/composites/utilities'
 import FieldsEditor from './FieldsEditor.vue'
 
 type Form = Static<typeof formSchema>
@@ -194,27 +195,11 @@ const unselectAll = () => {
   }
 }
 
-const componentColor = (c: TFormComponent) => {
-  if (typeof c.color === 'function') {
-    return c.color()
-  }
-  return c.color
-}
+const componentColor = (c: TFormComponent) => stringValue(c?.color)
 
-const componentIcon = (c: TFormComponent) => {
-  if (typeof c.icon === 'function') {
-    return c.icon()
-  }
-  return c.icon
-}
+const componentIcon = (c: TFormComponent) => stringValue(c?.icon)
 
-const componentLabel = (c: TFormComponent) => {
-  if (typeof c.label === 'function') {
-    return c.label()
-  }
-  return c.label
-}
-
+const componentLabel = (c: TFormComponent) => stringValue(c?.label)
 </script>
 
 <style scoped lang="sass">

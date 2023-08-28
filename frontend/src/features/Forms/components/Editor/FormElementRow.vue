@@ -61,8 +61,9 @@ import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/for
 import { useModelValue } from '@/composites/prop'
 // eslint-disable-next-line import/no-cycle
 import { useAppEditor } from '@/features/App/store'
-// eslint-disable-next-line import/no-cycle
-import { useFormElements } from '@/features/Forms/composites'
+import { useExpression } from '@/features/Expression/composites'
+import { stringValue } from '@/composites/utilities'
+import { useFormElements } from '../../composites'
 import FieldsEditor from './FieldsEditor.vue'
 
 const props = defineProps<{
@@ -80,11 +81,13 @@ const emit = defineEmits<{
 
 const field = useModelValue(props, emit)
 
-const { fieldBinds, style, buildCtx } = useFormElements()
+const { fieldBinds, style } = useFormElements()
+
+const { buildCtx } = useExpression()
 
 const ctx = buildCtx()
 
-const columnIcon = computed(() => props.components.find((c) => c.type === 'col').icon)
+const columnIcon = computed(() => stringValue(props.components.find((c) => c.type === 'col')?.icon))
 
 const colName = (column: TFormColumn): string => {
   if (column.col === undefined || column.col === null || column.col === '') {

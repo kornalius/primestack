@@ -90,6 +90,7 @@ import { TFrontAction } from '@/features/Actions/interface'
 import { actionElementSchema } from '@/shared/schemas/actions'
 import { useActions } from '@/features/Actions/composites'
 import ActionsListEditor from '@/features/Actions/components/Editor/ActionsListEditor.vue'
+import { stringValue } from '@/composites/utilities'
 
 type Action = Static<typeof actionElementSchema>
 
@@ -123,40 +124,15 @@ const onRemoveClick = () => {
   emit('remove', props.modelValue)
 }
 
-const actionColor = computed(() => {
-  if (typeof action.value.color === 'function') {
-    return action.value.color(actionElement.value)
-  }
-  return action.value.color
-})
+const actionColor = computed(() => stringValue(action.value?.color))
 
-const actionIconColor = computed(() => {
-  if (typeof action.value.iconColor === 'function') {
-    return action.value.iconColor(actionElement.value)
-  }
-  return action.value.iconColor || 'grey-8'
-})
+const actionIconColor = computed(() => stringValue(action.value?.iconColor))
 
-const actionDescription = computed(() => {
-  if (typeof action.value.description === 'function') {
-    return action.value.description(actionElement.value)
-  }
-  return action.value.description
-})
+const actionDescription = computed(() => stringValue(action.value?.description))
 
-const actionIcon = computed(() => {
-  if (typeof action.value.icon === 'function') {
-    return action.value.icon(actionElement.value)
-  }
-  return action.value.icon
-})
+const actionIcon = computed(() => stringValue(action.value?.icon))
 
-const actionLabel = computed(() => {
-  if (typeof action.value.label === 'function') {
-    return action.value.label(actionElement.value)
-  }
-  return action.value.label
-})
+const actionLabel = computed(() => stringValue(action.value?.label))
 </script>
 
 <style scoped lang="sass">

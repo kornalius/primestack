@@ -107,6 +107,7 @@ import { TAction } from '@/shared/interfaces/actions'
 import { useModelValue } from '@/composites/prop'
 import { actionElementSchema } from '@/shared/schemas/actions'
 import { TFrontAction } from '@/features/Actions/interface'
+import { stringValue } from '@/composites/utilities'
 import ActionsListEditor from './ActionsListEditor.vue'
 
 type ActionElement = Static<typeof actionElementSchema>
@@ -138,43 +139,15 @@ const unselectAll = () => {
   }
 }
 
-const actionColor = (action: TFrontAction) => {
-  if (typeof action.color === 'function') {
-    return action.color()
-  }
-  return action.color
-}
+const actionColor = (action: TFrontAction) => stringValue(action?.color)
 
-const actionIconColor = (action: TFrontAction) => {
-  if (typeof action.iconColor === 'function') {
-    return action.iconColor()
-  }
-  if (action.iconColor) {
-    return action.iconColor
-  }
-  return actionColor(action)
-}
+const actionIconColor = (action: TFrontAction) => stringValue(action?.iconColor)
 
-const actionDescription = (action: TAction) => {
-  if (typeof action.description === 'function') {
-    return action.description()
-  }
-  return action.description
-}
+const actionDescription = (action: TAction) => stringValue(action?.description)
 
-const actionIcon = (action: TFrontAction) => {
-  if (typeof action.icon === 'function') {
-    return action.icon()
-  }
-  return action.icon
-}
+const actionIcon = (action: TFrontAction) => stringValue(action?.icon)
 
-const actionLabel = (action: TFrontAction) => {
-  if (typeof action.label === 'function') {
-    return action.label()
-  }
-  return action.label
-}
+const actionLabel = (action: TFrontAction) => stringValue(action?.label)
 </script>
 
 <style scoped lang="sass">

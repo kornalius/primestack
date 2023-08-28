@@ -1,11 +1,6 @@
-import { useI18n } from 'vue-i18n'
-import { useQuasar } from 'quasar'
-import { useRoute, useRouter } from 'vue-router'
-import { LRUCache } from 'lru-cache'
 import { Static, TSchema } from '@feathersjs/typebox'
 import startCase from 'lodash/startCase'
 import omit from 'lodash/omit'
-import expr2fn from 'expr2fn'
 import { TFormColumn, TFormField } from '@/shared/interfaces/forms'
 import { AnyData, T18N } from '@/shared/interfaces/commons'
 import { components, componentForType, componentForField } from '@/features/Components'
@@ -13,12 +8,8 @@ import { useValidators } from '@/features/Validation/composites'
 import { columnSchema, fieldSchema } from '@/shared/schemas/form'
 import { getTypeFor } from '@/shared/schema'
 import { actionSchema } from '@/shared/schemas/actions'
-import { useFeathers } from '@/composites/feathers'
-import { useActions } from '@/features/Actions/composites'
-import { useSnacks } from '@/features/Snacks/store'
-import { useVariables } from '@/features/Variables/store'
 // eslint-disable-next-line import/no-cycle
-import { useAppEditor } from '@/features/App/store'
+import { getProp } from '@/features/Expression/composites'
 
 type FormField = Static<typeof fieldSchema>
 type FormColumn = Static<typeof columnSchema>
@@ -50,45 +41,6 @@ const flattenFields = (fields: FormField[] | FormColumn[]): FormField[] => {
   flatten(fields)
 
   return flattended
-}
-
-const isExpr = (v: string): boolean => typeof v === 'string' && v.startsWith('```') && v.endsWith('```')
-
-const exprCode = (v: string): string => (isExpr(v) ? v.substring(3, v.length - 3) : undefined)
-
-const exprToString = (v: string): string => (isExpr(v) ? v.substring(3, v.length - 3) : v)
-
-const stringToExpr = (v: string): string => {
-  const quotes = '```'
-  return `${quotes}${exprToString(v)}${quotes}`
-}
-
-const options = {
-  max: 500,
-  ttl: 1000 * 60 * 5,
-  allowStale: false,
-  updateAgeOnGet: false,
-  updateAgeOnHas: false,
-}
-
-const cache = new LRUCache(options)
-
-const runExpr = (v: string, ctx: AnyData): unknown => {
-  let fn = cache.get(v) as (ctx: AnyData) => unknown
-  if (!fn) {
-    fn = expr2fn(v) as (ctx: AnyData) => unknown
-    cache.set(v, fn)
-  }
-  return fn({
-    doc: ctx.doc,
-    var: (name: string): unknown => ctx.store.getVariable(name),
-    route: (): string => ctx.route.path,
-  })
-}
-
-const getProp = (field: TFormField | TFormColumn, propName: string, ctx: AnyData): unknown => {
-  const v = field[propName] as string
-  return isExpr(v) ? runExpr(exprCode(v), ctx) : v
 }
 
 export const newNameForField = (type: string, fields: AnyData[]): string => {
@@ -153,7 +105,7 @@ export const useFormElements = () => ({
         if (schema.properties[k] && getTypeFor(schema.properties[k]) === 'action') {
           return { ...acc, [`on${startCase(k)}`]: callEventAction(field[k] as string) }
         }
-        return { ...acc, [k]: getProp(field, k, ctx) }
+        return { ...acc, [k]: getProp(field[k], ctx) }
       }, {})
   },
 
@@ -171,7 +123,8 @@ export const useFormElements = () => ({
   // eslint-disable-next-line no-underscore-dangle
   isParagraph: (field: TFormField): boolean => field._type === 'paragraph',
 
-  serializeRules: (t: T18N, field: TFormField): ((...args) => (val: string) => true | string)[] => (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  serializeRules: (t: T18N, field: TFormField): ((...args: any[]) => (val: string) => true | string)[] => (
     (field.rules as AnyData[])?.map((r) => validators[r.type](t, omit(r, ['type'])))
   ),
 
@@ -187,8 +140,6 @@ export const useFormElements = () => ({
     return false
   },
 
-  getProp,
-
   style: (field: AnyData): AnyData => {
     const component = components
       // eslint-disable-next-line no-underscore-dangle
@@ -203,39 +154,6 @@ export const useFormElements = () => ({
       marginBottom: field.margin?.bottom,
       marginRight: field.margin?.right,
       ...(component.editStyles || {}),
-    }
-  },
-
-  isExpr,
-
-  exprCode,
-
-  stringToExpr,
-
-  runExpr,
-
-  buildCtx: (doc?: AnyData): AnyData => {
-    const { t } = useI18n()
-    const quasar = useQuasar()
-    const { api } = useFeathers()
-    const { exec } = useActions()
-    const snacks = useSnacks()
-    const store = useVariables()
-    const route = useRoute()
-    const router = useRouter()
-    const editor = useAppEditor()
-
-    return {
-      quasar,
-      snacks,
-      api,
-      editor,
-      t,
-      store,
-      route,
-      router,
-      exec,
-      doc,
     }
   },
 })

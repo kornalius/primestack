@@ -4,6 +4,8 @@ import { AnyData } from '@/shared/interfaces/commons'
 import { actionElementSchema } from '@/shared/schemas/actions'
 import { fieldSchema } from '@/shared/actions/insert'
 // eslint-disable-next-line import/no-cycle
+import { getProp } from '@/features/Expression/composites'
+// eslint-disable-next-line import/no-cycle
 import { actions } from './definitions'
 
 type ActionElement = Static<typeof actionElementSchema>
@@ -12,37 +14,35 @@ type Action = Static<typeof actionElementSchema>
 
 type Field = Static<typeof fieldSchema>
 
-const actionsByType = (
+export const actionsByType = (
   actions.reduce((acc, a) => (
     { ...acc, [a.type]: a }
   ), {})
 )
 
-const componentForType = (
+export const componentForType = (
   actions.reduce((acc, a) => (
     { ...acc, [a.type]: a.component }
   ), {})
 )
 
-const execForType = (
+export const execForType = (
   actions.reduce((acc, a) => (
     { ...acc, [a.type]: a.exec }
   ), {})
 )
 
-const execAction = (a: ActionElement, args: AnyData) => {
+export const execAction = async (a: ActionElement, args: AnyData) => {
   // eslint-disable-next-line no-underscore-dangle
   const exec = execForType[a._type]
-  exec({ ...args, ...omit(a, ['_id', '_type']) })
+  await exec({ ...args, ...omit(a, ['_id', '_type']) })
 }
 
-const exec = (list: ActionElement[], args: AnyData) => {
-  list.forEach((a) => {
-    execAction(a, args)
-  })
-}
+export const exec = async (list: ActionElement[], args: AnyData) => (
+  Promise.all(list.map((a) => execAction(a, args)))
+)
 
-const componentForAction = (action: Action): unknown => {
+export const componentForAction = (action: Action): unknown => {
   // eslint-disable-next-line no-underscore-dangle
   let comp = componentForType[action._type]
   if (typeof comp === 'function') {
@@ -51,7 +51,7 @@ const componentForAction = (action: Action): unknown => {
   return comp
 }
 
-const flattenActions = (acts: ActionElement[]): ActionElement[] => {
+export const flattenActions = (acts: ActionElement[]): ActionElement[] => {
   const flattended: ActionElement[] = []
 
   const flatten = (list: ActionElement[]): void => {
@@ -93,11 +93,11 @@ export const useActions = () => ({
     return omit(action, fieldsToOmit)
   },
 
-  exec,
-
-  fieldsArrayToObject: (fields: Field[]): AnyData => (
+  fieldsArrayToObject: (fields: Field[], ctx: AnyData): AnyData => (
     fields.reduce((acc, f) => (
-      { ...acc, [f.name]: f.value }
+      { ...acc, [f.name]: getProp(f.value, ctx) }
     ), {})
   ),
+
+  exec,
 })

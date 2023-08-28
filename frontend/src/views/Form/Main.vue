@@ -153,6 +153,7 @@ import isEqual from 'lodash/isEqual'
 import { useAppEditor } from '@/features/App/store'
 import { useFormElements } from '@/features/Forms/composites'
 import { useActions } from '@/features/Actions/composites'
+import { useExpression } from '@/features/Expression/composites'
 import { defaultValueForSchema, fieldsToSchema } from '@/shared/schema'
 import { useFeathers } from '@/composites/feathers'
 import { formSchema } from '@/shared/schemas/form'
@@ -239,9 +240,9 @@ watch(form, () => {
 const {
   components,
   flattenFields,
-  getProp,
-  buildCtx,
 } = useFormElements()
+
+const { buildCtx, getProp } = useExpression()
 
 const ctx = buildCtx()
 
@@ -273,7 +274,7 @@ const formModelValues = computed(() => {
     if (field.field !== undefined && field.field !== null) {
       // eslint-disable-next-line no-underscore-dangle
       const comp = components.find((c) => c.type === field._type)
-      let v = getProp(field, 'modelValue', ctx)
+      let v = getProp(field.modelValue, ctx)
       if (comp.numericInput && v !== undefined) {
         v = Number(v)
       }

@@ -509,6 +509,7 @@ import { ruleTypes } from '@/features/Components/common'
 import { fieldSchema } from '@/shared/schemas/form'
 import { useAppEditor } from '@/features/App/store'
 import { useFormElements } from '@/features/Forms/composites'
+import { useExpression } from '@/features/Expression/composites'
 import PaddingEditor from '@/features/Fields/components/PaddingEditor.vue'
 import MarginEditor from '@/features/Fields/components/MarginEditor.vue'
 import IconField from '@/features/Fields/components/IconField.vue'
@@ -568,7 +569,9 @@ const tempJson = ref()
 
 const editor = useAppEditor()
 
-const { isExpr, exprCode, flattenFields } = useFormElements()
+const { flattenFields } = useFormElements()
+
+const { isExpr, exprCode } = useExpression()
 
 const { queryToString } = useQuery()
 

@@ -54,6 +54,7 @@
 import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
 import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
+import { useExpression } from '@/features/Expression/composites'
 import { useFormElements } from '../composites'
 import FormDisplayRow from './FormDisplayRow.vue'
 import FormDisplayCard from './FormDisplayCard.vue'
@@ -81,8 +82,9 @@ const {
   isCard,
   isParagraph,
   serializeRules,
-  buildCtx,
 } = useFormElements()
+
+const { buildCtx } = useExpression()
 
 const value = useModelValue(props, emit)
 
