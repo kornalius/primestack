@@ -31,7 +31,8 @@
     "md5": "Invalid MD5 value",
     "semver": "Invalid semantic version",
     "latlong": "Invalid latitude and longitude format",
-    "postalcode": "Invalid postal/zip code"
+    "postalcode": "Invalid postal/zip code",
+    "name": "Duplicate name"
   },
   "uploader": {
     "remove": "Remove",

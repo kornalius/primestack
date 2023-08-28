@@ -33,7 +33,7 @@
 
         <q-btn
           v-if="editor.active"
-          :disable="!editor.isModified"
+          :disable="!editor.canSave"
           icon="mdi-check"
           label="Save"
           color="green-4"

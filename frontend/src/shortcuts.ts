@@ -5,7 +5,9 @@ hotkeys.setScope('app')
 
 hotkeys('ctrl+s', 'edit', (e) => {
   const editor = useAppEditor()
-  editor.save()
+  if (editor.canSave) {
+    editor.save()
+  }
   e.preventDefault()
 })
 

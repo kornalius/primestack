@@ -45,6 +45,7 @@ export interface TFormComponent {
 
 export interface TFormColumn {
   _id: string
+  name: string
   _type: string
   size: number
   _fields: TFormField[]
@@ -53,6 +54,7 @@ export interface TFormColumn {
 
 export interface TFormField {
   _id: string
+  name: string
   _type: string
   _columns?: TFormColumn[]
   [k: string]: unknown

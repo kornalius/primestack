@@ -31,7 +31,8 @@
     "md5": "Valeur MD5 invalide",
     "semver": "Valeur de version sémantique invalide",
     "latlong": "Format de latitude et longitude invalide",
-    "postalcode": "Code postal invalide"
+    "postalcode": "Code postal invalide",
+    "name": "Nom dupliqué"
   },
   "uploader": {
     "remove": "Effacer",

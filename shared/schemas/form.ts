@@ -22,6 +22,7 @@ export const columnSchema = Type.Recursive((self) => Type.Object(
 export const fieldSchema = Type.Object(
   {
     _id: Type.String({ objectid: true }),
+    name: Type.String(),
     _type: Type.String(),
     _columns: Type.Optional(Type.Array(columnSchema)),
   },

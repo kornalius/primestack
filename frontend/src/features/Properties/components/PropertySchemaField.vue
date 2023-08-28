@@ -21,6 +21,8 @@
     :label="embedLabel ? label : undefined"
     :outlined="property"
     :disable="disabled"
+    :rules="[isNameField ? checkDuplicateName : undefined]"
+    :hide-bottom-space="!isNameField"
     dense
     @keydown="editor.preventSystemUndoRedo"
   >
@@ -495,6 +497,7 @@
 import { computed, ref } from 'vue'
 import omit from 'lodash/omit'
 import { Static, TSchema, Type } from '@feathersjs/typebox'
+import { useI18n } from 'vue-i18n'
 import hljs from 'highlight.js'
 import javascript from 'highlight.js/lib/languages/javascript'
 import { defaultValueForSchema, getTypeFor, optionsForSchema } from '@/shared/schema'
@@ -503,6 +506,7 @@ import { useQuery } from '@/features/Query/composites'
 import { AnyData } from '@/shared/interfaces/commons'
 import { actionSchema } from '@/shared/schemas/actions'
 import { ruleTypes } from '@/features/Components/common'
+import { fieldSchema } from '@/shared/schemas/form'
 import { useAppEditor } from '@/features/App/store'
 import { useFormElements } from '@/features/Forms/composites'
 import PaddingEditor from '@/features/Fields/components/PaddingEditor.vue'
@@ -521,6 +525,8 @@ import ServiceSelect from '@/features/Fields/components/ServiceSelect.vue'
 import TableFieldSelect from '@/features/Fields/components/TableFieldSelect.vue'
 import VariableSelect from '@/features/Fields/components/VariableSelect.vue'
 import PropertyHighlight from '@/features/Properties/components/PropertyHighlight.vue'
+
+type FormField = Static<typeof fieldSchema>
 
 type Action = Static<typeof actionSchema>
 
@@ -562,9 +568,30 @@ const tempJson = ref()
 
 const editor = useAppEditor()
 
-const { isExpr, exprCode } = useFormElements()
+const { isExpr, exprCode, flattenFields } = useFormElements()
 
 const { queryToString } = useQuery()
+
+const { t } = useI18n()
+
+const isNameField = computed(() => props.schema.name === true)
+
+const checkDuplicateName = (v: string): true | string => {
+  if (props.schema.name === true && v) {
+    const form = editor.formInstance(editor.formId)
+    if (form) {
+      // eslint-disable-next-line no-underscore-dangle
+      const found = flattenFields(form._fields)
+        .find((f: FormField) => f.name
+          && f._id !== props.parent._id
+          && f.name.toLowerCase() === v.toLowerCase())
+      if (found) {
+        return t('field_errors.name')
+      }
+    }
+  }
+  return true
+}
 
 const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
 

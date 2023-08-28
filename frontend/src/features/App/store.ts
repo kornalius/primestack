@@ -565,6 +565,58 @@ export const useAppEditor = defineStore('app-editor', () => {
   }
 
   /**
+   * Returns the form instance from an id
+   *
+   * @param id Id of the form
+   *
+   * @returns {Form|undefined} Instance of the form
+   */
+  const formInstance = (id: string): Form | undefined => (
+    states.value.forms?.find
+      ? states.value.forms?.find((f) => f._id === id)
+      : undefined
+  )
+
+  /**
+   * Returns the form field instance from an id
+   *
+   * @param id Id of the form field
+   *
+   * @returns {FormField|undefined} Instance of the form field
+   */
+  const formFieldInstance = (id: string): FormField | undefined => (
+    // eslint-disable-next-line no-underscore-dangle
+    flattenFields(formInstance(states.value.formId)?._fields || []).find((f) => f._id === id) as FormField
+  )
+
+  /**
+   * Computes if the form can be saved properly
+   *
+   * @returns {boolean} Returns true if the form can be saved
+   */
+  const canSave = computed((): boolean => {
+    if (!isModified.value) {
+      return false
+    }
+
+    const form = formInstance(states.value.formId)
+
+    const nameExists = (field: FormField): boolean => {
+      if (!field.name) {
+        return false
+      }
+      // eslint-disable-next-line no-underscore-dangle
+      return !!flattenFields(form._fields)
+        .find((f: FormField) => f.name
+          && f._id !== field._id
+          && f.name.toLowerCase() === field.name.toLowerCase())
+    }
+
+    // eslint-disable-next-line no-underscore-dangle
+    return !flattenFields(form._fields).find((f) => nameExists(f))
+  })
+
+  /**
    * Save the editing session into the store
    */
   const save = async (): Promise<void> => {
@@ -708,31 +760,6 @@ export const useAppEditor = defineStore('app-editor', () => {
       }
     }
   }
-
-  /**
-   * Returns the form instance from an id
-   *
-   * @param id Id of the form
-   *
-   * @returns {Form|undefined} Instance of the form
-   */
-  const formInstance = (id: string): Form | undefined => (
-    states.value.forms?.find
-      ? states.value.forms?.find((f) => f._id === id)
-      : undefined
-  )
-
-  /**
-   * Returns the form field instance from an id
-   *
-   * @param id Id of the form field
-   *
-   * @returns {FormField|undefined} Instance of the form field
-   */
-  const formFieldInstance = (id: string): FormField | undefined => (
-    // eslint-disable-next-line no-underscore-dangle
-    flattenFields(formInstance(states.value.formId)?._fields || []).find((f) => f._id === id) as FormField
-  )
 
   /**
    * Returns the menu instance from an id
@@ -898,7 +925,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @returns {TFormField} New form field
    */
   const createFormField = (component: TFormComponent, options?: AnyData): TFormField | undefined => {
-    const form = states.value.forms.find((f) => f._id === states.value.formId)
+    const form = formInstance(states.value.formId)
     if (form) {
       return {
         _id: hexObjectId(),
@@ -912,7 +939,7 @@ export const useAppEditor = defineStore('app-editor', () => {
         ...(defaultValues(component.defaultValues) || {}),
         ...(options || {}),
         // eslint-disable-next-line no-underscore-dangle
-        name: newNameForField(component.type, form._fields),
+        name: newNameForField(component.type, flattenFields(form._fields)),
       }
     }
     return undefined
@@ -956,6 +983,8 @@ export const useAppEditor = defineStore('app-editor', () => {
     componentType: string,
     field: TFormField,
   ): TFormColumn => {
+    const form = formInstance(states.value.formId)
+
     let type: string
 
     if (componentType === 'row') {
@@ -977,6 +1006,8 @@ export const useAppEditor = defineStore('app-editor', () => {
           { ...acc, [k]: defaultValueForSchema(colComponent.schema.properties[k]) }
         ), {}),
       ...(defaultValues(colComponent.defaultValues) || {}),
+      // eslint-disable-next-line no-underscore-dangle
+      name: newNameForField(type, flattenFields(form._fields)),
     } as TFormColumn
     // eslint-disable-next-line no-underscore-dangle
     field._columns.push(col)
@@ -1231,6 +1262,7 @@ export const useAppEditor = defineStore('app-editor', () => {
     selectTableField,
     unselectTableField,
     isTableFieldSelected,
+    canSave,
     save,
     reset,
     snap,
