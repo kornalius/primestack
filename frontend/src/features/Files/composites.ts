@@ -375,6 +375,8 @@ export const useFiles = (t: ((key: VueI18n.Path, values?: VueI18n.PathValue[]) =
           headers: {
             'Content-Type': 'multipart/form-data',
             Authorization: token,
+            tableId: file.tableId,
+            docId: file.docId,
           },
           onUploadProgress,
         },

@@ -169,6 +169,7 @@ const handleFileChange = (e) => {
         extension: file.name.split('.').pop(),
         state: fileStates.NONE,
         progress: 0,
+        ...props.query,
       } as StoreFile
 
       if (isValidFile(def)) {

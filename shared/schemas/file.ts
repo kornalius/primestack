@@ -3,6 +3,8 @@ import { Type } from '@feathersjs/typebox'
 export const schema = Type.Intersect([
   Type.Object({
     _id: Type.String({ objectid: true }),
+    tableId: Type.String({ objectid: true }),
+    docId: Type.String({ objectid: true }),
     originalFilename: Type.String(),
     newFilename: Type.String(),
     filepath: Type.String(),

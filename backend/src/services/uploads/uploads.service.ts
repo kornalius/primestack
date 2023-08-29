@@ -22,6 +22,8 @@ class Service extends BaseService {
         filepath: file.filepath,
         mimetype: file.mimetype,
         size: file.size,
+        tableId: params?.headers?.tableid,
+        docId: params?.headers?.docid,
       }, params)
     } catch (e) {
       // delete file after finished

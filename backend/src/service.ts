@@ -306,9 +306,9 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
     },
     before: {
       all: [
+        ...expandHooks('before.all'),
         schemaHooks.validateQuery(queryValidator),
         schemaHooks.resolveQuery(queryResolver),
-        ...expandHooks('before.all'),
       ],
       find: [
         ...expandHooks('before.find'),
@@ -317,17 +317,17 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
         ...expandHooks('before.get'),
       ],
       create: [
+        ...expandHooks('before.create'),
         schemaHooks.validateData(dataValidator),
         schemaHooks.resolveData(dataResolver),
-        ...expandHooks('before.create'),
       ],
       update: [
         ...expandHooks('before.update'),
       ],
       patch: [
+        ...expandHooks('before.patch'),
         schemaHooks.validateData(patchValidator),
         schemaHooks.resolveData(patchResolver),
-        ...expandHooks('before.patch'),
       ],
       remove: [
         ...(options.softDelete ? [softDelete] : []),

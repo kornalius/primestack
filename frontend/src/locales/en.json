@@ -52,7 +52,8 @@
     "fileLocked":  "File is locked",
     "readAborted": "Reading of file aborted",
     "somethingWrong": "Something wrong happened",
-    "done": "Done"
+    "done": "Done",
+    "message": "Select a file or drag one here..."
   },
   "dialog": {
     "areyousure": "Are you sure?",
@@ -89,6 +90,9 @@
         "title": "Unsaved changes",
         "message": "There are unsaved changes. Are you sure you want to cancel?"
       }
+    },
+    "files": {
+      "title": "Files ({count})"
     }
   }
 }

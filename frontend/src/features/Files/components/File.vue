@@ -7,7 +7,7 @@
 
       <div class="col">
         <div class="row">
-          <div class="col-auto">
+          <div class="col-auto overflow-hidden ellipsis" style="max-width: 50%;">
             {{ name }}
           </div>
 

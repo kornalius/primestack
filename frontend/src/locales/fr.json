@@ -52,7 +52,8 @@
     "fileLocked":  "Le fichier est barré",
     "readAborted": "Lecture du fichier cancellé",
     "somethingWrong": "Quelque chose d'horrible est arrivé",
-    "done": "Terminé"
+    "done": "Terminé",
+    "message": "Selectionnez un fichier ou glissez en un ici..."
   },
   "dialog": {
     "areyousure": "Êtes-vous certain?",
@@ -88,6 +89,9 @@
       "unsaved": {
         "title": "Changements non-sauvegardés",
         "message": "Il y a des changements non sauvegardés. Êtes-vous certain de vouloir annuler?"
+      },
+      "files": {
+        "title": "Files ({count})"
       }
     }
   }

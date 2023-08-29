@@ -97,6 +97,24 @@
                 @click="resetForm"
               />
             </q-card-actions>
+
+            <q-expansion-item
+              v-if="showFilesSection"
+              :caption="t('form.files.title', { count: filesCount })"
+              icon="mdi-paperclip"
+              header-class="q-px-none"
+              dense
+            >
+              <div class="q-my-sm">
+                <uploader
+                  :label="t('uploader.message')"
+                  :query="filesFilter"
+                  :accept="mimetypes"
+                  :max-file-size="maxFileSize"
+                  :max-files="10"
+                />
+              </div>
+            </q-expansion-item>
           </q-form>
 
           <actions-editor
@@ -160,12 +178,14 @@ import { formSchema } from '@/shared/schemas/form'
 import { useUrl } from '@/composites/url'
 import { getId } from '@/composites/utilities'
 import { useQuery } from '@/features/Query/composites'
+import { useFiles } from '@/features/Files/composites'
 import { TFormColumn, TFormField } from '@/shared/interfaces/forms'
 import { AnyData } from '@/shared/interfaces/commons'
 import FormEditor from '@/features/Forms/components/Editor/FormEditor.vue'
 import FormDisplay from '@/features/Forms/components/FormDisplay.vue'
 import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
 import ActionsEditor from '@/features/Actions/components/Editor/ActionsEditor.vue'
+import Uploader from '@/features/Files/components/Uploader.vue'
 
 const props = defineProps<{
   menuId: string
@@ -185,6 +205,8 @@ const quasar = useQuasar()
 const { t } = useI18n()
 
 const { queryToMongo } = useQuery()
+
+const { mimetypes, maxFileSize } = useFiles(t)
 
 /**
  * Menu
@@ -565,4 +587,26 @@ const unselectAll = () => {
     editor.unselectActionElement()
   }
 }
+
+/**
+ * Files
+ */
+
+/**
+ * Should we display the files section?
+ */
+const showFilesSection = computed(() => table.value && currentId.value)
+
+const filesFilter = computed(() => ({
+  tableId: table.value?._id,
+  docId: currentId.value,
+}))
+
+const { data: files, queryWhen } = api.service('files').useFind({
+  query: filesFilter,
+  temps: true,
+})
+queryWhen(() => Object.keys(filesFilter.value).length === 2)
+
+const filesCount = computed(() => files.value?.length || 0)
 </script>
