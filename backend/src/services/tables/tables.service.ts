@@ -10,7 +10,7 @@ import { fieldsToSchema, indexesToMongo } from '@/shared/schema'
 import { AnyData } from '@/shared/interfaces/commons'
 import { info } from '@/logger'
 import diff from '@/diff-arrays'
-import { checkRule } from '@/hooks/checkRule'
+import { checkRules } from '@/hooks/check-rules'
 import { checkMaxRecords, checkMaxTables } from './tables.hooks'
 
 dataValidator.addSchema(schema)
@@ -34,7 +34,7 @@ const createDynamicService = (app: Application, id: string, t: AnyData) => {
     hooks: {
       before: {
         all: [
-          checkRule,
+          checkRules,
         ],
         create: [
           checkMaxRecords,

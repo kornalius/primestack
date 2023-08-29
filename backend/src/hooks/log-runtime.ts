@@ -1,5 +1,5 @@
-import { HookContext } from '@/declarations'
 import { NextFunction } from '@feathersjs/feathers'
+import { HookContext } from '@/declarations'
 import { info } from '@/logger'
 
 export const logRuntime = async (context: HookContext, next: NextFunction) => {

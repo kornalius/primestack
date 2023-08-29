@@ -12,7 +12,6 @@ import cloneDeep from 'lodash/cloneDeep'
 import { useSnacks } from '@/features/Snacks/store'
 import { AnyData } from '@/shared/interfaces/commons'
 // eslint-disable-next-line import/no-cycle
-import { newNameForField, useFormElements } from '@/features/Forms/composites'
 import { useActions } from '@/features/Actions/composites'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
 import { fieldSchema, formSchema } from '@/shared/schemas/form'
@@ -20,6 +19,7 @@ import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
 import { actionSchema, actionElementSchema } from '@/shared/schemas/actions'
 import { TFormColumn, TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { defaultValueForSchema, defaultValues } from '@/shared/schema'
+import { newNameForField, flattenFields } from '@/shared/form'
 import { TAction } from '@/shared/interfaces/actions'
 
 type Menu = Static<typeof menuSchema>
@@ -39,8 +39,6 @@ interface Snapshot {
 }
 
 const { flattenActions } = useActions()
-
-const { flattenFields } = useFormElements()
 
 export const useAppEditor = defineStore('app-editor', () => {
   const states = ref({

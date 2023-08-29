@@ -1,6 +1,6 @@
 import { Type } from '@feathersjs/typebox'
 
-export const ruleSchema = Type.Object({
+export const schema = Type.Object({
   tableId: Type.Optional(Type.String({ objectid: true, tableid: true })),
   read: Type.Boolean(),
   create: Type.Boolean(),
@@ -8,7 +8,7 @@ export const ruleSchema = Type.Object({
   delete: Type.Boolean(),
 }, { $id: 'Rule', additionalProperties: false })
 
-export const schema = Type.Object({
+export const maxSchema = Type.Object({
   maxShares: Type.Integer(),
   maxTables: Type.Integer(),
   maxRecords: Type.Integer(),

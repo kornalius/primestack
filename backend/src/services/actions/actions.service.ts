@@ -3,6 +3,7 @@ import { Application } from '@feathersjs/koa'
 import { createService, MongoService } from '@/service'
 import { schema } from '@/shared/schemas/actions'
 import { dataValidator } from '@/validators'
+import { checkPaidActions } from '@/hooks/check-paid-actions'
 
 dataValidator.addSchema(schema)
 
@@ -20,6 +21,14 @@ export default function (app: Application): void {
     user: true,
     authentication: true,
     methods: ['find', 'get', 'create', 'patch', 'remove'],
+    hooks: {
+      before: {
+        all: [],
+        create: [checkPaidActions],
+        update: [checkPaidActions],
+        patch: [checkPaidActions],
+      }
+    },
   }).init(app, {})
 }
 

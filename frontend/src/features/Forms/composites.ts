@@ -5,56 +5,15 @@ import { TFormColumn, TFormField } from '@/shared/interfaces/forms'
 import { AnyData, T18N } from '@/shared/interfaces/commons'
 import { components, componentForType, componentForField } from '@/features/Components'
 import { useValidators } from '@/features/Validation/composites'
-import { columnSchema, fieldSchema } from '@/shared/schemas/form'
 import { getTypeFor } from '@/shared/schema'
+import { flattenFields, newNameForField } from '@/shared/form'
 import { actionSchema } from '@/shared/schemas/actions'
 // eslint-disable-next-line import/no-cycle
 import { getProp } from '@/features/Expression/composites'
 
-type FormField = Static<typeof fieldSchema>
-type FormColumn = Static<typeof columnSchema>
 type Action = Static<typeof actionSchema>
 
 const validators = useValidators()
-
-const flattenFields = (fields: FormField[] | FormColumn[]): FormField[] => {
-  const flattended = []
-
-  const flatten = (list: FormField[] | FormColumn[]): void => {
-    list.forEach((f: FormField | FormColumn) => {
-      flattended.push(f)
-
-      // eslint-disable-next-line no-underscore-dangle
-      const cols = (f as FormField)._columns
-      if (cols) {
-        flatten(cols)
-      }
-
-      // eslint-disable-next-line no-underscore-dangle
-      const flds = (f as FormColumn)._fields
-      if (flds) {
-        flatten(flds)
-      }
-    })
-  }
-
-  flatten(fields)
-
-  return flattended
-}
-
-export const newNameForField = (type: string, fields: AnyData[]): string => {
-  let index = 1
-  let newName = `${startCase(type)}${index}`
-  let field = fields.find((f) => f.name === newName)
-  while (field) {
-    index += 1
-    newName = `${startCase(type)}${index}`
-    // eslint-disable-next-line @typescript-eslint/no-loop-func
-    field = fields.find((f) => f.name === newName)
-  }
-  return newName
-}
 
 export const useFormElements = () => ({
   componentForField,
@@ -70,6 +29,7 @@ export const useFormElements = () => ({
   fieldBinds: (field: TFormField | TFormColumn, schema: TSchema, ctx: AnyData): AnyData => {
     const fieldsToOmit = [
       '_id',
+      'name',
       '_type',
       '_fields',
       '_columns',
@@ -98,6 +58,7 @@ export const useFormElements = () => ({
 
     return Object.keys(omit(field, fieldsToOmit))
       .reduce((acc, k) => {
+        let fieldname = k
         // if (ctx.editor.active) {
         //   return { ...acc, [k]: field[k] }
         // }
@@ -105,7 +66,11 @@ export const useFormElements = () => ({
         if (schema.properties[k] && getTypeFor(schema.properties[k]) === 'action') {
           return { ...acc, [`on${startCase(k)}`]: callEventAction(field[k] as string) }
         }
-        return { ...acc, [k]: getProp(field[k], ctx) }
+        // schema property specifies its own prop name
+        if (schema.properties[k] && schema.properties[k].propname) {
+          fieldname = schema.properties[k].propname
+        }
+        return { ...acc, [fieldname]: getProp(field[k], ctx) }
       }, {})
   },
 
@@ -119,6 +84,12 @@ export const useFormElements = () => ({
 
   // eslint-disable-next-line no-underscore-dangle
   isCard: (field: TFormField): boolean => field._type === 'card',
+
+  // eslint-disable-next-line no-underscore-dangle
+  isIcon: (field: TFormField): boolean => field._type === 'icon',
+
+  // eslint-disable-next-line no-underscore-dangle
+  isTable: (field: TFormField): boolean => field._type === 'table',
 
   // eslint-disable-next-line no-underscore-dangle
   isParagraph: (field: TFormField): boolean => field._type === 'paragraph',

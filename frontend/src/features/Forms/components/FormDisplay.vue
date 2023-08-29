@@ -27,6 +27,13 @@
         v-html="value[field.field]"
       />
 
+      <q-icon
+        v-else-if="isIcon(field)"
+        :name="displayValue(field) as string"
+        v-bind="fieldBinds(field, schemaForType(field), ctx)"
+        :style="style"
+      />
+
       <component
         :is="componentForField(field)"
         v-else-if="isNumericInput(field)"
@@ -54,7 +61,7 @@
 import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
 import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
-import { useExpression } from '@/features/Expression/composites'
+import { getProp, useExpression } from '@/features/Expression/composites'
 import { useFormElements } from '../composites'
 import FormDisplayRow from './FormDisplayRow.vue'
 import FormDisplayCard from './FormDisplayCard.vue'
@@ -80,6 +87,7 @@ const {
   schemaForType,
   isRow,
   isCard,
+  isIcon,
   isParagraph,
   serializeRules,
 } = useFormElements()
@@ -89,4 +97,6 @@ const { buildCtx } = useExpression()
 const value = useModelValue(props, emit)
 
 const ctx = buildCtx(value.value)
+
+const displayValue = (field: TFormField) => getProp(field.modelValue, ctx)
 </script>

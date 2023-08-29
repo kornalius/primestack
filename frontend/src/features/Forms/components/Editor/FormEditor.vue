@@ -19,7 +19,7 @@
             pull: 'clone',
             put: false,
           }"
-          filter=".overlay"
+          filter=".overlay,[disabled]"
           :sort="false"
           @start="editor.setDragging(true)"
           @end="editor.setDragging(false)"
@@ -49,13 +49,21 @@
               class="form-component q-mx-sm"
               :icon="componentIcon(value)"
               :label="componentLabel(value)"
+              :disabled="isComponentPaid(value.type, auth.user._plan.code)"
               type="button"
               size="12px"
               align="left"
               dense
               flat
               @click="editor.addFieldToForm(value)"
-            />
+            >
+              <q-icon
+                v-if="isComponentPaid(value.type, auth.user._plan.code)"
+                name="mdi-currency-usd"
+                color="red-9"
+                size="xs"
+              />
+            </q-btn>
           </template>
         </draggable>
       </q-list>
@@ -88,6 +96,8 @@ import { tableFieldSchema } from '@/shared/schemas/table'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useAppEditor } from '@/features/App/store'
 import { stringValue } from '@/composites/utilities'
+import { isComponentPaid } from '@/shared/plan'
+import { useAuth } from '@/features/Auth/store'
 import FieldsEditor from './FieldsEditor.vue'
 
 type Form = Static<typeof formSchema>
@@ -107,6 +117,8 @@ const emit = defineEmits<{
   (e: 'clear'): void,
   (e: 'update:model-value', value: unknown[]): void,
 }>()
+
+const auth = useAuth()
 
 const quasar = useQuasar()
 

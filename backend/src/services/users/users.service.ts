@@ -8,7 +8,8 @@ import { passwordHash } from '@feathersjs/authentication-local'
 import { createService, MongoService } from '@/service'
 import { schema } from '@/shared/schemas/user'
 import { dataValidator } from '@/validators'
-import { schema as maxSchema, ruleSchema } from '@/shared/schemas/rule'
+import { maxSchema, schema as ruleSchema } from '@/shared/schemas/rule'
+import { virtual } from '@feathersjs/schema'
 
 dataValidator.addSchema(schema)
 
@@ -165,6 +166,36 @@ const aggregateMaxes = () => async (context: HookContext): Promise<HookContext> 
   return context
 }
 
+/**
+ * Aggregates group's planId
+ */
+const aggregateGroupPlanId = () => async (context: HookContext): Promise<HookContext> => {
+  if (context.method === 'remove') {
+    return context
+  }
+
+  const mixItem = async (item: AnyData) => {
+    // replace user's planId with the group's planId
+    if (item.groupId) {
+      const groupPlanId = (await context.app.service('groups').get(item.groupId))?.planId
+      if (groupPlanId) {
+        // eslint-disable-next-line no-param-reassign
+        item.planId = groupPlanId
+      }
+    }
+  }
+
+  const items = getItems(context)
+
+  if (Array.isArray(items)) {
+    await Promise.all(items.map((i) => mixItem(i)))
+  } else {
+    await mixItem(items)
+  }
+
+  return context
+}
+
 const service = createService(path, Service, {
   collection,
   schema,
@@ -191,6 +222,22 @@ const service = createService(path, Service, {
         password: passwordHash({ strategy: 'local' })
       },
     },
+    result: {
+      _plan: virtual(async (record: AnyData, context: HookContext) => {
+        if (record.planId) {
+          // Populate the plan associated
+          return context.app.service('plans').get(record.planId)
+        }
+        return undefined
+      }),
+      _group: virtual(async (record: AnyData, context: HookContext) => {
+        if (record.groupId) {
+          // Populate the plan associated
+          return context.app.service('groups').get(record.groupId)
+        }
+        return undefined
+      }),
+    },
     query: {
       _id: async (value: AnyData, user: AnyData, context: HookContext) => {
         if (context.params.user) {
@@ -214,6 +261,7 @@ const service = createService(path, Service, {
       all: [
         aggregateRules(),
         aggregateMaxes(),
+        aggregateGroupPlanId(),
       ],
     },
   }

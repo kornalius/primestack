@@ -28,7 +28,7 @@ export const fieldSchema = Type.Object(
     _type: Type.String(),
     _columns: Type.Optional(Type.Array(columnSchema)),
   },
-  { $id: 'FormField',additionalProperties: true },
+  { $id: 'FormField', additionalProperties: true },
 )
 
 export const formSchema = Type.Object(

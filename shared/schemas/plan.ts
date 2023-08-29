@@ -4,6 +4,7 @@ import { schema as maxSchema } from './rule'
 export const schema = Type.Intersect([
   Type.Object({
     _id: Type.String({ objectid: true }),
+    code: Type.String(),
     name: Type.String(),
     description: Type.String(),
     color: Type.Optional(Type.String()),

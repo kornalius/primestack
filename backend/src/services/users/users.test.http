@@ -9,7 +9,7 @@ Content-Type: application/json
   "password": "molson",
   "firstname": "Alain",
   "lastname": "Deschênes",
-  "groupid": "{{groupId}}",
+  "groupid": "64dac88a60b0712d5261f603",
   "maxShares": 0,
   "maxTables": 0,
   "maxRecords": 0,

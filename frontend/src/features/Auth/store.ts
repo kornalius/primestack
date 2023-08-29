@@ -7,24 +7,22 @@ export const useAuth = defineStore('auth', () => {
   const states = ref({
     processing: false,
     authenticated: false,
-    userId: undefined,
-    username: undefined,
-    userEmail: undefined,
+    user: undefined,
   })
 
   const processing = computed(() => states.value.processing)
   const authenticated = computed(() => states.value.authenticated)
-  const userId = computed(() => states.value.userId)
-  const username = computed(() => states.value.username)
-  const userEmail = computed(() => states.value.userEmail)
+  const user = computed(() => states.value.user)
+  const userId = computed(() => states.value.user._id)
+  const username = computed(() => states.value.user.username)
+  const userEmail = computed(() => states.value.user.email)
+  const userRights = computed(() => states.value.user.rights)
 
   const reAuthenticate = async (): Promise<void> => {
     try {
       states.value.processing = true
       const r = await app.reAuthenticate()
-      states.value.userId = r.user._id
-      states.value.username = r.user.username
-      states.value.userEmail = r.user.email
+      states.value.user = r.user
       states.value.authenticated = true
     } catch (e) {
       states.value.authenticated = false
@@ -41,9 +39,7 @@ export const useAuth = defineStore('auth', () => {
         strategy: 'local',
         ...args,
       })
-      states.value.userId = r.user._id
-      states.value.username = r.user.username
-      states.value.userEmail = r.user.email
+      states.value.user = r.user
       states.value.authenticated = true
     } catch (e) {
       states.value.authenticated = false
@@ -67,9 +63,11 @@ export const useAuth = defineStore('auth', () => {
     states,
     processing,
     authenticated,
+    user,
     userId,
     username,
     userEmail,
+    userRights,
     reAuthenticate,
     authenticate,
     logout,

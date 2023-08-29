@@ -1,9 +1,9 @@
-import { HookContext } from '@/declarations'
 import { Forbidden } from '@feathersjs/errors'
 import { Static } from '@feathersjs/typebox'
-import { ruleSchema } from '@/shared/schemas/rule'
+import { HookContext } from '@/declarations'
+import { schema } from '@/shared/schemas/rule'
 
-type Rule = Static<typeof ruleSchema>
+type Rule = Static<typeof schema>
 
 const methodToRuleName: Record<string, string> = {
   get: 'read',
@@ -13,7 +13,8 @@ const methodToRuleName: Record<string, string> = {
   update: 'update',
   remove: 'delete',
 }
-export const checkRule = async (context: HookContext) => {
+
+export const checkRules = async (context: HookContext) => {
   const {
     path,
     method,

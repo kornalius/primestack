@@ -1,5 +1,5 @@
 import { Type } from '@feathersjs/typebox'
-import { ruleSchema } from './rule'
+import { schema as ruleSchema } from './rule'
 
 export const schema = Type.Object(
   {

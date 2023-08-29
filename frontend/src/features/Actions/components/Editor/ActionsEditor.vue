@@ -20,6 +20,7 @@
             put: false,
           }"
           :sort="false"
+          filter="[disabled]"
           @start="editor.setDragging(true)"
           @end="editor.setDragging(false)"
         >
@@ -45,7 +46,8 @@
 
             <q-btn
               v-else-if="value.type !== ''"
-              class="action-button q-mx-sm"
+              class="action-button q-mx-sm align-center"
+              :disabled="isActionPaid(value.type, auth.user._plan.code)"
               type="button"
               size="12px"
               align="left"
@@ -60,6 +62,13 @@
               <q-icon :name="actionIcon(value)" :color="actionIconColor(value)" />
 
               <span class="q-ml-sm">{{ actionLabel(value) }}</span>
+
+              <q-icon
+                v-if="isActionPaid(value.type, auth.user._plan.code)"
+                name="mdi-currency-usd"
+                color="red-9"
+                size="xs"
+              />
             </q-btn>
           </template>
         </draggable>
@@ -108,6 +117,8 @@ import { useModelValue } from '@/composites/prop'
 import { actionElementSchema } from '@/shared/schemas/actions'
 import { TFrontAction } from '@/features/Actions/interface'
 import { stringValue } from '@/composites/utilities'
+import { useAuth } from '@/features/Auth/store'
+import { isActionPaid } from '@/shared/plan'
 import ActionsListEditor from './ActionsListEditor.vue'
 
 type ActionElement = Static<typeof actionElementSchema>
@@ -128,6 +139,8 @@ const emit = defineEmits<{
 const actionList = useModelValue(props, emit)
 
 const visibleActions = computed(() => props.actions.filter((a) => !a.hidden))
+
+const auth = useAuth()
 
 const editor = useAppEditor()
 

@@ -1,7 +1,7 @@
 <template>
   <q-card
-    class="q-mx-sm"
-    style="width: 30%;"
+    class="q-ma-sm"
+    style="width: 300px;"
     :flat="!modelValue.bestValue"
     bordered
   >
@@ -22,7 +22,7 @@
           </div>
         </div>
 
-        <div class="row justify-center items-center">
+        <div class="row justify-center items-center q-my-sm">
           <div class="col-auto">
             <div class="bg-grey-6" style="width: 30px; height: 3px;" />
           </div>

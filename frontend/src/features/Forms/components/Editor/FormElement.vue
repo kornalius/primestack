@@ -19,7 +19,7 @@
     </div>
 
     <q-btn
-      v-if="(isRow || isCard) && !editor.isDragging && editor.isHovered(field._id)"
+      v-if="(isRow(field) || isCard(field)) && !editor.isDragging && editor.isHovered(field._id)"
       class="action-button"
       style="right: 26px;"
       icon="mdi-plus"
@@ -65,7 +65,7 @@
 
     <div class="element">
       <form-element-row
-        v-if="isRow"
+        v-if="isRow(field)"
         v-model="field"
         :components="components"
         @remove="(col) => editor.removeColumnFromField(col, field)"
@@ -73,7 +73,7 @@
       />
 
       <form-element-card
-        v-else-if="isCard"
+        v-else-if="isCard(field)"
         v-model="field"
         class="card"
         :components="components"
@@ -82,12 +82,19 @@
       />
 
       <table-editor
-        v-else-if="field._type === 'table'"
+        v-else-if="isTable(field)"
         v-model:columns="field.columns"
         v-model:visible-columns="field.visibleColumns"
         :model-value="displayValue"
         v-bind="fieldBinds(field, schemaForType(field), ctx)"
         :query="queryToMongo(field.query, fieldTable)"
+        :style="style"
+      />
+
+      <q-icon
+        v-else-if="isIcon(field)"
+        :name="displayValue as string"
+        v-bind="fieldBinds(field, schemaForType(field), ctx)"
         :style="style"
       />
 
@@ -139,6 +146,10 @@ const emit = defineEmits<{
 const {
   componentForField,
   fieldBinds,
+  isRow,
+  isCard,
+  isIcon,
+  isTable,
 } = useFormElements()
 
 const { buildCtx, getProp } = useExpression()
@@ -153,7 +164,7 @@ const editor = useAppEditor()
 
 const component = computed(() => (
   // eslint-disable-next-line no-underscore-dangle
-  props.components.find((c) => c.type === props.modelValue._type)
+  props.components.find((c) => c.type === field.value._type)
 ))
 
 const fieldTable = computed(() => (
@@ -161,10 +172,6 @@ const fieldTable = computed(() => (
     ? editor.tables.find((t) => t._id === field.value.tableId)
     : undefined
 ))
-
-const isRow = computed(() => component.value.type === 'row')
-
-const isCard = computed(() => component.value.type === 'card')
 
 const schemaForType = (f: TFormField): TSchema | undefined => (
   // eslint-disable-next-line no-underscore-dangle
