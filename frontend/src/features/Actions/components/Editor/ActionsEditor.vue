@@ -47,7 +47,7 @@
             <q-btn
               v-else-if="value.type !== ''"
               class="action-button q-mx-sm align-center"
-              :disabled="isActionPaid(value.type, auth.user._plan.code)"
+              :disabled="!isActionAvailable(value.type, auth.user._plan.code)"
               type="button"
               size="12px"
               align="left"
@@ -64,7 +64,7 @@
               <span class="q-ml-sm">{{ actionLabel(value) }}</span>
 
               <q-icon
-                v-if="isActionPaid(value.type, auth.user._plan.code)"
+                v-if="!isActionAvailable(value.type, auth.user._plan.code)"
                 name="mdi-currency-usd"
                 color="red-9"
                 size="xs"
@@ -118,7 +118,7 @@ import { actionElementSchema } from '@/shared/schemas/actions'
 import { TFrontAction } from '@/features/Actions/interface'
 import { stringValue } from '@/composites/utilities'
 import { useAuth } from '@/features/Auth/store'
-import { isActionPaid } from '@/shared/plan'
+import { isActionAvailable } from '@/shared/plan'
 import ActionsListEditor from './ActionsListEditor.vue'
 
 type ActionElement = Static<typeof actionElementSchema>

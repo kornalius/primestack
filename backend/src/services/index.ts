@@ -1,6 +1,7 @@
 import { Application } from '@/declarations'
 import { info } from '@/logger'
 import health from './health/health.service'
+import events from './events/events.service'
 import groups from './groups/groups.service'
 import plans from './plans/plans.service'
 import shares from './shares/shares.service'
@@ -15,6 +16,9 @@ import uploads from './uploads/uploads.service'
 export default function (app: Application): void {
   info('    - Health Check')
   app.configure(health)
+
+  info('    - Events')
+  app.configure(events)
 
   info('    - Groups')
   app.configure(groups)

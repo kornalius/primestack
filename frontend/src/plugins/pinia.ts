@@ -4,6 +4,7 @@ import { feathersClient } from '@/feathers'
 import { AnyData } from '@/shared/interfaces/commons'
 
 import health from '@/features/Health/service'
+import events from '@/features/Events/service'
 import users from '@/features/Users/service'
 import groups from '@/features/Groups/service'
 import plans from '@/features/Plans/service'
@@ -50,6 +51,7 @@ export const api = createPiniaClient(feathersClient, {
 
   services: {
     health,
+    events,
     users,
     groups,
     plans,

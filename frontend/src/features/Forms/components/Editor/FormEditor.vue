@@ -49,7 +49,7 @@
               class="form-component q-mx-sm"
               :icon="componentIcon(value)"
               :label="componentLabel(value)"
-              :disabled="isComponentPaid(value.type, auth.user._plan.code)"
+              :disabled="!isComponentAvailable(value.type, auth.user._plan.code)"
               type="button"
               size="12px"
               align="left"
@@ -58,7 +58,7 @@
               @click="editor.addFieldToForm(value)"
             >
               <q-icon
-                v-if="isComponentPaid(value.type, auth.user._plan.code)"
+                v-if="!isComponentAvailable(value.type, auth.user._plan.code)"
                 name="mdi-currency-usd"
                 color="red-9"
                 size="xs"
@@ -96,7 +96,7 @@ import { tableFieldSchema } from '@/shared/schemas/table'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useAppEditor } from '@/features/App/store'
 import { stringValue } from '@/composites/utilities'
-import { isComponentPaid } from '@/shared/plan'
+import { isComponentAvailable } from '@/shared/plan'
 import { useAuth } from '@/features/Auth/store'
 import FieldsEditor from './FieldsEditor.vue'
 

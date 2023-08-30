@@ -2,7 +2,7 @@ import { Static } from '@feathersjs/typebox'
 import { Forbidden } from '@feathersjs/errors'
 import { HookContext } from '@/declarations'
 import { actionSchema } from '@/shared/schemas/actions'
-import { isActionPaid } from '@/shared/plan'
+import { isActionAvailable } from '@/shared/plan'
 import { flattenActions } from '@/shared/action'
 
 type Action = Static<typeof actionSchema>
@@ -21,7 +21,7 @@ export const checkPaidActions = async (context: HookContext) => {
     const userActions = flattenActions(action._actions)
     userActions.forEach((a) => {
       // eslint-disable-next-line no-underscore-dangle
-      if (isActionPaid(a._type, _plan.code)) {
+      if (!isActionAvailable(a._type, _plan.code)) {
         // eslint-disable-next-line no-underscore-dangle
         throw new Forbidden(`Action ${a._type} is a paid feature`)
       }
