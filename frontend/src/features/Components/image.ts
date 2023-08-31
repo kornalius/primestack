@@ -13,7 +13,7 @@ export default {
     commonProperties.size,
     Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
-      src: Type.String(),
+      modelValue: Type.String(),
       srcset: Type.String(),
       alt: Type.String(),
       sizes: Type.String(),
@@ -50,7 +50,7 @@ export default {
       spinnerColor: Type.String({ color: true }),
       spinnerSize: sizeString,
     }),
-  ], false),
+  ]),
   defaultValues: {
     loading: 'eager',
     decoding: 'async',
@@ -63,7 +63,8 @@ export default {
       icon: contentIcon,
       names: [
         'name',
-        'src',
+        'modelValue',
+        'field',
         'srcset',
         'alt',
         'placeholderSrc',

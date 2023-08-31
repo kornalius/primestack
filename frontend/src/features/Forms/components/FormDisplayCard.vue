@@ -1,13 +1,13 @@
 <template>
   <q-card
     class="q-gutter-sm"
-    v-bind="fieldBinds(field, schemaForType(field), ctx)"
+    v-bind="fieldBinds(field, schemaForType(field), ctx(doc))"
     :style="style(field)"
   >
     <q-card-section
       v-for="section in sections"
       :key="section._id"
-      v-bind="fieldBinds(section, schemaForType(section), ctx)"
+      v-bind="fieldBinds(section, schemaForType(section), ctx(doc))"
       :style="style(section)"
     >
       <form-display
@@ -23,7 +23,7 @@
       :class="{
         'card-action': true,
       }"
-      v-bind="fieldBinds(action, schemaForType(action), ctx)"
+      v-bind="fieldBinds(action, schemaForType(action), ctx(doc))"
       style="z-index: 1;"
       :style="style(action)"
     >
@@ -42,12 +42,14 @@ import { TSchema } from '@feathersjs/typebox'
 import { TFormColumn, TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 import { useExpression } from '@/features/Expression/composites'
+import { AnyData } from '@/shared/interfaces/commons'
 import { useFormElements } from '../composites'
 import FormDisplay from './FormDisplay.vue'
 
 const props = defineProps<{
   modelValue: Record<string, unknown>
   field: TFormField
+  doc: AnyData
   columns: TFormColumn[]
   components: TFormComponent[]
 }>()

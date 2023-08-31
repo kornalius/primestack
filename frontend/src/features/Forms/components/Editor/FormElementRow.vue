@@ -1,7 +1,7 @@
 <template>
   <div
     class="row form-row"
-    v-bind="fieldBinds(field, schemaForType(field), ctx)"
+    v-bind="fieldBinds(field, schemaForType(field), ctx())"
     :style="style(field)"
   >
     <div
@@ -13,7 +13,7 @@
         selected: editor.isSelected(column._id),
         hovered: editor.isHovered(column._id),
       }"
-      v-bind="fieldBinds(column, schemaForType(column), ctx)"
+      v-bind="fieldBinds(column, schemaForType(column), ctx())"
       style="z-index: 1;"
       :style="style(column)"
       @mouseover.stop="editor.hover(column._id)"
@@ -63,6 +63,7 @@ import { useModelValue } from '@/composites/prop'
 import { useAppEditor } from '@/features/App/store'
 import { useExpression } from '@/features/Expression/composites'
 import { stringValue } from '@/composites/utilities'
+// eslint-disable-next-line import/no-cycle
 import { useFormElements } from '../../composites'
 import FieldsEditor from './FieldsEditor.vue'
 

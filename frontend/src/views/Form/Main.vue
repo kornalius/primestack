@@ -397,14 +397,12 @@ const cloneData = async () => {
       }
       selected.value = [r]
     }
-  } else if (!table.value) {
+  } else {
     currentData.value = {
       ...defaultValues.value,
       ...(form.value?.data || {}),
       ...(formModelValues.value || {}),
     }
-  } else {
-    currentData.value = {}
   }
   prevData.value = cloneDeep(currentData.value)
 }

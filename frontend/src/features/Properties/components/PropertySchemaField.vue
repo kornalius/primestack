@@ -5,7 +5,13 @@
     v-if="isExpr(value)"
     class="row"
   >
-    <div class="col">
+    <div class="col overflow-hidden ellipsis" style="max-width: 230px;">
+      <q-tooltip class="bg-grey-10" :delay="500">
+        <pre
+          class="no-wrap text-caption"
+          v-html="hljs.highlight(exprCode(value), { language: 'javascript' }).value"
+        />
+      </q-tooltip>
       <pre
         class="no-wrap text-caption"
         v-html="hljs.highlight(exprCode(value), { language: 'javascript' }).value"
@@ -160,6 +166,21 @@
     map-options
     options-dense
     @keydown="editor.preventSystemUndoRedo"
+  />
+
+  <!-- Multiple Toggles -->
+
+  <btn-toggle-multi
+    v-else-if="type === 'toggles' && schema.multiple"
+    v-model="value"
+    :label="embedLabel ? label : undefined"
+    :options="toggleOptions"
+    :clearable="clearableToggle"
+    :disable="disabled"
+    spread
+    stretch
+    unelevated
+    dense
   />
 
   <!-- Toggles -->
@@ -526,6 +547,7 @@ import ServiceSelect from '@/features/Fields/components/ServiceSelect.vue'
 import TableFieldSelect from '@/features/Fields/components/TableFieldSelect.vue'
 import VariableSelect from '@/features/Fields/components/VariableSelect.vue'
 import PropertyHighlight from '@/features/Properties/components/PropertyHighlight.vue'
+import BtnToggleMulti from '@/features/Fields/components/BtnToggleMulti.vue'
 
 type FormField = Static<typeof fieldSchema>
 
@@ -563,6 +585,7 @@ const emit = defineEmits<{
   (e: 'update:model-value', value: unknown): void,
 }>()
 
+// eslint-disable-next-line vue/no-setup-props-destructure
 const value = useModelValue(props, emit, defaultValueForSchema(props.schema))
 
 const tempJson = ref()

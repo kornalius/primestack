@@ -135,6 +135,7 @@ import { useAppEditor } from '@/features/App/store'
 import { defaultValueForSchema, defaultValues } from '@/shared/schema'
 import { useExpression } from '@/features/Expression/composites'
 import { stringValue } from '@/composites/utilities'
+// eslint-disable-next-line import/no-cycle
 import { useFormElements } from '../../composites'
 import FieldsEditor from './FieldsEditor.vue'
 

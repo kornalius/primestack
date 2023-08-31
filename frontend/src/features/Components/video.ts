@@ -12,7 +12,7 @@ export default {
   schema: properties([
     Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
-      src: Type.String(),
+      modelValue: Type.String(),
       title: Type.String(),
       ratio: Type.String(),
       loading: StringEnum(['eager', 'lazy']),
@@ -28,7 +28,7 @@ export default {
         'unsafe-url',
       ]),
     }),
-  ], false),
+  ]),
   defaultValues: {
     loading: 'eager',
     fetchpriority: 'auto',
@@ -39,8 +39,9 @@ export default {
       icon: contentIcon,
       names: [
         'name',
+        'modelValue',
+        'field',
         'title',
-        'src',
         'fetchpriority',
         'reffererpolicy',
         'loading',

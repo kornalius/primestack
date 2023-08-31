@@ -1,14 +1,14 @@
 <template>
   <div
     class="row q-gutter-sm"
-    v-bind="fieldBinds(field, schemaForType(field), ctx)"
+    v-bind="fieldBinds(field, schemaForType(field), ctx(doc))"
     :style="style(field)"
   >
     <div
       v-for="column in columns"
       :key="column._id"
       :class="{ [colName(column)]: true }"
-      v-bind="fieldBinds(column, schemaForType(column), ctx)"
+      v-bind="fieldBinds(column, schemaForType(column), ctx(doc))"
       :style="style(column)"
     >
       <form-display
@@ -25,12 +25,14 @@ import { TSchema } from '@feathersjs/typebox'
 import { TFormColumn, TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 import { useExpression } from '@/features/Expression/composites'
+import { AnyData } from '@/shared/interfaces/commons'
 import { useFormElements } from '../composites'
 import FormDisplay from './FormDisplay.vue'
 
 const props = defineProps<{
   modelValue: Record<string, unknown>
   field: TFormField
+  doc: AnyData
   columns: TFormColumn[]
   components: TFormComponent[]
 }>()

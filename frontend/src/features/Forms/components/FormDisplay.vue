@@ -9,6 +9,7 @@
         v-if="isRow(field)"
         v-model="value"
         :field="field"
+        :doc="value"
         :columns="field._columns"
         :components="components"
       />
@@ -16,21 +17,31 @@
       <form-display-card
         v-else-if="isCard(field)"
         v-model="value"
-        v-bind="fieldBinds(field, schemaForType(field), ctx)"
+        v-bind="fieldBinds(field, schemaForType(field), ctx(value))"
         :field="field"
+        :doc="value"
         :columns="field._columns"
         :components="components"
       />
 
       <div
         v-else-if="isParagraph(field)"
-        v-html="value[field.field]"
+        v-bind="fieldBinds(field, schemaForType(field), ctx(value))"
+        :style="style(field)"
+        v-html="displayValue(field)"
+      />
+
+      <label-field
+        v-else-if="isLabel(field)"
+        :model-value="displayValue(field) as string"
+        :style="style(field)"
+        v-bind="fieldBinds(field, schemaForType(field), ctx(value))"
       />
 
       <q-icon
         v-else-if="isIcon(field)"
         :name="displayValue(field) as string"
-        v-bind="fieldBinds(field, schemaForType(field), ctx)"
+        v-bind="fieldBinds(field, schemaForType(field), ctx(value))"
         :style="style"
       />
 
@@ -38,7 +49,7 @@
         :is="componentForField(field)"
         v-else-if="isNumericInput(field)"
         v-model.number="value[field.field]"
-        v-bind="fieldBinds(field, schemaForType(field), ctx)"
+        v-bind="fieldBinds(field, schemaForType(field), ctx(value))"
         :style="style(field)"
         :rules="serializeRules(t, field)"
         lazy-rules
@@ -48,7 +59,7 @@
         :is="componentForField(field)"
         v-else
         v-model="value[field.field]"
-        v-bind="fieldBinds(field, schemaForType(field), ctx)"
+        v-bind="fieldBinds(field, schemaForType(field), ctx(value))"
         :style="style(field)"
         :rules="serializeRules(t, field)"
         lazy-rules
@@ -62,6 +73,7 @@ import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
 import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { getProp, useExpression } from '@/features/Expression/composites'
+import LabelField from '@/features/Fields/components/LabelField.vue'
 import { useFormElements } from '../composites'
 import FormDisplayRow from './FormDisplayRow.vue'
 import FormDisplayCard from './FormDisplayCard.vue'
@@ -89,6 +101,7 @@ const {
   isCard,
   isIcon,
   isParagraph,
+  isLabel,
   serializeRules,
 } = useFormElements()
 
@@ -96,7 +109,9 @@ const { buildCtx } = useExpression()
 
 const value = useModelValue(props, emit)
 
-const ctx = buildCtx(value.value)
+const ctx = buildCtx()
 
-const displayValue = (field: TFormField) => getProp(field.modelValue, ctx)
+const displayValue = (field: TFormField) => (
+  getProp(field.modelValue || value.value[field.field], ctx(value.value))
+)
 </script>

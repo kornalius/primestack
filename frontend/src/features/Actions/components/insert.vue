@@ -28,6 +28,7 @@ import json from 'highlight.js/lib/languages/json'
 import { useActions } from '@/features/Actions/composites'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useFeathers } from '@/composites/feathers'
+import { useExpression } from '@/features/Expression/composites'
 
 hljs.registerLanguage('json', json)
 
@@ -47,7 +48,15 @@ const tableName = computed(() => (
   userTable.value.list.find((t) => t._id === props.modelValue.tableId)?.name
 ))
 
+const { buildCtx } = useExpression()
+
+const ctx = buildCtx()
+
 const fields = computed(() => (
-  JSON.stringify(fieldsArrayToObject(props.modelValue.fields as []), undefined, 2)
+  JSON.stringify(
+    fieldsArrayToObject(props.modelValue.fields as [], ctx()),
+    undefined,
+    2,
+  )
 ))
 </script>

@@ -43,6 +43,7 @@ export default {
           { value: 'strike', icon: 'mdi-format-strikethrough' },
         ],
         toggles: true,
+        multiple: true,
         clearable: true,
       }),
       casing: Type.String({
@@ -54,6 +55,7 @@ export default {
         toggles: true,
         clearable: true,
       }),
+      pre: Type.Boolean(),
     }),
   ]),
   categories: {
@@ -68,6 +70,7 @@ export default {
     style: {
       icon: styleIcon,
       names: [
+        'pre',
         'format',
         'heading',
         'styling',

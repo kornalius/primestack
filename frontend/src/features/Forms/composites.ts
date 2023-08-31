@@ -94,6 +94,9 @@ export const useFormElements = () => ({
   // eslint-disable-next-line no-underscore-dangle
   isParagraph: (field: TFormField): boolean => field._type === 'paragraph',
 
+  // eslint-disable-next-line no-underscore-dangle
+  isLabel: (field: TFormField): boolean => field._type === 'label',
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   serializeRules: (t: T18N, field: TFormField): ((...args: any[]) => (val: string) => true | string)[] => (
     (field.rules as AnyData[])?.map((r) => validators[r.type](t, omit(r, ['type'])))

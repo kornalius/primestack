@@ -6,6 +6,8 @@ export const useVariables = defineStore('variables', () => {
 
   const variableNames = computed(() => Object.keys(states.value))
 
+  const variableExists = (name: string): boolean => Object.keys(states.value).includes(name)
+
   const getVariable = (name: string): unknown => states.value[name]
 
   const setVariable = (name: string, value: unknown): void => {
@@ -19,6 +21,7 @@ export const useVariables = defineStore('variables', () => {
   return {
     states,
     variableNames,
+    variableExists,
     getVariable,
     setVariable,
     unsetVariable,

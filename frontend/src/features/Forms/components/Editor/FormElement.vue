@@ -86,7 +86,7 @@
         v-model:columns="field.columns"
         v-model:visible-columns="field.visibleColumns"
         :model-value="displayValue"
-        v-bind="fieldBinds(field, schemaForType(field), ctx)"
+        v-bind="fieldBinds(field, schemaForType(field), ctx())"
         :query="queryToMongo(field.query, fieldTable)"
         :style="style"
       />
@@ -94,7 +94,7 @@
       <q-icon
         v-else-if="isIcon(field)"
         :name="displayValue as string"
-        v-bind="fieldBinds(field, schemaForType(field), ctx)"
+        v-bind="fieldBinds(field, schemaForType(field), ctx())"
         :style="style"
       />
 
@@ -102,7 +102,7 @@
         :is="componentForField(field)"
         v-else
         :model-value="displayValue"
-        v-bind="fieldBinds(field, schemaForType(field), ctx)"
+        v-bind="fieldBinds(field, schemaForType(field), ctx())"
         :style="style"
       />
 
@@ -190,7 +190,7 @@ const onRemoveClick = () => {
   emit('remove', props.modelValue)
 }
 
-const displayValue = computed(() => getProp(field.value.modelValue, ctx))
+const displayValue = computed(() => getProp(field.value.modelValue, ctx()))
 
 const style = computed(() => ({
   paddingTop: field.value.padding?.top,

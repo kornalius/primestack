@@ -46,7 +46,7 @@ export default {
       fabMini: Type.Boolean(),
       click: Type.String({ objectid: true, action: true }),
     }),
-  ]),
+  ], false),
   defaultValues: {
     align: 'center',
     flat: true,
