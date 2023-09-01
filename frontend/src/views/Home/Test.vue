@@ -114,6 +114,7 @@ import hexObjectId from 'hex-object-id'
 import { Type } from '@feathersjs/typebox'
 import { useQuery } from '@/features/Query/composites'
 import { useFeathers } from '@/composites/feathers'
+import { useExpression } from '@/features/Expression/composites'
 import { Query } from '@/shared/interfaces/query'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
@@ -148,6 +149,10 @@ const testProperties = ref({
 const { api } = useFeathers()
 
 const forcedTypes = ref({})
+
+const { buildCtx } = useExpression()
+
+const ctx = buildCtx()
 
 const schema = Type.Object({
   string: Type.Union([Type.String(), Type.Number()]),
@@ -253,7 +258,7 @@ const { queryToMongo } = useQuery()
 
 const query = ref({ limit: 10, skip: 0, groups: [] }) as Ref<Query>
 
-const mongoQuery = computed(() => queryToMongo(query.value, userTable.value))
+const mongoQuery = computed(() => queryToMongo(query.value, userTable.value, ctx().expr))
 
 /**
  * Table

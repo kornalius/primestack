@@ -29,8 +29,21 @@
 
     <div class="col">
       <div v-if="showValue">
+        <!-- Expression -->
+
+        <div
+          v-if="isExpr(field.value)"
+          class="overflow-hidden ellipsis"
+          style="max-width: 175px;"
+        >
+          <property-highlight
+            :model-value="exprCode(field.value)"
+            language="javascript"
+          />
+        </div>
+
         <q-input
-          v-if="fieldType === 'string'"
+          v-else-if="fieldType === 'string'"
           v-model="field.value"
           label="Value"
           clearable
@@ -56,6 +69,34 @@
         />
       </div>
     </div>
+
+    <div class="col-auto" style="width: 20px;">
+      <q-btn
+        v-if="showExpr"
+        class="q-mr-sm"
+        icon="mdi-flash"
+        :color="isExpr(field.value) ? 'orange-8' : 'grey-5'"
+        size="sm"
+        flat
+        dense
+      >
+        <q-popup-edit
+          v-model="field.value"
+          :title="`${fieldname} Expression...`"
+          auto-save
+          @before-show="loadExpr"
+          @before-hide="saveExpr"
+        >
+          <code-editor
+            v-model="field.value"
+            style="width: 600px; height: 150px;"
+            lang-js
+            autofocus
+            @keydown="editor.preventSystemUndoRedo"
+          />
+        </q-popup-edit>
+      </q-btn>
+    </div>
   </div>
 </template>
 
@@ -64,10 +105,13 @@ import { computed, watch } from 'vue'
 import { Static, TSchema } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
 import { tableFieldSchema } from '@/shared/schemas/table'
-import { defaultValueForSchema } from '@/shared/schema'
+import { defaultValueForSchema, validForExpr } from '@/shared/schema'
 import { QueryCriteria } from '@/shared/interfaces/query'
 import { useAppEditor } from '@/features/App/store'
+import { useExpression } from '@/features/Expression/composites'
 import TableFieldSelect from '@/features/Fields/components/TableFieldSelect.vue'
+import CodeEditor from '@/features/Fields/components/CodeEditor.vue'
+import PropertyHighlight from '@/features/Properties/components/PropertyHighlight.vue'
 
 type TableFieldSchema = Static<typeof tableFieldSchema>
 
@@ -87,19 +131,48 @@ const field = useModelValue(props, emit)
 
 const editor = useAppEditor()
 
+const { isExpr, exprCode, stringToExpr } = useExpression()
+
 const selectedField = computed(() => (
   props.fields.find((f) => f._id === field.value.fieldId)
 ))
 
-const fieldType = computed(() => selectedField.value?.type)
+const fieldType = computed((): string => selectedField.value?.type as string)
+
+const fieldname = computed(() => selectedField.value.name)
 
 const showOps = computed(() => selectedField.value && fieldType.value !== 'boolean')
 
 const showValue = computed(() => selectedField.value)
+
+/**
+ * Should we show the expression button next to the property?
+ */
+const showExpr = computed((): boolean => (
+  validForExpr.indexOf(fieldType.value) !== -1
+))
 
 watch(() => field.value.fieldId, () => {
   if (!field.value.value) {
     field.value.value = defaultValueForSchema({ type: fieldType.value } as TSchema)
   }
 }, { immediate: true })
+
+/**
+ * Convert the property value expression into the code editor
+ */
+const loadExpr = () => {
+  if (isExpr(field.value.value)) {
+    field.value.value = exprCode(field.value.value)
+  }
+}
+
+/**
+ * Convert the expression from the code editor back into the property value
+ */
+const saveExpr = () => {
+  if (field.value.value !== '') {
+    field.value.value = stringToExpr(field.value.value)
+  }
+}
 </script>

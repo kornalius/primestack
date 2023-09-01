@@ -11,9 +11,9 @@
 
     <div class="row">
       <div class="col">
-        <pre
-          class="q-my-none"
-          v-html="hljs.highlight(fields, { language: 'json' }).value"
+        <property-highlight
+          :model-value="fields"
+          language="json"
         />
       </div>
     </div>
@@ -29,6 +29,7 @@ import { useActions } from '@/features/Actions/composites'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useFeathers } from '@/composites/feathers'
 import { useExpression } from '@/features/Expression/composites'
+import PropertyHighlight from '@/features/Properties/components/PropertyHighlight.vue'
 
 hljs.registerLanguage('json', json)
 

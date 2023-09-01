@@ -6,15 +6,11 @@
     class="row"
   >
     <div class="col overflow-hidden ellipsis" style="max-width: 230px;">
-      <q-tooltip class="bg-grey-10" :delay="500">
-        <pre
-          class="no-wrap text-caption"
-          v-html="hljs.highlight(exprCode(value), { language: 'javascript' }).value"
-        />
-      </q-tooltip>
-      <pre
-        class="no-wrap text-caption"
-        v-html="hljs.highlight(exprCode(value), { language: 'javascript' }).value"
+      <property-highlight
+        :model-value="exprCode(value)"
+        :disabled="disabled"
+        :disabled-label="disabledLabel"
+        language="javascript"
       />
     </div>
   </div>
@@ -519,8 +515,6 @@ import { computed, ref } from 'vue'
 import omit from 'lodash/omit'
 import { Static, TSchema, Type } from '@feathersjs/typebox'
 import { useI18n } from 'vue-i18n'
-import hljs from 'highlight.js'
-import javascript from 'highlight.js/lib/languages/javascript'
 import { defaultValueForSchema, getTypeFor, optionsForSchema } from '@/shared/schema'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { useQuery } from '@/features/Query/composites'
@@ -552,8 +546,6 @@ import BtnToggleMulti from '@/features/Fields/components/BtnToggleMulti.vue'
 type FormField = Static<typeof fieldSchema>
 
 type Action = Static<typeof actionSchema>
-
-hljs.registerLanguage('javascript', javascript)
 
 const props = defineProps<{
   // value of the property

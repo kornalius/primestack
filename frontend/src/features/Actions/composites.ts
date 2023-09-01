@@ -71,6 +71,21 @@ export const flattenActions = (acts: ActionElement[]): ActionElement[] => {
   return flattended
 }
 
+export const fieldsArrayToObject = (fields: Field[], ctx: AnyData): AnyData => (
+  fields.reduce((acc, f) => (
+    { ...acc, [f.name]: getProp(f.value, ctx) }
+  ), {})
+)
+
+export const actionBinds = (action: ActionElement): AnyData => {
+  const fieldsToOmit = [
+    '_id',
+    '_type',
+    '_children',
+  ]
+  return omit(action, fieldsToOmit)
+}
+
 export const useActions = () => ({
   componentForAction,
 
@@ -84,20 +99,9 @@ export const useActions = () => ({
 
   flattenActions,
 
-  actionBinds: (action: ActionElement): AnyData => {
-    const fieldsToOmit = [
-      '_id',
-      '_type',
-      '_children',
-    ]
-    return omit(action, fieldsToOmit)
-  },
+  actionBinds,
 
-  fieldsArrayToObject: (fields: Field[], ctx: AnyData): AnyData => (
-    fields.reduce((acc, f) => (
-      { ...acc, [f.name]: getProp(f.value, ctx) }
-    ), {})
-  ),
+  fieldsArrayToObject,
 
   exec,
 })

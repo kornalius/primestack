@@ -3,6 +3,8 @@ import { Static } from '@feathersjs/typebox'
 import { Query, QueryCriteria, QueryGroup } from '@/shared/interfaces/query'
 import { AnyData } from '@/shared/interfaces/commons'
 import { tableSchema } from '@/shared/schemas/table'
+// eslint-disable-next-line import/no-cycle
+import { exprToString, isExpr, runExpr } from '@/features/Expression/composites'
 
 type TableSchema = Static<typeof tableSchema>
 
@@ -45,7 +47,7 @@ const cleanupQuery = (q: AnyData): AnyData => {
   return q
 }
 
-const queryToMongo = (q: Query, schema: TableSchema): AnyData => {
+export const queryToMongo = (q: Query, schema: TableSchema, ctx: AnyData): AnyData => {
   const cleanExpr = (expr: AnyData): AnyData => {
     if (expr.$and.length === 0) {
       // eslint-disable-next-line no-param-reassign
@@ -60,14 +62,22 @@ const queryToMongo = (q: Query, schema: TableSchema): AnyData => {
 
   const reduceCriteria = (c: QueryCriteria): AnyData | undefined => {
     if (c.fieldId && c.op && c.value !== null && c.value !== undefined) {
-      const n = schema?.fields.find((f) => f._id === c.fieldId)?.name
-      if (c.op === 'like') {
-        return { [n]: new RegExp(c.value, 'i') }
+      const v = isExpr(c.value)
+        ? runExpr(exprToString(c.value), ctx)
+        : c.value
+
+      const n = schema?.fields
+        .find((f) => f._id === c.fieldId)?.name
+
+      if (c.op === 'like' && typeof v === 'string') {
+        return { [n]: new RegExp(v, 'i') }
       }
+
       if (c.op !== '=') {
-        return { [n]: { [mongoOperators[c.op]]: c.value } }
+        return { [n]: { [mongoOperators[c.op]]: v } }
       }
-      return { [n]: c.value }
+
+      return { [n]: v }
     }
 
     return undefined
@@ -127,13 +137,14 @@ const queryToMongo = (q: Query, schema: TableSchema): AnyData => {
   }
 }
 
-const queryToString = (query: Query, schema: TableSchema): string => {
+export const queryToString = (query: Query, schema: TableSchema): string => {
   let r = []
 
   const convertCriterias = (criterias: QueryCriteria[]): string[] => {
     const cr = []
     criterias.forEach((c, index) => {
-      const n = schema?.fields.find((f) => f._id === c.fieldId)?.name
+      const n = schema?.fields
+        .find((f) => f._id === c.fieldId)?.name
 
       if (!n || !c.op || c.value === undefined || c.value === null) {
         return
@@ -141,7 +152,11 @@ const queryToString = (query: Query, schema: TableSchema): string => {
 
       cr.push(n)
       cr.push(` ${c.op} `)
-      cr.push(JSON.stringify(c.value))
+      if (isExpr(c.value)) {
+        cr.push(exprToString(c.value))
+      } else {
+        cr.push(JSON.stringify(c.value))
+      }
       if (c.logicOp === 'and' && index < criterias.length - 1) {
         cr.push(' AND ')
       } else if (c.logicOp === 'or' && index < criterias.length - 1) {

@@ -8,13 +8,16 @@
   </span>
 
   <div v-else>
-    <q-tooltip :delay="500">
-      {{ modelValue }}
+    <q-tooltip class="bg-grey-10" :delay="500">
+      <pre
+        class="no-wrap text-caption"
+        v-html="hljs.highlight(modelValue || '', { language }).value"
+      />
     </q-tooltip>
 
     <pre
-      class="no-wrap text-caption"
-      v-html="hljs.highlight(modelValue, { language }).value"
+      class="q-my-none no-wrap text-caption"
+      v-html="hljs.highlight(modelValue || '', { language }).value"
     />
   </div>
 </template>

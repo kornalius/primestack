@@ -64,6 +64,7 @@
       </indentOptions>
     </codeStyleSettings>
     <codeStyleSettings language="JavaScript">
+      <option name="BINARY_OPERATION_SIGN_ON_NEXT_LINE" value="true" />
       <indentOptions>
         <option name="INDENT_SIZE" value="2" />
         <option name="CONTINUATION_INDENT_SIZE" value="2" />
@@ -108,6 +109,7 @@
       </arrangement>
     </codeStyleSettings>
     <codeStyleSettings language="TypeScript">
+      <option name="BINARY_OPERATION_SIGN_ON_NEXT_LINE" value="true" />
       <indentOptions>
         <option name="INDENT_SIZE" value="2" />
         <option name="CONTINUATION_INDENT_SIZE" value="2" />

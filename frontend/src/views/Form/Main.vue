@@ -351,7 +351,7 @@ const table = computed(() => (
 const tableBinds = computed(() => {
   const r = pick(form.value, formSchema.tableFields)
   if (typeof r.query === 'object' && Array.isArray(r.query.groups)) {
-    r.query = queryToMongo(r.query, table.value)
+    r.query = queryToMongo(r.query, table.value, ctx().expr)
   }
   return r
 })
