@@ -32,20 +32,20 @@
           size="sm"
           flat
           @click="clear"
-        />
+        >
+          <q-tooltip :delay="500">
+            {{ clearLabel || 'Clear' }}
+          </q-tooltip>
+        </q-btn>
 
         <!-- Add button -->
 
-        <q-btn
+        <add-button
           :label="addLabel"
           :disable="disable || addDisable"
-          :round="!addLabel"
-          :icon-right="addLabel ? (addIcon || 'mdi-plus') : undefined"
-          :icon="!addLabel ? (addIcon || 'mdi-plus') : undefined"
-          color="primary"
-          size="sm"
-          flat
+          :options="addOptions"
           @click="addItem"
+          @click-option="(value) => $emit('add-option', value)"
         />
       </div>
     </div>
@@ -132,6 +132,7 @@
               style="width: 30px;"
             >
               <q-btn
+                v-if="!canRemove || canRemove(values[index])"
                 v-show="hover === index"
                 :disable="disable || removeDisable"
                 :icon="removeIcon || 'mdi-trash-can-outline'"
@@ -140,7 +141,11 @@
                 round
                 flat
                 @click="removeItem(values[index])"
-              />
+              >
+                <q-tooltip :delay="500">
+                  {{ removeLabel || 'Remove' }}
+                </q-tooltip>
+              </q-btn>
             </div>
           </div>
         </template>
@@ -175,21 +180,20 @@
           size="sm"
           flat
           @click="clear"
-        />
+        >
+          <q-tooltip :delay="500">
+            {{ clearLabel || 'Clear' }}
+          </q-tooltip>
+        </q-btn>
 
         <!-- Add button -->
 
-        <q-btn
-          :class="{ 'q-ml-sm': horizontal }"
+        <add-button
           :label="addLabel"
-          :round="!addLabel"
           :disable="disable || addDisable"
-          :icon-right="addLabel ? (addIcon || 'mdi-plus') : undefined"
-          :icon="!addLabel ? (addIcon || 'mdi-plus') : undefined"
-          size="sm"
-          color="primary"
-          flat
+          :options="addOptions"
           @click="addItem"
+          @click-option="(value) => $emit('add-option', value)"
         />
       </div>
     </div>
@@ -202,6 +206,8 @@ import draggable from 'vuedraggable'
 import hexObjectId from 'hex-object-id'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { AnyData } from '@/shared/interfaces/commons'
+import { AddOption } from '@/features/Fields/interfaces'
+import AddButton from '@/features/Fields/components/AddButton.vue'
 
 const props = defineProps<{
   // Array to be edited
@@ -216,6 +222,8 @@ const props = defineProps<{
   addIcon?: string
   // label for the add button
   addLabel?: string
+  // add button's menu options
+  addOptions?: AddOption[]
   // position of the add button
   addButton?: 'start' | 'end'
   // function to execute to add a new item to the array, return the value if successful
@@ -240,6 +248,8 @@ const props = defineProps<{
   itemDisable?: (index: number) => boolean
   // icon for the remove button
   removeIcon?: string
+  // label for the remove button
+  removeLabel?: string
   // function called before removing item at index
   canRemove?: (value: unknown) => boolean
   // minimum number of items the array must contain to be valid
@@ -269,6 +279,7 @@ const props = defineProps<{
 // eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'add', value: unknown): void,
+  (e: 'add-option', value: string): void,
   (e: 'remove', value: unknown, index: number): void,
   (e: 'clear'): void,
   (e: 'moved', oldIndex: number, newIndex: number): void,

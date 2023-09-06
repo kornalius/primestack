@@ -1,5 +1,5 @@
 import { HookContext } from '@feathersjs/feathers'
-import { Forbidden } from '@feathersjs/errors'
+import { BadRequest, Forbidden } from '@feathersjs/errors'
 import { formatSize } from '@/shared/files/utils'
 
 export const checkMaxFiles = async (context: HookContext): Promise<HookContext> => {
@@ -29,6 +29,25 @@ export const checkMaxFileSize = async (context: HookContext): Promise<HookContex
     throw new Forbidden(
       `Your plan only supports file sizes up to ${formatSize(m)}, please consider upgrading`
     )
+  }
+  return context
+}
+
+export const checkRequiredQueryFields = async (context: HookContext): Promise<HookContext> => {
+  // skip check if from internal server
+  if (!context.params.connection) {
+    return context
+  }
+
+  // if no query provided
+  if (context.method === 'find') {
+    if (!context.params?.query.tableId) {
+      throw new BadRequest('Missing tableId field')
+    }
+
+    if (!context.params?.query.docId) {
+      throw new BadRequest('Missing docId field')
+    }
   }
   return context
 }

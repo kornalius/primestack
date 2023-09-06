@@ -8,7 +8,7 @@ import { Params } from '@feathersjs/feathers'
 import { createService, MongoService } from '@/service'
 import { schema } from '@/shared/schemas/file'
 import { dataValidator } from '@/validators'
-import { checkMaxFiles, checkMaxFileSize } from './files.hooks'
+import { checkMaxFiles, checkMaxFileSize, checkRequiredQueryFields } from './files.hooks'
 
 dataValidator.addSchema(schema)
 
@@ -68,7 +68,9 @@ export default function (app: Application): void {
     methods: ['find', 'get', 'create', 'remove'],
     hooks: {
       before: {
-        all: [],
+        all: [
+          checkRequiredQueryFields,
+        ],
         create: [
           checkMaxFiles,
           checkMaxFileSize,

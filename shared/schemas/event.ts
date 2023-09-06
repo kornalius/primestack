@@ -19,3 +19,72 @@ export const schema = Type.Object({
   // data being passed
   data: Type.Optional(Type.Object({})),
 }, { $id: 'Event', additionalProperties: false })
+
+// for special user tables
+export const eventFields = [
+  {
+    name: 'userId',
+    type: 'objectid',
+    hidden: false,
+    optional: false,
+    array: false,
+    readonly: true,
+    queryable: true,
+  },
+  {
+    name: 'ownerid',
+    type: 'objectid',
+    hidden: false,
+    optional: false,
+    array: false,
+    readonly: true,
+    queryable: true,
+  },
+  {
+    name: 'method',
+    type: 'string',
+    hidden: false,
+    optional: false,
+    array: false,
+    readonly: true,
+    queryable: true,
+  },
+  {
+    name: 'service',
+    type: 'string',
+    hidden: false,
+    optional: false,
+    array: false,
+    readonly: true,
+    queryable: true,
+  },
+  {
+    name: 'docid',
+    type: 'objectid',
+    hidden: false,
+    optional: false,
+    array: false,
+    readonly: true,
+    queryable: true,
+  },
+  {
+    name: 'time',
+    type: 'number',
+    hidden: false,
+    optional: false,
+    array: false,
+    readonly: true,
+    queryable: true,
+  },
+]
+
+export const eventTable = {
+  service: 'events',
+  methods: ['get', 'find'],
+  created: false,
+  updated: false,
+  softDelete: false,
+  user: false,
+  fields: eventFields,
+  indexes: [],
+}

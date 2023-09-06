@@ -28,23 +28,14 @@
         </div>
 
         <div class="col-auto">
-          <q-btn
+          <add-button
             v-if="addButton === 'start'"
-            class="add-button start"
             :label="addLabel"
-            :round="!addLabel"
             :disable="disable || addDisable"
-            :icon-right="addLabel ? (addIcon || 'mdi-plus') : undefined"
-            :icon="!addLabel ? (addIcon || 'mdi-plus') : undefined"
-            size="sm"
-            color="primary"
-            flat
+            :options="addOptions"
             @click="addRow"
-          >
-            <q-tooltip :delay="500">
-              {{ addLabel || 'Create new' }}
-            </q-tooltip>
-          </q-btn>
+            @click-option="(value) => $emit('add-option', value)"
+          />
         </div>
       </div>
     </template>
@@ -83,13 +74,14 @@
             :key-name="col.field"
             :label="col.label"
           />
+
           <span v-else>
             {{ col.format ? col.format(p.row[col.field]) : p.row[col.field] }}
           </span>
         </q-td>
 
         <q-btn
-          v-if="removeButton === 'end'"
+          v-if="removeButton === 'end' && (!canRemove || canRemove(p.row))"
           v-show="hover === p.row._id"
           class="remove-button"
           :disable="disable || removeDisable"
@@ -112,23 +104,14 @@
     </template>
   </q-table>
 
-  <q-btn
+  <add-button
     v-if="addButton === 'end'"
-    class="add-button end"
     :label="addLabel"
-    :round="!addLabel"
     :disable="disable || addDisable"
-    :icon-right="addLabel ? (addIcon || 'mdi-plus') : undefined"
-    :icon="!addLabel ? (addIcon || 'mdi-plus') : undefined"
-    size="sm"
-    color="primary"
-    flat
+    :options="addOptions"
     @click="addRow"
-  >
-    <q-tooltip :delay="500">
-      {{ addLabel || 'Create new' }}
-    </q-tooltip>
-  </q-btn>
+    @click-option="(value) => $emit('add-option', value)"
+  />
 </template>
 
 <script setup lang="ts">
@@ -146,6 +129,8 @@ import { useFeathers } from '@/composites/feathers'
 import { useQuery } from '@/features/Query/composites'
 import { filterToMongo } from '@/composites/filter'
 import PropertySchemaField from '@/features/Properties/components/PropertySchemaField.vue'
+import AddButton from '@/features/Fields/components/AddButton.vue'
+import { AddOption } from '../interfaces'
 
 const attrs = useAttrs()
 
@@ -167,6 +152,8 @@ const props = defineProps<{
   addIcon?: string
   // label for the add button
   addLabel?: string
+  // add button's menu options
+  addOptions?: AddOption[]
   // should we disable the add feature?
   addDisable?: boolean
   // position of the remove button on the rows
@@ -189,6 +176,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'row-click', value: unknown): void,
   (e: 'add', value: unknown): void,
+  (e: 'add-option', value: string): void,
   (e: 'remove', value: unknown): void,
   (e: 'update:filter', value: string | null | undefined): void,
   (e: 'update:selected', value: unknown[]): void,

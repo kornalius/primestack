@@ -223,13 +223,13 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
    * Query
    */
 
-  const filteredKeys = Object.keys(options.schema.properties).filter((k) => (
+  const nonArrayKeys = Object.keys(options.schema.properties).filter((k) => (
     options.schema.properties[k].type !== 'array'
   ))
 
   const queryKeys = [
     '_id',
-    ...filteredKeys,
+    ...nonArrayKeys,
     ...(options.validators?.query || []),
     ...(options.created ? ['createdAt', 'createdBy'] : []),
     ...(options.updated ? ['updatedAt', 'updatedBy'] : []),
@@ -410,6 +410,8 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
 
       const o = {
         app,
+        // this mostly serves as the table id for the service
+        name,
         paginate: paginate || app.get('paginate'),
         Model: collection
           ? app.get('mongodbClient')

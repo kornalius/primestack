@@ -401,6 +401,7 @@
         v-model:forced-types="currentForcedTypes"
         :prop-name="subPropName(index)"
         :schema="dynamicArraySchema(value[index])"
+        :categories="dynamicArraySchema(value[index]).categories"
         :horizontal="arrayIsHorizontal"
         embed-label
         flat
@@ -457,6 +458,7 @@
             v-model:forced-types="currentForcedTypes"
             :prop-name="subPropName(index)"
             :schema="dynamicArraySchema(scope.value[index])"
+            :categories="dynamicArraySchema(scope.value[index]).categories"
             :horizontal="arrayIsHorizontalPopup"
             embed-label
             flat
@@ -847,9 +849,12 @@ const form = computed(() => (
 /**
  * Computes the user's table id from the schema of the form's tableId
  */
-const tableId = computed(() => (
-  (props.schema.tableProp && value.value[props.schema.tableProp]) || form.value.tableId
-))
+const tableId = computed(() => {
+  if (editor.selectedTable) {
+    return editor.selectedTable
+  }
+  return (props.schema.tableProp && value.value[props.schema.tableProp]) || form.value.tableId
+})
 
 /**
  * Computes the fields from the form's data property

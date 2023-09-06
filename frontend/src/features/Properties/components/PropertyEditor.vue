@@ -25,6 +25,7 @@
     <property-schema-field
       v-model="value"
       v-model:forced-types="currentForcedTypes"
+      :disable="disable"
       :parent="parent"
       :schema="schema"
       :key-name="propName"
@@ -105,6 +106,7 @@
           <property-schema-field
             v-model="value"
             v-model:forced-types="currentForcedTypes"
+            :disable="disable"
             :parent="parent"
             :schema="schema"
             :key-name="propName"
@@ -120,8 +122,9 @@
           <q-btn
             v-if="showExpr"
             class="q-mr-sm"
-            icon="mdi-flash"
+            :disable="disable"
             :color="isExpr(value) ? 'orange-8' : 'grey-5'"
+            icon="mdi-flash"
             size="sm"
             flat
             dense
@@ -183,11 +186,12 @@
               <array-editor
                 v-model="scope.value"
                 style="min-width: 600px; min-height: 400px;"
-                add-button="end"
-                add-label="Click here to add a new item"
                 :add-function="() => addItem(scope.value)"
                 :remove-function="(v: unknown, idx: number) => removeItem(scope.value, idx)"
+                :disable="disable"
                 :no-separator="!arraySchemaIsObject"
+                add-button="end"
+                add-label="Click here to add a new item"
                 reorderable
               >
                 <template #default="{ index }">
@@ -195,6 +199,7 @@
                     v-if="arraySchemaIsObject"
                     v-model="scope.value[index]"
                     v-model:forced-types="currentForcedTypes"
+                    :disable="disable"
                     :prop-name="subPropName(index)"
                     :schema="dynamicArraySchema(scope.value[index])"
                     :horizontal="arrayIsHorizontalPopup"
@@ -207,6 +212,7 @@
                     v-model="scope.value[index]"
                     v-model:forced-types="currentForcedTypes"
                     v-model:parent="scope.value"
+                    :disable="disable"
                     :prop-name="subPropName(index)"
                     :schema="arraySchema"
                     :required="arraySchema.required"

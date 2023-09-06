@@ -16,3 +16,63 @@ export const schema = Type.Intersect([
     data: Type.Optional(Type.String()),
   }),
 ], { $id: 'File', additionalProperties: false })
+
+// for special user tables
+export const fileFields = [
+  {
+    name: 'originalFilename',
+    type: 'string',
+    hidden: false,
+    optional: false,
+    array: false,
+    readonly: true,
+    queryable: true,
+  },
+  {
+    name: 'mimetype',
+    type: 'string',
+    hidden: false,
+    optional: false,
+    array: false,
+    readonly: true,
+    queryable: true,
+  },
+  {
+    name: 'size',
+    type: 'number',
+    hidden: false,
+    optional: false,
+    array: false,
+    readonly: true,
+    queryable: true,
+  },
+  {
+    name: 'tableId',
+    type: 'objectid',
+    hidden: false,
+    optional: false,
+    array: false,
+    readonly: true,
+    queryable: true,
+  },
+  {
+    name: 'docId',
+    type: 'objectid',
+    hidden: false,
+    optional: false,
+    array: false,
+    readonly: true,
+    queryable: true,
+  },
+]
+
+export const fileTable = {
+  service: 'files',
+  methods: ['get', 'find', 'remove'],
+  created: true,
+  updated: true,
+  softDelete: false,
+  user: false,
+  fields: fileFields,
+  indexes: [],
+}

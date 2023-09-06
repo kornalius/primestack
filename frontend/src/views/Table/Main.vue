@@ -9,6 +9,7 @@
           :columns="schemaColumns"
           :rows-per-page-options="[0]"
           :add-function="addTable"
+          :add-options="addOptions"
           :remove-function="removeTable"
           add-button="start"
           remove-button="end"
@@ -20,6 +21,7 @@
           dense
           flat
           @row-click="toggleTableSelection"
+          @add-option="addSpecialTable"
         />
       </div>
     </div>
@@ -34,6 +36,8 @@
           :rows-per-page-options="[0]"
           :add-function="addTableField"
           :remove-function="removeTableField"
+          :add-disable="tableHasService"
+          :can-remove="() => !tableHasService"
           add-button="start"
           remove-button="end"
           title="Fields"
@@ -54,12 +58,18 @@
 import {
   computed, onBeforeUnmount, onMounted, ref, watch,
 } from 'vue'
+import hexObjectId from 'hex-object-id'
 import { useRouter } from 'vue-router'
 import { Static } from '@feathersjs/typebox'
 import { useAppEditor } from '@/features/App/store'
 import { useUrl } from '@/composites/url'
 import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
 import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
+import { eventTable } from '@/shared/schemas/event'
+import { fileTable } from '@/shared/schemas/file'
+import { AddOption } from '@/features/Fields/interfaces'
+import { isServiceAvailable } from '@/shared/plan'
+import { useAuth } from '@/features/Auth/store'
 
 type Table = Static<typeof tableSchema>
 type TableField = Static<typeof tableFieldSchema>
@@ -75,6 +85,8 @@ const editor = useAppEditor()
 const { tableUrl } = useUrl()
 
 const router = useRouter()
+
+const auth = useAuth()
 
 onMounted(() => {
   editor.unselectAll()
@@ -101,6 +113,31 @@ const tableFields = computed(() => (
   editor.tableInstance(selectedTable.value?.[0]?._id)?.fields || []
 ))
 
+const tableHasService = computed((): boolean => (
+  !!editor.tableInstance(selectedTable.value?.[0]?._id)?.service
+))
+
+const addOptions = computed((): AddOption[] => ([
+  {
+    label: 'Files',
+    value: 'files',
+    icon: 'mdi-file-multiple',
+    // eslint-disable-next-line no-underscore-dangle
+    disabled: !isServiceAvailable('files', auth.user._plan.code),
+    // eslint-disable-next-line no-underscore-dangle
+    paid: isServiceAvailable('files', auth.user._plan.code),
+  },
+  {
+    label: 'Events',
+    value: 'events',
+    icon: 'mdi-calendar-multiple',
+    // eslint-disable-next-line no-underscore-dangle
+    disabled: !isServiceAvailable('events', auth.user._plan.code),
+    // eslint-disable-next-line no-underscore-dangle
+    paid: isServiceAvailable('events', auth.user._plan.code),
+  },
+]))
+
 watch(() => props.id, () => {
   if (props.id) {
     selectedTable.value = [editor.tableInstance(props.id)]
@@ -115,6 +152,7 @@ watch(() => props.fieldId, () => {
 
 watch(selectedTable, () => {
   if (selectedTable.value?.[0]?._id) {
+    editor.unselectTableField()
     editor.selectTable(selectedTable.value?.[0]?._id)
     router.push(tableUrl(selectedTable.value?.[0]?._id))
   }
@@ -130,6 +168,25 @@ watch(selectedTableField, () => {
 const addTable = () => {
   const t = editor.addTable(true)
   selectedTable.value = [t]
+  return t
+}
+
+const addSpecialTable = (type: string) => {
+  const tables = {
+    files: fileTable,
+    events: eventTable,
+  }
+
+  const t = addTable()
+
+  Object.keys(tables[type]).forEach((k: string) => {
+    t[k] = tables[type][k]
+  })
+
+  t.fields.forEach((f) => {
+    // eslint-disable-next-line no-param-reassign
+    f._id = f._id || hexObjectId()
+  })
 }
 
 const removeTable = (t: Table): void => {

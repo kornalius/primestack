@@ -43,6 +43,7 @@
       :prop-name="''"
       :schema="selectedTableSchema"
       :categories="selectedTableSchema.categories"
+      :disabled-properties="disabledTableProperties"
     />
 
     <!-- Table Field properties -->
@@ -54,6 +55,7 @@
       :prop-name="''"
       :schema="selectedSchemaFieldSchema"
       :categories="selectedSchemaFieldSchema.categories"
+      :disabled-properties="disabledTableFieldProperties"
     />
 
     <template v-else-if="!editor.actionId">
@@ -278,7 +280,7 @@ const showTableFieldProperties = computed(() => (
  */
 const selectedTableSchema = computed(() => (
   selectedTable.value
-    ? omitFields(tableSchema, ['_id', 'fields', 'indexes'])
+    ? omitFields(tableSchema, ['_id', 'fields', 'service'])
     : undefined
 ))
 
@@ -290,6 +292,26 @@ const selectedSchemaFieldSchema = computed(() => (
     ? omitFields(tableFieldSchema, ['_id'])
     : undefined
 ))
+
+/**
+ * Computes a list of disabled table property names
+ */
+const disabledTableProperties = computed((): string[] | undefined => {
+  if (selectedTable.value?.service) {
+    return Object.keys(selectedTableSchema.value.properties).filter((n) => n !== 'name')
+  }
+  return undefined
+})
+
+/**
+ * Computes if table field properties are disabled or not
+ */
+const disabledTableFieldProperties = computed((): string[] | undefined => {
+  if (selectedTable.value?.service) {
+    return Object.keys(selectedSchemaFieldSchema.value.properties)
+  }
+  return undefined
+})
 
 /**
  * Actions

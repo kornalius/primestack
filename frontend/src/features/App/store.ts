@@ -609,7 +609,7 @@ export const useAppEditor = defineStore('app-editor', () => {
     }
 
     // eslint-disable-next-line no-underscore-dangle
-    return !flattenFields(form._fields).find((f) => nameExists(f))
+    return !flattenFields(form?._fields || []).find((f) => nameExists(f))
   })
 
   /**

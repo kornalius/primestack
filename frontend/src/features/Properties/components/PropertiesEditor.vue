@@ -2,7 +2,7 @@
   <!-- Categories tabs -->
 
   <q-tabs
-    v-if="categories"
+    v-if="displayableCategories"
     v-model="category"
     active-color="blue-4"
     indicator-color="blue-4"
@@ -29,7 +29,7 @@
       v-model="value[name]"
       v-model:forced-types="currentForcedTypes"
       v-model:parent="value"
-      :disable="disable"
+      :disable="disable || disabledProperties?.includes(name)"
       :prop-name="subPropName(name)"
       :schema="schema.properties[name]"
       :required="schema.required.includes(name)"
@@ -53,7 +53,7 @@
       v-model="value[name]"
       v-model:forced-types="currentForcedTypes"
       v-model:parent="value"
-      :disable="disable"
+      :disable="disable || disabledProperties?.includes(name)"
       :prop-name="subPropName(name)"
       :schema="schema.properties[name]"
       :required="schema.required.includes(name)"
@@ -90,6 +90,8 @@ const props = defineProps<{
   categories?: Record<string, TFormFieldCategory>
   // use an horizontal layout to display the properties
   horizontal?: boolean
+  // list of disabled property names
+  disabledProperties?: string[]
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -115,6 +117,19 @@ const names = computed((): string[] => {
     return props.categories[category.value].names
   }
   return Object.keys(props.schema.properties)
+    .filter((p) => props.schema.properties[p].hidden !== true)
+})
+
+/**
+ * Computes if there are displayable categories, meaning categories with icons
+ */
+const displayableCategories = computed((): boolean => {
+  if (props.categories) {
+    return Object.keys(props.categories)
+      .filter((k) => props.categories[k].icon)
+      .length > 0
+  }
+  return false
 })
 
 /**

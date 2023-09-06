@@ -1,8 +1,13 @@
 import { Application } from '@feathersjs/koa'
-import { TObject } from '@feathersjs/typebox'
+import { Static, TObject } from '@feathersjs/typebox'
+import { Forbidden } from '@feathersjs/errors'
+import { AdapterId, NullableAdapterId } from '@feathersjs/mongodb/src/adapter'
+import { Paginated, Params } from '@feathersjs/feathers'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { PaginationOptions } from '@feathersjs/adapter-commons'
 // eslint-disable-next-line import/no-cycle
 import { createService, MongoService } from '@/service'
-import { schema } from '@/shared/schemas/table'
+import { schema, tableSchema } from '@/shared/schemas/table'
 import { dataValidator } from '@/validators'
 import { loadPrev } from '@/hooks/load-prev'
 import { HookContext } from '@/declarations'
@@ -18,12 +23,135 @@ dataValidator.addSchema(schema)
 const path = 'tables'
 const collection = 'tables'
 
+type Table = Static<typeof tableSchema>
+
 class Service extends MongoService {}
+
+class DynamicService extends MongoService {
+  async getTable(): Promise<Table | undefined> {
+    const { app, name } = (this.options as AnyData)
+    const table = (await app.service('tables').find({ query: {} })).data?.[0]
+    if (table) {
+      return table.list.find((t: Table) => t._id.toString() === name)
+    }
+    return undefined
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async create(data: AnyData, params?: Params): Promise<AnyData>
+  async create(data: AnyData[], params?: Params): Promise<AnyData[]>
+  async create(data: AnyData | AnyData[], params?: Params): Promise<AnyData | AnyData[]>
+  async create(data: AnyData | AnyData[], params?: Params): Promise<AnyData | AnyData[]> {
+    const { app } = (this.options as AnyData)
+    const t = await this.getTable()
+    if (t) {
+      switch (t.service) {
+        case 'events':
+          throw new Forbidden()
+        case 'files':
+          return app.service('files').create(data, params)
+        default:
+          break
+      }
+    }
+    return super.create(data, params)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async get(id: AdapterId, params?: Params) {
+    const { app } = (this.options as AnyData)
+    const t = await this.getTable()
+    if (t) {
+      switch (t.service) {
+        case 'events':
+          throw new Forbidden()
+        case 'files':
+          return app.service('files').get(id, params)
+        default:
+          break
+      }
+    }
+    return super.get(id, params)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async find(params?: Params & { paginate?: PaginationOptions }): Promise<Paginated<AnyData>>
+  async find(params?: Params & { paginate: false }): Promise<AnyData[]>
+  async find(params?: Params): Promise<Paginated<AnyData> | AnyData[]>
+  async find(params?: Params): Promise<Paginated<AnyData> | AnyData[]> {
+    const { app } = (this.options as AnyData)
+    const t = await this.getTable()
+    if (t) {
+      switch (t.service) {
+        case 'events':
+          return app.service('events').find(params)
+        case 'files':
+          return app.service('files').find(params)
+        default:
+          break
+      }
+    }
+    return super.find(params)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async update(id: AdapterId, data: AnyData, params?: Params): Promise<AnyData> {
+    const t = await this.getTable()
+    if (t) {
+      switch (t.service) {
+        case 'events':
+          throw new Forbidden()
+        case 'files':
+          throw new Forbidden()
+        default:
+          break
+      }
+    }
+    return super.update(id, data, params)
+  }
+
+  async patch(id: null, data: AnyData, params?: Params): Promise<AnyData[]>
+  async patch(id: AdapterId, data: AnyData, params?: Params): Promise<AnyData>
+  async patch(id: NullableAdapterId, data: AnyData, params?: Params): Promise<AnyData | AnyData[]>
+  async patch(id: NullableAdapterId, data: AnyData, params?: Params): Promise<AnyData | AnyData[]> {
+    const t = await this.getTable()
+    if (t) {
+      switch (t.service) {
+        case 'events':
+          throw new Forbidden()
+        case 'files':
+          throw new Forbidden()
+        default:
+          break
+      }
+    }
+    return super.patch(id, data, params)
+  }
+
+  async remove(id: AdapterId, params?: Params): Promise<AnyData>
+  async remove(id: null, params?: Params): Promise<AnyData[]>
+  async remove(id: NullableAdapterId, params?: Params): Promise<AnyData | AnyData[]>
+  async remove(id: NullableAdapterId, params?: Params): Promise<AnyData | AnyData[]> {
+    const { app } = (this.options as AnyData)
+    const t = await this.getTable()
+    if (t) {
+      switch (t.service) {
+        case 'events':
+          throw new Forbidden()
+        case 'files':
+          return app.service('files').remove(id, params)
+        default:
+          break
+      }
+    }
+    return super.remove(id, params)
+  }
+}
 
 const createDynamicService = (app: Application, id: string, t: AnyData) => {
   info(`Creating user service ${id}...`)
 
-  createService(id, Service, {
+  createService(id, DynamicService, {
     collection: id,
     schema: fieldsToSchema(t.fields, id) as TObject,
     indexes: indexesToMongo(t.indexes),

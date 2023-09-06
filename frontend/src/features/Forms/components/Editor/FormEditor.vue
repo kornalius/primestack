@@ -142,40 +142,44 @@ const autoGenerateForm = (tableId: string): void => {
     const field = editor.addFieldToForm(component, options)
     field.field = f.name
     field.label = f.name
+    field.disable = f.readonly
+    field.readonly = f.readonly
     return field
   }
 
   const table = editor.tableInstance(tableId)
   if (table) {
-    table.fields.forEach((f) => {
-      switch (f.type) {
-        case 'string':
-          addFieldToForm('input', f)
-          break
-        case 'number':
-          addFieldToForm('input', f, { type: 'number' })
-          break
-        case 'boolean':
-          addFieldToForm('checkbox', f)
-          break
-        case 'date':
-          addFieldToForm('date', f)
-          break
-        case 'time':
-          addFieldToForm('time', f)
-          break
-        case 'color':
-          addFieldToForm('color', f)
-          break
-        case 'icon':
-          addFieldToForm('iconSelect', f)
-          break
-        case 'objectid':
-          addFieldToForm('select', f, { optionLabel: 'name', optionValue: '_id' })
-          break
-        default:
-      }
-    })
+    table.fields
+      .filter((f) => f.hidden !== true)
+      .forEach((f) => {
+        switch (f.type) {
+          case 'string':
+            addFieldToForm('input', f)
+            break
+          case 'number':
+            addFieldToForm('input', f, { type: 'number' })
+            break
+          case 'boolean':
+            addFieldToForm('checkbox', f)
+            break
+          case 'date':
+            addFieldToForm('date', f)
+            break
+          case 'time':
+            addFieldToForm('time', f)
+            break
+          case 'color':
+            addFieldToForm('color', f)
+            break
+          case 'icon':
+            addFieldToForm('iconSelect', f)
+            break
+          case 'objectid':
+            addFieldToForm('select', f, { optionLabel: 'name', optionValue: '_id' })
+            break
+          default:
+        }
+      })
   }
 }
 
@@ -191,7 +195,7 @@ watch(() => props.form?.tableId, (newValue, oldValue) => {
         outline: true,
       },
       cancel: {
-        label: t('dialog.ok'),
+        label: t('dialog.cancel'),
         color: 'negative',
         outline: true,
       },

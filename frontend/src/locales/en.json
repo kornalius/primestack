@@ -94,5 +94,10 @@
     "files": {
       "title": "Files ({count})"
     }
+  },
+  "buttons": {
+    "add": "Create New...",
+    "clear": "Clear",
+    "remove": "Remove"
   }
 }

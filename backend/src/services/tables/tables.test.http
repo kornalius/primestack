@@ -156,15 +156,3 @@ Authorization: {{token}}
   ]
 }
 ###
-
-// Create table data
-POST http://localhost:3030/64b806da03ac5093de3f3e78
-Accept: application/json
-Content-Type: application/json
-
-{
-  "stringField": "String Field",
-  "numberField": 10,
-  "booleanField": false
-}
-###

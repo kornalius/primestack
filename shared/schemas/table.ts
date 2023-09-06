@@ -10,6 +10,7 @@ export const supportedFieldTypes = [
   'date',
   'time',
   'objectid',
+  'object',
 ]
 
 export const supportedStringFormats = [
@@ -48,7 +49,7 @@ export const supportedMethods = [
 export const tableFieldSchema = Type.Object(
   {
     _id: Type.String({ objectid: true }),
-    name: Type.String({ availableFieldname: true }),
+    name: Type.String(),
     type: StringEnum(supportedFieldTypes),
     hidden: Type.Boolean(),
     array: Type.Boolean(),
@@ -114,7 +115,7 @@ export const tableFieldSchema = Type.Object(
 export const tableIndexSchema = Type.Object(
   {
     _id: Type.String({ objectid: true }),
-    name: Type.String({ availableFieldname: true }),
+    name: Type.String({ field: true }),
     order: Type.Number({ minimum: -1, maximum: 1 }),
     unique: Type.Boolean(),
     sparse: Type.Boolean(),
@@ -124,7 +125,6 @@ export const tableIndexSchema = Type.Object(
     additionalProperties: false,
     categories: {
       content: {
-        icon: contentIcon,
         names: [
           'name',
           'order',
@@ -147,6 +147,8 @@ export const tableSchema = Type.Object(
     user: Type.Boolean(),
     fields: Type.Array(tableFieldSchema),
     indexes: Type.Array(tableIndexSchema),
+    // when specified (events, files), the data will come from those services instead
+    service: Type.Optional(StringEnum(['events', 'files'])),
   },
   {
     $id: 'Table',
@@ -161,6 +163,7 @@ export const tableSchema = Type.Object(
           'updated',
           'softDelete',
           'user',
+          'indexes',
         ],
       },
     },

@@ -94,5 +94,10 @@
         "title": "Files ({count})"
       }
     }
+  },
+  "buttons": {
+    "add": "Nouveau...",
+    "clear": "Effacer tout",
+    "remove": "Effacer"
   }
 }
