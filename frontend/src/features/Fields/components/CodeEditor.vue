@@ -12,6 +12,7 @@
 import { shallowRef } from 'vue'
 import { Codemirror } from 'vue-codemirror'
 import { marked } from 'marked'
+import { SyntaxNode } from '@lezer/common'
 import { CompletionContext, autocompletion, Completion } from '@codemirror/autocomplete'
 import { syntaxTree } from '@codemirror/language'
 import { json } from '@codemirror/lang-json'
@@ -20,7 +21,7 @@ import { oneDark } from '@codemirror/theme-one-dark'
 import { useModelValue } from '@/composites/prop'
 import { useAppEditor } from '@/features/App/store'
 import { useVariables } from '@/features/Variables/store'
-import { SyntaxNode } from '@lezer/common'
+import { extraFields } from '@/shared/schema'
 
 const props = defineProps<{
   modelValue: string | null | undefined
@@ -399,11 +400,11 @@ const toOptions = (opts: string[], type = 'keyword'): Completion[] => (
   opts.map((k) => ({
     label: k,
     type,
-    info: () => {
+    info: fcts[k] ? () => {
       const el = document.createElement('div')
       el.innerHTML = marked.parse(fcts[k])
       return el
-    },
+    } : undefined,
   }))
 )
 
@@ -460,7 +461,10 @@ const myCompletions = (context: CompletionContext) => {
     const tt = tokens[2]
     const n = context.state.doc.slice(tt.from + 1, tt.to - 1).toString()
     const table = editor.tables.find((t) => t.name === n)
-    options = toOptions(table ? table.fields.map((f) => f.name) : [])
+    options = toOptions([
+      ...(table.fields?.map((f) => f.name) || []),
+      ...extraFields(table?.created, table?.updated, table?.softDelete).map((f) => f.name),
+    ])
   } else if (check(['var', 'ArgList', '(', 'String'])) {
     options = toOptions(variables.variableNames)
   } else if (nodeBefore.name === 'String') {

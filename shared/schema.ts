@@ -201,6 +201,27 @@ export const iconForType = (type: string): string => {
   }
 }
 
+/**
+ * Returns a type from a JSON object value
+ *
+ * @param o Object to check type from
+ *
+ * @returns {string} Type of 'o'
+ */
+export const primaryToType = (o: unknown): string => {
+  const t = typeof o
+
+  if (Array.isArray(o)) {
+    return 'array'
+  }
+
+  if (['string', 'number', 'boolean', 'object'].includes(t)) {
+    return t
+  }
+
+  return 'string'
+}
+
 type TableFieldSchema = Static<typeof tableFieldSchema>
 
 export const fieldToSchema = (field: TableFieldSchema): TSchema => {
@@ -333,3 +354,29 @@ export const indexesToMongo = (indexes: TableIndexSchema[]): Index[] => (
     sparse: i.sparse,
   }))
 )
+
+/**
+ * Returns a list of extra fields that are not specified in the fields of tables
+ *
+ * @param created Created from table
+ * @param updated Updated from table
+ * @param softDelete SoftDelete from table
+ *
+ * @returns {AnyData[]} List of extra fields
+ */
+export const extraFields = (created: boolean, updated: boolean, softDelete: boolean): AnyData[] => {
+  const fields: AnyData[] = []
+  if (created) {
+    fields.push({ name: 'createdAt', type: 'date' })
+    fields.push({ name: 'createdBy', type: 'objectid' })
+  }
+  if (updated) {
+    fields.push({ name: 'updatedAt', type: 'date' })
+    fields.push({ name: 'updatedBy', type: 'objectid' })
+  }
+  if (softDelete) {
+    fields.push({ name: 'deletedAt', type: 'date' })
+    fields.push({ name: 'deletedBy', type: 'objectid' })
+  }
+  return fields
+}

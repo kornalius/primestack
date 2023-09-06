@@ -504,8 +504,8 @@
       <query-editor
         v-model="scope.value"
         style="min-width: 600px; min-height: 400px;"
-        :table-id="parent.tableId"
-        :hide-table-select="!!parent.tableId"
+        :table-id="parent?.tableId"
+        :hide-table-select="!!parent?.tableId"
         show-limits
       />
     </q-popup-edit>
@@ -517,7 +517,12 @@ import { computed, ref } from 'vue'
 import omit from 'lodash/omit'
 import { Static, TSchema, Type } from '@feathersjs/typebox'
 import { useI18n } from 'vue-i18n'
-import { defaultValueForSchema, getTypeFor, optionsForSchema } from '@/shared/schema'
+import {
+  defaultValueForSchema,
+  getTypeFor,
+  optionsForSchema,
+  primaryToType,
+} from '@/shared/schema'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { useQuery } from '@/features/Query/composites'
 import { AnyData } from '@/shared/interfaces/commons'
@@ -703,6 +708,13 @@ const multiple = computed((): boolean => {
  */
 const arraySchema = computed(() => props.schema.items)
 
+/**
+ * Dynamic array schema for rules editing
+ *
+ * @param val Field value
+ *
+ * @returns {TSchema}
+ */
 const dynamicArraySchema = (val: AnyData): TSchema => {
   if (props.schema.rules) {
     const rt = ruleTypes.find((r) => r.name === val.type)
@@ -853,14 +865,20 @@ const tableId = computed(() => {
   if (editor.selectedTable) {
     return editor.selectedTable
   }
-  return (props.schema.tableProp && value.value[props.schema.tableProp]) || form.value.tableId
+  return (props.schema.tableProp && value.value[props.schema.tableProp])
+    || props.parent?.tableId
+    || form.value.tableId
 })
 
 /**
  * Computes the fields from the form's data property
  */
 const extraFields = computed(() => (
-  Object.keys(form.value?.data || {}).map((k) => ({ _id: k, name: k }))
+  Object.keys(form.value?.data || {}).map((k) => ({
+    _id: k,
+    name: k,
+    type: primaryToType(form.value?.data?.[k]),
+  }))
 ))
 
 /**

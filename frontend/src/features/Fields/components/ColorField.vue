@@ -60,7 +60,7 @@ const { hexToRgb, textToRgb } = colors
 
 const quasar = computed(() => (
   Array.from(document.querySelectorAll('head style'))
-    .filter((s) => s.dataset.viteDevId.endsWith('quasar/src/css/index.sass'))
+    .filter((s) => s.dataset.viteDevId?.endsWith('quasar/src/css/index.sass'))
 ))
 
 const quasarColors = computed(() => (

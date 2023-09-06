@@ -77,7 +77,7 @@
               :components="components"
             />
 
-            <pre>{{ currentData }}</pre>
+            <!-- <pre>{{ currentData }}</pre>-->
 
             <q-card-actions
               v-if="hasChanges"

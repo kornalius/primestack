@@ -3,7 +3,7 @@
     v-model="value"
     v-bind="$attrs"
     :disable="!!($attrs.disable || !table)"
-    :options="[...options, ...(extraOptions || [])]"
+    :options="options"
     label="Fieldname"
     option-value="_id"
     option-label="name"
@@ -45,7 +45,7 @@
 import { computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
-import { iconForType } from '@/shared/schema'
+import { extraFields, iconForType } from '@/shared/schema'
 import { tableFieldSchema } from '@/shared/schemas/table'
 import { useAppEditor } from '@/features/App/store'
 import { AnyData } from '@/shared/interfaces/commons'
@@ -75,7 +75,9 @@ const table = computed(() => (
   editor.tables?.find((s) => s._id === props.tableId)
 ))
 
-const options = computed(() => (
-  props.fields || table.value?.fields
-))
+const options = computed(() => ([
+  ...(props.fields || table.value?.fields || []),
+  ...extraFields(table.value?.created, table.value?.updated, table.value?.softDelete),
+  ...(props.extraOptions || []),
+]))
 </script>
