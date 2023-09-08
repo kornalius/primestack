@@ -2683,6 +2683,11 @@ magic-string@^0.30.0:
   dependencies:
     "@jridgewell/sourcemap-codec" "^1.4.15"
 
+marked-highlight@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/marked-highlight/-/marked-highlight-2.0.5.tgz#6b5bfc23a53b3bc03542dfb65d0777ff511b9661"
+  integrity sha512-SnMOy3LBe3ZMVyew7sO/wqAzBBSrLrOejeayP2bmnB00rrETtNyEvJkR5f3kDRYv5nT+ueEMba6XcGlmcyaN+A==
+
 marked@^7.0.5:
   version "7.0.5"
   resolved "https://registry.yarnpkg.com/marked/-/marked-7.0.5.tgz#8a9e4e3afb93b58fe9ee7608e67cc154eb15d508"

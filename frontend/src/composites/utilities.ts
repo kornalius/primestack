@@ -190,9 +190,17 @@ export const removeAccentsFromString = (str: string): string => (
   str.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
 )
 
-export const stringValue = (v?: string | ((value?: AnyData) => string)): string | undefined => {
+/**
+ * Evaluate `v` if it's a function else return it
+ *
+ * @param v A string or a function
+ * @param value Optional value to pass to the function call
+ *
+ * @returns {string}
+ */
+export const stringValue = (v?: string | ((value?: AnyData) => string), value?: unknown): string | undefined => {
   if (typeof v === 'function') {
-    return v()
+    return v(value)
   }
   return v
 }

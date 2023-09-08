@@ -29,7 +29,7 @@ import draggable from 'vuedraggable'
 import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useModelValue } from '@/composites/prop'
-import { useAppEditor } from '@/features/App/store'
+import { useAppEditor } from '@/features/App/editor-store'
 import FormElement from './FormElement.vue'
 
 const props = defineProps<{

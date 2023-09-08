@@ -1,16 +1,31 @@
 <template>
-  <div class="row items-center">
-    <div class="col-auto text-bold">
-      title:
+  <div class="q-mb-sm q-mr-sm">
+    <div class="row">
+      <div class="col text-h6">
+        {{ modelValue.title }}
+      </div>
     </div>
-    <div class="col-auto q-ml-xs text-italic">
-      {{ modelValue.title }}
+    <div class="row q-mb-sm">
+      <div class="col-auto">
+        {{ modelValue.message }}
+      </div>
     </div>
-    <div class="col-auto q-ml-sm text-bold">
-      message:
-    </div>
-    <div class="col-auto q-ml-xs text-italic">
-      {{ modelValue.message }}
+
+    <div class="row items-center justify-end q-gutter-sm">
+      <div class="col-auto">
+        <q-btn
+          v-bind="modelValue.cancel"
+          :label="modelValue.cancel.label || 'Cancel'"
+          disable
+        />
+      </div>
+      <div class="col-auto">
+        <q-btn
+          v-bind="modelValue.ok"
+          :label="modelValue.ok.label || 'Ok'"
+          disable
+        />
+      </div>
     </div>
   </div>
 </template>

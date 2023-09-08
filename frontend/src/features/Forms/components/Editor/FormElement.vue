@@ -86,15 +86,15 @@
         v-model:columns="field.columns"
         v-model:visible-columns="field.visibleColumns"
         :model-value="displayValue"
-        v-bind="fieldBinds(field, schemaForType(field), ctx())"
-        :query="queryToMongo(field.query, fieldTable, ctx().expr)"
+        v-bind="fieldBinds(field, schemaForType(field), ctx)"
+        :query="queryToMongo(field.query, fieldTable, ctx.expr)"
         :style="style"
       />
 
       <q-icon
         v-else-if="isIcon(field)"
         :name="displayValue as string"
-        v-bind="fieldBinds(field, schemaForType(field), ctx())"
+        v-bind="fieldBinds(field, schemaForType(field), ctx)"
         :style="style"
       />
 
@@ -102,7 +102,7 @@
         :is="componentForField(field)"
         v-else
         :model-value="displayValue"
-        v-bind="fieldBinds(field, schemaForType(field), ctx())"
+        v-bind="fieldBinds(field, schemaForType(field), ctx)"
         :style="style"
       />
 
@@ -121,11 +121,11 @@ import { computed, ref } from 'vue'
 import { TSchema } from '@feathersjs/typebox'
 import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
-import { useAppEditor } from '@/features/App/store'
+import { useAppEditor } from '@/features/App/editor-store'
 import { useQuery } from '@/features/Query/composites'
 import { useExpression } from '@/features/Expression/composites'
-import TableEditor from '@/features/Forms/components/Editor/TableEditor.vue'
 import { stringValue } from '@/composites/utilities'
+import TableEditor from '@/features/Forms/components/Editor/TableEditor.vue'
 import { useFormElements } from '../../composites'
 import FormElementRow from './FormElementRow.vue'
 import FormElementCard from './FormElementCard.vue'
@@ -190,7 +190,9 @@ const onRemoveClick = () => {
   emit('remove', props.modelValue)
 }
 
-const displayValue = computed(() => getProp(field.value.modelValue, ctx()))
+const displayValue = computed(() => (
+  getProp(field.value.modelValue, ctx)
+))
 
 const style = computed(() => ({
   paddingTop: field.value.padding?.top,

@@ -258,7 +258,7 @@ const { queryToMongo } = useQuery()
 
 const query = ref({ limit: 10, skip: 0, groups: [] }) as Ref<Query>
 
-const mongoQuery = computed(() => queryToMongo(query.value, userTable.value, ctx().expr))
+const mongoQuery = computed(() => queryToMongo(query.value, userTable.value, ctx.expr))
 
 /**
  * Table

@@ -131,8 +131,8 @@ export const queryToMongo = (q: Query, schema: TableSchema, ctx: AnyData): AnyDa
   }
 
   return {
-    $limit: Number(q.limit),
-    $skip: Number(q.skip),
+    $limit: Number(q.limit) || 10,
+    $skip: Number(q.skip) || 0,
     ...cleanupQuery(reduceGroups(q.groups)),
   }
 }

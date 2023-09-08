@@ -118,7 +118,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { useAppEditor } from '@/features/App/store'
+import { useAppEditor } from '@/features/App/editor-store'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { TAction } from '@/shared/interfaces/actions'

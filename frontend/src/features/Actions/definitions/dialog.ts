@@ -28,4 +28,14 @@ export default {
     }).onCancel(() => {
     })
   },
+  defaultValues: {
+    ok: {
+      color: 'green',
+      outline: true,
+    },
+    cancel: {
+      color: 'red',
+      outline: true,
+    },
+  },
 } as TFrontAction

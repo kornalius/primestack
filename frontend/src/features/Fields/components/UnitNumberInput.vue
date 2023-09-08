@@ -54,7 +54,6 @@ watch(value, () => {
   unit.value = ''
   props.units.forEach((u) => {
     const l = u.length
-    console.log(value.value?.slice(-l).toLowerCase(), value.value?.slice(0, -l))
     if (value.value?.slice(-l).toLowerCase() === u) {
       unit.value = u
       editValue.value = value.value.slice(0, -l)

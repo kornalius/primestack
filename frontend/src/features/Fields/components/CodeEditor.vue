@@ -11,7 +11,9 @@
 <script setup lang="ts">
 import { shallowRef } from 'vue'
 import { Codemirror } from 'vue-codemirror'
-import { marked } from 'marked'
+import { Marked } from 'marked'
+import { markedHighlight } from 'marked-highlight'
+import hljs from 'highlight.js'
 import { SyntaxNode } from '@lezer/common'
 import { CompletionContext, autocompletion, Completion } from '@codemirror/autocomplete'
 import { syntaxTree } from '@codemirror/language'
@@ -19,7 +21,8 @@ import { json } from '@codemirror/lang-json'
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
 import { useModelValue } from '@/composites/prop'
-import { useAppEditor } from '@/features/App/store'
+import { useApp } from '@/features/App/store'
+import { useAppEditor } from '@/features/App/editor-store'
 import { useVariables } from '@/features/Variables/store'
 import { extraFields } from '@/shared/schema'
 
@@ -38,16 +41,131 @@ const emit = defineEmits<{
 
 const editor = useAppEditor()
 
+const app = useApp()
+
 const variables = useVariables()
 
 const fcts = {
-  str: '',
+  str: '`(format: string, data: object): string`\n\n'
+    + 'Formats a string with format specifiers (subsequences beginning with %), \n'
+    + 'the additional arguments following format are formatted and inserted in \n'
+    + 'the resulting string replacing their respective specifiers.\n\n'
 
-  doc: '`(key: string): unknown`\n\n'
+    + 'A format specifier follows this prototype:\n'
+    + '`%[flags][width][.precision][length]specifier`\n\n'
+
+    + 'Where the specifier character at the end is the most significant component, \n'
+    + 'since it defines the type and the interpretation of its corresponding argument:\n\n'
+
+    + '|specifier|Output|Example|\n'
+    + '|:--------|:-----|:------|\n'
+    + '|`d` or `i`|Signed decimal integer|`392`|\n'
+    + '|`u`|Unsigned decimal integer|`7235`|\n'
+    + '|`o`|Unsigned octal|`610`|\n'
+    + '|`x`|Unsigned hexadecimal integer|`7fa`|\n'
+    + '|`X`|Unsigned hexadecimal integer (uppercase)|`7FA`|\n'
+    + '|`f`|Decimal floating point, lowercase|`392.65`|\n'
+    + '|`F`|Decimal floating point, uppercase|`392.65`|\n'
+    + '|`e`|Scientific notation (mantissa/exponent), lowercase|`3.9265e+2`|\n'
+    + '|`E`|Scientific notation (mantissa/exponent), uppercase|`3.9265E+2`|\n'
+    + '|`g`|Use the shortest representation: %e or %f|`392.65`|\n'
+    + '|`G`|Use the shortest representation: %E or %F|`392.65`|\n'
+    + '|`a`|Hexadecimal floating point, lowercase|`-0xc.90fep-2`|\n'
+    + '|`A`|Hexadecimal floating point, uppercase|`-0XC.90FEP-2`|\n'
+    + '|`c`|Character|`a`|\n'
+    + '|`s`|String of characters|`sample`|\n'
+    + '|`p`|Pointer address|`b8000000`|\n'
+    + '|`n`|Nothing printed. '
+    + 'The corresponding argument must be a pointer to a signed int. '
+    + 'The number of characters written so far is stored in the pointed location.||\n'
+    + '|`%`|A `%` followed by another `%` character will write a single `%` to the stream.|`%`|\n\n'
+
+    + 'The format specifier can also contain sub-specifiers: `flags`, `width`, `.precision` \n'
+    + 'and modifiers (in that order), which are optional and follow these specifications:\n\n'
+
+    + '|flags|description|\n'
+    + '|:----|:----------|\n'
+    + '|`-`|Left-justify within the given field width; Right justification is the default.|\n'
+    + '|`+`|Forces to preceed the result with a plus or minus sign (+ or -) even for positive '
+    + 'numbers. By default, only negative numbers are preceded with a `-` sign.|\n'
+    + '|`(space)`|If no sign is going to be written, a blank space is inserted before the value.|\n'
+    + '|`#`|Used with `o`, `x` or `X` specifiers the value is preceeded with '
+    + '`0`, `0x` or `0X` respectively for values different than zero. '
+    + 'Used with a, A, e, E, f, F, g or G it forces the written output to contain a decimal '
+    + 'point even if no more digits follow. By default, if no digits follow, no decimal '
+    + 'point is written.|\n'
+    + '|`0`|Left-pads the number with zeroes (0) instead of spaces when padding is specified '
+    + '(see width sub-specifier).|\n\n\n'
+
+    + '|width|description|\n'
+    + '|:----|:----------|\n'
+    + '|`(number)`|Minimum number of characters to be outputed. If the value is shorter than this '
+    + 'number, the result is padded with blank spaces. The value is not truncated even if the '
+    + 'result is larger.|\n'
+    + '|`*`|The width is not specified in the format string, but as an additional integer '
+    + 'value argument preceding the argument that has to be formatted.|\n\n'
+
+    + '|.precision|description|\n'
+    + '|:---------|:----------|\n'
+    + '|`.number`|For integer specifiers (d, i, o, u, x, X): precision specifies the minimum '
+    + 'number of digits to be written. If the value to be written is shorter than this number, '
+    + 'the result is padded with leading zeros. The value is not truncated even if the result is '
+    + 'longer. A precision of 0 means that no character is written for the value 0. '
+    + 'For a, A, e, E, f and F specifiers: this is the number of digits to be printed '
+    + 'after the decimal point (by default, this is 6). '
+    + 'For g and G specifiers: This is the maximum number of significant digits to be printed. '
+    + 'For s: this is the maximum number of characters to be printed. By default all '
+    + 'characters are printed until the ending null character is encountered. '
+    + 'If the period is specified without an explicit value for precision, 0 is assumed.|\n'
+    + '|`.*`|The precision is not specified in the format string, but as an additional integer '
+    + 'value argument preceding the argument that has to be formatted.|\n\n'
+
+    + 'The length sub-specifier modifies the length of the data type. This is a chart showing '
+    + 'the types used to interpret the corresponding arguments with and without length specifier '
+    + '(if a different type is used, the proper type promotion or conversion is performed, '
+    + 'if allowed):\n\n'
+
+    + '| |specifiers|  |  |  |  |  |\n'
+    + '|-|:---------|:-|:-|:-|:-|:-|\n'
+    + '|`length`|`d i`|`u o x X`|`f F e E g G a A`|`c`|`s`|`n`|\n'
+    + '|`(none)`|`number`|`number`|`number`|`number`|`string`|`number`|\n'
+    + '|`hh`|`string`|`string`||||`string`|\n'
+    + '|`h`|`number`|`number`||||`number`|\n'
+    + '|`l`|`number`|`number`||`number`|`string`|`number`|\n'
+    + '|`ll`|`number`|`number`||||`number`|\n'
+    + '|`j`|`number`|`number`||||`number`|\n'
+    + '|`z`|`number`|`number`||||`number`|\n'
+    + '|`t`|`number`|`number`||||`number`|\n'
+    + '|`L`|||`number`||||\n\n'
+
+    + '**Example**\n'
+    + '```js\n'
+    + 'str(\'Characters: %string:c %number:c\', { string: \'a\', number: 65 })\n'
+    + 'str(\'Decimals: %n:d %long:ld\', { n: 1977, long: 650000L })\n'
+    + 'str(\'Preceding with blanks: %n:10d\', { n: 1977 })\n'
+    + 'str(\'Preceding with zeros: %n:010d\', { n: 1977 })\n'
+    + 'str(\'Some different radices: %a:d %b:x %c:o %d:#x %e:#o\', '
+    + '{ a: 100, b: 100, c: 100, d: 100, e: 100 })\n'
+    + 'str(\'floats: %a:4.2f %b:+.0e %c:E\', { a: 3.1416, b: 3.1416, c: 3.1416 })\n'
+    + 'str(\'%a:s\', { a: \'A string\' })\n'
+    + '```\n\n'
+
+    + '**Output:**\n'
+    + '```\n'
+    + 'Characters: a A\n'
+    + 'Decimals: 1977 650000\n'
+    + 'Preceding with blanks:       1977\n'
+    + 'Preceding with zeros: 0000001977\n'
+    + 'Some different radices: 100 64 144 0x64 0144\n'
+    + 'floats: 3.14 +3e+000 3.141600E+000\n'
+    + 'A string\n'
+    + '```\n',
+
+  val: '`(key: string): unknown`\n\n'
     + 'Returns value from the current document in the form',
 
-  var: '`(name: string, value?: unknown): unknown`\n\n'
-    + 'Sets and/or returns the value of a variable',
+  var: '`(name: string): unknown`\n\n'
+    + 'Returns the value of a variable',
 
   field: '`(tablename: string, fieldname: string): unknown`\n\n'
     + 'Returns the ID of a field in a table',
@@ -58,8 +176,8 @@ const fcts = {
   route: '`(): string`\n\n'
     + ' Returns the current route/url',
 
-  param: '`(key: string, value?: string): string`\n\n'
-    + 'Sets and/or returns a parameter in the current route/url',
+  param: '`(key: string): string`\n\n'
+    + 'Returns a parameter in the current route/url',
 
   now: '`(): number`\n\n'
     + 'Returns the current time in milliseconds since the epoch',
@@ -76,8 +194,8 @@ const fcts = {
   warn: '`(...args: unknown)`\n\n'
     + 'Logs something to the browser console as a warning',
 
-  localStorage: '`(key: string, value?: string): string`\n\n'
-    + 'Sets and/or returns the value of a localStorage key',
+  localStorage: '`(key: string): string`\n\n'
+    + 'Returns the value of a localStorage key',
 
   parse: '`(s: string): unknown`\n\n'
     + 'Parse a string into an object',
@@ -93,6 +211,7 @@ const fcts = {
 
   format: '`(d: Date, format: string): string`\n\n'
     + 'Formats a Date object into a string\n\n'
+
     + '**List of all available parsing tokens**\n'
     + '|Input|Example|Description|\n'
     + '|:----|:------|:----------|\n'
@@ -167,7 +286,9 @@ const fcts = {
 
   add: '`(d: Date, count: number, unit: string): Date`\n\n'
     + 'Adds a number of units to a date\n\n'
-    + '**List of all available units**\n'
+
+    + '**List of all available units**\n\n'
+
     + '|Unit|Shorthand|Description|\n'
     + '|:---|:--------|:----------|\n'
     + '|day|d|Day|\n'
@@ -182,7 +303,9 @@ const fcts = {
 
   subtract: '`(d: Date, count: number, unit: string): Date`\n\n'
     + 'Subtracts a number of units to a date\n\n'
-    + '**List of all available units**\n'
+
+    + '**List of all available units**\n\n'
+
     + '|Unit|Shorthand|Description|\n'
     + '|:---|:--------|:----------|\n'
     + '|day|d|Day|\n'
@@ -196,8 +319,10 @@ const fcts = {
     + '|millisecond|ms|Millisecond|\n',
 
   startOf: '`(d: Date, unit: string): Date`\n\n'
-    + 'Returns the start of a unit in a date\n'
-    + '**List of all available units**\n'
+    + 'Returns the start of a unit in a date\n\n'
+
+    + '**List of all available units**\n\n'
+
     + '|Unit|Shorthand|Description|\n'
     + '|:---|:--------|:----------|\n'
     + '|year|y|January 1st, 00:00 this year|\n'
@@ -214,8 +339,10 @@ const fcts = {
     + '|second|s|now, but with 0 milliseconds|\n',
 
   endOf: '`(d: Date, unit: string): Date`\n\n'
-    + 'Returns the end of a unit in a date\n'
-    + '**List of all available units**\n'
+    + 'Returns the end of a unit in a date\n\n'
+
+    + '**List of all available units**\n\n'
+
     + '|Unit|Shorthand|Description|\n'
     + '|:---|:--------|:----------|\n'
     + '|year|y|January 1st, 00:00 this year|\n'
@@ -236,7 +363,9 @@ const fcts = {
 
   diff: '`(d1: Date, d2: Date): Date`\n\n'
     + 'Get the difference between `d2` and `d1`\n\n'
-    + '**List of all available units**\n'
+
+    + '**List of all available units**\n\n'
+
     + '|Unit|Shorthand|Description|\n'
     + '|:---|:--------|:----------|\n'
     + '|day|d|Day|\n'
@@ -389,12 +518,53 @@ const fcts = {
 
   replace: '`(s: string, pattern: string, replacement: string): string`\n\n'
     + 'Replaces matches for `pattern` in string `s` with `replacement`',
+
+  menuId: '`(): string`\n\n'
+    + 'Returns the current menu id',
+
+  tabId: '`(): string`\n\n'
+    + 'Returns the current tab id',
+
+  formId: '`(): string`\n\n'
+    + 'Returns the current form id',
+
+  tableId: '`(): string`\n\n'
+    + 'Returns the current table id',
+
+  selection: '`(): unknown[]`\n\n'
+    + 'Returns the current table selected rows',
 }
+
+const marked = new Marked(
+  markedHighlight({
+    langPrefix: 'hljs language-',
+    highlight(code, lang) {
+      const language = hljs.getLanguage(lang) ? lang : 'plaintext'
+      return hljs.highlight(code, { language }).value
+    },
+  }),
+)
 
 marked.use({
   breaks: true,
   gfm: true,
 })
+
+const style = `
+<style>
+  table {
+    border-collapse: collapse;
+    margin: .5em;
+  }
+  th {
+    background-color: #5781ab;
+    color: white;
+  }
+  th, td {
+    border: 1px solid #000;
+    padding: 5px;
+  }
+</style>`
 
 const toOptions = (opts: string[], type = 'keyword'): Completion[] => (
   opts.map((k) => ({
@@ -402,7 +572,10 @@ const toOptions = (opts: string[], type = 'keyword'): Completion[] => (
     type,
     info: fcts[k] ? () => {
       const el = document.createElement('div')
-      el.innerHTML = marked.parse(fcts[k])
+      el.innerHTML = marked.parse(`${style}\n${fcts[k]}`) as string
+      el.style.overflow = 'auto'
+      el.style.maxHeight = '600px'
+      el.style.fontSize = '.95em'
       return el
     } : undefined,
   }))
@@ -451,8 +624,14 @@ const myCompletions = (context: CompletionContext) => {
 
   if (check(['str', 'ArgList', '(', 'String'])) {
     options = []
-  } else if (check(['doc', 'ArgList', '(', 'String'])) {
+  } else if (check(['val', 'ArgList', '(', 'String'])) {
     options = []
+    if (app.doc && Object.keys(app.doc).length) {
+      options = [...options, ...toOptions(Object.keys(app.doc))]
+    }
+    if (app.tableId) {
+      options = [...options, ...toOptions(app.tableInstance.fields.map((f) => f.name))]
+    }
   } else if (check(['table', 'ArgList', '(', 'String'])
     || check(['field', 'ArgList', '(', 'String'])) {
     options = toOptions(editor.tables.map((t) => t.name))

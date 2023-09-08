@@ -55,7 +55,7 @@ const ctx = buildCtx()
 
 const fields = computed(() => (
   JSON.stringify(
-    fieldsArrayToObject(props.modelValue.fields as [], ctx()),
+    fieldsArrayToObject(props.modelValue.fields as [], ctx),
     undefined,
     2,
   )

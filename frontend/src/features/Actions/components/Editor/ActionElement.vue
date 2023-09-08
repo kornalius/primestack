@@ -85,7 +85,7 @@
 import { computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
-import { useAppEditor } from '@/features/App/store'
+import { useAppEditor } from '@/features/App/editor-store'
 import { TFrontAction } from '@/features/Actions/interface'
 import { actionElementSchema } from '@/shared/schemas/actions'
 import { useActions } from '@/features/Actions/composites'
@@ -124,15 +124,25 @@ const onRemoveClick = () => {
   emit('remove', props.modelValue)
 }
 
-const actionColor = computed(() => stringValue(action.value?.color))
+const actionColor = computed(() => (
+  stringValue(action.value?.color, actionElement.value)
+))
 
-const actionIconColor = computed(() => stringValue(action.value?.iconColor))
+const actionIconColor = computed(() => (
+  stringValue(action.value?.iconColor, actionElement.value)
+))
 
-const actionDescription = computed(() => stringValue(action.value?.description))
+const actionDescription = computed(() => (
+  stringValue(action.value?.description, actionElement.value)
+))
 
-const actionIcon = computed(() => stringValue(action.value?.icon))
+const actionIcon = computed(() => (
+  stringValue(action.value?.icon, actionElement.value)
+))
 
-const actionLabel = computed(() => stringValue(action.value?.label))
+const actionLabel = computed(() => (
+  stringValue(action.value?.label, actionElement.value)
+))
 </script>
 
 <style scoped lang="sass">

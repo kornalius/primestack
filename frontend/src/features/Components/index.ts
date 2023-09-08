@@ -39,7 +39,7 @@ const addSeparator = (l: string, i: string, c?: string): TFormComponent => ({
 })
 
 export const components = [
-  addSeparator('Display', 'mdi-format-color-text', 'white'),
+  addSeparator('Display', 'mdi-format-color-text', 'orange-2'),
   label,
   separator,
   chip,
@@ -72,7 +72,7 @@ export const components = [
   addSeparator('Flexbox', 'mdi-view-column-outline', 'pink-2'),
   row,
   col,
-  addSeparator('Card', 'mdi-card', 'orange-2'),
+  addSeparator('Card', 'mdi-card'),
   card,
   carSection,
   cardActions,

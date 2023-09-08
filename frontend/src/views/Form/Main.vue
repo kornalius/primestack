@@ -168,7 +168,8 @@ import { useI18n } from 'vue-i18n'
 import pick from 'lodash/pick'
 import cloneDeep from 'lodash/cloneDeep'
 import isEqual from 'lodash/isEqual'
-import { useAppEditor } from '@/features/App/store'
+import { useAppEditor } from '@/features/App/editor-store'
+import { useApp } from '@/features/App/store'
 import { useFormElements } from '@/features/Forms/composites'
 import { useActions } from '@/features/Actions/composites'
 import { useExpression } from '@/features/Expression/composites'
@@ -197,6 +198,8 @@ const props = defineProps<{
 const { api } = useFeathers()
 
 const editor = useAppEditor()
+
+const app = useApp()
 
 const router = useRouter()
 
@@ -259,14 +262,50 @@ watch(form, () => {
   }
 }, { immediate: true, deep: true })
 
+/**
+ * Table
+ */
+
+const selected = ref([])
+
+watch(selected, () => {
+  app.setSelection(selected.value)
+})
+
+const userTable = api.service('tables').findOneInStore({ query: {} })
+
+const table = computed(() => (
+  userTable.value?.list.find((tt) => tt._id === form.value?.tableId)
+))
+
 const {
   components,
   flattenFields,
 } = useFormElements()
 
+const currentId = ref()
+const prevData = ref({})
+const currentData = ref({})
+
 const { buildCtx, getProp } = useExpression()
 
 const ctx = buildCtx()
+
+/**
+ * Table (continued)
+ */
+
+const tableBinds = computed(() => {
+  const r = pick(form.value, formSchema.tableFields)
+  if (typeof r.query === 'object' && Array.isArray(r.query.groups)) {
+    r.query = queryToMongo(r.query, table.value, ctx.expr)
+  }
+  return r
+})
+
+/**
+ * Form (continued)
+ */
 
 const defaultValues = computed(() => (
   flattenFields(fields.value)
@@ -316,10 +355,6 @@ const formModelValues = computed(() => {
   return (fields.value || []).reduce((acc, f) => ({ ...acc, ...convertField(f) }), {})
 })
 
-const currentId = ref()
-const prevData = ref({})
-const currentData = ref({})
-
 const preview = ref(false)
 const previewFormData = ref({})
 const showPreviewFormData = ref(false)
@@ -337,27 +372,7 @@ onBeforeUnmount(() => {
 })
 
 /**
- * Table
- */
-
-const selected = ref([])
-
-const userTable = api.service('tables').findOneInStore({ query: {} })
-
-const table = computed(() => (
-  userTable.value?.list.find((tt) => tt._id === form.value?.tableId)
-))
-
-const tableBinds = computed(() => {
-  const r = pick(form.value, formSchema.tableFields)
-  if (typeof r.query === 'object' && Array.isArray(r.query.groups)) {
-    r.query = queryToMongo(r.query, table.value, ctx().expr)
-  }
-  return r
-})
-
-/**
- * Form editing & validations
+ * Form (editing & validations)
  */
 
 const qform = ref()
@@ -395,13 +410,16 @@ const cloneData = async () => {
       } else {
         currentData.value = r
       }
-      selected.value = [r]
+      if (selected.value?.[0] !== r) {
+        setTimeout(() => {
+          selected.value = [r]
+        }, 100)
+      }
     }
   } else {
     currentData.value = {
       ...defaultValues.value,
       ...(form.value?.data || {}),
-      ...(formModelValues.value || {}),
     }
   }
   prevData.value = cloneDeep(currentData.value)
@@ -428,9 +446,9 @@ watch(() => props.id, () => {
 }, { immediate: true })
 
 /**
- * When currentId, form data, defaultValues or formModelValues change, clone the data
+ * When currentId, form data or defaultValues change, clone the data
  */
-watch([currentId, form, defaultValues, formModelValues], () => {
+watch([currentId, form, defaultValues], () => {
   cloneData()
 }, { immediate: true })
 
@@ -607,4 +625,22 @@ const { data: files, queryWhen } = api.service('files').useFind({
 queryWhen(() => Object.keys(filesFilter.value).length === 2)
 
 const filesCount = computed(() => files.value?.length || 0)
+
+/**
+ * App (store)
+ */
+
+watch([
+  menu,
+  tab,
+  form,
+  table,
+  currentData,
+], () => {
+  app.setMenu(menu.value?._id)
+  app.setTab(tab.value?._id)
+  app.setForm(form.value?._id)
+  app.setTable(table.value?._id)
+  app.setDoc(currentData.value)
+}, { immediate: true })
 </script>

@@ -1,35 +1,35 @@
 <template>
   <q-card
     class="q-gutter-sm"
-    v-bind="fieldBinds(field, schemaForType(field), ctx(doc))"
+    v-bind="bindFields(field)"
     :style="style(field)"
   >
     <q-card-section
-      v-for="section in sections"
-      :key="section._id"
-      v-bind="fieldBinds(section, schemaForType(section), ctx(doc))"
-      :style="style(section)"
+      v-for="cardSection in cardSections"
+      :key="cardSection._id"
+      v-bind="bindFields(cardSection)"
+      :style="style(cardSection)"
     >
       <form-display
         v-model="value"
-        :fields="section._fields"
+        :fields="cardSection._fields"
         :components="components"
       />
     </q-card-section>
 
     <q-card-actions
-      v-for="action in actions"
-      :key="action._id"
+      v-for="cardAction in cardActions"
+      :key="cardAction._id"
       :class="{
-        'card-action': true,
+        'card-cardAction': true,
       }"
-      v-bind="fieldBinds(action, schemaForType(action), ctx(doc))"
+      v-bind="bindFields(cardAction)"
       style="z-index: 1;"
-      :style="style(action)"
+      :style="style(cardAction)"
     >
       <form-display
         v-model="value"
-        :fields="action._fields"
+        :fields="cardAction._fields"
         :components="components"
       />
     </q-card-actions>
@@ -42,14 +42,12 @@ import { TSchema } from '@feathersjs/typebox'
 import { TFormColumn, TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 import { useExpression } from '@/features/Expression/composites'
-import { AnyData } from '@/shared/interfaces/commons'
 import { useFormElements } from '../composites'
 import FormDisplay from './FormDisplay.vue'
 
 const props = defineProps<{
   modelValue: Record<string, unknown>
   field: TFormField
-  doc: AnyData
   columns: TFormColumn[]
   components: TFormComponent[]
 }>()
@@ -67,12 +65,12 @@ const { buildCtx } = useExpression()
 
 const ctx = buildCtx()
 
-const sections = computed(() => (
+const cardSections = computed(() => (
   // eslint-disable-next-line no-underscore-dangle
   props.columns.filter((c) => c._type === 'card-section')
 ))
 
-const actions = computed(() => (
+const cardActions = computed(() => (
   // eslint-disable-next-line no-underscore-dangle
   props.columns.filter((c) => c._type === 'card-actions')
 ))
@@ -80,5 +78,9 @@ const actions = computed(() => (
 const schemaForType = (f: TFormField | TFormColumn): TSchema | undefined => (
   // eslint-disable-next-line no-underscore-dangle
   props.components.find((c) => c.type === f._type)?.schema
+)
+
+const bindFields = (field: TFormField | TFormColumn) => (
+  fieldBinds(field, schemaForType(field), ctx)
 )
 </script>

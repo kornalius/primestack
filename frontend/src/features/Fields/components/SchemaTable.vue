@@ -225,25 +225,25 @@ watch([
   const f = filterToMongo(currentFilter.value || '') || {}
 
   const { $limit, $skip } = props.query || {}
-  const pq = omit(props.query || {}, ['$limit', '$skip'])
+  const queryProp = omit(props.query || {}, ['$limit', '$skip'])
 
-  const q: AnyData = cleanupQuery({
+  const query: AnyData = cleanupQuery({
     $and: [
-      Object.keys(pq).length ? pq : undefined,
+      Object.keys(queryProp).length ? queryProp : undefined,
       Object.keys(f).length ? f : undefined,
     ],
   })
 
-  if ($limit !== undefined) {
-    q.$limit = $limit
+  if (typeof $limit === 'number') {
+    query.$limit = $limit || 10
   }
-  if ($skip !== undefined) {
-    q.$skip = $skip
+  if (typeof $skip === 'number') {
+    query.$skip = $skip || 0
   }
 
   if (props.tableId) {
-    const dataFind = api.service(props.tableId).useFind({ query: q, temps: props.temps })
-    dataFind.find({ query: q })
+    const dataFind = api.service(props.tableId).useFind({ query, temps: props.temps })
+    dataFind.find({ query })
     watch(dataFind.data, () => {
       data.value = dataFind.data.value
     }, { immediate: true })
@@ -251,10 +251,10 @@ watch([
   }
 
   if (attrs.rows) {
-    const s = sift(q)
+    const s = sift(query)
     dataRows.value = attrs.rows?.filter(s) || []
   }
-}, { immediate: true, deep: true })
+}, { immediate: true })
 
 const schemaSchema = (name: string) => props.schema?.properties[name]
 

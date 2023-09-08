@@ -130,7 +130,7 @@ import hexObjectId from 'hex-object-id'
 import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 // eslint-disable-next-line import/no-cycle
-import { useAppEditor } from '@/features/App/store'
+import { useAppEditor } from '@/features/App/editor-store'
 // eslint-disable-next-line import/no-cycle
 import { defaultValueForSchema, defaultValues } from '@/shared/schema'
 import { useExpression } from '@/features/Expression/composites'
@@ -162,11 +162,11 @@ const { buildCtx } = useExpression()
 const ctx = buildCtx()
 
 const sectionIcon = computed(() => (
-  stringValue(props.components.find((c) => c.type === 'card-section')?.icon)
+  stringValue(props.components.find((c) => c.type === 'card-section')?.icon, field.value)
 ))
 
 const actionIcon = computed(() => (
-  stringValue(props.components.find((c) => c.type === 'card-actions')?.icon)
+  stringValue(props.components.find((c) => c.type === 'card-actions')?.icon, field.value)
 ))
 
 const sections = computed(() => (

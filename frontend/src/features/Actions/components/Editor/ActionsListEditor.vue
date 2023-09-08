@@ -35,7 +35,7 @@
 <script setup lang="ts">
 import { Static } from '@feathersjs/typebox'
 import draggable from 'vuedraggable'
-import { useAppEditor } from '@/features/App/store'
+import { useAppEditor } from '@/features/App/editor-store'
 import { useModelValue } from '@/composites/prop'
 import { actionElementSchema } from '@/shared/schemas/actions'
 import { AnyData } from '@/shared/interfaces/commons'

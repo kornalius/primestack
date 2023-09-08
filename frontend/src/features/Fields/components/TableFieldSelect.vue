@@ -47,7 +47,7 @@ import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
 import { extraFields, iconForType } from '@/shared/schema'
 import { tableFieldSchema } from '@/shared/schemas/table'
-import { useAppEditor } from '@/features/App/store'
+import { useAppEditor } from '@/features/App/editor-store'
 import { AnyData } from '@/shared/interfaces/commons'
 
 type TableFieldSchema = Static<typeof tableFieldSchema>

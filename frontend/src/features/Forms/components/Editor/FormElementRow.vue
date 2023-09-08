@@ -1,7 +1,6 @@
 <template>
   <div
     class="row form-row"
-    v-bind="fieldBinds(field, schemaForType(field), ctx())"
     :style="style(field)"
   >
     <div
@@ -13,7 +12,7 @@
         selected: editor.isSelected(column._id),
         hovered: editor.isHovered(column._id),
       }"
-      v-bind="fieldBinds(column, schemaForType(column), ctx())"
+      v-bind="fieldBinds(column, schemaForType(column), ctx)"
       style="z-index: 1;"
       :style="style(column)"
       @mouseover.stop="editor.hover(column._id)"
@@ -60,7 +59,7 @@ import { TSchema } from '@feathersjs/typebox'
 import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 // eslint-disable-next-line import/no-cycle
-import { useAppEditor } from '@/features/App/store'
+import { useAppEditor } from '@/features/App/editor-store'
 import { useExpression } from '@/features/Expression/composites'
 import { stringValue } from '@/composites/utilities'
 // eslint-disable-next-line import/no-cycle

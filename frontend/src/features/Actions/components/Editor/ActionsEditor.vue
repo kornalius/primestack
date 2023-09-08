@@ -111,7 +111,7 @@
 import { computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import draggable from 'vuedraggable'
-import { useAppEditor } from '@/features/App/store'
+import { useAppEditor } from '@/features/App/editor-store'
 import { TAction } from '@/shared/interfaces/actions'
 import { useModelValue } from '@/composites/prop'
 import { actionElementSchema } from '@/shared/schemas/actions'
@@ -152,15 +152,15 @@ const unselectAll = () => {
   }
 }
 
-const actionColor = (action: TFrontAction) => stringValue(action?.color)
+const actionColor = (action: TFrontAction) => stringValue(action?.color, action)
 
-const actionIconColor = (action: TFrontAction) => stringValue(action?.iconColor)
+const actionIconColor = (action: TFrontAction) => stringValue(action?.iconColor, action)
 
-const actionDescription = (action: TAction) => stringValue(action?.description)
+const actionDescription = (action: TAction) => stringValue(action?.description, action)
 
-const actionIcon = (action: TFrontAction) => stringValue(action?.icon)
+const actionIcon = (action: TFrontAction) => stringValue(action?.icon, action)
 
-const actionLabel = (action: TFrontAction) => stringValue(action?.label)
+const actionLabel = (action: TFrontAction) => stringValue(action?.label, action)
 </script>
 
 <style scoped lang="sass">

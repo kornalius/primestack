@@ -52,7 +52,8 @@ import { useSnacks } from '@/features/Snacks/store'
 import { useVariables } from '@/features/Variables/store'
 import { LocationQueryValue, useRoute, useRouter } from 'vue-router'
 // eslint-disable-next-line import/no-cycle
-import { useAppEditor } from '@/features/App/store'
+import { useAppEditor } from '@/features/App/editor-store'
+import { useApp } from '@/features/App/store'
 import { AnyData } from '@/shared/interfaces/commons'
 // eslint-disable-next-line import/no-cycle
 import { exec } from '@/features/Actions/composites'
@@ -122,7 +123,7 @@ export const getProp = (v: unknown, ctx: AnyData): unknown => (
   isExpr(v) ? runExpr(exprCode(v as string), ctx.expr) : v
 )
 
-export const buildCtx = (extra?: AnyData): ((ctx?: AnyData) => AnyData) => {
+export const buildCtx = (extra?: AnyData) => {
   const { t } = useI18n()
   const quasar = useQuasar()
   const { api } = useFeathers()
@@ -131,9 +132,10 @@ export const buildCtx = (extra?: AnyData): ((ctx?: AnyData) => AnyData) => {
   const route = useRoute()
   const router = useRouter()
   const editor = useAppEditor()
+  const app = useApp()
   const vars = useVariables()
 
-  return (doc) => ({
+  return {
     quasar,
     snacks,
     api,
@@ -142,26 +144,20 @@ export const buildCtx = (extra?: AnyData): ((ctx?: AnyData) => AnyData) => {
     store,
     route,
     router,
+    app,
     exec,
     ...(extra || {}),
     expr: {
       /**
-       * Get or set a variable's value
+       * Get a variable's value
        *
        * @param name Name of the variable
-       * @param value Optional value
        *
        * @returns {unknown | undefined} Value of the variable
        */
-      var: (name: string, value?: unknown): unknown | undefined => {
-        if (vars.variableExists(name)) {
-          if (value) {
-            vars.setVariable(name, value)
-          }
-          return vars.getVariable(name) as string
-        }
-        return undefined
-      },
+      var: (name: string): unknown | undefined => (
+        vars.getVariable(name) as string
+      ),
 
       /**
        * Get the table id by its name
@@ -171,13 +167,9 @@ export const buildCtx = (extra?: AnyData): ((ctx?: AnyData) => AnyData) => {
        * @returns {string | undefined} Id of the table
        */
       table: (name: string): string | undefined => {
-        const tables = api.service('tables').findInStore()
-        const userTables = tables.value?.[0]?.list || []
-        const table = userTables.find((tt: AnyData) => tt.name === name)
-        if (table) {
-          return table._id
-        }
-        return undefined
+        const tables = api.service('tables').findOneInStore({ query: {} })
+        const table = tables.value?.list.find((tt: AnyData) => tt.name === name)
+        return table?._id
       },
 
       /**
@@ -189,9 +181,8 @@ export const buildCtx = (extra?: AnyData): ((ctx?: AnyData) => AnyData) => {
        * @returns {string | undefined} Id of the field
        */
       field: (tablename: string, fieldname: string): string | undefined => {
-        const tables = api.service('tables').findInStore()
-        const userTables = tables.value?.[0]?.list || []
-        const table = userTables.find((tt: AnyData) => tt.name === tablename)
+        const tables = api.service('tables').findOneInStore({ query: {} })
+        const table = tables.value?.list.find((tt: AnyData) => tt.name === tablename)
         if (table) {
           return table.fields.find((ff: AnyData) => ff.name === fieldname)?._id
         }
@@ -199,23 +190,50 @@ export const buildCtx = (extra?: AnyData): ((ctx?: AnyData) => AnyData) => {
       },
 
       /**
-       * Get or set the current document field
+       * Get the current document field
        *
        * @param fieldname Field name
-       * @param value Optional value
        *
        * @returns {unknown} Value of the field
        */
-      doc: (fieldname: string, value?: unknown): unknown | undefined => {
-        if (!doc) {
-          return undefined
-        }
-        if (value) {
-          // eslint-disable-next-line no-param-reassign
-          doc[fieldname] = value
-        }
-        return doc[fieldname]
-      },
+      val: (fieldname: string): unknown | undefined => (
+        app.doc?.[fieldname]
+      ),
+
+      /**
+       * Returns the current menu id
+       *
+       * @returns {string}
+       */
+      menuId: (): string => app.menuId,
+
+      /**
+       * Returns the current tab id
+       *
+       * @returns {string}
+       */
+      tabId: (): string => app.tabId,
+
+      /**
+       * Returns the current form id
+       *
+       * @returns {string}
+       */
+      formId: (): string => app.formId,
+
+      /**
+       * Returns the current table id
+       *
+       * @returns {string}
+       */
+      tableId: (): string => app.tableId,
+
+      /**
+       * Returns the current table selected rows
+       *
+       * @returns {unknown[]}
+       */
+      selection: (): unknown[] => app.selection,
 
       /**
        * Super powerful string builder
@@ -275,22 +293,17 @@ export const buildCtx = (extra?: AnyData): ((ctx?: AnyData) => AnyData) => {
       route: (): string => router.currentRoute.value.path,
 
       /**
-       * Get or set a url parameter
+       * Get a url parameter
        *
        * @param name Parameter name
-       * @param value Optional value to set it to
        *
-       * @return {LocationQueryValue | LocationQueryValue[]} Url parameter value
+       * @return {LocationQueryValue | LocationQueryValue[] | undefined} Url parameter value
        */
       param: (
         name: string,
-        value?: LocationQueryValue,
-      ): LocationQueryValue | LocationQueryValue[] => {
-        if (value) {
-          route.query[name] = value
-        }
-        return route.query[name]
-      },
+      ): LocationQueryValue | LocationQueryValue[] | undefined => (
+        route.query?.[name]
+      ),
 
       /**
        * Returns the number of milliseconds elapsed since the epoch
@@ -312,19 +325,15 @@ export const buildCtx = (extra?: AnyData): ((ctx?: AnyData) => AnyData) => {
       warn: (...args: unknown[]) => console.warn(...args),
 
       /**
-       * Retrieve or set a localStorage key value
+       * Retrieve a localStorage key value
        *
        * @param key Key name
-       * @param value Optional value
        *
        * @returns {string} Key value
        */
-      localStorage: (key: string, value?: string): string => {
-        if (value) {
-          localStorage.setItem(key, value)
-        }
-        return localStorage.getItem(key)
-      },
+      localStorage: (key: string): string => (
+        localStorage.getItem(key)
+      ),
 
       /**
        * Parse a string into a JSON object
@@ -725,7 +734,7 @@ export const buildCtx = (extra?: AnyData): ((ctx?: AnyData) => AnyData) => {
       split,
       replace,
     },
-  })
+  }
 }
 
 export const useExpression = () => ({

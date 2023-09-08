@@ -14,6 +14,7 @@ const separator = (label: string, icon: string, color?: string): TFrontAction =>
   label,
   icon,
   color: color || 'white',
+  iconColor: color || 'white',
 })
 
 export const actions = [
