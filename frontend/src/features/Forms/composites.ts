@@ -118,6 +118,19 @@ export const useFormElements = () => ({
     const component = components
       // eslint-disable-next-line no-underscore-dangle
       .find((c) => c.type === field._type)
+
+    const b = field.border
+
+    let border = ''
+    if (b) {
+      border = `${b.width}px ${b.style} ${b.color}`
+    }
+
+    const tl = b?.radius?.topLeft ? `${b?.radius?.topLeft}px` : '0'
+    const tr = b?.radius?.topRight ? `${b?.radius?.topRight}px` : '0'
+    const br = b?.radius?.bottomLeft ? `${b?.radius?.bottomLeft}px` : '0'
+    const bl = b?.radius?.bottomRight ? `${b?.radius?.bottomRight}px` : '0'
+
     return {
       paddingTop: field.padding?.top,
       paddingLeft: field.padding?.left,
@@ -127,6 +140,11 @@ export const useFormElements = () => ({
       marginLeft: field.margin?.left,
       marginBottom: field.margin?.bottom,
       marginRight: field.margin?.right,
+      borderTop: b?.sides?.top ? border : 'none',
+      borderBottom: b?.sides?.bottom ? border : 'none',
+      borderLeft: b?.sides?.left ? border : 'none',
+      borderRight: b?.sides?.right ? border : 'none',
+      borderRadius: `${tl} ${tr} ${bl} ${br}`,
       ...(component.editStyles || {}),
     }
   },

@@ -3,7 +3,7 @@ import { Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import FormElementCard from '@/features/Forms/components/Editor/FormElementCard.vue'
-import { properties, commonProperties } from './common'
+import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
   type: 'card',
@@ -28,8 +28,7 @@ export default {
         _type: 'card-section',
         _fields: [],
         horizontal: false,
-        padding: {},
-        margin: {},
+        ...defaultStyleValues,
       },
       {
         _id: hexObjectId(),
@@ -37,8 +36,7 @@ export default {
         _fields: [],
         align: 'right',
         vertical: false,
-        padding: {},
-        margin: {},
+        ...defaultStyleValues,
       },
     ]),
   },
@@ -55,6 +53,7 @@ export default {
         'square',
         'flat',
         'bordered',
+        'border',
         'padding',
         'margin',
       ],

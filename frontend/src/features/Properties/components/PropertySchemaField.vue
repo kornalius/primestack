@@ -334,6 +334,14 @@
     :disable="disabled"
   />
 
+  <!-- Borders -->
+
+  <border-editor
+    v-else-if="type === 'border' && value && value.radius && value.sides"
+    v-model="value"
+    :disable="disabled"
+  />
+
   <!-- Object in complex UI -->
 
   <properties-editor
@@ -534,6 +542,7 @@ import { useFormElements } from '@/features/Forms/composites'
 import { useExpression } from '@/features/Expression/composites'
 import PaddingEditor from '@/features/Fields/components/PaddingEditor.vue'
 import MarginEditor from '@/features/Fields/components/MarginEditor.vue'
+import BorderEditor from '@/features/Fields/components/BorderEditor.vue'
 import IconField from '@/features/Fields/components/IconField.vue'
 import ColorField from '@/features/Fields/components/ColorField.vue'
 import DateField from '@/features/Fields/components/DateField.vue'

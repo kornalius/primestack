@@ -2,7 +2,7 @@ import { QTime } from 'quasar'
 import { StringEnum, Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties } from './common'
+import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
   type: 'time',
@@ -33,6 +33,7 @@ export default {
     outlined: true,
     calendar: 'gregorian',
     hideBottomSpace: true,
+    ...defaultStyleValues,
   },
   categories: {
     content: {
@@ -62,6 +63,7 @@ export default {
         'flat',
         'bordered',
         'hideBottomSpace',
+        'border',
         'padding',
         'margin',
       ],

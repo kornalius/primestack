@@ -2,7 +2,7 @@ import { QDate } from 'quasar'
 import { StringEnum, Type } from '@feathersjs/typebox'
 import { contentIcon, modelIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties } from './common'
+import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
   type: 'date',
@@ -46,6 +46,7 @@ export default {
     calendar: 'gregorian',
     defaultView: 'Calendar',
     hideBottomSpace: true,
+    ...defaultStyleValues,
   },
   categories: {
     content: {
@@ -91,6 +92,7 @@ export default {
         'flat',
         'bordered',
         'hideBottomSpace',
+        'border',
         'padding',
         'margin',
       ],

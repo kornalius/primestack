@@ -2,7 +2,7 @@ import { QInput } from 'quasar'
 import { StringEnum, Type } from '@feathersjs/typebox'
 import { contentIcon, modelIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
-import { properties, commonProperties } from './common'
+import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
   type: 'input',
@@ -60,6 +60,7 @@ export default {
     dense: true,
     outlined: true,
     rules: [],
+    ...defaultStyleValues,
   },
   categories: {
     content: {
@@ -108,6 +109,7 @@ export default {
         'borderless',
         'standout',
         'rounded',
+        'border',
         'padding',
         'margin',
       ],

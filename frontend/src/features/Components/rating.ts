@@ -2,7 +2,7 @@ import { QRating } from 'quasar'
 import { Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties } from './common'
+import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
   type: 'rating',
@@ -34,6 +34,7 @@ export default {
     iconHalf: 'mdi-star-half-full',
     max: 5,
     size: 'sm',
+    ...defaultStyleValues,
   },
   categories: {
     content: {
@@ -59,6 +60,7 @@ export default {
         'colorHalf',
         'noReset',
         'noDimming',
+        'border',
         'padding',
         'margin',
       ],

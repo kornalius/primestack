@@ -2,7 +2,7 @@ import { Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import LabelField from '@/features/Fields/components/LabelField.vue'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties } from './common'
+import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
   type: 'label',
@@ -58,6 +58,10 @@ export default {
       pre: Type.Boolean(),
     }),
   ]),
+  defaultValues: {
+    styling: [],
+    ...defaultStyleValues,
+  },
   categories: {
     content: {
       icon: contentIcon,
@@ -75,6 +79,7 @@ export default {
         'heading',
         'styling',
         'casing',
+        'border',
         'padding',
         'margin',
       ],

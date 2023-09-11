@@ -2,7 +2,7 @@ import { Type } from '@feathersjs/typebox'
 import { contentIcon, modelIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import IconField from '@/features/Fields/components/IconField.vue'
-import { properties, commonProperties } from './common'
+import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
   type: 'icon-select',
@@ -48,6 +48,7 @@ export default {
     outlined: true,
     emitValue: true,
     useInput: true,
+    ...defaultStyleValues,
   },
   categories: {
     content: {
@@ -102,6 +103,7 @@ export default {
         'itemAligned',
         'hideBottomSpace',
         'virtualScrollHorizontal',
+        'border',
         'padding',
         'margin',
       ],

@@ -2,7 +2,12 @@ import { QSlider } from 'quasar'
 import { Type } from '@feathersjs/typebox'
 import { contentIcon, modelIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties, sizeString } from './common'
+import {
+  properties,
+  commonProperties,
+  sizeString,
+  defaultStyleValues,
+} from './common'
 
 export default {
   type: 'slider',
@@ -44,6 +49,7 @@ export default {
     snap: true,
     max: 10,
     innerMax: 10,
+    ...defaultStyleValues,
   },
   categories: {
     content: {
@@ -86,6 +92,7 @@ export default {
         'thumbColor',
         'innerTrackColor',
         'selectionColor',
+        'border',
         'padding',
         'margin',
       ],

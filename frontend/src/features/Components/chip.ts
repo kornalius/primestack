@@ -2,7 +2,7 @@ import { QChip } from 'quasar'
 import { Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties } from './common'
+import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
   type: 'chip',
@@ -28,6 +28,7 @@ export default {
   ]),
   defaultValues: {
     modelValue: true,
+    ...defaultStyleValues,
   },
   categories: {
     content: {
@@ -54,6 +55,7 @@ export default {
         'textColor',
         'square',
         'outline',
+        'border',
         'padding',
         'margin',
       ],

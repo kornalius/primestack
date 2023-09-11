@@ -1,7 +1,7 @@
 import { StringEnum, Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties } from './common'
+import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
   type: 'card-actions',
@@ -28,6 +28,7 @@ export default {
   defaultValues: {
     align: 'right',
     vertical: false,
+    ...defaultStyleValues,
   },
   categories: {
     content: {
@@ -41,6 +42,7 @@ export default {
       names: [
         'align',
         'vertical',
+        'border',
         'padding',
         'margin',
       ],

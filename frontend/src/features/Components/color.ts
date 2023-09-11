@@ -2,7 +2,7 @@ import { StringEnum, Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import ColorField from '@/features/Fields/components/ColorField.vue'
-import { properties, commonProperties } from './common'
+import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
   type: 'color',
@@ -31,6 +31,7 @@ export default {
     outlined: true,
     defaultView: 'palette',
     formatModel: 'auto',
+    ...defaultStyleValues,
   },
   categories: {
     content: {
@@ -57,6 +58,7 @@ export default {
         'flat',
         'bordered',
         'hideBottomSpace',
+        'border',
         'padding',
         'margin',
       ],

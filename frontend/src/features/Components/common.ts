@@ -148,6 +148,12 @@ export const commonProperties = {
 
   style: Type.Object({
     dense: Type.Boolean(),
+    border: Type.Object({
+      style: Type.String(),
+      color: Type.String({ color: true }),
+      width: Type.Number(),
+      sides: Type.Array(Type.String()),
+    }, { style: true, border: true }),
     padding: Type.Object({
       top: Type.String(),
       left: Type.String(),
@@ -174,6 +180,23 @@ export const commonProperties = {
       { rules: true },
     ),
   }),
+}
+
+export const defaultStyleValues = {
+  border: {
+    style: 'none',
+    color: 'black',
+    width: 1,
+    sides: {
+      top: 'top',
+      bottom: 'bottom',
+      left: 'left',
+      right: 'right',
+    },
+    radius: {},
+  },
+  margin: {},
+  padding: {},
 }
 
 export const properties = (props: TObject[], field = true) => Type.Intersect(

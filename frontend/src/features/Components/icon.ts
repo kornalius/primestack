@@ -2,7 +2,7 @@ import { QIcon } from 'quasar'
 import { Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties } from './common'
+import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
   type: 'icon',
@@ -21,6 +21,7 @@ export default {
   ]),
   defaultValues: {
     size: 'md',
+    ...defaultStyleValues,
   },
   categories: {
     content: {
@@ -38,6 +39,7 @@ export default {
         'color',
         'left',
         'right',
+        'border',
         'padding',
         'margin',
       ],

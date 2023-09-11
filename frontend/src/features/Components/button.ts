@@ -2,7 +2,7 @@ import { QBtn } from 'quasar'
 import { StringEnum, Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon, actionIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties } from './common'
+import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
   type: 'button',
@@ -50,6 +50,7 @@ export default {
   defaultValues: {
     align: 'center',
     flat: true,
+    ...defaultStyleValues,
   },
   categories: {
     content: {
@@ -88,6 +89,7 @@ export default {
         'unelevated',
         'fab',
         'fabMini',
+        'border',
         'padding',
         'margin',
       ],

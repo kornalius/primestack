@@ -2,7 +2,7 @@ import { Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import Editor from '@/features/Fields/components/Editor.vue'
-import { properties, commonProperties } from './common'
+import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
   type: 'paragraph',
@@ -47,6 +47,7 @@ export default {
       ['bold', 'italic', 'underline', 'strike'],
       ['undo', 'redo'],
     ],
+    ...defaultStyleValues,
   },
   categories: {
     content: {
@@ -80,6 +81,7 @@ export default {
       names: [
         'square',
         'flat',
+        'border',
         'padding',
         'margin',
       ],

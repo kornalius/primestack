@@ -2,7 +2,7 @@ import { QVideo } from 'quasar'
 import { StringEnum, Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties } from './common'
+import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
   type: 'video',
@@ -33,6 +33,7 @@ export default {
     loading: 'eager',
     fetchpriority: 'auto',
     referrerpolicy: 'strict-origin-when-cross-origin',
+    ...defaultStyleValues,
   },
   categories: {
     content: {
@@ -51,6 +52,7 @@ export default {
       icon: styleIcon,
       names: [
         'ratio',
+        'border',
         'padding',
         'margin',
       ],

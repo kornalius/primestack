@@ -103,6 +103,9 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string | undefined 
   if (p.type === 'object' && p.margin) {
     return 'margin'
   }
+  if (p.type === 'object' && p.border) {
+    return 'border'
+  }
   if (p.type === 'object') {
     return 'object'
   }

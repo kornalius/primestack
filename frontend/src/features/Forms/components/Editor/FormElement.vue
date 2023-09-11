@@ -88,14 +88,14 @@
         :model-value="displayValue"
         v-bind="fieldBinds(field, schemaForType(field), ctx)"
         :query="queryToMongo(field.query, fieldTable, ctx.expr)"
-        :style="style"
+        :style="style(field)"
       />
 
       <q-icon
         v-else-if="isIcon(field)"
         :name="displayValue as string"
         v-bind="fieldBinds(field, schemaForType(field), ctx)"
-        :style="style"
+        :style="style(field)"
       />
 
       <component
@@ -103,7 +103,7 @@
         v-else
         :model-value="displayValue"
         v-bind="fieldBinds(field, schemaForType(field), ctx)"
-        :style="style"
+        :style="style(field)"
       />
 
       <div
@@ -146,6 +146,7 @@ const emit = defineEmits<{
 const {
   componentForField,
   fieldBinds,
+  style,
   isRow,
   isCard,
   isIcon,
@@ -193,18 +194,6 @@ const onRemoveClick = () => {
 const displayValue = computed(() => (
   getProp(field.value.modelValue, ctx)
 ))
-
-const style = computed(() => ({
-  paddingTop: field.value.padding?.top,
-  paddingLeft: field.value.padding?.left,
-  paddingBottom: field.value.padding?.bottom,
-  paddingRight: field.value.padding?.right,
-  marginTop: field.value.margin?.top,
-  marginLeft: field.value.margin?.left,
-  marginBottom: field.value.margin?.bottom,
-  marginRight: field.value.margin?.right,
-  ...(component.value.editStyles || {}),
-}))
 
 const interactable = computed(() => component.value.interactable || false)
 

@@ -2,7 +2,7 @@ import { QCircularProgress } from 'quasar'
 import { Type } from '@feathersjs/typebox'
 import { contentIcon, modelIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties } from './common'
+import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
   type: 'progress',
@@ -36,6 +36,7 @@ export default {
     indeterminate: true,
     thickness: 0.2,
     size: 'sm',
+    ...defaultStyleValues,
   },
   categories: {
     content: {
@@ -68,6 +69,7 @@ export default {
         'thickness',
         'fontSize',
         'animationSpeed',
+        'border',
         'padding',
         'margin',
       ],

@@ -2,7 +2,12 @@ import { QImg } from 'quasar'
 import { StringEnum, Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties, sizeString } from './common'
+import {
+  properties,
+  commonProperties,
+  sizeString,
+  defaultStyleValues,
+} from './common'
 
 export default {
   type: 'image',
@@ -57,6 +62,7 @@ export default {
     fetchpriority: 'auto',
     referrerpolicy: 'strict-origin-when-cross-origin',
     fit: 'cover',
+    ...defaultStyleValues,
   },
   categories: {
     content: {
@@ -91,6 +97,7 @@ export default {
         'noTransition',
         'spinnerColor',
         'spinnerSize',
+        'border',
         'padding',
         'margin',
       ],

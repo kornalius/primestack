@@ -2,7 +2,7 @@ import { QSkeleton } from 'quasar'
 import { StringEnum, Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties } from './common'
+import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
   type: 'skeleton',
@@ -48,6 +48,7 @@ export default {
   ], false),
   defaultValues: {
     type: 'rect',
+    ...defaultStyleValues,
   },
   categories: {
     content: {
@@ -67,6 +68,7 @@ export default {
         'animationSpeed',
         'square',
         'bordered',
+        'border',
         'padding',
         'margin',
       ],

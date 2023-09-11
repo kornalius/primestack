@@ -2,7 +2,7 @@ import { QKnob } from 'quasar'
 import { Type } from '@feathersjs/typebox'
 import { contentIcon, modelIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties } from './common'
+import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
   type: 'knob',
@@ -33,6 +33,7 @@ export default {
     }),
   ]),
   defaultValues: {
+    ...defaultStyleValues,
   },
   categories: {
     content: {
@@ -68,6 +69,7 @@ export default {
         'trackColor',
         'fontSize',
         'thickness',
+        'border',
         'padding',
         'margin',
       ],

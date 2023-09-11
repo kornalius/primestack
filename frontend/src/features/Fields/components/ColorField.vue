@@ -2,20 +2,15 @@
   <q-input
     v-model="value"
     v-bind="$attrs"
-    :bg-color="value"
-    :input-style="{
-      color: 'rgb(255, 255, 255)',
-      mixBlendMode: 'difference',
-    }"
+    :class="{ 'color-input': true, cssColor, isTextWhite }"
+    :bg-color="!cssColor ? value : undefined"
+    :style="{ background: cssColor ? value : undefined }"
   >
     <template #append>
       <q-icon
         class="cursor-pointer"
         name="mdi-eyedropper-variant"
-        :style="{
-          color: 'rgb(255, 255, 255)',
-          mixBlendMode: 'difference',
-        }"
+        :style="{ color: isTextWhite ? 'white' : 'black' }"
       >
         <q-popup-proxy
           transition-show="scale"
@@ -46,6 +41,7 @@ import { useModelValue } from '@/composites/prop'
 
 const props = defineProps<{
   modelValue: string | null | undefined
+  cssColor?: boolean
   quasarPalette?: boolean
 }>()
 
@@ -85,15 +81,76 @@ watch(value, () => {
     const rgbText = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`
     const color = quasarColors.value.find((c) => c.color === rgbText)
     if (color) {
-      emit('update:model-value', color.name)
+      emit(
+        'update:model-value',
+        !props.cssColor && !props.quasarPalette ? color.name : color.color,
+      )
     }
   } else if (value.value?.startsWith('#')) {
     const rgb = hexToRgb(value.value)
     const rgbText = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`
     const color = quasarColors.value.find((c) => c.color === rgbText)
     if (color) {
-      emit('update:model-value', color.name)
+      emit(
+        'update:model-value',
+        !props.cssColor && !props.quasarPalette ? color.name : color.color,
+      )
     }
   }
 })
+
+const rgbStringToHexString = (rgb: string): string => (
+  rgb
+    .split('(')?.[1]
+    .split(')')?.[0]
+    .split(',')
+    .map((x) => {
+      const nx = parseInt(x, 10).toString(16)
+      return (nx.length === 1) ? `0${nx}` : nx
+    })
+    .join('')
+)
+
+const isTextWhite = computed(() => {
+  let hex: string = value.value
+
+  if (value.value?.startsWith('rgb(')) {
+    const rgb = textToRgb(value.value)
+    const rgbText = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`
+    const color = quasarColors.value.find((c) => c.color === rgbText)
+    if (color) {
+      hex = rgbStringToHexString(color.color)
+    }
+  } else if (value.value?.startsWith('#')) {
+    const rgb = hexToRgb(value.value)
+    const rgbText = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`
+    const color = quasarColors.value.find((c) => c.color === rgbText)
+    if (color) {
+      hex = rgbStringToHexString(color.color)
+    }
+  } else {
+    const color = quasarColors.value.find((c) => c.name === value.value)
+    if (color) {
+      hex = rgbStringToHexString(color.color)
+    }
+  }
+
+  if (hex) {
+    const r = parseInt(hex.substring(0, 2), 16) // hexToR
+    const g = parseInt(hex.substring(2, 4), 16) // hexToG
+    const b = parseInt(hex.substring(4, 6), 16) // hexToB
+    return (r * 0.299) + (g * 0.587) + (b * 0.114) < 165
+  }
+
+  return false
+})
 </script>
+
+<style lang="sass">
+.color-input.cssColor .q-field__control
+  background-color: unset
+
+.color-input.isTextWhite .q-field__native,
+.color-input.isTextWhite .q-field__label
+  color: white
+</style>

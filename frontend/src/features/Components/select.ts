@@ -4,7 +4,7 @@ import { contentIcon, modelIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { AnyData } from '@/shared/interfaces/commons'
 import ServiceSelect from '@/features/Fields/components/ServiceSelect.vue'
-import { properties, commonProperties } from './common'
+import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
   type: 'select',
@@ -66,6 +66,7 @@ export default {
     optionValue: 'value',
     optionDisable: 'disable',
     optionsDense: true,
+    ...defaultStyleValues,
   },
   categories: {
     content: {
@@ -121,6 +122,7 @@ export default {
         'itemAligned',
         'hideBottomSpace',
         'virtualScrollHorizontal',
+        'border',
         'padding',
         'margin',
       ],

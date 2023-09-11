@@ -1,7 +1,7 @@
 import { Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties } from './common'
+import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
   type: 'col',
@@ -34,6 +34,9 @@ export default {
       }),
     }),
   ], false),
+  defaultValues: {
+    ...defaultStyleValues,
+  },
   categories: {
     content: {
       icon: contentIcon,
@@ -45,6 +48,7 @@ export default {
     style: {
       icon: styleIcon,
       names: [
+        'border',
         'padding',
         'margin',
       ],

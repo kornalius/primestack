@@ -2,7 +2,7 @@ import { QSpinnerIos } from 'quasar'
 import { Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties } from './common'
+import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
   type: 'spinner',
@@ -21,6 +21,7 @@ export default {
   defaultValues: {
     color: 'primary',
     size: 'sm',
+    ...defaultStyleValues,
   },
   categories: {
     content: {
@@ -35,6 +36,7 @@ export default {
         'size',
         'color',
         'thickness',
+        'border',
         'padding',
         'margin',
       ],

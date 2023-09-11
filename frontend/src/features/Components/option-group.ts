@@ -2,7 +2,7 @@ import { QOptionGroup } from 'quasar'
 import { StringEnum, Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties } from './common'
+import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
   type: 'option-group',
@@ -28,6 +28,7 @@ export default {
   ]),
   defaultValues: {
     type: 'radio',
+    ...defaultStyleValues,
   },
   editStyles: {
     minHeight: '40px',
@@ -53,6 +54,7 @@ export default {
         'keepColor',
         'leftLabel',
         'inline',
+        'border',
         'padding',
         'margin',
       ],

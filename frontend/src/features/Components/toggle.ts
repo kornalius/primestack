@@ -2,7 +2,7 @@ import { QToggle } from 'quasar'
 import { Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties } from './common'
+import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
   type: 'toggle',
@@ -24,6 +24,7 @@ export default {
   ]),
   defaultValues: {
     modelValue: false,
+    ...defaultStyleValues,
   },
   categories: {
     content: {
@@ -46,6 +47,7 @@ export default {
         'iconColor',
         'keepColor',
         'size',
+        'border',
         'padding',
         'margin',
       ],
