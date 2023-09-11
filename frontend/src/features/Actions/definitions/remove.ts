@@ -15,7 +15,7 @@ export default {
     } else {
       const table = await ctx.api.service('tables').get(ctx.tableId as string)
       await ctx.api.service(ctx.tableId as string)
-        .remove(null, { query: queryToMongo(ctx.query as Query, table, ctx.expr) })
+        .remove(null, { query: queryToMongo(ctx.query as Query, table, ctx.$expr) })
     }
   },
 } as TFrontAction

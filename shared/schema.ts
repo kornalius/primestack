@@ -73,6 +73,9 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string | undefined 
   if (p.type === 'string' && p.enum) {
     return 'select'
   }
+  if (p.type === 'string' && p.expr) {
+    return 'expr'
+  }
   if (p.type === 'string') {
     return 'string'
   }
@@ -129,6 +132,7 @@ export const validForExpr = [
   'slider',
   'select',
   'icon',
+  'expr',
 ]
 
 export const columnAlignmentFor = (type: string): string => {

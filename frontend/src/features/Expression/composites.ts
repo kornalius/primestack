@@ -120,7 +120,7 @@ export const runExpr = (v: string, ctx: AnyData): unknown => {
 }
 
 export const getProp = (v: unknown, ctx: AnyData): unknown => (
-  isExpr(v) ? runExpr(exprCode(v as string), ctx.expr) : v
+  isExpr(v) ? runExpr(exprCode(v as string), ctx.$expr) : v
 )
 
 export const buildCtx = (extra?: AnyData) => {
@@ -147,7 +147,7 @@ export const buildCtx = (extra?: AnyData) => {
     app,
     exec,
     ...(extra || {}),
-    expr: {
+    $expr: {
       /**
        * Get a variable's value
        *

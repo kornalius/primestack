@@ -49,8 +49,9 @@
               class="action-button q-mx-sm align-center"
               :disabled="!isActionAvailable(value.type, auth.user._plan.code)"
               type="button"
-              size="12px"
+              size="13px"
               align="left"
+              no-caps
               dense
               flat
               @click="editor.addActionElement(value, true)"
@@ -80,18 +81,14 @@
         class="q-pa-sm"
         @click="unselectAll"
       >
-        <div class="row items-center q-mb-md">
-          <div class="col">
-            Actions
-          </div>
-
+        <div class="title text-h6 text-bold row items-center q-px-xs q-mb-sm">
           <q-space />
 
           <div class="col-auto">
             <q-btn
               icon="mdi-close"
               size="sm"
-              flat
+              color="grey-9"
               round
               @click="editor.setActionId(undefined)"
             />
@@ -154,7 +151,7 @@ const unselectAll = () => {
 
 const actionColor = (action: TFrontAction) => stringValue(action?.color, action)
 
-const actionIconColor = (action: TFrontAction) => stringValue(action?.iconColor, action)
+const actionIconColor = (action: TFrontAction) => stringValue(action?.iconColor, action) || 'grey-9'
 
 const actionDescription = (action: TAction) => stringValue(action?.description, action)
 
@@ -167,4 +164,7 @@ const actionLabel = (action: TFrontAction) => stringValue(action?.label, action)
 .action-button
   width: 90%
   height: 30px
+
+.title
+  background: repeating-linear-gradient(-55deg, #f5d75d, #f5d75d 10px, #969489 10px, #969489 20px)
 </style>

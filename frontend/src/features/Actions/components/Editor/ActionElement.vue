@@ -125,11 +125,11 @@ const onRemoveClick = () => {
 }
 
 const actionColor = computed(() => (
-  stringValue(action.value?.color, actionElement.value)
+  stringValue(action.value?.color, actionElement.value) || 'grey-2'
 ))
 
 const actionIconColor = computed(() => (
-  stringValue(action.value?.iconColor, actionElement.value)
+  stringValue(action.value?.iconColor, actionElement.value) || 'grey-9'
 ))
 
 const actionDescription = computed(() => (

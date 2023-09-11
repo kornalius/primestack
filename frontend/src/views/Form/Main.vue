@@ -298,7 +298,7 @@ const ctx = buildCtx()
 const tableBinds = computed(() => {
   const r = pick(form.value, formSchema.tableFields)
   if (typeof r.query === 'object' && Array.isArray(r.query.groups)) {
-    r.query = queryToMongo(r.query, table.value, ctx.expr)
+    r.query = queryToMongo(r.query, table.value, ctx.$expr)
   }
   return r
 })

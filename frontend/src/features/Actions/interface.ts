@@ -17,6 +17,7 @@ export interface TFrontActionExecOptions {
   store: AnyData
   route: RouteLocationNormalizedLoaded,
   router: Router,
+  $expr: AnyData,
   [key: string]: unknown
 }
 

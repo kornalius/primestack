@@ -11,6 +11,27 @@
 
     <div class="row">
       <div class="col">
+        Query:
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <property-highlight
+          :model-value="queryValue"
+          language="basic"
+        />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        Patch Data:
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
         <property-highlight
           :model-value="fields"
           language="json"
@@ -30,6 +51,7 @@ import { AnyData } from '@/shared/interfaces/commons'
 import { useFeathers } from '@/composites/feathers'
 import { useExpression } from '@/features/Expression/composites'
 import PropertyHighlight from '@/features/Properties/components/PropertyHighlight.vue'
+import { useQuery } from '@/features/Query/composites'
 
 hljs.registerLanguage('json', json)
 
@@ -53,8 +75,24 @@ const { buildCtx } = useExpression()
 
 const ctx = buildCtx()
 
+const { queryToString } = useQuery()
+
 /**
- * Computes the fields to insert
+ * Computes the user's table instance
+ */
+const table = computed(() => (
+  userTable.value.list.find((t) => t._id === props.modelValue.tableId)
+))
+
+/**
+ * Computes the query value as a string
+ */
+const queryValue = computed((): string => (
+  queryToString(props.modelValue.query || { limit: 10, skip: 0, groups: [] }, table.value) || '()'
+))
+
+/**
+ * Computes the fields to patch
  */
 const fields = computed(() => (
   JSON.stringify(

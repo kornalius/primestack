@@ -31,7 +31,9 @@
 </template>
 
 <script setup lang="ts">
+import { AnyData } from '@/shared/interfaces/commons'
+
 defineProps<{
-  modelValue: unknown
+  modelValue: AnyData
 }>()
 </script>

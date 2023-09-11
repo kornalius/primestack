@@ -23,7 +23,15 @@ export default {
       default: return 'green-4'
     }
   },
-  color: 'green-4',
+  color: (value?) => {
+    switch (value?.level || '') {
+      case 'Info': return 'info'
+      case 'Error': return 'negative'
+      case 'Warning': return 'warning'
+      case 'Success': return 'positive'
+      default: return 'green-4'
+    }
+  },
   component: Notify,
   exec: async ({
     level,

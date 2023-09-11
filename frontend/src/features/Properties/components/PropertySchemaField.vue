@@ -2,7 +2,7 @@
   <!-- Expression -->
 
   <div
-    v-if="isExpr(value)"
+    v-if="isExpr(value) || type === 'expr'"
     class="row"
   >
     <div class="col overflow-hidden ellipsis" style="max-width: 230px;">

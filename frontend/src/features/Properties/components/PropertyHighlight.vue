@@ -30,7 +30,7 @@ import json from 'highlight.js/lib/languages/json'
 import basic from 'highlight.js/lib/languages/basic'
 
 const props = defineProps<{
-  modelValue: string
+  modelValue: string | undefined
   language: string
   disabled?: boolean
   disabledLabel?: string
