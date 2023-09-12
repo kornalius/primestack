@@ -109,8 +109,8 @@ import { defaultValueForSchema, validForExpr } from '@/shared/schema'
 import { QueryCriteria } from '@/shared/interfaces/query'
 import { useAppEditor } from '@/features/App/editor-store'
 import { useExpression } from '@/features/Expression/composites'
-import TableFieldSelect from '@/features/Fields/components/TableFieldSelect.vue'
-import CodeEditor from '@/features/Fields/components/CodeEditor.vue'
+import TableFieldSelect from '@/features/Tables/components/TableFieldSelect.vue'
+import CodeEditor from '@/features/Expression/components/CodeEditor.vue'
 import PropertyHighlight from '@/features/Properties/components/PropertyHighlight.vue'
 
 type TableFieldSchema = Static<typeof tableFieldSchema>

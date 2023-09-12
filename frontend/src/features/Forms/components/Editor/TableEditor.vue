@@ -65,7 +65,7 @@ import draggable from 'vuedraggable'
 import startCase from 'lodash/startCase'
 import { useSyncedProp } from '@/composites/prop'
 import { useAppEditor } from '@/features/App/editor-store'
-import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
+import SchemaTable from '@/features/Tables/components/SchemaTable.vue'
 
 const props = defineProps<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

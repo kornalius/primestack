@@ -128,9 +128,9 @@ import { AnyData } from '@/shared/interfaces/commons'
 import { useFeathers } from '@/composites/feathers'
 import { useQuery } from '@/features/Query/composites'
 import { filterToMongo } from '@/composites/filter'
+import { AddOption } from '@/features/Fields/interfaces'
 import PropertySchemaField from '@/features/Properties/components/PropertySchemaField.vue'
 import AddButton from '@/features/Fields/components/AddButton.vue'
-import { AddOption } from '../interfaces'
 
 const attrs = useAttrs()
 

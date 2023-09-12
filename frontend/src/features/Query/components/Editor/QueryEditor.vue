@@ -86,7 +86,7 @@ import { extraFields } from '@/shared/schema'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import QueryGroupEditor from '@/features/Query/components/Editor/QueryGroup.vue'
 import QueryLogicalOperators from '@/features/Query/components/Editor/QueryLogicalOperators.vue'
-import TableSelect from '@/features/Fields/components/TableSelect.vue'
+import TableSelect from '@/features/Tables/components/TableSelect.vue'
 
 const props = defineProps<{
   modelValue: Query | undefined

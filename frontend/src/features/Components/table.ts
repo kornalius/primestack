@@ -2,7 +2,7 @@ import { StringEnum, Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { AnyData } from '@/shared/interfaces/commons'
-import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
+import SchemaTable from '@/features/Tables/components/SchemaTable.vue'
 import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {

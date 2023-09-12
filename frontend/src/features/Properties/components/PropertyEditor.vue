@@ -284,7 +284,7 @@ import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import PropertyLabel from '@/features/Properties/components/PropertyLabel.vue'
 import PropertySchemaField from '@/features/Properties/components/PropertySchemaField.vue'
-import CodeEditor from '@/features/Fields/components/CodeEditor.vue'
+import CodeEditor from '@/features/Expression/components/CodeEditor.vue'
 
 const props = defineProps<{
   // property value

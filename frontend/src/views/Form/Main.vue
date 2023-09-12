@@ -184,7 +184,7 @@ import { TFormColumn, TFormField } from '@/shared/interfaces/forms'
 import { AnyData } from '@/shared/interfaces/commons'
 import FormEditor from '@/features/Forms/components/Editor/FormEditor.vue'
 import FormDisplay from '@/features/Forms/components/FormDisplay.vue'
-import SchemaTable from '@/features/Fields/components/SchemaTable.vue'
+import SchemaTable from '@/features/Tables/components/SchemaTable.vue'
 import ActionsEditor from '@/features/Actions/components/Editor/ActionsEditor.vue'
 import Uploader from '@/features/Files/components/Uploader.vue'
 
