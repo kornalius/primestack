@@ -240,7 +240,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
   const queryProperties = Type.Pick(schema, queryKeys)
   const querySchema = Type.Intersect(
     [
-      querySyntax(queryProperties),
+      querySyntax(queryProperties, options.validators?.querySyntax),
       // Add additional query properties here
       Type.Object({}, { additionalProperties: false })
     ],
@@ -307,11 +307,12 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
     before: {
       all: [
         ...expandHooks('before.all'),
-        schemaHooks.validateQuery(queryValidator),
-        schemaHooks.resolveQuery(queryResolver),
       ],
       find: [
         ...expandHooks('before.find'),
+        // TODO: Put it back when figured out how to have $regex working with validation
+        // schemaHooks.validateQuery(queryValidator),
+        schemaHooks.resolveQuery(queryResolver),
       ],
       get: [
         ...expandHooks('before.get'),
@@ -413,6 +414,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
         // this mostly serves as the table id for the service
         name,
         paginate: paginate || app.get('paginate'),
+        operators: ['$regex', '$options', '$not'],
         Model: collection
           ? app.get('mongodbClient')
             .then((db: Db) => db.collection(collection))

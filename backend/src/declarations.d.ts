@@ -7,7 +7,7 @@ import {
   PaginationOptions,
 } from '@feathersjs/feathers'
 import { Application as FeathersApplication, Middleware } from '@feathersjs/koa'
-import { TObject } from '@feathersjs/typebox'
+import { TObject, TSchema } from '@feathersjs/typebox'
 import { Index } from '@/shared/schema'
 // eslint-disable-next-line import/no-cycle
 import { User } from './services/users/users.service'
@@ -48,6 +48,7 @@ export interface CreateServiceValidators {
     $patch?: string[]
   }
   query?: string[]
+  querySyntax?: Record<string, TSchema>,
 }
 
 export interface CreateServiceResolvers {

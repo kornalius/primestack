@@ -151,6 +151,22 @@ class DynamicService extends MongoService {
 const createDynamicService = (app: Application, id: string, t: AnyData) => {
   info(`Creating user service ${id}...`)
 
+  // TODO: Add to validate string fields to have $regex
+
+  // const querySyntax: AnyData = {}
+  //
+  // t.fields
+  //   .filter((f: TableField) => f.queryable && f.type === 'string')
+  //   .forEach((f: TableField) => {
+  //     querySyntax[f.name] = Type.Optional(Type.Union([
+  //       Type.String(),
+  //       Type.Object({
+  //         $regex: Type.String(),
+  //         $options: Type.String(),
+  //       }),
+  //     ]))
+  //   })
+
   createService(id, DynamicService, {
     collection: id,
     schema: fieldsToSchema(t.fields, id) as TObject,
@@ -168,7 +184,10 @@ const createDynamicService = (app: Application, id: string, t: AnyData) => {
           checkMaxRecords,
         ]
       }
-    }
+    },
+    validators: {
+      // querySyntax: Object.keys(querySyntax).length ? querySyntax : undefined,
+    },
   }).init(app, {})
 }
 

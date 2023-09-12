@@ -12,7 +12,7 @@
         </div>
 
         <div class="col">
-          <q-input
+          <filter-editor
             v-if="!hideFilter"
             v-model="currentFilter"
             class="full-width"
@@ -20,11 +20,7 @@
             clearable
             dense
             outlined
-          >
-            <template #append>
-              <q-icon name="mdi-magnify" size="xs" />
-            </template>
-          </q-input>
+          />
         </div>
 
         <div class="col-auto">
@@ -131,6 +127,7 @@ import { filterToMongo } from '@/composites/filter'
 import { AddOption } from '@/features/Fields/interfaces'
 import PropertySchemaField from '@/features/Properties/components/PropertySchemaField.vue'
 import AddButton from '@/features/Fields/components/AddButton.vue'
+import FilterEditor from '@/features/Tables/components/FilterEditor.vue'
 
 const attrs = useAttrs()
 
@@ -216,13 +213,21 @@ const data = ref()
 
 const hover = ref()
 
+const userTable = api.service('tables').findOneInStore({ query: {} })
+
+const table = computed(() => (
+  userTable.value?.list.find((tt) => tt._id === props.tableId)
+))
+
+let filterTimeout = 0
+
 watch([
   () => attrs.rows,
   () => props.tableId,
   () => props.query,
   currentFilter,
 ], () => {
-  const f = filterToMongo(currentFilter.value || '') || {}
+  const f = filterToMongo(currentFilter.value || '', table.value?.fields) || {}
 
   const { $limit, $skip } = props.query || {}
   const queryProp = omit(props.query || {}, ['$limit', '$skip'])
@@ -241,19 +246,22 @@ watch([
     query.$skip = $skip || 0
   }
 
-  if (props.tableId) {
-    const dataFind = api.service(props.tableId).useFind({ query, temps: props.temps })
-    dataFind.find({ query })
-    watch(dataFind.data, () => {
-      data.value = dataFind.data.value
-    }, { immediate: true })
-    return
-  }
+  clearTimeout(filterTimeout)
+  filterTimeout = setTimeout(() => {
+    if (props.tableId) {
+      const dataFind = api.service(props.tableId).useFind({ query, temps: props.temps })
+      dataFind.find({ query })
+      watch(dataFind.data, () => {
+        data.value = dataFind.data.value
+      }, { immediate: true })
+      return
+    }
 
-  if (attrs.rows) {
-    const s = sift(query)
-    dataRows.value = attrs.rows?.filter(s) || []
-  }
+    if (attrs.rows) {
+      const s = sift(query)
+      dataRows.value = attrs.rows?.filter(s) || []
+    }
+  }, 500)
 }, { immediate: true })
 
 const schemaSchema = (name: string) => props.schema?.properties[name]

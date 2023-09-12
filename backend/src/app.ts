@@ -78,6 +78,12 @@ app.configure(
     //   (socket as AnyData).feathers.appId = socket.handshake.query.appId
     //   next()
     // })
+
+    io.use((socket, next) => {
+      // eslint-disable-next-line no-param-reassign
+      (socket as AnyData).feathers.ip = socket.request.socket.remoteAddress
+      next()
+    })
   })
 )
 

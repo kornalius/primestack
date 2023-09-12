@@ -18,15 +18,19 @@ export const debug = async (context: HookContext, next: NextFunction) => {
     data,
   } = context
 
-  info(`Query[${method}.${path}] ${JSON.stringify(params.query, undefined, 2)}`)
+  const sizeof = (o: unknown): number => JSON.stringify(o).length
+
+  const prefix = `${params.ip} ${method.toUpperCase()} /${path}`
+
+  info(`${prefix} QUERY ${sizeof(params.query)} ${JSON.stringify(params.query)}`)
 
   if (data) {
-    info(`Data[${method}.${path}] ${JSON.stringify(data, undefined, 2)}`)
+    info(`${prefix} DATA ${sizeof(data)} ${JSON.stringify(data)}`)
   }
 
   await next()
 
-  info(`Result[${method}.${path}] ${JSON.stringify(context.result, undefined, 2)}`)
+  info(`${prefix} RESULT ${sizeof(context.result)} ${JSON.stringify(context.result)}`)
 
-  info(`Time[${method}.${path}] ${Date.now() - startTime}ms`)
+  info(`${prefix} ${Date.now() - startTime}ms`)
 }
