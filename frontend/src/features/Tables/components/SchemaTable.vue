@@ -16,6 +16,7 @@
             v-if="!hideFilter"
             v-model="currentFilter"
             class="full-width"
+            :fields="table?.fields"
             placeholder="Filter expression (ex: field:value)"
             clearable
             dense

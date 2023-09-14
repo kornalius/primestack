@@ -1,19 +1,25 @@
 <template>
-  <q-input
-    v-model="value"
+  <input-complete
     v-bind="$attrs"
-  >
-    <template #append>
-      <q-icon name="mdi-magnify" size="xs" />
-    </template>
-  </q-input>
+    v-model="value"
+    style="font-family: monospace;"
+    :items="items"
+  />
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
+import { tableFieldSchema } from '@/shared/schemas/table'
+import InputComplete from '@/features/Fields/components/InputComplete.vue'
+
+type TableField = Static<typeof tableFieldSchema>
 
 const props = defineProps<{
   modelValue: string | undefined
+  fields?: TableField[]
+  caretHeight?: number
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -22,4 +28,15 @@ const emit = defineEmits<{
 }>()
 
 const value = useModelValue(props, emit)
+
+const items = computed(() => (
+  (props.fields || [])
+    .filter((f) => f.queryable && f.type !== 'boolean')
+    .map((f) => ({
+      label: f.name,
+      value: f.name,
+      icon: 'mdi-key',
+      color: 'orange-4',
+    }))
+))
 </script>
