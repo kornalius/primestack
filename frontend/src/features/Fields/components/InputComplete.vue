@@ -121,12 +121,12 @@ const getCurrentWord = (caretIndex: number) => {
 
 const updateMenuPosition = () => {
   const pos = getCaretPosition(input, lastSearchIndex.value)
-  if (menu) {
-    setTimeout(() => {
+  setTimeout(() => {
+    if (menu) {
       menu.style.setProperty('left', `${pos.left}px`)
       menu.style.setProperty('top', `${pos.top + pos.height - input.scrollTop}px`)
-    })
-  }
+    }
+  })
 }
 
 const openMenu = () => {
@@ -293,7 +293,8 @@ onUnmounted(() => {
 .menu
   position: absolute
   z-index: 10000
+
 .selected
-  background-color: #5781ab
+  background-color: $primary
   color: white
 </style>

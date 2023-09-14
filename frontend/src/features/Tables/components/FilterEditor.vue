@@ -2,7 +2,7 @@
   <input-complete
     v-bind="$attrs"
     v-model="value"
-    style="font-family: monospace;"
+    style="font-family: monospace; font-size: 12px;"
     :items="items"
   />
 </template>
