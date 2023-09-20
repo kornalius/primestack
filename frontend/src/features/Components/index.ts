@@ -6,6 +6,7 @@ import image from './image'
 import video from './video'
 import input from './input'
 import select from './select'
+import lookupSelect from './lookup-select'
 import table from './table'
 import color from './color'
 import iconSelect from './icon-select'
@@ -53,6 +54,7 @@ export const components = [
   addSeparator('Inputs', 'mdi-form-textbox', 'green-2'),
   input,
   select,
+  lookupSelect,
   table,
   color,
   iconSelect,

@@ -120,10 +120,11 @@ import sift from 'sift'
 import startCase from 'lodash/startCase'
 import { TSchema } from '@feathersjs/typebox'
 import { useSyncedProp } from '@/composites/prop'
-import { columnAlignmentFor, getTypeFor, tableFields } from '@/shared/schema'
+import { columnAlignmentFor, getTypeFor } from '@/shared/schema'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useFeathers } from '@/composites/feathers'
 import { useQuery } from '@/features/Query/composites'
+import { useTable } from '@/features/Tables/composites'
 import { filterToMongo } from '@/composites/filter'
 import { AddOption } from '@/features/Fields/interfaces'
 import PropertySchemaField from '@/features/Properties/components/PropertySchemaField.vue'
@@ -187,6 +188,8 @@ const currentSelected = useSyncedProp(props, 'selected', emit)
 const currentFilter = useSyncedProp(props, 'filter', emit)
 
 const { cleanupQuery } = useQuery()
+
+const { tableFields } = useTable()
 
 const columns = computed(() => {
   if (!props.schema) {

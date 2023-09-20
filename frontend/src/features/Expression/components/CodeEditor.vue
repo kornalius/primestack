@@ -24,7 +24,7 @@ import { useModelValue } from '@/composites/prop'
 import { useApp } from '@/features/App/store'
 import { useAppEditor } from '@/features/App/editor-store'
 import { useVariables } from '@/features/Variables/store'
-import { extraFields } from '@/shared/schema'
+import { useTable } from '@/features/Tables/composites'
 
 const props = defineProps<{
   modelValue: string | null | undefined
@@ -44,6 +44,8 @@ const editor = useAppEditor()
 const app = useApp()
 
 const variables = useVariables()
+
+const { extraFields } = useTable()
 
 const fcts = {
   str: '`(format: string, data: object): string`\n\n'

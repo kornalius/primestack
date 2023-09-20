@@ -92,16 +92,14 @@ import draggable from 'vuedraggable'
 import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 import { formSchema } from '@/shared/schemas/form'
-import { tableFieldSchema } from '@/shared/schemas/table'
-import { AnyData } from '@/shared/interfaces/commons'
 import { useAppEditor } from '@/features/App/editor-store'
+import { useFormElements } from '@/features/Forms/composites'
 import { stringValue } from '@/composites/utilities'
 import { isComponentAvailable } from '@/shared/plan'
 import { useAuth } from '@/features/Auth/store'
 import FieldsEditor from './FieldsEditor.vue'
 
 type Form = Static<typeof formSchema>
-type TableField = Static<typeof tableFieldSchema>
 
 const props = defineProps<{
   modelValue: unknown[]
@@ -126,6 +124,8 @@ const { t } = useI18n()
 
 const fields = useModelValue(props, emit)
 
+const { autoGenerateForm } = useFormElements()
+
 const visibleComponents = computed(() => props.components.filter((c) => !c.hidden))
 
 /**
@@ -135,53 +135,6 @@ const visibleComponents = computed(() => props.components.filter((c) => !c.hidde
 const editor = useAppEditor()
 
 const cloneComponent = (component: TFormComponent): TFormField | undefined => editor.createFormField(component)
-
-const autoGenerateForm = (tableId: string): void => {
-  const addFieldToForm = (type: string, f: TableField, options?: AnyData): TFormField => {
-    const component = props.components.find((c) => c.type === type)
-    const field = editor.addFieldToForm(component, options)
-    field.field = f.name
-    field.label = f.name
-    field.disable = f.readonly
-    field.readonly = f.readonly
-    return field
-  }
-
-  const table = editor.tableInstance(tableId)
-  if (table) {
-    table.fields
-      .filter((f) => f.hidden !== true)
-      .forEach((f) => {
-        switch (f.type) {
-          case 'string':
-            addFieldToForm('input', f)
-            break
-          case 'number':
-            addFieldToForm('input', f, { type: 'number' })
-            break
-          case 'boolean':
-            addFieldToForm('checkbox', f)
-            break
-          case 'date':
-            addFieldToForm('date', f)
-            break
-          case 'time':
-            addFieldToForm('time', f)
-            break
-          case 'color':
-            addFieldToForm('color', f)
-            break
-          case 'icon':
-            addFieldToForm('iconSelect', f)
-            break
-          case 'objectid':
-            addFieldToForm('select', f, { optionLabel: 'name', optionValue: '_id' })
-            break
-          default:
-        }
-      })
-  }
-}
 
 watch(() => props.form?.tableId, (newValue, oldValue) => {
   if (!oldValue && newValue && fields.value.length === 0) {

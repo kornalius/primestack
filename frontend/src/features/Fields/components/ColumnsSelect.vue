@@ -3,14 +3,12 @@
     v-model="value"
     v-bind="$attrs"
     :options="filteredOptions"
-    :option-label="primaryField"
+    :option-label="primaryLabel"
     :option-value="primaryField"
     :virtual-scroll-item-size="32"
     use-input
     emit-value
     map-options
-    clearable
-    options-dense
     @filter="filter"
   >
     <template #before-options>
@@ -24,7 +22,7 @@
               :class="colClass(col, true)"
               :style="col.titleStyle"
             >
-              {{ col.title || capitalize(col.field) }}
+              {{ col.title || startCase(col.field) }}
             </div>
           </div>
         </q-item-section>
@@ -58,7 +56,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { QSelect } from 'quasar'
-import capitalize from 'lodash/capitalize'
+import startCase from 'lodash/startCase'
 import { useModelValue } from '@/composites/prop'
 import { AnyData } from '@/shared/interfaces/commons'
 import { Column } from '@/features/Fields/interfaces'
@@ -66,7 +64,8 @@ import { Column } from '@/features/Fields/interfaces'
 const props = defineProps<{
   modelValue: string | null | undefined
   options: AnyData[]
-  field: string
+  valueField: string
+  labelField?: string
   columns: Column[]
 }>()
 
@@ -95,7 +94,11 @@ const colClass = (col: Column, title = false): string | string[] | AnyData => {
 }
 
 const primaryField = computed(() => (
-  props.columns.find((c) => c.primary)?.field || props.columns[0]?.field
+  props.valueField || props.columns[0]?.field
+))
+
+const primaryLabel = computed(() => (
+  props.labelField || props.columns[0]?.field || primaryField.value
 ))
 
 const filteredOptions = ref([])
@@ -115,7 +118,7 @@ const filter = (
     } else {
       const cols = props.columns.filter((col) => col.filterable)
       filteredOptions.value = props.options.filter((row) => (
-        !!cols.find((col) => row[col.field].toLowerCase().indexOf(val) !== -1)
+        !!cols.find((col) => row[col.field].toString().toLowerCase().indexOf(val) !== -1)
       ))
     }
   })

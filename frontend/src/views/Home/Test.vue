@@ -111,8 +111,12 @@
               v-model="columnValue"
               :columns="columns"
               :options="columnsOptions"
-              field="_id"
+              value-field="_id"
+              use-chips
               dense
+              options-dense
+              multiple
+              clearable
               outlined
             />
           </div>
@@ -312,7 +316,7 @@ for (let i = 0; i < 1000; i++) {
  * Columns Select
  */
 
-const columnValue = ref()
+const columnValue = ref([])
 
 const columns = ref([
   {

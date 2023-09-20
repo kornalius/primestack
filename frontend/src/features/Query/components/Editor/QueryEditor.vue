@@ -82,7 +82,7 @@ import { computed, ref, watch } from 'vue'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { Query, QueryGroup, queryOperators } from '@/shared/interfaces/query'
 import { useAppEditor } from '@/features/App/editor-store'
-import { tableFields } from '@/shared/schema'
+import { useTable } from '@/features/Tables/composites'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import QueryGroupEditor from '@/features/Query/components/Editor/QueryGroup.vue'
 import QueryLogicalOperators from '@/features/Query/components/Editor/QueryLogicalOperators.vue'
@@ -106,6 +106,8 @@ const emit = defineEmits<{
 }>()
 
 const editor = useAppEditor()
+
+const { tableFields } = useTable()
 
 const palette = ref([
   'bg-purple-1',

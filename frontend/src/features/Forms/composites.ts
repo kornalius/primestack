@@ -7,9 +7,13 @@ import { components, componentForType, componentForField } from '@/features/Comp
 import { useValidators } from '@/features/Validation/composites'
 import { getTypeFor } from '@/shared/schema'
 import { flattenFields, newNameForField } from '@/shared/form'
-import { actionSchema } from '@/shared/schemas/actions'
 // eslint-disable-next-line import/no-cycle
 import { getProp } from '@/features/Expression/composites'
+import { useAppEditor } from '@/features/App/editor-store'
+import { actionSchema } from '@/shared/schemas/actions'
+import { tableFieldSchema } from '@/shared/schemas/table'
+
+type TableField = Static<typeof tableFieldSchema>
 
 type Action = Static<typeof actionSchema>
 
@@ -146,6 +150,68 @@ export const useFormElements = () => ({
       borderRight: b?.sides?.right ? border : 'none',
       borderRadius: `${tl} ${tr} ${bl} ${br}`,
       ...(component.editStyles || {}),
+    }
+  },
+
+  autoGenerateForm: (tableId: string): void => {
+    const editor = useAppEditor()
+
+    const addFieldToForm = (type: string, f: TableField, options?: AnyData): TFormField => {
+      const component = components.find((c) => c.type === type)
+      const field = editor.addFieldToForm(component, options)
+      field.field = f.name
+      field.label = f.name
+      field.disable = f.readonly
+      field.readonly = f.readonly
+      return field
+    }
+
+    const table = editor.tableInstance(tableId)
+    if (table) {
+      table.fields
+        .filter((f) => f.hidden !== true)
+        .forEach((f) => {
+          // if field is reference to another field in a table
+          if (f.refTableId) {
+            addFieldToForm('lookup-field', f, {
+              columns: f.refFields.map((fc) => ({
+                field: fc,
+                filterable: true,
+                titleClass: 'text-bold',
+              })),
+              multiple: f.array,
+            })
+            return
+          }
+
+          switch (f.type) {
+            case 'string':
+              addFieldToForm('input', f)
+              break
+            case 'number':
+              addFieldToForm('input', f, { type: 'number' })
+              break
+            case 'boolean':
+              addFieldToForm('checkbox', f)
+              break
+            case 'date':
+              addFieldToForm('date', f)
+              break
+            case 'time':
+              addFieldToForm('time', f)
+              break
+            case 'color':
+              addFieldToForm('color', f)
+              break
+            case 'icon':
+              addFieldToForm('iconSelect', f)
+              break
+            case 'objectid':
+              addFieldToForm('select', f, { optionLabel: 'name', optionValue: '_id' })
+              break
+            default:
+          }
+        })
     }
   },
 })

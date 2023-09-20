@@ -12,7 +12,6 @@ export interface Column {
   field: string
   size?: number
   filterable?: boolean
-  primary?: boolean
   class?: string | string[] | AnyData
   style?: string | string[] | AnyData
   title?: string

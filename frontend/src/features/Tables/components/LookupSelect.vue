@@ -4,7 +4,8 @@
     v-bind="$attrs"
     :options="options"
     :columns="columns"
-    :field="field"
+    :value-field="valueField"
+    :label-field="labelField"
   >
     <template v-for="(_, name) in $slots" #[name]="slotData">
       <slot :name="name" v-bind="slotData" />
@@ -24,7 +25,8 @@ const props = defineProps<{
   modelValue: string | null | undefined
   tableId: string
   query?: AnyData
-  field: string
+  valueField: string
+  labelField: string
   columns: Column[]
 }>()
 

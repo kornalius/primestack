@@ -549,6 +549,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import omit from 'lodash/omit'
+import hexObjectId from 'hex-object-id'
 import { Static, TSchema, Type } from '@feathersjs/typebox'
 import { useI18n } from 'vue-i18n'
 import {
@@ -556,7 +557,6 @@ import {
   getTypeFor,
   optionsForSchema,
   primaryToType,
-  tableFields,
 } from '@/shared/schema'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { useQuery } from '@/features/Query/composites'
@@ -565,6 +565,7 @@ import { actionSchema } from '@/shared/schemas/actions'
 import { ruleTypes } from '@/features/Components/common'
 import { fieldSchema } from '@/shared/schemas/form'
 import { useAppEditor } from '@/features/App/editor-store'
+import { useTable } from '@/features/Tables/composites'
 import { useFormElements } from '@/features/Forms/composites'
 import { useExpression } from '@/features/Expression/composites'
 import PaddingEditor from '@/features/Properties/components/PaddingEditor.vue'
@@ -632,6 +633,8 @@ const { flattenFields } = useFormElements()
 const { isExpr, exprCode } = useExpression()
 
 const { queryToString } = useQuery()
+
+const { tableFields } = useTable()
 
 const { t } = useI18n()
 
@@ -853,9 +856,9 @@ const tableId = computed((): string | undefined => (
 /**
  * Computes the user's table from the parent data
  */
-const table = computed(() => {
-  return editor.tables?.find((s) => s._id === tableId.value)
-})
+const table = computed(() => (
+  editor.tables?.find((s) => s._id === tableId.value)
+))
 
 /**
  * Computes the query value as a string
@@ -909,7 +912,7 @@ const disabledLabel = computed((): string | undefined => (
  */
 const extraFields = computed(() => (
   Object.keys(form.value?.data || {}).map((k) => ({
-    _id: k,
+    _id: hexObjectId(),
     name: k,
     type: primaryToType(form.value?.data?.[k]),
   }))

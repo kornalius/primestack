@@ -301,6 +301,27 @@ export const iconForType = (type: string): string => {
 }
 
 /**
+ * Display class for a field
+ *
+ * @param name Name of the field
+ *
+ * @returns {string} Quasar class string
+ */
+export const fieldClass = (name: string): string => {
+  const fields = [
+    '_id',
+    'createdAt',
+    'createdBy',
+    'updatedAt',
+    'updatedBy',
+    'deletedAt',
+    'deletedBy',
+  ]
+
+  return fields.includes(name) ? 'text-italic' : 'text-bold'
+}
+
+/**
  * Returns a type from a JSON object value
  *
  * @param o Object to check type from
@@ -334,10 +355,18 @@ export const fieldToSchema = (field: TableFieldSchema): TSchema => {
       ...field,
       array: false,
     } as TableFieldSchema))
-    if (field.optional) {
-      return Type.Optional(a)
+    return field.optional ? Type.Optional(a) : a
+  }
+
+  // if field is a reference to another field in another table
+  if (field.refTableId) {
+    if (field.array) {
+      const a = Type.Array(Type.String({ objectid: true }))
+      return field.optional ? Type.Optional(a) : a
     }
-    return a
+
+    const s = Type.String({ objectid: true })
+    return field.optional ? Type.Optional(s) : s
   }
 
   switch (field.type) {
@@ -349,18 +378,12 @@ export const fieldToSchema = (field: TableFieldSchema): TSchema => {
         maxLength: field.max,
         pattern: field.pattern,
       })
-      if (field.optional) {
-        return Type.Optional(s)
-      }
-      return s
+      return field.optional ? Type.Optional(s) : s
 
     case 'boolean':
       // eslint-disable-next-line no-case-declarations
       const b = Type.Boolean({})
-      if (field.optional) {
-        return Type.Optional(b)
-      }
-      return b
+      return field.optional ? Type.Optional(b) : b
 
     case 'number':
       // eslint-disable-next-line no-case-declarations
@@ -371,10 +394,7 @@ export const fieldToSchema = (field: TableFieldSchema): TSchema => {
         exclusiveMinimum: field.exclusiveMin,
         exclusiveMaximum: field.exclusiveMax,
       })
-      if (field.optional) {
-        return Type.Optional(n)
-      }
-      return n
+      return field.optional ? Type.Optional(n) : n
 
     case 'date':
       // eslint-disable-next-line no-case-declarations
@@ -385,10 +405,7 @@ export const fieldToSchema = (field: TableFieldSchema): TSchema => {
         exclusiveMinimum: field.dateExclusiveMin,
         exclusiveMaximum: field.dateExclusiveMax,
       })
-      if (field.optional) {
-        return Type.Optional(d)
-      }
-      return d
+      return field.optional ? Type.Optional(d) : d
 
     case 'time':
       // eslint-disable-next-line no-case-declarations
@@ -399,46 +416,31 @@ export const fieldToSchema = (field: TableFieldSchema): TSchema => {
         exclusiveMinimum: field.dateExclusiveMin,
         exclusiveMaximum: field.dateExclusiveMax,
       })
-      if (field.optional) {
-        return Type.Optional(t)
-      }
-      return t
+      return field.optional ? Type.Optional(t) : t
 
     case 'color':
       // eslint-disable-next-line no-case-declarations
       const c = Type.String({
         color: true,
       })
-      if (field.optional) {
-        return Type.Optional(c)
-      }
-      return c
+      return field.optional ? Type.Optional(c) : c
 
     case 'icon':
       // eslint-disable-next-line no-case-declarations
       const i = Type.String({
         icon: true,
       })
-      if (field.optional) {
-        return Type.Optional(i)
-      }
-      return i
+      return field.optional ? Type.Optional(i) : i
 
     case 'select':
       // eslint-disable-next-line no-case-declarations
       const e = Type.String({
         options: field.options,
       })
-      if (field.optional) {
-        return Type.Optional(e)
-      }
-      return e
+      return field.optional ? Type.Optional(e) : e
 
     default:
-      if (field.optional) {
-        return Type.Optional(Type.String())
-      }
-      return Type.String()
+      return field.optional ? Type.Optional(Type.String()) : Type.String()
   }
 }
 
@@ -486,73 +488,3 @@ export const refFieldname = (name: string): string => {
   }
   return `${n}Ref`
 }
-
-/**
- * Table field base schema
- */
-export const baseField: TableFieldSchema = {
-  _id: '',
-  name: '',
-  type: '',
-  queryable: true,
-  array: false,
-  hidden: false,
-  optional: false,
-  readonly: false
-}
-
-/**
- * Returns a list of extra fields that are not specified in the fields of tables
- *
- * @param created Created from table
- * @param updated Updated from table
- * @param softDelete SoftDelete from table
- *
- * @returns {AnyData[]} List of extra fields
- */
-export const extraFields = (created: boolean, updated: boolean, softDelete: boolean): TableFieldSchema[] => {
-  const fields: TableFieldSchema[] = []
-  if (created) {
-    fields.push({ ...baseField, name: 'createdAt', type: 'date' })
-    fields.push({ ...baseField, name: 'createdBy', type: 'objectid' })
-  }
-  if (updated) {
-    fields.push({ ...baseField, name: 'updatedAt', type: 'date' })
-    fields.push({ ...baseField, name: 'updatedBy', type: 'objectid' })
-  }
-  if (softDelete) {
-    fields.push({ ...baseField, name: 'deletedAt', type: 'date' })
-    fields.push({ ...baseField, name: 'deletedBy', type: 'objectid' })
-  }
-  return fields
-}
-
-/**
- * Build a list of fields from a table
- *
- * @param fields Table fields
- * @param created Add createdAt, createdBy fields
- * @param updated Add updatedAt, updatedBy fields
- * @param softDelete Add deletedAt, deletedBy fields
- * @param userFields Add extra user fields
- *
- * @returns {TableFieldSchema[]}
- */
-export const tableFields = (
-  fields: TableFieldSchema[],
-  created: boolean,
-  updated: boolean,
-  softDelete: boolean,
-  userFields?: TableFieldSchema[],
-): TableFieldSchema[] => ([
-  ...fields,
-  ...fields
-    .filter((field) => field.refTableId)
-    .map((field) => ({
-      ...baseField,
-      name: refFieldname(field.name),
-      type: 'object',
-    })),
-  ...extraFields(created, updated, softDelete),
-  ...(userFields || []),
-])

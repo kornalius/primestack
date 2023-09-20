@@ -31,7 +31,9 @@
           <q-icon :name="iconForType((opt as any).type)" size="xs" color="grey-7" />
         </q-item-section>
 
-        {{ (opt as any).name }}
+        <span :class="fieldClass((opt as any).name)">
+          {{ (opt as any).name }}
+        </span>
       </q-item>
     </template>
 
@@ -45,9 +47,10 @@
 import { computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
-import { iconForType, tableFields } from '@/shared/schema'
+import { iconForType, fieldClass } from '@/shared/schema'
 import { tableFieldSchema } from '@/shared/schemas/table'
 import { useAppEditor } from '@/features/App/editor-store'
+import { useTable } from '@/features/Tables/composites'
 import { AnyData } from '@/shared/interfaces/commons'
 
 type TableFieldSchema = Static<typeof tableFieldSchema>
@@ -70,6 +73,8 @@ const emit = defineEmits<{
 const value = useModelValue(props, emit)
 
 const editor = useAppEditor()
+
+const { tableFields } = useTable()
 
 const table = computed(() => (
   editor.tables?.find((s) => s._id === props.tableId)
