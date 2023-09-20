@@ -45,7 +45,7 @@
 import { computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
-import { extraFields, iconForType } from '@/shared/schema'
+import { iconForType, tableFields } from '@/shared/schema'
 import { tableFieldSchema } from '@/shared/schemas/table'
 import { useAppEditor } from '@/features/App/editor-store'
 import { AnyData } from '@/shared/interfaces/commons'
@@ -75,9 +75,13 @@ const table = computed(() => (
   editor.tables?.find((s) => s._id === props.tableId)
 ))
 
-const options = computed(() => ([
-  ...(props.fields || table.value?.fields || []),
-  ...extraFields(table.value?.created, table.value?.updated, table.value?.softDelete),
-  ...(props.extraOptions || []),
-]))
+const options = computed(() => (
+  tableFields(
+    props.fields || table.value?.fields || [],
+    table.value?.created,
+    table.value?.updated,
+    table.value?.softDelete,
+    props.extraOptions as TableFieldSchema[],
+  )
+))
 </script>

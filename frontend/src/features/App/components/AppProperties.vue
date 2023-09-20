@@ -20,6 +20,7 @@
       v-model:forced-types="forcedTypes"
       :prop-name="''"
       :schema="selectedAction.schema"
+      :labels="selectedAction.labels"
       :categories="selectedAction.categories"
     />
 
@@ -31,6 +32,7 @@
       v-model:forced-types="forcedTypes"
       :prop-name="''"
       :schema="selectedComponent.schema"
+      :labels="selectedComponent.labels"
       :categories="selectedComponent.categories"
     />
 
@@ -43,6 +45,7 @@
       :prop-name="''"
       :schema="selectedTableSchema"
       :categories="selectedTableSchema.categories"
+      :labels="selectedTableSchema.labels"
       :disabled-properties="disabledTableProperties"
     />
 
@@ -55,6 +58,7 @@
       :prop-name="''"
       :schema="selectedSchemaFieldSchema"
       :categories="selectedSchemaFieldSchema.categories"
+      :labels="selectedSchemaFieldSchema.labels"
       :disabled-properties="disabledTableFieldProperties"
     />
 
@@ -75,6 +79,7 @@
         :prop-name="''"
         :schema="selectedMenuSchema"
         :categories="selectedMenuSchema.categories"
+        :labels="selectedMenuSchema.labels"
       />
 
       <!-- Tab title -->
@@ -93,6 +98,7 @@
         :prop-name="''"
         :schema="selectedTabSchema"
         :categories="selectedTabSchema.categories"
+        :labels="selectedTabSchema.labels"
       />
 
       <!-- Form title -->
@@ -111,6 +117,7 @@
         :prop-name="''"
         :schema="selectedFormSchema"
         :categories="selectedFormSchema.categories"
+        :labels="selectedFormSchema.labels"
       />
     </template>
   </q-drawer>

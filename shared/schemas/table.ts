@@ -74,16 +74,31 @@ export const tableFieldSchema = Type.Object(
         value: Type.String(),
       }),
     )),
+    refTableId: Type.Optional(
+      Type.String({ objectid: true, tableid: true })
+    ),
+    refFields: Type.Optional(
+      Type.Array(
+        Type.String(),
+        { field: true, tableProp: 'refTableId', select: true }
+      )
+    ),
   },
   {
     $id: 'TableField',
     additionalProperties: false,
+    labels: {
+      'refTableId': 'Reference Table',
+      'refFields': 'Referenced Fields',
+    },
     categories: {
       content: {
         icon: contentIcon,
         names: [
           'name',
           'type',
+          'refTableId',
+          'refFields',
           'optional',
           'queryable',
           'array',

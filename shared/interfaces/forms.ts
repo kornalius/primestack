@@ -31,6 +31,8 @@ export interface TFormComponent {
   defaultValues?: AnyData
   // edit mode styles to add to component
   editStyles?: AnyData
+  // overrides from field names (key) to display label values (value)
+  labels?: AnyData
   // split schema keys into different categories and order items in the properties list
   categories?: Record<string, TFormFieldCategory>
   // use an horizontal layout for properties

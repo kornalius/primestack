@@ -11,6 +11,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { schema } from '@/shared/schemas/file'
 import { useFeathers } from '@/composites/feathers'
@@ -36,7 +37,12 @@ defineEmits<{
 
 const { api } = useFeathers()
 
-const { data: files, find } = api.service('files').useFind({ query: props.query, temps: true })
+const params = computed(() => ({
+  query: props.query,
+  temps: true,
+}))
+
+const { data: files, find } = api.service('files').useFind(params)
 find()
 </script>
 

@@ -82,7 +82,7 @@ import { computed, ref, watch } from 'vue'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { Query, QueryGroup, queryOperators } from '@/shared/interfaces/query'
 import { useAppEditor } from '@/features/App/editor-store'
-import { extraFields } from '@/shared/schema'
+import { tableFields } from '@/shared/schema'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import QueryGroupEditor from '@/features/Query/components/Editor/QueryGroup.vue'
 import QueryLogicalOperators from '@/features/Query/components/Editor/QueryLogicalOperators.vue'
@@ -161,10 +161,14 @@ const table = computed(() => (
   editor.tables?.find((s) => s._id === query.value?.tableId)
 ))
 
-const fields = computed(() => ([
-  ...(table.value?.fields || []),
-  ...extraFields(table.value?.created, table.value?.updated, table.value?.softDelete),
-]))
+const fields = computed(() => (
+  tableFields(
+    table.value?.fields || [],
+    table.value?.created,
+    table.value?.updated,
+    table.value?.softDelete,
+  )
+))
 
 watch(() => query.value.tableId, () => {
   query.value.groups = []

@@ -11,6 +11,7 @@
       <q-tab name="QueryEditor" label="Query Editor" />
       <q-tab name="SchemaEditor" label="Schema Editor" />
       <q-tab name="Table" label="Table" />
+      <q-tab name="Columns" label="Columns Select" />
     </q-tabs>
 
     <q-tab-panels v-model="tab" animated>
@@ -102,6 +103,21 @@
           </div>
         </div>
       </q-tab-panel>
+
+      <q-tab-panel name="Columns">
+        <div class="row">
+          <div class="col">
+            <columns-select
+              v-model="columnValue"
+              :columns="columns"
+              :options="columnsOptions"
+              field="_id"
+              dense
+              outlined
+            />
+          </div>
+        </div>
+      </q-tab-panel>
     </q-tab-panels>
   </q-page>
 </template>
@@ -110,6 +126,7 @@
 import {
   computed, Ref, ref,
 } from 'vue'
+import sample from 'lodash/sample'
 import hexObjectId from 'hex-object-id'
 import { Type } from '@feathersjs/typebox'
 import { useQuery } from '@/features/Query/composites'
@@ -120,7 +137,8 @@ import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import QueryEditor from '@/features/Query/components/Editor/QueryEditor.vue'
 import SchemaTable from '@/features/Tables/components/SchemaTable.vue'
-import SchemaEditor from '@/features/Tables/components/Editor/TableEditor.vue'
+import SchemaEditor from '@/features/Forms/components/Editor/TableEditor.vue'
+import ColumnsSelect from '@/features/Fields/components/ColumnsSelect.vue'
 
 /**
  * Properties
@@ -244,9 +262,7 @@ const selection = ref([])
  * Schema
  */
 
-const { data: tables } = api.service('tables').useFind({
-  query: {},
-})
+const { data: tables } = api.service('tables').useFind({ uery: {} })
 
 const userTable = computed(() => tables.value?.[0])
 
@@ -288,6 +304,46 @@ for (let i = 0; i < 1000; i++) {
         bottom: 30,
         right: 40,
       },
+    },
+  )
+}
+
+/**
+ * Columns Select
+ */
+
+const columnValue = ref()
+
+const columns = ref([
+  {
+    field: 'colA',
+    size: 2,
+    filterable: true,
+    title: 'Column A',
+    titleClass: 'text-bold',
+  },
+  {
+    field: 'colB',
+    size: 7,
+    filterable: true,
+    titleClass: ['text-bold'],
+  },
+  {
+    field: 'colC',
+    filterable: true,
+    titleClass: { 'text-bold': true },
+  },
+])
+
+const columnsOptions = ref([])
+
+for (let i = 0; i < 1000; i++) {
+  columnsOptions.value.push(
+    {
+      _id: hexObjectId(),
+      colA: sample(['apple', 'orange', 'grape', 'pear', 'blueberry']),
+      colB: sample(['apple', 'grape', 'pear', 'blueberry']),
+      colC: sample(['apple', 'grape', 'pear', 'blueberry']),
     },
   )
 }

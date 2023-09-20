@@ -22,7 +22,7 @@ export interface BaseInterface extends FeathersTempRecordInterface {
   'deleted_by': NullableString;
 }
 
-export type T18N = (path: string, args?) => string
+export type T18N = (path: string, ...args: unknown[]) => string
 
 export const sizeString = Type.String({
   options: [

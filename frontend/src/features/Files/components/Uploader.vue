@@ -110,7 +110,12 @@ const {
   uploadFile,
 } = useFiles(t)
 
-const { data: files, find } = api.service('files').useFind({ query: props.query, temps: true })
+const params = computed(() => ({
+  query: props.query,
+  temps: true,
+}))
+
+const { data: files, find } = api.service('files').useFind(params)
 find()
 
 /**

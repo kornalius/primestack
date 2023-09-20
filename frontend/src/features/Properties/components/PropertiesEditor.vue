@@ -28,12 +28,12 @@
       :key="name"
       v-model="value[name]"
       v-model:forced-types="currentForcedTypes"
-      v-model:parent="value"
+      :parent="value"
       :disable="disable || disabledProperties?.includes(name)"
       :prop-name="subPropName(name)"
       :schema="schema.properties[name]"
       :required="schema.required.includes(name)"
-      :label="startCase(name)"
+      :label="label(name)"
       :embed-label="embedLabel"
       horizontal
     />
@@ -52,12 +52,12 @@
       :key="name"
       v-model="value[name]"
       v-model:forced-types="currentForcedTypes"
-      v-model:parent="value"
+      :parent="value"
       :disable="disable || disabledProperties?.includes(name)"
       :prop-name="subPropName(name)"
       :schema="schema.properties[name]"
       :required="schema.required.includes(name)"
-      :label="startCase(name)"
+      :label="label(name)"
       :embed-label="embedLabel"
     />
   </q-list>
@@ -86,6 +86,8 @@ const props = defineProps<{
   propName: string
   // object that stores the forced types selected by the user
   forcedTypes?: Record<string, string>
+  // label overrides
+  labels?: Record<string, string>
   // split schema keys into different categories and order items in the properties list
   categories?: Record<string, TFormFieldCategory>
   // use an horizontal layout to display the properties
@@ -152,4 +154,8 @@ watch(() => props.categories, () => {
     category.value = Object.keys(props.categories)[0]
   }
 }, { immediate: true })
+
+const label = (name: string): string => (
+  startCase(props.labels?.[name] || name)
+)
 </script>

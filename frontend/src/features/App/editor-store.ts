@@ -1090,6 +1090,8 @@ export const useAppEditor = defineStore('app-editor', () => {
         optional: false,
         readonly: false,
         queryable: true,
+        refTableId: undefined,
+        refFields: [],
       }
       table.fields.push(f)
       return f

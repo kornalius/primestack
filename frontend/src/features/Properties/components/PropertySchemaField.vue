@@ -91,7 +91,7 @@
     v-model.number="value"
     :min="schema.min"
     :max="schema.max"
-    :step="schema.step"
+    :step="schema.step || 1"
     :markers="property"
     :marker-labels="property"
     :snap="property"
@@ -251,6 +251,28 @@
     @keydown="editor.preventSystemUndoRedo"
   />
 
+  <!-- Table Field Multiple Select -->
+
+  <q-select
+    v-else-if="type === 'select-field'"
+    v-model="value"
+    :label="embedLabel ? label : undefined"
+    :options="fields"
+    :outlined="property"
+    :disable="disabled"
+    option-label="name"
+    option-value="name"
+    autocomplete="name"
+    dense
+    multiple
+    use-chips
+    clearable
+    emit-value
+    map-options
+    options-dense
+    @keydown="editor.preventSystemUndoRedo"
+  />
+
   <!-- Table field -->
 
   <table-field-select
@@ -352,6 +374,7 @@
     :schema="objectSchema"
     :horizontal="objectIsHorizontal"
     :disable="disabled"
+    :labels="objectSchema.labels"
     embed-label
     flat
   />
@@ -384,6 +407,7 @@
         :prop-name="keyName"
         :schema="objectSchema"
         :horizontal="objectIsHorizontalPopup"
+        :labels="objectSchema?.labels"
         embed-label
         flat
       />
@@ -411,6 +435,7 @@
         :schema="dynamicArraySchema(value[index])"
         :categories="dynamicArraySchema(value[index]).categories"
         :horizontal="arrayIsHorizontal"
+        :labels="arraySchema.labels"
         embed-label
         flat
       />
@@ -419,7 +444,7 @@
         v-else
         v-model="value[index]"
         v-model:forced-types="currentForcedTypes"
-        :parent="value"
+        :parent="parent"
         :prop-name="subPropName(index)"
         :schema="arraySchema"
         :required="arraySchema.required"
@@ -468,6 +493,7 @@
             :schema="dynamicArraySchema(scope.value[index])"
             :categories="dynamicArraySchema(scope.value[index]).categories"
             :horizontal="arrayIsHorizontalPopup"
+            :labels="arraySchema.labels"
             embed-label
             flat
           />
@@ -512,8 +538,8 @@
       <query-editor
         v-model="scope.value"
         style="min-width: 600px; min-height: 400px;"
-        :table-id="parent?.tableId"
-        :hide-table-select="!!parent?.tableId"
+        :table-id="tableId"
+        :hide-table-select="!!tableId"
         show-limits
       />
     </q-popup-edit>
@@ -530,6 +556,7 @@ import {
   getTypeFor,
   optionsForSchema,
   primaryToType,
+  tableFields,
 } from '@/shared/schema'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { useQuery } from '@/features/Query/composites'
@@ -807,11 +834,28 @@ const removeItem = (arr: unknown[], index: number): boolean => {
 }
 
 /**
+ * Computes the currently edited user's form
+ */
+const form = computed(() => (
+  editor.forms.find((f) => f._id === editor.formId)
+))
+
+/**
+ * Computes the user's table id from the schema of the form's tableId
+ */
+const tableId = computed((): string | undefined => (
+  (props.schema.tableProp && value.value?.[props.schema.tableProp] as string)
+    || (props.schema.tableProp && props.parent?.[props.schema.tableProp] as string)
+    || props.parent?.tableId
+    || form.value?.tableId
+))
+
+/**
  * Computes the user's table from the parent data
  */
-const table = computed(() => (
-  editor.tables?.find((s) => s._id === props.parent?.tableId)
-))
+const table = computed(() => {
+  return editor.tables?.find((s) => s._id === tableId.value)
+})
 
 /**
  * Computes the query value as a string
@@ -861,25 +905,6 @@ const disabledLabel = computed((): string | undefined => (
 ))
 
 /**
- * Computes the currently edited user's form
- */
-const form = computed(() => (
-  editor.forms.find((f) => f._id === editor.formId)
-))
-
-/**
- * Computes the user's table id from the schema of the form's tableId
- */
-const tableId = computed(() => {
-  if (editor.selectedTable) {
-    return editor.selectedTable
-  }
-  return (props.schema.tableProp && value.value[props.schema.tableProp])
-    || props.parent?.tableId
-    || form.value.tableId
-})
-
-/**
  * Computes the fields from the form's data property
  */
 const extraFields = computed(() => (
@@ -909,6 +934,15 @@ const createAction = (): Action => {
   value.value = a._id
   return a
 }
+
+const fields = computed(() => (
+  tableFields(
+    table.value?.fields || [],
+    table.value?.created,
+    table.value?.updated,
+    table.value?.softDelete,
+  )
+))
 </script>
 
 <style scoped lang="sass">

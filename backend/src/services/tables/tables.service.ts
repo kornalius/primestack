@@ -1,22 +1,26 @@
 import { Application } from '@feathersjs/koa'
+import { pick } from 'lodash'
 import { Static, TObject } from '@feathersjs/typebox'
-import { Forbidden } from '@feathersjs/errors'
+import { virtual } from '@feathersjs/schema'
+import { BadRequest, Forbidden } from '@feathersjs/errors'
 import { AdapterId, NullableAdapterId } from '@feathersjs/mongodb/src/adapter'
 import { Paginated, Params } from '@feathersjs/feathers'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { PaginationOptions } from '@feathersjs/adapter-commons'
 // eslint-disable-next-line import/no-cycle
 import { createService, MongoService } from '@/service'
-import { schema, tableSchema } from '@/shared/schemas/table'
+import { schema, tableFieldSchema, tableSchema } from '@/shared/schemas/table'
 import { dataValidator } from '@/validators'
 import { loadPrev } from '@/hooks/load-prev'
 import { HookContext } from '@/declarations'
-import { fieldsToSchema, indexesToMongo } from '@/shared/schema'
+import { fieldsToSchema, indexesToMongo, refFieldname } from '@/shared/schema'
 import { AnyData } from '@/shared/interfaces/commons'
 import { info } from '@/logger'
 import diff from '@/diff-arrays'
 import { checkRules } from '@/hooks/check-rules'
 import { checkMaxRecords, checkMaxTables } from './tables.hooks'
+
+type TableField = Static<typeof tableFieldSchema>
 
 dataValidator.addSchema(schema)
 
@@ -167,6 +171,47 @@ const createDynamicService = (app: Application, id: string, t: AnyData) => {
   //     ]))
   //   })
 
+  /**
+   * Create resolvers for fields with refTableId and refFields specified.
+   */
+
+  const resultResolvers: Record<string, AnyData> = {}
+
+  t.fields
+    .filter((f: TableField) => f.refTableId)
+    .forEach((f: TableField) => {
+      resultResolvers[refFieldname(f.name)] = virtual(async (
+        record: AnyData,
+        context: HookContext,
+      ) => {
+        if (record[f.name]) {
+          if (f.refTableId === t._id) {
+            throw new BadRequest('Cannot resolve on the same table')
+          }
+
+          if (f.array) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            return (await context.app.service(f.refTableId as string).find({
+              query: {
+                _id: { $in: record[f.name] },
+                $select: f.refFields?.length ? f.refFields : undefined,
+              },
+            })).data
+          }
+
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          const data = await context.app.service(f.refTableId as string).get(record[f.name])
+          if (f.refFields?.length) {
+            return pick(data, f.refFields)
+          }
+          return data
+        }
+        return undefined
+      })
+    })
+
   createService(id, DynamicService, {
     collection: id,
     schema: fieldsToSchema(t.fields, id) as TObject,
@@ -188,6 +233,9 @@ const createDynamicService = (app: Application, id: string, t: AnyData) => {
     validators: {
       // querySyntax: Object.keys(querySyntax).length ? querySyntax : undefined,
     },
+    resolvers: {
+      result: resultResolvers,
+    }
   }).init(app, {})
 }
 

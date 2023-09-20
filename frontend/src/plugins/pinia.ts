@@ -1,5 +1,6 @@
 import { createPinia } from 'pinia'
 import { createPiniaClient } from 'feathers-pinia'
+import { Static } from '@feathersjs/typebox'
 import { feathersClient } from '@/feathers'
 import { AnyData } from '@/shared/interfaces/commons'
 
@@ -15,9 +16,16 @@ import forms from '@/features/Forms/service'
 import actions from '@/features/Actions/service'
 import files from '@/features/Files/service'
 
+import { mongoId } from '@/features/Validation/helpers'
+import { tableSchema, tableFieldSchema } from '@/shared/schemas/table'
+import { refFieldname } from '@/shared/schema'
+
 export const pinia = createPinia()
 
-const syncWithStorage = ['itemsById']
+type Table = Static<typeof tableSchema>
+type TableField = Static<typeof tableFieldSchema>
+
+// const syncWithStorage = ['itemsById']
 
 export const api = createPiniaClient(feathersClient, {
   pinia,
@@ -31,7 +39,7 @@ export const api = createPiniaClient(feathersClient, {
   syncWithStorage: false,
   storage: window.localStorage,
 
-  setupInstance(data: AnyData): AnyData {
+  setupInstance(data: AnyData, { app, servicePath }): AnyData {
     /* eslint-disable no-param-reassign */
     data._id = data._id || undefined
     data.createdAt = data.createdAt || undefined
@@ -41,6 +49,26 @@ export const api = createPiniaClient(feathersClient, {
     data.deletedAt = data.deletedAt || undefined
     data.deletedBy = data.deletedBy || undefined
     /* eslint-enable no-param-reassign */
+
+    // it's a user's table, check for referenced fields
+    if (mongoId.test(servicePath)) {
+      const userTables = app.service('tables').findOneInStore({ query: {} }).value
+      if (userTables) {
+        const table = userTables.list.find((t: Table) => t._id === servicePath)
+        if (table) {
+          // build a config for each field in the table that is referenced
+          const config = {}
+          table.fields.forEach((f: TableField) => {
+            if (f.refTableId) {
+              config[refFieldname(f.name)] = f.refTableId
+            }
+          })
+          // associate ref table fields to stores
+          app.storeAssociated(data, config)
+        }
+      }
+    }
+
     return data
   },
 

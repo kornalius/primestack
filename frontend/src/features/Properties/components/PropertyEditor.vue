@@ -203,6 +203,7 @@
                     :prop-name="subPropName(index)"
                     :schema="dynamicArraySchema(scope.value[index])"
                     :horizontal="arrayIsHorizontalPopup"
+                    :labels="arraySchema?.labels"
                     embed-label
                     flat
                   />
@@ -211,7 +212,7 @@
                     v-else
                     v-model="scope.value[index]"
                     v-model:forced-types="currentForcedTypes"
-                    v-model:parent="scope.value"
+                    :parent="parent"
                     :disable="disable"
                     :prop-name="subPropName(index)"
                     :schema="arraySchema"

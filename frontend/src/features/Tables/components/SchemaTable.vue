@@ -16,7 +16,7 @@
             v-if="!hideFilter"
             v-model="currentFilter"
             class="full-width"
-            :fields="table?.fields"
+            :fields="fields"
             placeholder="Filter expression (ex: field:value)"
             clearable
             dense
@@ -120,7 +120,7 @@ import sift from 'sift'
 import startCase from 'lodash/startCase'
 import { TSchema } from '@feathersjs/typebox'
 import { useSyncedProp } from '@/composites/prop'
-import { columnAlignmentFor, getTypeFor } from '@/shared/schema'
+import { columnAlignmentFor, getTypeFor, tableFields } from '@/shared/schema'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useFeathers } from '@/composites/feathers'
 import { useQuery } from '@/features/Query/composites'
@@ -220,6 +220,15 @@ const table = computed(() => (
   userTable.value?.list.find((tt) => tt._id === props.tableId)
 ))
 
+const fields = computed(() => (
+  tableFields(
+    table.value?.fields || [],
+    table.value?.created,
+    table.value?.updated,
+    table.value?.softDelete,
+  )
+))
+
 let filterTimeout = 0
 
 watch([
@@ -228,7 +237,7 @@ watch([
   () => props.query,
   currentFilter,
 ], () => {
-  const f = filterToMongo(currentFilter.value || '', table.value?.fields) || {}
+  const f = filterToMongo(currentFilter.value || '', fields.value) || {}
 
   const { $limit, $skip } = props.query || {}
   const queryProp = omit(props.query || {}, ['$limit', '$skip'])
