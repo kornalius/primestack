@@ -149,6 +149,8 @@ export const useFormElements = () => ({
       borderLeft: b?.sides?.left ? border : 'none',
       borderRight: b?.sides?.right ? border : 'none',
       borderRadius: `${tl} ${tr} ${bl} ${br}`,
+      color: field.color,
+      backgroundColor: field.backgroundColor,
       ...(component.editStyles || {}),
     }
   },

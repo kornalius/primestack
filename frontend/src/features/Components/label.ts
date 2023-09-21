@@ -56,6 +56,8 @@ export default {
         clearable: true,
       }),
       pre: Type.Boolean(),
+      color: Type.String({ color: true }),
+      backgroundColor: Type.String({ color: true }),
     }),
   ]),
   defaultValues: {
@@ -79,6 +81,8 @@ export default {
         'heading',
         'styling',
         'casing',
+        'color',
+        'backgroundColor',
         'border',
         'padding',
         'margin',

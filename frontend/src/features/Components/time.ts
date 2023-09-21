@@ -1,6 +1,6 @@
 import { QTime } from 'quasar'
 import { StringEnum, Type } from '@feathersjs/typebox'
-import { contentIcon, styleIcon } from '@/shared/icons'
+import { actionIcon, contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { properties, commonProperties, defaultStyleValues } from './common'
 
@@ -12,6 +12,7 @@ export default {
   schema: properties([
     commonProperties.state,
     commonProperties.style,
+    commonProperties.events,
     Type.Object({
       modelValue: Type.String(),
       landscape: Type.Boolean(),
@@ -26,6 +27,7 @@ export default {
       flat: Type.Boolean(),
       bordered: Type.Boolean(),
       hideBottomSpace: Type.Boolean(),
+      backgroundColor: Type.String({ color: true }),
     }),
   ]),
   defaultValues: {
@@ -63,9 +65,18 @@ export default {
         'flat',
         'bordered',
         'hideBottomSpace',
+        'backgroundColor',
         'border',
         'padding',
         'margin',
+      ],
+    },
+    action: {
+      icon: actionIcon,
+      names: [
+        'update',
+        'focus',
+        'blur',
       ],
     },
   },

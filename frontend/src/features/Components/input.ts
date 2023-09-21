@@ -1,6 +1,8 @@
 import { QInput } from 'quasar'
 import { StringEnum, Type } from '@feathersjs/typebox'
-import { contentIcon, modelIcon, styleIcon } from '@/shared/icons'
+import {
+  actionIcon, contentIcon, modelIcon, styleIcon,
+} from '@/shared/icons'
 import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import { properties, commonProperties, defaultStyleValues } from './common'
 
@@ -14,6 +16,7 @@ export default {
     commonProperties.state,
     commonProperties.style,
     commonProperties.rules,
+    commonProperties.events,
     Type.Object({
       modelValue: Type.Union([Type.String(), Type.Null(), Type.Undefined()]),
       mask: Type.String(),
@@ -53,6 +56,8 @@ export default {
       color: Type.String({ color: true }),
       bgColor: Type.String({ color: true }),
       hideBottomSpace: Type.Boolean(),
+      backgroundColor: Type.String({ color: true }),
+      clear: Type.String({ objectid: true, action: true }),
     }),
   ]),
   defaultValues: {
@@ -109,9 +114,19 @@ export default {
         'borderless',
         'standout',
         'rounded',
+        'backgroundColor',
         'border',
         'padding',
         'margin',
+      ],
+    },
+    action: {
+      icon: actionIcon,
+      names: [
+        'update',
+        'clear',
+        'focus',
+        'blur',
       ],
     },
   },

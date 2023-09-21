@@ -1,6 +1,8 @@
 import { QSlider } from 'quasar'
 import { Type } from '@feathersjs/typebox'
-import { contentIcon, modelIcon, styleIcon } from '@/shared/icons'
+import {
+  actionIcon, contentIcon, modelIcon, styleIcon,
+} from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import {
   properties,
@@ -18,6 +20,7 @@ export default {
   schema: properties([
     commonProperties.state,
     commonProperties.style,
+    commonProperties.events,
     Type.Object({
       modelValue: Type.Number(),
       label: Type.String(),
@@ -42,6 +45,8 @@ export default {
       thumbColor: Type.String({ color: true }),
       innerTrackColor: Type.String({ color: true }),
       selectionColor: Type.String({ color: true }),
+      change: Type.String({ objectid: true, action: true }),
+      pan: Type.String({ objectid: true, action: true }),
     }),
   ]),
   defaultValues: {
@@ -95,6 +100,16 @@ export default {
         'border',
         'padding',
         'margin',
+      ],
+    },
+    action: {
+      icon: actionIcon,
+      names: [
+        'update',
+        'change',
+        'pan',
+        'focus',
+        'blur',
       ],
     },
   },

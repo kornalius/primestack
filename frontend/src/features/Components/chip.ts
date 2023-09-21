@@ -1,6 +1,6 @@
 import { QChip } from 'quasar'
 import { Type } from '@feathersjs/typebox'
-import { contentIcon, styleIcon } from '@/shared/icons'
+import { actionIcon, contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { properties, commonProperties, defaultStyleValues } from './common'
 
@@ -13,6 +13,7 @@ export default {
     commonProperties.state,
     commonProperties.size,
     commonProperties.style,
+    commonProperties.events,
     Type.Object({
       modelValue: Type.Boolean(),
       selected: Type.Boolean(),
@@ -24,6 +25,8 @@ export default {
       removable: Type.Boolean(),
       square: Type.Boolean(),
       outline: Type.Boolean(),
+      remove: Type.String({ objectid: true, action: true }),
+      click: Type.String({ objectid: true, action: true }),
     }),
   ]),
   defaultValues: {
@@ -58,6 +61,15 @@ export default {
         'border',
         'padding',
         'margin',
+      ],
+    },
+    action: {
+      icon: actionIcon,
+      names: [
+        'click',
+        'remove',
+        'focus',
+        'blur',
       ],
     },
   },

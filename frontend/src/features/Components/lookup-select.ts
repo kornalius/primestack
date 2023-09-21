@@ -1,5 +1,7 @@
 import { Type } from '@feathersjs/typebox'
-import { contentIcon, modelIcon, styleIcon } from '@/shared/icons'
+import {
+  actionIcon, contentIcon, modelIcon, styleIcon,
+} from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import LookupSelect from '@/features/Tables/components/LookupSelect.vue'
 import { properties, commonProperties, defaultStyleValues } from './common'
@@ -12,6 +14,7 @@ export default {
   schema: properties([
     commonProperties.state,
     commonProperties.style,
+    commonProperties.events,
     Type.Object({
       modelValue: Type.String(),
       tableId: Type.String({ objectid: true, tableid: true }),
@@ -55,6 +58,11 @@ export default {
       rounded: Type.Boolean(),
       itemAligned: Type.Boolean(),
       hideBottomSpace: Type.Boolean(),
+      backgroundColor: Type.String({ color: true }),
+      clear: Type.String({ objectid: true, action: true }),
+      input: Type.String({ objectid: true, action: true }),
+      popupShow: Type.String({ objectid: true, action: true }),
+      popupHide: Type.String({ objectid: true, action: true }),
     }),
   ]),
   defaultValues: {
@@ -116,9 +124,22 @@ export default {
         'itemAligned',
         'hideBottomSpace',
         'virtualScrollHorizontal',
+        'backgroundColor',
         'border',
         'padding',
         'margin',
+      ],
+    },
+    action: {
+      icon: actionIcon,
+      names: [
+        'update',
+        'clear',
+        'input',
+        'popupShow',
+        'popupHide',
+        'focus',
+        'blur',
       ],
     },
   },

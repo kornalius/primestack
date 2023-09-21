@@ -32,6 +32,7 @@ export default {
         toggles: true,
         clearable: true,
       }),
+      backgroundColor: Type.String({ color: true }),
     }),
   ], false),
   defaultValues: {
@@ -48,6 +49,7 @@ export default {
     style: {
       icon: styleIcon,
       names: [
+        'backgroundColor',
         'border',
         'padding',
         'margin',

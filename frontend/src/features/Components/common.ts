@@ -180,6 +180,12 @@ export const commonProperties = {
       { rules: true },
     ),
   }),
+
+  events: Type.Object({
+    update: Type.String({ objectid: true, action: true }),
+    focus: Type.String({ objectid: true, action: true }),
+    blur: Type.String({ objectid: true, action: true }),
+  }),
 }
 
 export const defaultStyleValues = {

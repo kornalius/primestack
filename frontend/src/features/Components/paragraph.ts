@@ -37,6 +37,7 @@ export default {
       toolbarTextColor: Type.String({ color: true }),
       toolbarToggleColor: Type.String({ color: true }),
       toolbarBg: Type.String({ color: true }),
+      backgroundColor: Type.String({ color: true }),
     }),
   ]),
   defaultValues: {
@@ -81,6 +82,7 @@ export default {
       names: [
         'square',
         'flat',
+        'backgroundColor',
         'border',
         'padding',
         'margin',

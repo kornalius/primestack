@@ -13,6 +13,7 @@ export default {
     commonProperties.state,
     commonProperties.size,
     commonProperties.style,
+    commonProperties.events,
     Type.Object({
       label: Type.String(),
       color: Type.String({ color: true }),
@@ -98,6 +99,8 @@ export default {
       icon: actionIcon,
       names: [
         'click',
+        'focus',
+        'blur',
       ],
     },
   },

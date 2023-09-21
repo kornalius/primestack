@@ -17,6 +17,7 @@ export default {
       left: Type.Boolean(),
       right: Type.Boolean(),
       color: Type.String({ color: true }),
+      backgroundColor: Type.String({ color: true }),
     }),
   ]),
   defaultValues: {
@@ -39,6 +40,7 @@ export default {
         'color',
         'left',
         'right',
+        'backgroundColor',
         'border',
         'padding',
         'margin',

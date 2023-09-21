@@ -1,5 +1,5 @@
 import { StringEnum, Type } from '@feathersjs/typebox'
-import { contentIcon, styleIcon } from '@/shared/icons'
+import { actionIcon, contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import ColorField from '@/features/Fields/components/ColorField.vue'
 import { properties, commonProperties, defaultStyleValues } from './common'
@@ -12,6 +12,7 @@ export default {
   schema: properties([
     commonProperties.state,
     commonProperties.style,
+    commonProperties.events,
     Type.Object({
       modelValue: Type.String(),
       defaultValue: Type.String(),
@@ -24,6 +25,12 @@ export default {
       flat: Type.Boolean(),
       bordered: Type.Boolean(),
       hideBottomSpace: Type.Boolean(),
+      clear: Type.String({ objectid: true, action: true }),
+      input: Type.String({ objectid: true, action: true }),
+      remove: Type.String({ objectid: true, action: true }),
+      add: Type.String({ objectid: true, action: true }),
+      popupShow: Type.String({ objectid: true, action: true }),
+      popupHide: Type.String({ objectid: true, action: true }),
     }),
   ]),
   defaultValues: {
@@ -61,6 +68,20 @@ export default {
         'border',
         'padding',
         'margin',
+      ],
+    },
+    action: {
+      icon: actionIcon,
+      names: [
+        'update',
+        'clear',
+        'input',
+        'remove',
+        'add',
+        'popupShow',
+        'popupHide',
+        'focus',
+        'blur',
       ],
     },
   },

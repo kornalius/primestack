@@ -1,6 +1,8 @@
 import { QKnob } from 'quasar'
 import { Type } from '@feathersjs/typebox'
-import { contentIcon, modelIcon, styleIcon } from '@/shared/icons'
+import {
+  actionIcon, contentIcon, modelIcon, styleIcon,
+} from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { properties, commonProperties, defaultStyleValues } from './common'
 
@@ -13,6 +15,7 @@ export default {
   schema: properties([
     commonProperties.state,
     commonProperties.size,
+    commonProperties.events,
     Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
       modelValue: Type.Number({ min: 0, max: 360 }),
@@ -30,6 +33,8 @@ export default {
       centerColor: Type.String({ color: true }),
       trackColor: Type.String({ color: true }),
       thickness: Type.Number(),
+      change: Type.String({ objectid: true, action: true }),
+      dragValue: Type.String({ objectid: true, action: true }),
     }),
   ]),
   defaultValues: {
@@ -72,6 +77,16 @@ export default {
         'border',
         'padding',
         'margin',
+      ],
+    },
+    action: {
+      icon: actionIcon,
+      names: [
+        'update',
+        'change',
+        'dragValue',
+        'focus',
+        'blur',
       ],
     },
   },

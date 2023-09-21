@@ -1,6 +1,6 @@
 import { QToggle } from 'quasar'
 import { Type } from '@feathersjs/typebox'
-import { contentIcon, styleIcon } from '@/shared/icons'
+import { actionIcon, contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { properties, commonProperties, defaultStyleValues } from './common'
 
@@ -13,6 +13,7 @@ export default {
     commonProperties.state,
     commonProperties.size,
     commonProperties.style,
+    commonProperties.events,
     Type.Object({
       modelValue: Type.Boolean(),
       label: Type.String(),
@@ -50,6 +51,14 @@ export default {
         'border',
         'padding',
         'margin',
+      ],
+    },
+    action: {
+      icon: actionIcon,
+      names: [
+        'update',
+        'focus',
+        'blur',
       ],
     },
   },

@@ -1,6 +1,8 @@
 import { QRange } from 'quasar'
 import { Type } from '@feathersjs/typebox'
-import { contentIcon, modelIcon, styleIcon } from '@/shared/icons'
+import {
+  actionIcon, contentIcon, modelIcon, styleIcon,
+} from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import {
   properties,
@@ -17,6 +19,7 @@ export default {
   schema: properties([
     commonProperties.state,
     commonProperties.style,
+    commonProperties.events,
     Type.Object({
       modelValue: Type.Object({ min: Type.Number(), max: Type.Number() }),
       min: Type.Number(),
@@ -49,6 +52,8 @@ export default {
       rightLabelTextColor: Type.String({ color: true }),
       leftThumbColor: Type.String({ color: true }),
       rightThumbColor: Type.String({ color: true }),
+      change: Type.String({ objectid: true, action: true }),
+      pan: Type.String({ objectid: true, action: true }),
     }),
   ]),
   defaultValues: {
@@ -111,6 +116,16 @@ export default {
         'border',
         'padding',
         'margin',
+      ],
+    },
+    action: {
+      icon: actionIcon,
+      names: [
+        'update',
+        'change',
+        'pan',
+        'focus',
+        'blur',
       ],
     },
   },

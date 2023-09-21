@@ -1,6 +1,6 @@
 import { QRating } from 'quasar'
 import { Type } from '@feathersjs/typebox'
-import { contentIcon, styleIcon } from '@/shared/icons'
+import { actionIcon, contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { properties, commonProperties, defaultStyleValues } from './common'
 
@@ -13,6 +13,7 @@ export default {
   schema: properties([
     commonProperties.state,
     commonProperties.size,
+    commonProperties.events,
     Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
       modelValue: Type.Number(),
@@ -63,6 +64,14 @@ export default {
         'border',
         'padding',
         'margin',
+      ],
+    },
+    action: {
+      icon: actionIcon,
+      names: [
+        'update',
+        'focus',
+        'blur',
       ],
     },
   },

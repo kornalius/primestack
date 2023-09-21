@@ -19,6 +19,7 @@ export default {
       square: Type.Boolean(),
       flat: Type.Boolean(),
       bordered: Type.Boolean(),
+      backgroundColor: Type.String({ color: true }),
     }),
   ], false),
   defaultValues: {
@@ -53,6 +54,7 @@ export default {
         'square',
         'flat',
         'bordered',
+        'backgroundColor',
         'border',
         'padding',
         'margin',

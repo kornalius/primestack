@@ -1,6 +1,6 @@
 import { QImg } from 'quasar'
 import { StringEnum, Type } from '@feathersjs/typebox'
-import { contentIcon, styleIcon } from '@/shared/icons'
+import { actionIcon, contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import {
   properties,
@@ -54,6 +54,8 @@ export default {
       ]),
       spinnerColor: Type.String({ color: true }),
       spinnerSize: sizeString,
+      load: Type.String({ objectid: true, action: true }),
+      error: Type.String({ objectid: true, action: true }),
     }),
   ]),
   defaultValues: {
@@ -100,6 +102,13 @@ export default {
         'border',
         'padding',
         'margin',
+      ],
+    },
+    action: {
+      icon: actionIcon,
+      names: [
+        'load',
+        'error',
       ],
     },
   },
