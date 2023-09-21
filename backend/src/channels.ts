@@ -1,6 +1,13 @@
 import { HookContext, Params, RealTimeConnection } from '@feathersjs/feathers'
 import { AuthenticationResult } from '@feathersjs/authentication'
+import { Static } from '@feathersjs/typebox'
+import { mongoId } from '@/hooks/log-event'
+import { schema as shareSchema } from '@/shared/schemas/share'
+import { schema as tableSchema } from '@/shared/schemas/table'
 import { Application } from './declarations'
+
+type Share = Static<typeof shareSchema>
+type TableSchema = Static<typeof tableSchema>
 
 export default function (app: Application): void {
   if (typeof app.channel !== 'function') {
@@ -13,9 +20,8 @@ export default function (app: Application): void {
     app.channel('anonymous').join(connection)
   })
 
-  app.on('login', (authResult: AuthenticationResult, { connection }: Params) => {
-    // connection can be undefined if there is no
-    // real-time connection, e.g. when logging in via REST
+  app.on('login', (authResult: AuthenticationResult, { user, connection }: Params) => {
+    // connection can be undefined if there is no real-time, e.g. when logging in via REST
     if (connection) {
       // The connection is no longer anonymous, remove it
       app.channel('anonymous').leave(connection)
@@ -23,35 +29,46 @@ export default function (app: Application): void {
       // Add it to the authenticated user channel
       app.channel('authenticated').join(connection)
 
-      // Add it to that specific appId channel
-      // app.channel(`appIds/${connection.appId}`).join(connection);
+      // Add it to own specific user channel
+      app.channel(`users/${user?._id}`).join(connection)
     }
   })
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-  app.publish((data: any, hook: HookContext) => [app.channel('authenticated')])
-  // {
-  // eslint-disable-next-line max-len
-  // console.log('Publishing all events to all authenticated users. See `channels.ts` and https://docs.feathersjs.com/api/channels.html for more information.'); // eslint-disable-line
-  //
-  // const appId = hook?.params?.connection?.appId;
-  //
-  // if there is an appId provided
-  // if (appId) {
-  //   if (hook.path === 'refreshes' && hook.method === 'create') {
-  //     // send the update to channels that are not linked to the current appId
-  //     const names = app.channels
-  //       .filter((name) => !['authenticated', `appIds/${appId}`].includes(name));
-  //     return names
-  //       .map((name) => app.channel(name));
-  //   }
-  //
-  //   // only publish to the same channel linked to the current appId
-  //   return [app.channel(`appIds/${appId}`)];
-  // }
-  //
-  //   return [app.channel('authenticated')]
-  // })
+  app.publish(async (data: any, context: HookContext) => {
+    const userId = context?.params?.user?._id
+    if (userId) {
+      // service is a user's table
+      if (mongoId.test(context.path)) {
+        // retrieve all menus shared with the user
+        const userShares = (await context.app.service('shares').find({
+          query: {
+            userId,
+          },
+        })).data as Share[]
+
+        const userTables = (await context.app.service('tables').find({
+          query: {
+            tableIds: { $in: [context.path] }
+          },
+        }, context.params)).data as TableSchema[]
+
+        const share = userShares.find((s: Share) => (
+          s.tableIds?.includes(context.path)
+        ))
+
+        // so if this table is shared with the user or he/she is the creator of the table
+        if (share || userTables.length) {
+          // only publish to the same channel linked to the current user id
+          return [app.channel(`users/${userId}`)]
+        }
+
+        return []
+      }
+    }
+
+    return [app.channel('authenticated')]
+  })
 
   // Here you can add event publishers to channels set up in `channels.ts`
   // To publish only for a specific event use `app.publish(eventname, () => {})`

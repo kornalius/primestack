@@ -190,6 +190,7 @@ export const schema = Type.Object(
     _id: Type.String({ objectid: true }),
     userId: Type.Optional(Type.String({ objectid: true })),
     list: Type.Array(tableSchema),
+    tableIds: Type.Optional(Type.Array(Type.String())),
   },
   { $id: 'TableList', additionalProperties: false },
 )

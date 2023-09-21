@@ -133,6 +133,8 @@ export const schema = Type.Object(
   {
     _id: Type.String({ objectid: true }),
     list: Type.Array(formSchema),
+    formIds: Type.Optional(Type.Array(Type.String())),
+    tableIds: Type.Optional(Type.Array(Type.String())),
   },
   { $id: 'FormList', additionalProperties: false },
 )

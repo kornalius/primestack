@@ -648,7 +648,7 @@ export const useAppEditor = defineStore('app-editor', () => {
 
     states.value.actions = cloneDeep(
       (await api.service('actions').patch(userActions.value._id, {
-        ...userForms.value,
+        ...userActions.value,
         list: states.value.actions,
       }) as AnyData).list,
     )

@@ -20,14 +20,14 @@ import diff from '@/diff-arrays'
 import { checkRules } from '@/hooks/check-rules'
 import { checkMaxRecords, checkMaxTables } from './tables.hooks'
 
+type TableSchema = Static<typeof schema>
+type Table = Static<typeof tableSchema>
 type TableField = Static<typeof tableFieldSchema>
 
 dataValidator.addSchema(schema)
 
 const path = 'tables'
 const collection = 'tables'
-
-type Table = Static<typeof tableSchema>
 
 class Service extends MongoService {}
 
@@ -266,6 +266,11 @@ const updateCollections = (context: HookContext) => {
 }
 
 export default function (app: Application): void {
+  // return a list of form ids in the list
+  const tableIds = virtual(async (value: TableSchema) => (
+    value?.list.map((t: Table) => t._id.toString())
+  ))
+
   createService(path, Service, {
     collection,
     schema,
@@ -290,6 +295,14 @@ export default function (app: Application): void {
           loadPrev,
           updateCollections,
         ],
+      },
+    },
+    resolvers: {
+      data: {
+        tableIds,
+      },
+      result: {
+        tableIds,
       },
     },
   }).init(app, {})

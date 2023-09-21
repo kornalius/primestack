@@ -59,6 +59,10 @@ export const schema = Type.Object(
     _id: Type.String({ objectid: true }),
     userId: Type.Optional(Type.String({ objectid: true })),
     list: Type.Array(menuSchema),
+    menuIds: Type.Optional(Type.Array(Type.String())),
+    formIds: Type.Optional(Type.Array(Type.String())),
+    tableIds: Type.Optional(Type.Array(Type.String())),
+    userIds: Type.Optional(Type.Array(Type.String())),
   },
   { $id: 'MenuList', additionalProperties: false },
 )

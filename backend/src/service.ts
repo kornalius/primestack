@@ -120,7 +120,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
     ? {
       createdAt: async () => Date.now(),
       createdBy: async (value: AnyData, record: AnyData, context: HookContext) => (
-        context.params?.user?._id
+        context.params?.user?._id.toString()
       ),
     } : {}
 
@@ -128,7 +128,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
     ? {
       updatedAt: async () => Date.now(),
       updatedBy: async (value: AnyData, record: AnyData, context: HookContext) => (
-        context.params?.user?._id
+        context.params?.user?._id.toString()
       ),
     } : {}
 
@@ -193,7 +193,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
   const dataValidator = getValidator(dataSchema, validatorForData)
   const dataResolver = resolve<TSType, HookContext>(
     {
-      ...(options.resolvers?.data?.$create || options.resolvers?.data?.$create || {}),
+      ...(options.resolvers?.data?.$create || options.resolvers?.data || {}),
       ...createdResolver as AnyData,
       ...nullifyDeletedAtResolver as AnyData,
     }
@@ -214,7 +214,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
   const patchValidator = getValidator(patchSchema, validatorForData)
   const patchResolver = resolve<TSType, HookContext>(
     {
-      ...(options.resolvers?.data?.$patch || options.resolvers?.data?.$patch || {}),
+      ...(options.resolvers?.data?.$patch || options.resolvers?.data || {}),
       ...updatedResolver as AnyData,
     }
   )
@@ -319,16 +319,16 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
       ],
       create: [
         ...expandHooks('before.create'),
-        schemaHooks.validateData(dataValidator),
         schemaHooks.resolveData(dataResolver),
+        schemaHooks.validateData(dataValidator),
       ],
       update: [
         ...expandHooks('before.update'),
       ],
       patch: [
         ...expandHooks('before.patch'),
-        schemaHooks.validateData(patchValidator),
         schemaHooks.resolveData(patchResolver),
+        schemaHooks.validateData(patchValidator),
       ],
       remove: [
         ...(options.softDelete ? [softDelete] : []),
@@ -414,7 +414,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
         // this mostly serves as the table id for the service
         name,
         paginate: paginate || app.get('paginate'),
-        operators: ['$regex', '$options', '$not'],
+        operators: ['$regex', '$options', '$not', '$elemMatch'],
         Model: collection
           ? app.get('mongodbClient')
             .then((db: Db) => db.collection(collection))

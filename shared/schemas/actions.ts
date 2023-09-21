@@ -19,6 +19,7 @@ export const schema = Type.Object(
   {
     _id: Type.String({ objectid: true }),
     list: Type.Array(actionSchema),
+    actionIds: Type.Optional(Type.Array(Type.String())),
   },
   { $id: 'ActionList', additionalProperties: false },
 )

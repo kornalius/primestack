@@ -479,11 +479,8 @@ const hideUI = computed(() => (
  * Editor save and end
  */
 const save = async () => {
-  try {
-    await editor.save()
-  } finally {
-    endEdit()
-  }
+  await editor.save()
+  endEdit()
 }
 
 /**

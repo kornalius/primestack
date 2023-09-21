@@ -21,7 +21,7 @@ export default function (app: Application): void {
     methods: ['find', 'get', 'create'],
     resolvers: {
       query: {
-        ownerId: async (value: AnyData, query: AnyData, context: HookContext) => {
+        ownerId: async (value: AnyData, context: HookContext) => {
           if (context.params?.user) {
             return context.params.user._id
           }
