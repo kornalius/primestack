@@ -4,6 +4,7 @@
     v-bind="$attrs"
     :rows="filteredRows as any"
     :columns="columns as any"
+    :selection="selectionStyle"
   >
     <template #top>
       <div class="row q-gutter-sm full-width items-center">
@@ -169,6 +170,8 @@ const props = defineProps<{
   removeDisable?: boolean
   // show temps records from store
   temps?: boolean
+  // type of selection allowed
+  selectionStyle?: 'single' | 'multiple' | 'none'
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits

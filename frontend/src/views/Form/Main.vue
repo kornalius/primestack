@@ -22,7 +22,7 @@
           :hide-filter="form.hideFilter"
           add-button="start"
           remove-button="end"
-          selection="single"
+          selection-style="single"
           row-key="_id"
           virtual-scroll
           bordered

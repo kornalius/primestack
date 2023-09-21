@@ -185,6 +185,9 @@ export const commonProperties = {
     update: Type.String({ objectid: true, action: true }),
     focus: Type.String({ objectid: true, action: true }),
     blur: Type.String({ objectid: true, action: true }),
+    keydown: Type.String({ objectid: true, action: true }),
+    keypress: Type.String({ objectid: true, action: true }),
+    keyup: Type.String({ objectid: true, action: true }),
   }),
 }
 

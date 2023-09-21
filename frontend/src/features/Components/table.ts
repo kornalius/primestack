@@ -1,5 +1,5 @@
 import { StringEnum, Type } from '@feathersjs/typebox'
-import { contentIcon, styleIcon } from '@/shared/icons'
+import { actionIcon, contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { AnyData } from '@/shared/interfaces/commons'
 import SchemaTable from '@/features/Tables/components/SchemaTable.vue'
@@ -13,6 +13,7 @@ export default {
   schema: properties([
     commonProperties.state,
     commonProperties.style,
+    commonProperties.events,
     Type.Object({
       noRouteFullscreenExit: Type.Boolean(),
       grid: Type.Boolean(),
@@ -65,7 +66,7 @@ export default {
         rowsNumber: Type.Number(),
       }),
       rowsPerPageOptions: Type.Array(Type.Number()),
-      selection: StringEnum(['single', 'multiple', 'none']),
+      selectionStyle: StringEnum(['single', 'multiple', 'none']),
       binaryStateSort: Type.Boolean(),
       columnSortOrder: Type.String(),
       color: Type.String({ color: true }),
@@ -88,6 +89,10 @@ export default {
         ),
       }),
       hideFilter: Type.Boolean(),
+      rowClick: Type.String({ objectid: true, action: true }),
+      rowDblClick: Type.String({ objectid: true, action: true }),
+      rowContextMenu: Type.String({ objectid: true, action: true }),
+      selection: Type.String({ objectid: true, action: true }),
     }),
   ], false),
   defaultValues: {
@@ -176,6 +181,17 @@ export default {
         'border',
         'padding',
         'margin',
+      ],
+    },
+    action: {
+      icon: actionIcon,
+      names: [
+        'rowClick',
+        'rowDblClick',
+        'rowContextMenu',
+        'selection',
+        'focus',
+        'blur',
       ],
     },
   },

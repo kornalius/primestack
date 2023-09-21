@@ -14,7 +14,7 @@
           add-button="start"
           remove-button="end"
           title="Tables"
-          selection="single"
+          selection-style="single"
           row-key="_id"
           virtual-scroll
           bordered
@@ -41,7 +41,7 @@
           add-button="start"
           remove-button="end"
           title="Fields"
-          selection="single"
+          selection-style="single"
           row-key="_id"
           virtual-scroll
           bordered
