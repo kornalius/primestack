@@ -1,10 +1,11 @@
 import { Type } from '@feathersjs/typebox'
+import ExType from '../extypes'
 
 export const schema = Type.Intersect([
   Type.Object({
-    _id: Type.String({ objectid: true }),
-    tableId: Type.String({ objectid: true }),
-    docId: Type.String({ objectid: true }),
+    _id: ExType.Id(),
+    tableId: ExType.Id(),
+    docId: ExType.Id(),
     originalFilename: Type.String(),
     newFilename: Type.String(),
     filepath: Type.String(),

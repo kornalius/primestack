@@ -1,7 +1,8 @@
 import { Type } from '@feathersjs/typebox'
+import ExType from '../extypes'
 
 export const schema = Type.Object({
-  tableId: Type.Optional(Type.String({ objectid: true, tableid: true })),
+  tableId: Type.Optional(ExType.Table()),
   read: Type.Boolean(),
   create: Type.Boolean(),
   update: Type.Boolean(),

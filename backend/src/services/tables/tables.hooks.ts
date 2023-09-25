@@ -285,15 +285,33 @@ const updateCollections = (context: HookContext) => {
   return context
 }
 
+const forceCreatedAndUpdated = async (context: HookContext) => {
+  // skip check if from internal server
+  if (!context.params.connection) {
+    return context
+  }
+
+  context.data.list.forEach((table: Table) => {
+    // eslint-disable-next-line no-param-reassign
+    table.created = true
+    // eslint-disable-next-line no-param-reassign
+    table.updated = true
+  })
+
+  return context
+}
+
 export default {
   before: {
     all: [],
     create: [
       checkMaxTables,
+      forceCreatedAndUpdated,
     ],
     patch: [
       loadPrev,
       updateCollections,
+      forceCreatedAndUpdated,
     ],
   },
 }

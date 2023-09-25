@@ -1,8 +1,9 @@
 import { Type } from '@feathersjs/typebox'
+import ExType from '../extypes'
 
 export const actionElementSchema = Type.Recursive((self) => Type.Object(
   {
-    _id: Type.String({ objectid: true }),
+    _id: ExType.Id(),
     _type: Type.String(),
     _children: Type.Array(self)
   }
@@ -10,14 +11,14 @@ export const actionElementSchema = Type.Recursive((self) => Type.Object(
 
 export const actionSchema = Type.Object(
   {
-    _id: Type.String({ objectid: true }),
+    _id: ExType.Id(),
     _actions: Type.Array(actionElementSchema)
   }
   , { $id: 'Action' })
 
 export const schema = Type.Object(
   {
-    _id: Type.String({ objectid: true }),
+    _id: ExType.Id(),
     list: Type.Array(actionSchema),
     actionIds: Type.Optional(Type.Array(Type.String())),
   },

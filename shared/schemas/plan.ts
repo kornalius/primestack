@@ -1,9 +1,10 @@
 import { Type } from '@feathersjs/typebox'
 import { schema as maxSchema } from './rule'
+import ExType from '../extypes'
 
 export const schema = Type.Intersect([
   Type.Object({
-    _id: Type.String({ objectid: true }),
+    _id: ExType.Id(),
     code: Type.String(),
     name: Type.String(),
     description: Type.String(),

@@ -1,15 +1,16 @@
 import { Type, StringEnum } from '@feathersjs/typebox'
 import { contentIcon } from '../icons'
+import ExType from '../extypes'
 
 export const targetValues = ['_blank', '_self', '_parent', '_top']
 
 export const tabSchema = Type.Object(
   {
-    _id: Type.String({ objectid: true }),
+    _id: ExType.Id(),
     label: Type.String(),
-    icon: Type.String({ icon: true }),
-    color: Type.Optional(Type.String({ color: true })),
-    formId: Type.String({ objectid: true, service: 'forms' }),
+    icon: ExType.Icon(),
+    color: Type.Optional(ExType.Color()),
+    formId: ExType.Id({ service: 'forms' }),
   },
   {
     $id: 'Tab',
@@ -29,10 +30,10 @@ export const tabSchema = Type.Object(
 
 export const menuSchema = Type.Object(
   {
-    _id: Type.String({ objectid: true }),
+    _id: ExType.Id(),
     label: Type.String(),
-    icon: Type.String({ icon: true }),
-    color: Type.Optional(Type.String({ color: true })),
+    icon: ExType.Icon(),
+    color: Type.Optional(ExType.Color()),
     href: Type.Optional(Type.String()),
     target: Type.Optional(StringEnum(targetValues)),
     tabs: Type.Array(tabSchema),
@@ -56,13 +57,14 @@ export const menuSchema = Type.Object(
 
 export const schema = Type.Object(
   {
-    _id: Type.String({ objectid: true }),
-    userId: Type.Optional(Type.String({ objectid: true })),
+    _id: ExType.Id(),
+    userId: Type.Optional(ExType.Id()),
     list: Type.Array(menuSchema),
-    menuIds: Type.Optional(Type.Array(Type.String())),
-    formIds: Type.Optional(Type.Array(Type.String())),
-    tableIds: Type.Optional(Type.Array(Type.String())),
-    userIds: Type.Optional(Type.Array(Type.String())),
+    // from resolvers
+    menuIds: Type.Optional(Type.Array(ExType.Id())),
+    formIds: Type.Optional(Type.Array(ExType.Id())),
+    tableIds: Type.Optional(Type.Array(ExType.Id())),
+    userIds: Type.Optional(Type.Array(ExType.Id())),
   },
   { $id: 'MenuList', additionalProperties: false },
 )

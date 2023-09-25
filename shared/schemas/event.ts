@@ -1,17 +1,18 @@
 import { Type } from '@feathersjs/typebox'
+import ExType from '../extypes'
 
 export const schema = Type.Object({
-  _id: Type.String({ objectid: true }),
+  _id: ExType.Id(),
   // current user id who performs the action
-  userId: Type.Optional(Type.String({ objectid: true })),
+  userId: Type.Optional(ExType.Id()),
   // owner of the custom table the action is performed on
-  ownerId: Type.Optional(Type.String({ objectid: true })),
+  ownerId: Type.Optional(ExType.Id()),
   // action type ('find', 'get', 'create', 'update', 'patch', 'remove')
   method: Type.String(),
   // service name
   service: Type.String(),
   // document id the action is performed on
-  docId: Type.Optional(Type.String({ objectid: true })),
+  docId: Type.Optional(ExType.Id()),
   // timestamp
   time: Type.Number(),
   // query from the params

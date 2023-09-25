@@ -1,16 +1,16 @@
 import { StringEnum, Type } from '@feathersjs/typebox'
 import { tableIcon } from '../icons'
-import { AnyData } from '../interfaces/commons'
+import ExType from '../extypes'
 
 export const columnSchema = Type.Recursive((self) => Type.Object(
   {
-    _id: Type.String({ objectid: true }),
+    _id: ExType.Id(),
     name: Type.String(),
     _type: Type.String(),
     size: Type.Optional(Type.Number()),
     _fields: Type.Array(Type.Object(
       {
-        _id: Type.String({ objectid: true }),
+        _id: ExType.Id(),
         name: Type.String(),
         _type: Type.String(),
         _columns: Type.Optional(Type.Array(self)),
@@ -23,7 +23,7 @@ export const columnSchema = Type.Recursive((self) => Type.Object(
 
 export const fieldSchema = Type.Object(
   {
-    _id: Type.String({ objectid: true }),
+    _id: ExType.Id(),
     name: Type.String(),
     _type: Type.String(),
     _columns: Type.Optional(Type.Array(columnSchema)),
@@ -33,8 +33,8 @@ export const fieldSchema = Type.Object(
 
 export const formSchema = Type.Object(
   {
-    _id: Type.String({ objectid: true }),
-    data: Type.Optional(Type.Object({}, { json: true })),
+    _id: ExType.Id(),
+    data: Type.Optional(ExType.JSON()),
     hideFilter: Type.Optional(Type.Boolean({ skip: true })),
     grid: Type.Optional(Type.Boolean()),
     gridHeader: Type.Optional(Type.Boolean()),
@@ -56,14 +56,9 @@ export const formSchema = Type.Object(
     selection: Type.Optional(StringEnum(['single', 'multiple', 'none'])),
     binaryStateSort: Type.Optional(Type.Boolean()),
     tableColspan: Type.Optional(Type.Number()),
-    tableId: Type.Optional(Type.String({ objectid: true, tableid: true })),
+    tableId: Type.Optional(ExType.Table()),
     hideTable: Type.Optional(Type.Boolean()),
-    query: Type.Optional(Type.Object({}, {
-      query: true,
-      disable: (value: unknown, parent: AnyData) => (
-        parent.tableId ? false : 'Please select a table first'
-      ),
-    })),
+    query: Type.Optional(ExType.Query()),
     _fields: Type.Array(fieldSchema),
   },
   {
@@ -131,10 +126,11 @@ export const formSchema = Type.Object(
 
 export const schema = Type.Object(
   {
-    _id: Type.String({ objectid: true }),
+    _id: ExType.Id(),
     list: Type.Array(formSchema),
-    formIds: Type.Optional(Type.Array(Type.String())),
-    tableIds: Type.Optional(Type.Array(Type.String())),
+    // from resolvers
+    formIds: Type.Optional(Type.Array(ExType.Id())),
+    tableIds: Type.Optional(Type.Array(ExType.Id())),
   },
   { $id: 'FormList', additionalProperties: false },
 )

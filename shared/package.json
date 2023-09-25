@@ -12,5 +12,7 @@
   "dependencies": {
     "@feathersjs/typebox": "^5.0.6"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "tslib": "^2.6.2"
+  }
 }

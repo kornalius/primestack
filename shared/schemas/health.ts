@@ -1,8 +1,9 @@
 import { Type } from '@feathersjs/typebox'
+import ExType from '../extypes'
 
 export const schema = Type.Object(
   {
-    _id: Type.String({ objectid: true }),
+    _id: ExType.Id(),
     version: Type.String(),
     uptime: Type.Number(),
     calls: Type.Object({

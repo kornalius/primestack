@@ -1,5 +1,6 @@
 import { Type, StringEnum } from '@feathersjs/typebox'
 import { contentIcon, modelIcon } from '../icons'
+import ExType from '../extypes'
 
 export const supportedFieldTypes = [
   'string',
@@ -48,7 +49,7 @@ export const supportedMethods = [
 
 export const tableFieldSchema = Type.Object(
   {
-    _id: Type.String({ objectid: true }),
+    _id: ExType.Id(),
     name: Type.String(),
     type: StringEnum(supportedFieldTypes),
     hidden: Type.Boolean(),
@@ -74,22 +75,17 @@ export const tableFieldSchema = Type.Object(
         value: Type.String(),
       }),
     )),
-    refTableId: Type.Optional(
-      Type.String({ objectid: true, tableid: true })
-    ),
-    refFields: Type.Optional(
-      Type.Array(
-        Type.String(),
-        { field: true, tableProp: 'refTableId', select: true }
-      )
-    ),
+    refTableId: Type.Optional(ExType.Table()),
+    refFields: Type.Optional(Type.Array(
+      ExType.Field({ select: true, tableProp: 'refTableId' }),
+    )),
   },
   {
     $id: 'TableField',
     additionalProperties: false,
     labels: {
-      'refTableId': 'Reference Table',
-      'refFields': 'Referenced Fields',
+      refTableId: 'Reference Table',
+      refFields: 'Referenced Fields',
     },
     categories: {
       content: {
@@ -129,8 +125,8 @@ export const tableFieldSchema = Type.Object(
 
 export const tableIndexSchema = Type.Object(
   {
-    _id: Type.String({ objectid: true }),
-    name: Type.String({ field: true }),
+    _id: ExType.Id(),
+    name: ExType.Field(),
     order: Type.Number({ minimum: -1, maximum: 1 }),
     unique: Type.Boolean(),
     sparse: Type.Boolean(),
@@ -153,7 +149,7 @@ export const tableIndexSchema = Type.Object(
 
 export const tableSchema = Type.Object(
   {
-    _id: Type.String({ objectid: true }),
+    _id: ExType.Id(),
     name: Type.String(),
     methods: Type.Array(StringEnum(supportedMethods)),
     created: Type.Boolean(),
@@ -174,10 +170,7 @@ export const tableSchema = Type.Object(
         names: [
           'name',
           'methods',
-          'created',
-          'updated',
           'softDelete',
-          'user',
           'indexes',
         ],
       },
@@ -187,10 +180,11 @@ export const tableSchema = Type.Object(
 
 export const schema = Type.Object(
   {
-    _id: Type.String({ objectid: true }),
-    userId: Type.Optional(Type.String({ objectid: true })),
+    _id: ExType.Id(),
+    userId: Type.Optional(ExType.Id()),
     list: Type.Array(tableSchema),
-    tableIds: Type.Optional(Type.Array(Type.String())),
+    // from resolvers
+    tableIds: Type.Optional(Type.Array(ExType.Id())),
   },
   { $id: 'TableList', additionalProperties: false },
 )

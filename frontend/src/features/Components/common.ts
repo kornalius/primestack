@@ -63,13 +63,13 @@ export const ruleTypes: RuleType[] = [
   {
     name: 'before',
     options: Type.Object({
-      date: Type.String({ date: true }),
+      date: Type.String({ format: 'date' }),
     }),
   },
   {
     name: 'after',
     options: Type.Object({
-      date: Type.String({ date: true }),
+      date: Type.String({ format: 'date' }),
     }),
   },
   {

@@ -1,21 +1,23 @@
 import { Type } from '@feathersjs/typebox'
 import { schema as ruleSchema } from './rule'
+import ExType from '../extypes'
 
 export const schema = Type.Object(
   {
-    _id: Type.String({ objectid: true }),
+    _id: ExType.Id(),
     // target userId
-    userId: Type.String({ objectid: true }),
+    userId: ExType.Id(),
     // target email if not registered
     email: Type.String({ email: true }),
     // menuId to share
-    menuId: Type.String({ objectid: true }),
+    menuId: ExType.Id(),
     rules: Type.Array(ruleSchema),
     disabled: Type.Boolean(),
-    validFrom: Type.Optional(Type.String({ date: true })),
-    validUntil: Type.Optional(Type.String({ date: true })),
-    formIds: Type.Optional(Type.Array(Type.String())),
-    tableIds: Type.Optional(Type.Array(Type.String())),
+    validFrom: Type.Optional(ExType.Date()),
+    validUntil: Type.Optional(ExType.Time()),
+    // from resolvers
+    formIds: Type.Optional(Type.Array(ExType.Id())),
+    tableIds: Type.Optional(Type.Array(ExType.Id())),
   },
   { $id: 'Share', additionalProperties: false },
 )
