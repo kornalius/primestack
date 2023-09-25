@@ -1,19 +1,18 @@
 <template>
   <q-card
     class="q-gutter-sm"
-    v-bind="bindFields(field)"
+    v-bind="fieldBinds(field, schemaForField(field), ctx)"
     :style="style(field)"
   >
     <q-card-section
       v-for="cardSection in cardSections"
       :key="cardSection._id"
-      v-bind="bindFields(cardSection)"
+      v-bind="fieldBinds(cardSection, schemaForField(cardSection), ctx)"
       :style="style(cardSection)"
     >
       <form-display
         v-model="value"
         :fields="cardSection._fields"
-        :components="components"
       />
     </q-card-section>
 
@@ -23,14 +22,13 @@
       :class="{
         'card-cardAction': true,
       }"
-      v-bind="bindFields(cardAction)"
+      v-bind="fieldBinds(cardAction, schemaForField(cardAction), ctx)"
       style="z-index: 1;"
       :style="style(cardAction)"
     >
       <form-display
         v-model="value"
         :fields="cardAction._fields"
-        :components="components"
       />
     </q-card-actions>
   </q-card>
@@ -38,8 +36,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { TSchema } from '@feathersjs/typebox'
-import { TFormColumn, TFormComponent, TFormField } from '@/shared/interfaces/forms'
+import { TFormColumn, TFormField } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 import { useExpression } from '@/features/Expression/composites'
 import { useFormElements } from '../composites'
@@ -49,7 +46,6 @@ const props = defineProps<{
   modelValue: Record<string, unknown>
   field: TFormField
   columns: TFormColumn[]
-  components: TFormComponent[]
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -59,7 +55,7 @@ const emit = defineEmits<{
 
 const value = useModelValue(props, emit)
 
-const { fieldBinds, style } = useFormElements()
+const { fieldBinds, style, schemaForField } = useFormElements()
 
 const { buildCtx } = useExpression()
 
@@ -74,13 +70,4 @@ const cardActions = computed(() => (
   // eslint-disable-next-line no-underscore-dangle
   props.columns.filter((c) => c._type === 'card-actions')
 ))
-
-const schemaForType = (f: TFormField | TFormColumn): TSchema | undefined => (
-  // eslint-disable-next-line no-underscore-dangle
-  props.components.find((c) => c.type === f._type)?.schema
-)
-
-const bindFields = (field: TFormField | TFormColumn) => (
-  fieldBinds(field, schemaForType(field), ctx)
-)
 </script>

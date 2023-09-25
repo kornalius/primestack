@@ -4,11 +4,9 @@ import {
   actionIcon, contentIcon, modelIcon, styleIcon,
 } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
+import ExType from '@/shared/extypes'
 import {
-  properties,
-  commonProperties,
-  sizeString,
-  defaultStyleValues,
+  properties, commonProperties, sizeString, defaultStyleValues, commonEventArgs,
 } from './common'
 
 export default {
@@ -39,14 +37,14 @@ export default {
       trackSize: sizeString,
       markers: Type.Union([Type.Boolean(), Type.Number()]),
       markerLabels: Type.Boolean(),
-      color: Type.String({ color: true }),
-      labelColor: Type.String({ color: true }),
-      labelTextColor: Type.String({ color: true }),
-      thumbColor: Type.String({ color: true }),
-      innerTrackColor: Type.String({ color: true }),
-      selectionColor: Type.String({ color: true }),
-      change: Type.String({ objectid: true, action: true }),
-      pan: Type.String({ objectid: true, action: true }),
+      color: ExType.Color(),
+      labelColor: ExType.Color(),
+      labelTextColor: ExType.Color(),
+      thumbColor: ExType.Color(),
+      innerTrackColor: ExType.Color(),
+      selectionColor: ExType.Color(),
+      change: ExType.Action(),
+      pan: ExType.Action(),
     }),
   ]),
   defaultValues: {
@@ -115,5 +113,10 @@ export default {
         'keyup',
       ],
     },
+  },
+  eventArgs: {
+    ...commonEventArgs,
+    change: (value) => ({ value }),
+    pan: (phase) => ({ phase }),
   },
 } as TFormComponent

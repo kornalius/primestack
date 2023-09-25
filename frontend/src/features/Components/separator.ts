@@ -2,6 +2,7 @@ import { QSeparator } from 'quasar'
 import { Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
+import ExType from '@/shared/extypes'
 import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
@@ -16,7 +17,7 @@ export default {
       spaced: Type.Boolean(),
       inset: Type.Boolean(),
       vertical: Type.Boolean(),
-      color: Type.String({ color: true }),
+      color: ExType.Color(),
     }),
   ], false),
   defaultValues: {

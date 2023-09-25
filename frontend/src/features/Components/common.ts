@@ -191,6 +191,37 @@ export const commonProperties = {
   }),
 }
 
+export const clickEvent = (e: MouseEvent) => ({
+  x: e.x,
+  y: e.y,
+  shift: e.shiftKey,
+  ctrl: e.ctrlKey,
+  alt: e.altKey,
+  meta: e.metaKey,
+})
+
+export const focusEvent = (e: FocusEvent) => ({ relatedTarget: e.relatedTarget })
+
+export const updateEvent = (value: unknown) => ({ value })
+
+export const keyboardEvent = (e: KeyboardEvent) => ({
+  key: e.key,
+  code: e.code,
+  shift: e.shiftKey,
+  ctrl: e.ctrlKey,
+  alt: e.altKey,
+  meta: e.metaKey,
+})
+
+export const commonEventArgs = {
+  update: updateEvent,
+  focus: focusEvent,
+  blur: focusEvent,
+  keydown: keyboardEvent,
+  keypress: keyboardEvent,
+  keyup: keyboardEvent,
+}
+
 export const defaultStyleValues = {
   border: {
     style: 'none',

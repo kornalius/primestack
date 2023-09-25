@@ -2,7 +2,10 @@ import { QRating } from 'quasar'
 import { Type } from '@feathersjs/typebox'
 import { actionIcon, contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties, defaultStyleValues } from './common'
+import ExType from '@/shared/extypes'
+import {
+  properties, commonProperties, defaultStyleValues, commonEventArgs,
+} from './common'
 
 export default {
   type: 'rating',
@@ -17,15 +20,15 @@ export default {
     Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
       modelValue: Type.Number(),
-      icon: Type.String({ icon: true }),
-      iconSelected: Type.String({ icon: true }),
-      iconHalf: Type.String({ icon: true }),
+      icon: ExType.Icon(),
+      iconSelected: ExType.Icon(),
+      iconHalf: ExType.Icon(),
       max: Type.Number(),
       noReset: Type.Boolean(),
       noDimming: Type.Boolean(),
-      color: Type.String({ color: true }),
-      colorSelected: Type.String({ color: true }),
-      colorHalf: Type.String({ color: true }),
+      color: ExType.Color(),
+      colorSelected: ExType.Color(),
+      colorHalf: ExType.Color(),
     }),
   ]),
   defaultValues: {
@@ -74,5 +77,8 @@ export default {
         'blur',
       ],
     },
+  },
+  eventArgs: {
+    ...commonEventArgs,
   },
 } as TFormComponent

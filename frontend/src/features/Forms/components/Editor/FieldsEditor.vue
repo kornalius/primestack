@@ -14,7 +14,6 @@
       <template #item="{ index }">
         <form-element
           v-model="fields[index]"
-          :components="components"
           :selected="editor.isSelected(fields[index]._id)"
           @click="editor.select"
           @remove="remove"
@@ -26,7 +25,7 @@
 
 <script setup lang="ts">
 import draggable from 'vuedraggable'
-import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
+import { TFormField } from '@/shared/interfaces/forms'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useModelValue } from '@/composites/prop'
 import { useAppEditor } from '@/features/App/editor-store'
@@ -34,7 +33,6 @@ import FormElement from './FormElement.vue'
 
 const props = defineProps<{
   modelValue: unknown[]
-  components: TFormComponent[]
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits

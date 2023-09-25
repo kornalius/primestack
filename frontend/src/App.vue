@@ -296,7 +296,6 @@
 
     <app-properties
       v-if="!hideUI"
-      :components="components"
       :actions="actions"
     />
 
@@ -315,17 +314,16 @@ import {
 import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
 // import { useSnacks } from '@/features/Snacks/store'
-import SnacksDisplay from '@/features/Snacks/components/Snacks.vue'
 import { useAppEditor } from '@/features/App/editor-store'
 import { useAuth } from '@/features/Auth/store'
-import { useFormElements } from '@/features/Forms/composites'
 import { useActions } from '@/features/Actions/composites'
-import TabsEditor from '@/features/Tabs/components/TabsEditor.vue'
-import MenusEditor from '@/features/Menus/components/MenusEditor.vue'
-import AppProperties from '@/features/App/components/AppProperties.vue'
 import { useUrl } from '@/composites/url'
 import { useFeathers } from '@/composites/feathers'
 import { useI18n } from 'vue-i18n'
+import SnacksDisplay from '@/features/Snacks/components/Snacks.vue'
+import TabsEditor from '@/features/Tabs/components/TabsEditor.vue'
+import MenusEditor from '@/features/Menus/components/MenusEditor.vue'
+import AppProperties from '@/features/App/components/AppProperties.vue'
 
 const quasar = useQuasar()
 
@@ -390,10 +388,6 @@ watch(() => editor.active, () => {
 })
 
 const { actions } = useActions()
-
-const { components: comps } = useFormElements()
-
-const components = ref(comps)
 
 // function refreshHealth() {
 //   api.service('health').get(0).then((result) => {

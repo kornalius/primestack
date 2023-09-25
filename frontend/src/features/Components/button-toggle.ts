@@ -2,7 +2,10 @@ import { QBtnToggle } from 'quasar'
 import { Type } from '@feathersjs/typebox'
 import { actionIcon, contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties, defaultStyleValues } from './common'
+import ExType from '@/shared/extypes'
+import {
+  properties, commonProperties, defaultStyleValues, commonEventArgs,
+} from './common'
 
 export default {
   type: 'button-toggle',
@@ -24,9 +27,9 @@ export default {
       options: Type.Array(Type.Object({
         label: Type.String(),
         value: Type.String(),
-        icon: Type.String({ icon: true }),
+        icon: ExType.Icon(),
       }, { horizontalPopup: true })),
-      clear: Type.String({ objectid: true, action: true }),
+      clear: ExType.Action(),
     }),
   ]),
   defaultValues: {
@@ -68,5 +71,9 @@ export default {
         'blur',
       ],
     },
+  },
+  eventArgs: {
+    ...commonEventArgs,
+    clear: () => ({}),
   },
 } as TFormComponent

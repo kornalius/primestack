@@ -1,9 +1,16 @@
 import { Static, TSchema } from '@feathersjs/typebox'
 import startCase from 'lodash/startCase'
 import omit from 'lodash/omit'
-import { TFormColumn, TFormField } from '@/shared/interfaces/forms'
+import {
+  EventArgs, EventArgsFn, TFormColumn, TFormField,
+} from '@/shared/interfaces/forms'
 import { AnyData, T18N } from '@/shared/interfaces/commons'
-import { components, componentForType, componentForField } from '@/features/Components'
+import {
+  components,
+  componentForType,
+  componentForField,
+  componentsByType,
+} from '@/features/Components'
 import { useValidators } from '@/features/Validation/composites'
 import { getTypeFor } from '@/shared/schema'
 import { flattenFields, newNameForField } from '@/shared/form'
@@ -19,10 +26,22 @@ type Action = Static<typeof actionSchema>
 
 const validators = useValidators()
 
+/**
+ * Returns the event arguments for a field action
+ *
+ * @param f
+ */
+const eventArgsForField = (f: TFormField | TFormColumn): EventArgs | undefined => (
+  // eslint-disable-next-line no-underscore-dangle
+  componentsByType[f._type]?.eventArgs
+)
+
 export const useFormElements = () => ({
   componentForField,
 
   componentForType,
+
+  componentsByType,
 
   components,
 
@@ -50,15 +69,18 @@ export const useFormElements = () => ({
 
     scanSchema(schema)
 
-    const userActions = ctx.api.service('actions').findOneInStore({ query: {} })?.value?.list || []
+    const userActions = ctx.api.service('actions')
+      .findOneInStore({ query: {} })?.value?.list || []
 
-    const callEventAction = (id: string) => async () => {
-      const act = userActions.find((a: Action) => a._id === id)
-      if (act) {
-        // eslint-disable-next-line no-underscore-dangle
-        await ctx.exec(act._actions, ctx)
+    const callEventAction = (id: string, eventArgsFn?: EventArgsFn) => (
+      async (...args: unknown[]) => {
+        const act = userActions.find((a: Action) => a._id === id)
+        if (act) {
+          // eslint-disable-next-line no-underscore-dangle
+          await ctx.exec(act._actions, { ...ctx, $scoped: eventArgsFn(...args) })
+        }
       }
-    }
+    )
 
     return Object.keys(omit(field, fieldsToOmit))
       .reduce((acc, k) => {
@@ -68,7 +90,11 @@ export const useFormElements = () => ({
         // }
         // if it's an action, use onXxxx event key names instead
         if (schema.properties[k] && getTypeFor(schema.properties[k]) === 'action') {
-          return { ...acc, [`on${startCase(k)}`]: callEventAction(field[k] as string) }
+          const eventArgsFn = eventArgsForField(field)?.[k]
+          return {
+            ...acc,
+            [`on${startCase(k)}`]: callEventAction(field[k] as string, eventArgsFn),
+          }
         }
         // schema property specifies its own prop name
         if (schema.properties[k] && schema.properties[k].propname) {
@@ -78,10 +104,12 @@ export const useFormElements = () => ({
       }, {})
   },
 
-  schemaForType: (f: TFormField | TFormColumn): TSchema | undefined => (
+  schemaForField: (f: TFormField | TFormColumn): TSchema | undefined => (
     // eslint-disable-next-line no-underscore-dangle
-    components.find((c) => c.type === f._type)?.schema
+    componentsByType[f._type]?.schema
   ),
+
+  eventArgsForField,
 
   // eslint-disable-next-line no-underscore-dangle
   isRow: (field: TFormField): boolean => field._type === 'row',
@@ -101,14 +129,17 @@ export const useFormElements = () => ({
   // eslint-disable-next-line no-underscore-dangle
   isLabel: (field: TFormField): boolean => field._type === 'label',
 
+  serializeRules: (
+    t: T18N,
+    field: TFormField,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  serializeRules: (t: T18N, field: TFormField): ((...args: any[]) => (val: string) => true | string)[] => (
+  ): ((...args: any[]) => (val: string) => true | string)[] => (
     (field.rules as AnyData[])?.map((r) => validators[r.type](t, omit(r, ['type'])))
   ),
 
   isNumericInput: (field: TFormField): boolean => {
     // eslint-disable-next-line no-underscore-dangle
-    const comp = components.find((c) => c.type === field._type)
+    const comp = componentsByType[field._type]
     if (comp) {
       if (typeof comp.numericInput === 'function') {
         return comp.numericInput(field)
@@ -119,9 +150,8 @@ export const useFormElements = () => ({
   },
 
   style: (field: AnyData): AnyData => {
-    const component = components
-      // eslint-disable-next-line no-underscore-dangle
-      .find((c) => c.type === field._type)
+    // eslint-disable-next-line no-underscore-dangle
+    const component = componentsByType[field._type]
 
     const b = field.border
 
@@ -158,14 +188,21 @@ export const useFormElements = () => ({
   autoGenerateForm: (tableId: string): void => {
     const editor = useAppEditor()
 
-    const addFieldToForm = (type: string, f: TableField, options?: AnyData): TFormField => {
-      const component = components.find((c) => c.type === type)
-      const field = editor.addFieldToForm(component, options)
-      field.field = f.name
-      field.label = f.name
-      field.disable = f.readonly
-      field.readonly = f.readonly
-      return field
+    const addFieldToForm = (
+      type: string,
+      f: TableField,
+      options?: AnyData,
+    ): TFormField | undefined => {
+      const component = componentsByType[type]
+      if (component) {
+        const field = editor.addFieldToForm(component, options)
+        field.field = f.name
+        field.label = f.name
+        field.disable = f.readonly
+        field.readonly = f.readonly
+        return field
+      }
+      return undefined
     }
 
     const table = editor.tableInstance(tableId)
@@ -209,7 +246,10 @@ export const useFormElements = () => ({
               addFieldToForm('iconSelect', f)
               break
             case 'objectid':
-              addFieldToForm('select', f, { optionLabel: 'name', optionValue: '_id' })
+              addFieldToForm('select', f, {
+                optionLabel: 'name',
+                optionValue: '_id',
+              })
               break
             default:
           }

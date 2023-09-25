@@ -5,13 +5,12 @@ import { actionElementSchema } from '@/shared/schemas/actions'
 import { fieldSchema } from '@/shared/actions/insert'
 // eslint-disable-next-line import/no-cycle
 import { getProp } from '@/features/Expression/composites'
+import { useVariables } from '@/features/Variables/store'
 // eslint-disable-next-line import/no-cycle
 import { actions } from './definitions'
 
 type ActionElement = Static<typeof actionElementSchema>
-
 type Action = Static<typeof actionElementSchema>
-
 type Field = Static<typeof fieldSchema>
 
 export const actionsByType = (
@@ -35,12 +34,17 @@ export const execForType = (
 export const execAction = async (a: ActionElement, args: AnyData) => {
   // eslint-disable-next-line no-underscore-dangle
   const exec = execForType[a._type]
-  await exec({ ...args, ...omit(a, ['_id', '_type']) })
+  await exec({ ...args, ...omit(a, ['_id', '_type', '$scoped']), ...args.$scoped })
 }
 
-export const exec = async (list: ActionElement[], args: AnyData) => (
-  Promise.all(list.map((a) => execAction(a, args)))
-)
+export const exec = async (list: ActionElement[], args: AnyData) => {
+  const variables = useVariables()
+  const old = variables.getRaw('_scoped')
+  variables.setRaw('_scoped', args.$scoped)
+  const r = Promise.all(list.map((a) => execAction(a, args)))
+  variables.setRaw('_scoped', old)
+  return r
+}
 
 export const componentForAction = (action: Action): unknown => {
   // eslint-disable-next-line no-underscore-dangle

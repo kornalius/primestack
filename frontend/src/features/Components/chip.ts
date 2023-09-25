@@ -2,7 +2,10 @@ import { QChip } from 'quasar'
 import { Type } from '@feathersjs/typebox'
 import { actionIcon, contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties, defaultStyleValues } from './common'
+import ExType from '@/shared/extypes'
+import {
+  properties, commonProperties, defaultStyleValues, commonEventArgs, clickEvent,
+} from './common'
 
 export default {
   type: 'chip',
@@ -18,15 +21,15 @@ export default {
       modelValue: Type.Boolean(),
       selected: Type.Boolean(),
       label: Type.String(),
-      icon: Type.String({ icon: true }),
-      color: Type.String({ color: true }),
-      textColor: Type.String({ color: true }),
+      icon: ExType.Icon(),
+      color: ExType.Color(),
+      textColor: ExType.Color(),
       clickable: Type.Boolean(),
       removable: Type.Boolean(),
       square: Type.Boolean(),
       outline: Type.Boolean(),
-      remove: Type.String({ objectid: true, action: true }),
-      click: Type.String({ objectid: true, action: true }),
+      remove: ExType.Action(),
+      click: ExType.Action(),
     }),
   ]),
   defaultValues: {
@@ -72,5 +75,10 @@ export default {
         'blur',
       ],
     },
+  },
+  eventArgs: {
+    ...commonEventArgs,
+    remove: () => ({}),
+    click: clickEvent,
   },
 } as TFormComponent

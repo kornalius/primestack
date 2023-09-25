@@ -968,14 +968,14 @@ export const useAppEditor = defineStore('app-editor', () => {
   /**
    * Adds a new column to a field
    *
-   * @param components Component instances
+   * @param componentsByType Component instances classed by type
    * @param componentType Type of component of the field
    * @param field Field instance to add the column to
    *
    * @returns {TFormColumn} New tab instance
    */
   const addColumnToField = (
-    components: TFormComponent[],
+    componentsByType: Record<string, TFormComponent>,
     componentType: string,
     field: TFormField,
   ): TFormColumn => {
@@ -989,7 +989,7 @@ export const useAppEditor = defineStore('app-editor', () => {
       type = 'card-section'
     }
 
-    const colComponent = components.find((c) => c.type === type)
+    const colComponent = componentsByType[type]
 
     const col = {
       _id: hexObjectId(),

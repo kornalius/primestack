@@ -1,4 +1,4 @@
-import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
+import { TFormColumn, TFormComponent, TFormField } from '@/shared/interfaces/forms'
 import label from './label'
 import chip from './chip'
 import icon from './icon'
@@ -86,7 +86,13 @@ export const componentForType = (
   ), {})
 )
 
-export const componentForField = (field: TFormField): TFormComponent => {
+export const componentsByType = (
+  components.reduce((acc, c) => (
+    { ...acc, [c.type]: c }
+  ), {})
+)
+
+export const componentForField = (field: TFormField | TFormColumn): TFormComponent | undefined => {
   // eslint-disable-next-line no-underscore-dangle
   let comp = componentForType[field._type]
   if (typeof comp === 'function') {

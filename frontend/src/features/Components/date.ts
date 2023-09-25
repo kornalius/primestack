@@ -4,7 +4,10 @@ import {
   actionIcon, contentIcon, modelIcon, styleIcon,
 } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties, defaultStyleValues } from './common'
+import ExType from '@/shared/extypes'
+import {
+  properties, commonProperties, defaultStyleValues, commonEventArgs,
+} from './common'
 
 export default {
   type: 'date',
@@ -35,16 +38,16 @@ export default {
       navigationMinYearMonth: Type.String(),
       navigationMaxYearMonth: Type.String(),
       noUnset: Type.Boolean(),
-      color: Type.String({ color: true }),
-      textColor: Type.String({ color: true }),
+      color: ExType.Color(),
+      textColor: ExType.Color(),
       square: Type.Boolean(),
       flat: Type.Boolean(),
       bordered: Type.Boolean(),
       hideBottomSpace: Type.Boolean(),
-      backgroundColor: Type.String({ color: true }),
-      navigation: Type.String({ objectid: true, action: true }),
-      rangeStart: Type.String({ objectid: true, action: true }),
-      rangeEnd: Type.String({ objectid: true, action: true }),
+      backgroundColor: ExType.Color(),
+      navigation: ExType.Action(),
+      rangeStart: ExType.Action(),
+      rangeEnd: ExType.Action(),
     }),
   ]),
   defaultValues: {
@@ -119,5 +122,11 @@ export default {
         'keyup',
       ],
     },
+  },
+  eventArgs: {
+    ...commonEventArgs,
+    navigation: ({ year, month }) => ({ year, month }),
+    rangeStart: ({ year, month, day }) => ({ year, month, day }),
+    rangeEnd: ({ year, month, day }) => ({ year, month, day }),
   },
 } as TFormComponent

@@ -32,13 +32,13 @@
         </q-tooltip>
       </q-btn>
 
-      <div class="cursor-pointer text-grey-9">
+      <div class="cursor-pointer">
         <q-tooltip :delay="500">
           {{ actionDescription }}
         </q-tooltip>
 
         <div class="row">
-          <div class="col-auto q-mr-sm">
+          <div class="col-auto q-mr-sm text-grey-9">
             <q-icon
               :name="actionIcon"
               :color="actionIconColor"

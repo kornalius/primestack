@@ -1,6 +1,7 @@
 import { TFrontAction } from '@/features/Actions/interface'
 // eslint-disable-next-line import/no-cycle
 import dialog from './dialog'
+import console from './console'
 import notify from './notify'
 import navigate from './navigate'
 import setvar from './setvar'
@@ -20,6 +21,7 @@ const separator = (label: string, icon: string, color?: string): TFrontAction =>
 
 export const actions = [
   separator('Interactions', 'mdi-message-badge', 'green-2'),
+  console,
   dialog,
   notify,
   separator('Flow', 'mdi-source-branch', 'purple-2'),

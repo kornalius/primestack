@@ -4,6 +4,7 @@ import {
   actionIcon, contentIcon, modelIcon, styleIcon,
 } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
+import ExType from '@/shared/extypes'
 import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
@@ -29,12 +30,12 @@ export default {
       innerMax: Type.Number(),
       step: Type.Number(),
       fontSize: Type.String(),
-      color: Type.String({ color: true }),
-      centerColor: Type.String({ color: true }),
-      trackColor: Type.String({ color: true }),
+      color: ExType.Color(),
+      centerColor: ExType.Color(),
+      trackColor: ExType.Color(),
       thickness: Type.Number(),
-      change: Type.String({ objectid: true, action: true }),
-      dragValue: Type.String({ objectid: true, action: true }),
+      change: ExType.Action(),
+      dragValue: ExType.Action(),
     }),
   ]),
   defaultValues: {
@@ -89,5 +90,9 @@ export default {
         'blur',
       ],
     },
+  },
+  eventArgs: {
+    change: (value: number) => ({ value }),
+    dragValue: (value: number) => ({ value }),
   },
 } as TFormComponent

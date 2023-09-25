@@ -2,6 +2,7 @@ import { QSpinnerIos } from 'quasar'
 import { Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
+import ExType from '@/shared/extypes'
 import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
@@ -14,7 +15,7 @@ export default {
     commonProperties.size,
     Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
-      color: Type.String({ color: true }),
+      color: ExType.Color(),
       thickness: Type.Number(),
     }),
   ], false),

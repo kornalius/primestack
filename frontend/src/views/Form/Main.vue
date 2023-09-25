@@ -74,7 +74,6 @@
             <form-display
               v-model="currentData"
               :fields="fields"
-              :components="components"
             />
 
             <!-- <pre>{{ currentData }}</pre>-->
@@ -127,7 +126,6 @@
             v-else-if="preview"
             v-model="previewFormData"
             :fields="fields"
-            :components="components"
           />
 
           <form-editor
@@ -135,7 +133,6 @@
             v-model="fields"
             :form="form"
             :preview="preview"
-            :components="components"
           />
 
           <div
@@ -278,10 +275,7 @@ const table = computed(() => (
   userTable.value?.list.find((tt) => tt._id === form.value?.tableId)
 ))
 
-const {
-  components,
-  flattenFields,
-} = useFormElements()
+const { flattenFields, componentsByType } = useFormElements()
 
 const currentId = ref()
 const prevData = ref({})
@@ -311,7 +305,7 @@ const defaultValues = computed(() => (
   flattenFields(fields.value)
     .reduce((acc, f: TFormField) => {
       // eslint-disable-next-line no-underscore-dangle
-      const comp = components.find((c) => c.type === f._type)
+      const comp = componentsByType[f._type]
       if (comp && !comp.nokey) {
         const v = f.modelValue !== undefined && f.field !== undefined && f.field !== null
           ? { [f.field]: defaultValueForSchema(comp.schema.properties.modelValue) }
@@ -334,7 +328,7 @@ const formModelValues = computed(() => {
     }
     if (field.field !== undefined && field.field !== null) {
       // eslint-disable-next-line no-underscore-dangle
-      const comp = components.find((c) => c.type === field._type)
+      const comp = componentsByType[field._type]
       let v = getProp(field.modelValue, ctx)
       if (comp.numericInput && v !== undefined) {
         v = Number(v)

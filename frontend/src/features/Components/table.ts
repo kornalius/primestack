@@ -3,7 +3,10 @@ import { actionIcon, contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { AnyData } from '@/shared/interfaces/commons'
 import SchemaTable from '@/features/Tables/components/SchemaTable.vue'
-import { properties, commonProperties, defaultStyleValues } from './common'
+import ExType from '@/shared/extypes'
+import {
+  properties, commonProperties, defaultStyleValues, commonEventArgs,
+} from './common'
 
 export default {
   type: 'table',
@@ -69,7 +72,7 @@ export default {
       selectionStyle: StringEnum(['single', 'multiple', 'none']),
       binaryStateSort: Type.Boolean(),
       columnSortOrder: Type.String(),
-      color: Type.String({ color: true }),
+      color: ExType.Color(),
       flat: Type.Boolean(),
       bordered: Type.Boolean(),
       square: Type.Boolean(),
@@ -81,18 +84,13 @@ export default {
       virtualScrollStickySizeStart: Type.Number(),
       virtualScrollStickySizeEnd: Type.Number(),
       tableColspan: Type.Number(),
-      tableId: Type.String({ objectid: true, tableid: true }),
-      query: Type.Object({}, {
-        query: true,
-        disable: (value: unknown, parent: AnyData) => (
-          parent.tableId ? false : 'Please select a table first'
-        ),
-      }),
+      tableId: ExType.Table(),
+      query: ExType.Query(),
       hideFilter: Type.Boolean(),
-      rowClick: Type.String({ objectid: true, action: true }),
-      rowDblClick: Type.String({ objectid: true, action: true }),
-      rowContextMenu: Type.String({ objectid: true, action: true }),
-      selection: Type.String({ objectid: true, action: true }),
+      rowClick: ExType.Action(),
+      rowDblClick: ExType.Action(),
+      rowContextMenu: ExType.Action(),
+      selection: ExType.Action(),
     }),
   ], false),
   defaultValues: {
@@ -194,5 +192,25 @@ export default {
         'blur',
       ],
     },
+  },
+  eventArgs: {
+    ...commonEventArgs,
+    rowClick: (e: Event, row: AnyData, index: number) => ({
+      row,
+      index,
+    }),
+    rowDblClick: (e: Event, row: AnyData, index: number) => ({
+      row,
+      index,
+    }),
+    rowContextMenu: (e: Event, row: AnyData, index: number) => ({
+      row,
+      index,
+    }),
+    selection: ({ rows, keys, added }) => ({
+      rows,
+      keys,
+      added,
+    }),
   },
 } as TFormComponent

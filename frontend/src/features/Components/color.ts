@@ -2,7 +2,10 @@ import { StringEnum, Type } from '@feathersjs/typebox'
 import { actionIcon, contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import ColorField from '@/features/Fields/components/ColorField.vue'
-import { properties, commonProperties, defaultStyleValues } from './common'
+import ExType from '@/shared/extypes'
+import {
+  properties, commonProperties, defaultStyleValues, commonEventArgs,
+} from './common'
 
 export default {
   type: 'color',
@@ -25,12 +28,12 @@ export default {
       flat: Type.Boolean(),
       bordered: Type.Boolean(),
       hideBottomSpace: Type.Boolean(),
-      clear: Type.String({ objectid: true, action: true }),
-      input: Type.String({ objectid: true, action: true }),
-      remove: Type.String({ objectid: true, action: true }),
-      add: Type.String({ objectid: true, action: true }),
-      popupShow: Type.String({ objectid: true, action: true }),
-      popupHide: Type.String({ objectid: true, action: true }),
+      clear: ExType.Action(),
+      input: ExType.Action(),
+      remove: ExType.Action(),
+      add: ExType.Action(),
+      popupShow: ExType.Action(),
+      popupHide: ExType.Action(),
     }),
   ]),
   defaultValues: {
@@ -87,5 +90,14 @@ export default {
         'keyup',
       ],
     },
+  },
+  eventArgs: {
+    ...commonEventArgs,
+    clear: () => ({}),
+    input: (value: string) => ({ value }),
+    remove: ({ index, value }) => ({ index, value }),
+    add: ({ index, value }) => ({ index, value }),
+    popupShow: () => ({}),
+    popupHide: () => ({}),
   },
 } as TFormComponent

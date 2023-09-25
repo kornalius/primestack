@@ -26,7 +26,7 @@
       color="blue-4"
       size="xs"
       round
-      @click="editor.addColumnToField(components, component.type, field)"
+      @click="editor.addColumnToField(componentsByType, component.type, field)"
     >
       <q-tooltip :delay="500">
         Add Column or Section
@@ -67,7 +67,6 @@
       <form-element-row
         v-if="isRow(field)"
         v-model="field"
-        :components="components"
         @remove="(col) => editor.removeColumnFromField(col, field)"
         @click="onColumnClick"
       />
@@ -76,7 +75,6 @@
         v-else-if="isCard(field)"
         v-model="field"
         class="card"
-        :components="components"
         @remove="(col) => editor.removeColumnFromField(col, field)"
         @click="onColumnClick"
       />
@@ -86,7 +84,7 @@
         v-model:columns="field.columns"
         v-model:visible-columns="field.visibleColumns"
         :model-value="displayValue"
-        v-bind="fieldBinds(field, schemaForType(field), ctx)"
+        v-bind="fieldBinds(field, schemaForField(field), ctx)"
         :query="queryToMongo(field.query, fieldTable, ctx.$expr)"
         :style="style(field)"
       />
@@ -94,7 +92,7 @@
       <q-icon
         v-else-if="isIcon(field)"
         :name="displayValue as string"
-        v-bind="fieldBinds(field, schemaForType(field), ctx)"
+        v-bind="fieldBinds(field, schemaForField(field), ctx)"
         :style="style(field)"
       />
 
@@ -102,7 +100,7 @@
         :is="componentForField(field)"
         v-else
         :model-value="displayValue"
-        v-bind="fieldBinds(field, schemaForType(field), ctx)"
+        v-bind="fieldBinds(field, schemaForField(field), ctx)"
         :style="style(field)"
       />
 
@@ -118,8 +116,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { TSchema } from '@feathersjs/typebox'
-import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
+import { TFormField, TFormColumn } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 import { useAppEditor } from '@/features/App/editor-store'
 import { useQuery } from '@/features/Query/composites'
@@ -132,7 +129,6 @@ import FormElementCard from './FormElementCard.vue'
 
 const props = defineProps<{
   modelValue: TFormField
-  components: TFormComponent[]
   selected?: boolean
 }>()
 
@@ -144,6 +140,7 @@ const emit = defineEmits<{
 }>()
 
 const {
+  componentsByType,
   componentForField,
   fieldBinds,
   style,
@@ -151,6 +148,7 @@ const {
   isCard,
   isIcon,
   isTable,
+  schemaForField,
 } = useFormElements()
 
 const { buildCtx, getProp } = useExpression()
@@ -165,7 +163,7 @@ const editor = useAppEditor()
 
 const component = computed(() => (
   // eslint-disable-next-line no-underscore-dangle
-  props.components.find((c) => c.type === field.value._type)
+  componentsByType[field.value._type]
 ))
 
 const fieldTable = computed(() => (
@@ -173,11 +171,6 @@ const fieldTable = computed(() => (
     ? editor.tables.find((t) => t._id === field.value.tableId)
     : undefined
 ))
-
-const schemaForType = (f: TFormField): TSchema | undefined => (
-  // eslint-disable-next-line no-underscore-dangle
-  props.components.find((c) => c.type === f._type)?.schema
-)
 
 const onClick = () => {
   emit('click', props.modelValue._id)

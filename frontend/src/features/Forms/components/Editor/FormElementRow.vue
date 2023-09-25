@@ -12,7 +12,7 @@
         selected: editor.isSelected(column._id),
         hovered: editor.isHovered(column._id),
       }"
-      v-bind="fieldBinds(column, schemaForType(column), ctx)"
+      v-bind="fieldBinds(column, schemaForField(column), ctx)"
       style="z-index: 1;"
       :style="style(column)"
       @mouseover.stop="editor.hover(column._id)"
@@ -47,7 +47,6 @@
 
       <fields-editor
         v-model="column._fields"
-        :components="components"
       />
     </div>
   </div>
@@ -55,8 +54,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { TSchema } from '@feathersjs/typebox'
-import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
+import { TFormField, TFormColumn } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 // eslint-disable-next-line import/no-cycle
 import { useAppEditor } from '@/features/App/editor-store'
@@ -68,7 +66,6 @@ import FieldsEditor from './FieldsEditor.vue'
 
 const props = defineProps<{
   modelValue: TFormField
-  components: TFormComponent[]
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -81,13 +78,18 @@ const emit = defineEmits<{
 
 const field = useModelValue(props, emit)
 
-const { fieldBinds, style } = useFormElements()
+const {
+  fieldBinds,
+  style,
+  schemaForField,
+  componentsByType,
+} = useFormElements()
 
 const { buildCtx } = useExpression()
 
 const ctx = buildCtx()
 
-const columnIcon = computed(() => stringValue(props.components.find((c) => c.type === 'col')?.icon))
+const columnIcon = computed(() => stringValue(componentsByType.col?.icon))
 
 const colName = (column: TFormColumn): string => {
   if (column.col === undefined || column.col === null || column.col === '') {
@@ -95,11 +97,6 @@ const colName = (column: TFormColumn): string => {
   }
   return `col-${column.col}`
 }
-
-const schemaForType = (f: TFormField | TFormColumn): TSchema | undefined => (
-  // eslint-disable-next-line no-underscore-dangle
-  props.components.find((c) => c.type === f._type)?.schema
-)
 
 /**
  * Selection

@@ -2,6 +2,7 @@ import { Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import Editor from '@/features/Fields/components/Editor.vue'
+import ExType from '@/shared/extypes'
 import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
@@ -33,11 +34,11 @@ export default {
         key: Type.Number(),
       })),
       toolbar: Type.Array(Type.Array(Type.String())),
-      toolbarColor: Type.String({ color: true }),
-      toolbarTextColor: Type.String({ color: true }),
-      toolbarToggleColor: Type.String({ color: true }),
-      toolbarBg: Type.String({ color: true }),
-      backgroundColor: Type.String({ color: true }),
+      toolbarColor: ExType.Color(),
+      toolbarTextColor: ExType.Color(),
+      toolbarToggleColor: ExType.Color(),
+      toolbarBg: ExType.Color(),
+      backgroundColor: ExType.Color(),
     }),
   ]),
   defaultValues: {

@@ -2,7 +2,10 @@ import { QBtn } from 'quasar'
 import { StringEnum, Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon, actionIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties, defaultStyleValues } from './common'
+import ExType from '@/shared/extypes'
+import {
+  properties, commonProperties, defaultStyleValues, commonEventArgs, clickEvent,
+} from './common'
 
 export default {
   type: 'button',
@@ -16,8 +19,8 @@ export default {
     commonProperties.events,
     Type.Object({
       label: Type.String(),
-      color: Type.String({ color: true }),
-      textColor: Type.String({ color: true }),
+      color: ExType.Color(),
+      textColor: ExType.Color(),
       to: Type.String(),
       target: Type.String(),
       replace: Type.Boolean(),
@@ -45,7 +48,7 @@ export default {
       unelevated: Type.Boolean(),
       fab: Type.Boolean(),
       fabMini: Type.Boolean(),
-      click: Type.String({ objectid: true, action: true }),
+      click: ExType.Action(),
     }),
   ], false),
   defaultValues: {
@@ -103,5 +106,9 @@ export default {
         'blur',
       ],
     },
+  },
+  eventArgs: {
+    ...commonEventArgs,
+    click: clickEvent,
   },
 } as TFormComponent

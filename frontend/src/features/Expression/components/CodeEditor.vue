@@ -647,7 +647,7 @@ const myCompletions = (context: CompletionContext) => {
       ...extraFields(table?.created, table?.updated, table?.softDelete).map((f) => f.name),
     ])
   } else if (check(['var', 'ArgList', '(', 'String'])) {
-    options = toOptions(variables.variableNames)
+    options = toOptions(variables.names)
   } else if (nodeBefore.name === 'String') {
     options = []
   }

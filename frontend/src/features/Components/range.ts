@@ -4,11 +4,9 @@ import {
   actionIcon, contentIcon, modelIcon, styleIcon,
 } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
+import ExType from '@/shared/extypes'
 import {
-  properties,
-  commonProperties,
-  sizeString,
-  defaultStyleValues,
+  properties, commonProperties, sizeString, defaultStyleValues, commonEventArgs,
 } from './common'
 
 export default {
@@ -41,19 +39,19 @@ export default {
       switchMarkerLabelSide: Type.Boolean(),
       thumbSize: sizeString,
       trackSize: sizeString,
-      labelColor: Type.String({ color: true }),
-      labelTextColor: Type.String({ color: true }),
-      trackColor: Type.String({ color: true }),
-      thumbColor: Type.String({ color: true }),
-      selectionColor: Type.String({ color: true }),
-      leftLabelColor: Type.String({ color: true }),
-      leftLabelTextColor: Type.String({ color: true }),
-      rightLabelColor: Type.String({ color: true }),
-      rightLabelTextColor: Type.String({ color: true }),
-      leftThumbColor: Type.String({ color: true }),
-      rightThumbColor: Type.String({ color: true }),
-      change: Type.String({ objectid: true, action: true }),
-      pan: Type.String({ objectid: true, action: true }),
+      labelColor: ExType.Color(),
+      labelTextColor: ExType.Color(),
+      trackColor: ExType.Color(),
+      thumbColor: ExType.Color(),
+      selectionColor: ExType.Color(),
+      leftLabelColor: ExType.Color(),
+      leftLabelTextColor: ExType.Color(),
+      rightLabelColor: ExType.Color(),
+      rightLabelTextColor: ExType.Color(),
+      leftThumbColor: ExType.Color(),
+      rightThumbColor: ExType.Color(),
+      change: ExType.Action(),
+      pan: ExType.Action(),
     }),
   ]),
   defaultValues: {
@@ -131,5 +129,10 @@ export default {
         'keyup',
       ],
     },
+  },
+  eventArgs: {
+    ...commonEventArgs,
+    change: (value) => ({ value }),
+    pan: (phase) => ({ phase }),
   },
 } as TFormComponent

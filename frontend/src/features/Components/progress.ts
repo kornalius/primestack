@@ -2,6 +2,7 @@ import { QCircularProgress } from 'quasar'
 import { Type } from '@feathersjs/typebox'
 import { contentIcon, modelIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
+import ExType from '@/shared/extypes'
 import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
@@ -24,9 +25,9 @@ export default {
       min: Type.Number(),
       max: Type.Number(),
       fontSize: Type.String(),
-      color: Type.String({ color: true }),
-      centerColor: Type.String({ color: true }),
-      trackColor: Type.String({ color: true }),
+      color: ExType.Color(),
+      centerColor: ExType.Color(),
+      trackColor: ExType.Color(),
       thickness: Type.Number({ step: 0.1 }),
       animationSpeed: Type.Number(),
     }),

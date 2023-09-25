@@ -1,28 +1,26 @@
 <template>
   <div
     class="row q-gutter-sm"
-    v-bind="bindFields(field)"
+    v-bind="fieldBinds(field, schemaForField(field), ctx)"
     :style="style(field)"
   >
     <div
       v-for="column in columns"
       :key="column._id"
       :class="{ [colName(column)]: true }"
-      v-bind="bindFields(column)"
+      v-bind="fieldBinds(column, schemaForField(column), ctx)"
       :style="style(column)"
     >
       <form-display
         v-model="value"
         :fields="column._fields"
-        :components="components"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { TSchema } from '@feathersjs/typebox'
-import { TFormColumn, TFormComponent, TFormField } from '@/shared/interfaces/forms'
+import { TFormColumn, TFormField } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 import { useExpression } from '@/features/Expression/composites'
 import { useFormElements } from '../composites'
@@ -32,7 +30,6 @@ const props = defineProps<{
   modelValue: Record<string, unknown>
   field: TFormField
   columns: TFormColumn[]
-  components: TFormComponent[]
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -42,7 +39,7 @@ const emit = defineEmits<{
 
 const value = useModelValue(props, emit)
 
-const { fieldBinds, style } = useFormElements()
+const { fieldBinds, style, schemaForField } = useFormElements()
 
 const { buildCtx } = useExpression()
 
@@ -54,13 +51,4 @@ const colName = (column: TFormColumn): string => {
   }
   return `col-${column.col}`
 }
-
-const schemaForType = (f: TFormField | TFormColumn): TSchema | undefined => (
-  // eslint-disable-next-line no-underscore-dangle
-  props.components.find((c) => c.type === f._type)?.schema
-)
-
-const bindFields = (field: TFormField | TFormColumn) => (
-  fieldBinds(field, schemaForType(field), ctx)
-)
 </script>

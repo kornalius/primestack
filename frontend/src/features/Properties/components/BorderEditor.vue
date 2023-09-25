@@ -68,10 +68,13 @@
       </div>
 
       <div class="col">
-        <div
-          class="previewBox"
-          :style="style"
-        >
+        <div class="previewBox">
+          <div
+            class="previewBox"
+            style="z-index: 1;"
+            :style="style"
+          />
+
           <q-input
             v-model="value.radius.topLeft"
             style="position: absolute; top: 4px; left: 20px; width: 50px;"

@@ -126,8 +126,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useAppEditor } from '@/features/App/editor-store'
+import { useFormElements } from '@/features/Forms/composites'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
-import { TFormComponent } from '@/shared/interfaces/forms'
 import { TAction } from '@/shared/interfaces/actions'
 import { formSchema } from '@/shared/schemas/form'
 import { tableSchema, tableFieldSchema } from '@/shared/schemas/table'
@@ -136,8 +136,6 @@ import SectionTitle from '@/features/Fields/components/SectionTitle.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 
 const props = defineProps<{
-  // global components
-  components?: TFormComponent[]
   // global actions
   actions?: TAction[]
 }>()
@@ -145,6 +143,8 @@ const props = defineProps<{
 const forcedTypes = ref({})
 
 const editor = useAppEditor()
+
+const { componentsByType } = useFormElements()
 
 /**
  * Menus
@@ -230,7 +230,7 @@ const selectedField = computed(() => editor.formFieldInstance(editor.selected))
  */
 const selectedComponent = computed(() => (
   // eslint-disable-next-line no-underscore-dangle
-  props.components.find((c) => c.type === selectedField.value?._type)
+  componentsByType[selectedField.value?._type]
 ))
 
 /**
@@ -242,7 +242,7 @@ const showFormProperties = computed(() => !!form.value)
  * Should we show the form field properties?
  */
 const showFieldProperties = computed(() => (
-  props.components && selectedComponent.value && selectedField.value
+  selectedComponent.value && selectedField.value
 ))
 
 /**

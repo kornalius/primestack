@@ -1,13 +1,13 @@
 <template>
   <q-card
     class="card"
-    v-bind="fieldBinds(field, schemaForType(field), ctx)"
+    v-bind="fieldBinds(field, schemaForField(field), ctx)"
     :style="style(field)"
   >
     <q-card-section
       v-for="section in sections"
       :key="section._id"
-      v-bind="fieldBinds(section, schemaForType(section), ctx)"
+      v-bind="fieldBinds(section, schemaForField(section), ctx)"
       :class="{
         'card-section': true,
         selected: editor.isSelected(section._id),
@@ -51,14 +51,13 @@
 
       <fields-editor
         v-model="section._fields"
-        :components="components"
       />
     </q-card-section>
 
     <q-card-actions
       v-for="action in actions"
       :key="action._id"
-      v-bind="fieldBinds(action, schemaForType(action), ctx)"
+      v-bind="fieldBinds(action, schemaForField(action), ctx)"
       :class="{
         'card-action': true,
         selected: editor.isSelected(action._id),
@@ -117,7 +116,6 @@
 
       <fields-editor
         v-model="action._fields"
-        :components="components"
       />
     </q-card-actions>
   </q-card>
@@ -125,9 +123,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { TSchema } from '@feathersjs/typebox'
 import hexObjectId from 'hex-object-id'
-import { TFormField, TFormComponent, TFormColumn } from '@/shared/interfaces/forms'
+import { TFormField, TFormColumn } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
 // eslint-disable-next-line import/no-cycle
 import { useAppEditor } from '@/features/App/editor-store'
@@ -141,7 +138,6 @@ import FieldsEditor from './FieldsEditor.vue'
 
 const props = defineProps<{
   modelValue: TFormField
-  components: TFormComponent[]
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -155,18 +151,23 @@ const emit = defineEmits<{
 
 const field = useModelValue(props, emit)
 
-const { fieldBinds, style } = useFormElements()
+const {
+  fieldBinds,
+  style,
+  schemaForField,
+  componentsByType,
+} = useFormElements()
 
 const { buildCtx } = useExpression()
 
 const ctx = buildCtx()
 
 const sectionIcon = computed(() => (
-  stringValue(props.components.find((c) => c.type === 'card-section')?.icon, field.value)
+  stringValue(componentsByType['card-section']?.icon, field.value)
 ))
 
 const actionIcon = computed(() => (
-  stringValue(props.components.find((c) => c.type === 'card-actions')?.icon, field.value)
+  stringValue(componentsByType['card-actions']?.icon, field.value)
 ))
 
 const sections = computed(() => (
@@ -179,11 +180,6 @@ const actions = computed(() => (
   field.value._columns.filter((c) => c._type === 'card-actions')
 ))
 
-const schemaForType = (f: TFormField | TFormColumn): TSchema | undefined => (
-  // eslint-disable-next-line no-underscore-dangle
-  props.components.find((c) => c.type === f._type)?.schema
-)
-
 /**
  * Selection
  */
@@ -193,7 +189,7 @@ const editor = useAppEditor()
 const onAddActionClick = (cardActions: TFormColumn) => {
   const type = 'button'
 
-  const btnComponent = props.components.find((c) => c.type === type)
+  const btnComponent = componentsByType[type]
 
   const btn = {
     _id: hexObjectId(),

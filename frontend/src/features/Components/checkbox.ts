@@ -2,7 +2,10 @@ import { QCheckbox } from 'quasar'
 import { Type } from '@feathersjs/typebox'
 import { actionIcon, contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties, defaultStyleValues } from './common'
+import ExType from '@/shared/extypes'
+import {
+  properties, commonProperties, defaultStyleValues, commonEventArgs,
+} from './common'
 
 export default {
   type: 'checkbox',
@@ -17,10 +20,10 @@ export default {
       modelValue: Type.Boolean(),
       label: Type.String(),
       leftLabel: Type.Boolean(),
-      color: Type.String({ color: true }),
+      color: ExType.Color(),
       keepColor: Type.Boolean(),
-      checkedIcon: Type.String({ icon: true }),
-      uncheckedIcon: Type.String({ icon: true }),
+      checkedIcon: ExType.Icon(),
+      uncheckedIcon: ExType.Icon(),
     }),
   ]),
   defaultValues: {
@@ -61,5 +64,8 @@ export default {
         'blur',
       ],
     },
+  },
+  eventArgs: {
+    ...commonEventArgs,
   },
 } as TFormComponent

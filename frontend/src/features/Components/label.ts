@@ -2,6 +2,7 @@ import { Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import LabelField from '@/features/Fields/components/LabelField.vue'
 import { TFormComponent } from '@/shared/interfaces/forms'
+import ExType from '@/shared/extypes'
 import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
@@ -56,8 +57,8 @@ export default {
         clearable: true,
       }),
       pre: Type.Boolean(),
-      color: Type.String({ color: true }),
-      backgroundColor: Type.String({ color: true }),
+      color: ExType.Color(),
+      backgroundColor: ExType.Color(),
     }),
   ]),
   defaultValues: {

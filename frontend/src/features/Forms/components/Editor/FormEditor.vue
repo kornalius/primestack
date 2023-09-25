@@ -76,7 +76,6 @@
       >
         <fields-editor
           v-model="fields"
-          :components="components"
         />
       </q-page>
     </q-page-container>
@@ -105,7 +104,6 @@ const props = defineProps<{
   modelValue: unknown[]
   form: Form
   preview?: boolean
-  components: TFormComponent[]
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -124,9 +122,9 @@ const { t } = useI18n()
 
 const fields = useModelValue(props, emit)
 
-const { autoGenerateForm } = useFormElements()
+const { autoGenerateForm, components } = useFormElements()
 
-const visibleComponents = computed(() => props.components.filter((c) => !c.hidden))
+const visibleComponents = computed(() => components.filter((c) => !c.hidden))
 
 /**
  * Selection

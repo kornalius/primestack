@@ -3,6 +3,7 @@ import { Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import FormElementCard from '@/features/Forms/components/Editor/FormElementCard.vue'
+import ExType from '@/shared/extypes'
 import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
@@ -19,7 +20,7 @@ export default {
       square: Type.Boolean(),
       flat: Type.Boolean(),
       bordered: Type.Boolean(),
-      backgroundColor: Type.String({ color: true }),
+      backgroundColor: ExType.Color(),
     }),
   ], false),
   defaultValues: {

@@ -2,7 +2,10 @@ import { QOptionGroup } from 'quasar'
 import { StringEnum, Type } from '@feathersjs/typebox'
 import { actionIcon, contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties, defaultStyleValues } from './common'
+import ExType from '@/shared/extypes'
+import {
+  properties, commonProperties, defaultStyleValues, commonEventArgs,
+} from './common'
 
 export default {
   type: 'option-group',
@@ -15,7 +18,7 @@ export default {
     commonProperties.events,
     Type.Object({
       modelValue: Type.String(),
-      color: Type.String({ color: true }),
+      color: ExType.Color(),
       keepColor: Type.Boolean(),
       type: StringEnum(['radio', 'checkbox', 'toggle']),
       leftLabel: Type.Boolean(),
@@ -68,5 +71,8 @@ export default {
         'blur',
       ],
     },
+  },
+  eventArgs: {
+    ...commonEventArgs,
   },
 } as TFormComponent

@@ -2,6 +2,7 @@ import { QIcon } from 'quasar'
 import { Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
+import ExType from '@/shared/extypes'
 import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
@@ -13,11 +14,11 @@ export default {
     commonProperties.size,
     Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
-      modelValue: Type.String({ icon: true }),
+      modelValue: ExType.Icon(),
       left: Type.Boolean(),
       right: Type.Boolean(),
-      color: Type.String({ color: true }),
-      backgroundColor: Type.String({ color: true }),
+      color: ExType.Color(),
+      backgroundColor: ExType.Color(),
     }),
   ]),
   defaultValues: {

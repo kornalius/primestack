@@ -133,7 +133,7 @@ export const buildCtx = (extra?: AnyData) => {
   const router = useRouter()
   const editor = useAppEditor()
   const app = useApp()
-  const vars = useVariables()
+  const variables = useVariables()
 
   return {
     quasar,
@@ -156,7 +156,7 @@ export const buildCtx = (extra?: AnyData) => {
        * @returns {unknown | undefined} Value of the variable
        */
       var: (name: string): unknown | undefined => (
-        vars.getVariable(name) as string
+        variables.get(name) as string
       ),
 
       /**

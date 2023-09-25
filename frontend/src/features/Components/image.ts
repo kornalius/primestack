@@ -2,11 +2,9 @@ import { QImg } from 'quasar'
 import { StringEnum, Type } from '@feathersjs/typebox'
 import { actionIcon, contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
+import ExType from '@/shared/extypes'
 import {
-  properties,
-  commonProperties,
-  sizeString,
-  defaultStyleValues,
+  properties, commonProperties, sizeString, defaultStyleValues, commonEventArgs,
 } from './common'
 
 export default {
@@ -52,10 +50,10 @@ export default {
         'none',
         'scale-down',
       ]),
-      spinnerColor: Type.String({ color: true }),
+      spinnerColor: ExType.Color(),
       spinnerSize: sizeString,
-      load: Type.String({ objectid: true, action: true }),
-      error: Type.String({ objectid: true, action: true }),
+      load: ExType.Action(),
+      error: ExType.Action(),
     }),
   ]),
   defaultValues: {
@@ -111,5 +109,10 @@ export default {
         'error',
       ],
     },
+  },
+  eventArgs: {
+    ...commonEventArgs,
+    load: (src) => ({ src }),
+    error: (error) => ({ error }),
   },
 } as TFormComponent

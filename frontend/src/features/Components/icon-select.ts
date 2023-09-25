@@ -4,7 +4,10 @@ import {
 } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import IconField from '@/features/Fields/components/IconField.vue'
-import { properties, commonProperties, defaultStyleValues } from './common'
+import ExType from '@/shared/extypes'
+import {
+  properties, commonProperties, defaultStyleValues, commonEventArgs,
+} from './common'
 
 export default {
   type: 'icon-select',
@@ -23,9 +26,9 @@ export default {
       tableColspan: Type.Number(),
       noErrorIcon: Type.Boolean(),
       label: Type.String(),
-      labelColor: Type.String({ color: true }),
-      color: Type.String({ color: true }),
-      bgColor: Type.String({ color: true }),
+      labelColor: ExType.Color(),
+      color: ExType.Color(),
+      bgColor: ExType.Color(),
       stackLabel: Type.Boolean(),
       hint: Type.String(),
       hideHint: Type.Boolean(),
@@ -44,13 +47,13 @@ export default {
       rounded: Type.Boolean(),
       itemAligned: Type.Boolean(),
       hideBottomSpace: Type.Boolean(),
-      backgroundColor: Type.String({ color: true }),
-      clear: Type.String({ objectid: true, action: true }),
-      input: Type.String({ objectid: true, action: true }),
-      remove: Type.String({ objectid: true, action: true }),
-      add: Type.String({ objectid: true, action: true }),
-      popupShow: Type.String({ objectid: true, action: true }),
-      popupHide: Type.String({ objectid: true, action: true }),
+      backgroundColor: ExType.Color(),
+      clear: ExType.Action(),
+      input: ExType.Action(),
+      remove: ExType.Action(),
+      add: ExType.Action(),
+      popupShow: ExType.Action(),
+      popupHide: ExType.Action(),
     }),
   ]),
   defaultValues: {
@@ -136,5 +139,14 @@ export default {
         'keyup',
       ],
     },
+  },
+  eventArgs: {
+    ...commonEventArgs,
+    clear: () => ({}),
+    input: (value: string) => ({ value }),
+    remove: ({ index, value }) => ({ index, value }),
+    add: ({ index, value }) => ({ index, value }),
+    popupShow: () => ({}),
+    popupHide: () => ({}),
   },
 } as TFormComponent

@@ -2,7 +2,10 @@ import { QTime } from 'quasar'
 import { StringEnum, Type } from '@feathersjs/typebox'
 import { actionIcon, contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties, defaultStyleValues } from './common'
+import ExType from '@/shared/extypes'
+import {
+  properties, commonProperties, defaultStyleValues, commonEventArgs,
+} from './common'
 
 export default {
   type: 'time',
@@ -21,13 +24,13 @@ export default {
       nowBtn: Type.Boolean(),
       mask: Type.String(),
       calendar: StringEnum(['gregorian', 'persian']),
-      color: Type.String({ color: true }),
-      textColor: Type.String({ color: true }),
+      color: ExType.Color(),
+      textColor: ExType.Color(),
       square: Type.Boolean(),
       flat: Type.Boolean(),
       bordered: Type.Boolean(),
       hideBottomSpace: Type.Boolean(),
-      backgroundColor: Type.String({ color: true }),
+      backgroundColor: ExType.Color(),
     }),
   ]),
   defaultValues: {
@@ -82,5 +85,8 @@ export default {
         'keyup',
       ],
     },
+  },
+  eventArgs: {
+    ...commonEventArgs,
   },
 } as TFormComponent

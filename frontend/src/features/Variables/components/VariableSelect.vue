@@ -40,7 +40,7 @@ const editor = useAppEditor()
 const variables = useVariables()
 
 const options = computed(() => {
-  const names = [...variables.variableNames]
+  const names = [...variables.names]
 
   const addVariables = (actions: ActionElement[]): void => {
     actions.forEach((a) => {

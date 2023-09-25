@@ -4,7 +4,10 @@ import {
   actionIcon, contentIcon, modelIcon, styleIcon,
 } from '@/shared/icons'
 import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
-import { properties, commonProperties, defaultStyleValues } from './common'
+import ExType from '@/shared/extypes'
+import {
+  properties, commonProperties, defaultStyleValues, commonEventArgs,
+} from './common'
 
 export default {
   type: 'input',
@@ -23,7 +26,7 @@ export default {
       fillMask: Type.String(),
       unmaskedValue: Type.Boolean(),
       label: Type.String(),
-      labelColor: Type.String({ color: true }),
+      labelColor: ExType.Color(),
       stackLabel: Type.Boolean(),
       hint: Type.String(),
       hideHint: Type.Boolean(),
@@ -53,11 +56,11 @@ export default {
         'date',
       ]),
       maxLength: Type.Number(),
-      color: Type.String({ color: true }),
-      bgColor: Type.String({ color: true }),
+      color: ExType.Color(),
+      bgColor: ExType.Color(),
       hideBottomSpace: Type.Boolean(),
-      backgroundColor: Type.String({ color: true }),
-      clear: Type.String({ objectid: true, action: true }),
+      backgroundColor: ExType.Color(),
+      clear: ExType.Action(),
     }),
   ]),
   defaultValues: {
@@ -132,5 +135,9 @@ export default {
         'keyup',
       ],
     },
+  },
+  eventArgs: {
+    ...commonEventArgs,
+    clear: () => ({}),
   },
 } as TFormComponent

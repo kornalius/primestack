@@ -6,6 +6,10 @@ export interface TFormFieldCategory {
   names: string[]
 }
 
+export type EventArgsFn = (...args: unknown[]) => AnyData
+
+export type EventArgs = Record<string, EventArgsFn>
+
 export interface TFormComponent {
   // unique type for the component
   type: string
@@ -43,6 +47,8 @@ export interface TFormComponent {
   interactable?: boolean
   // for input fields (v-model), convert the value to numeric and not string
   numericInput?: boolean | ((field: TFormField) => boolean)
+  // map event arguments to context
+  eventArgs?: EventArgs
 }
 
 export interface TFormColumn {
