@@ -8,6 +8,9 @@ export default {
   setupInstance: (data: GroupInterface): GroupInterface => (
     useInstanceDefaults({
       maxTables: 0,
+      maxMenus: 0,
+      maxForms: 0,
+      maxEdits: 0,
       maxRecords: 0,
       maxFiles: 0,
       maxFileSize: 0,

@@ -21,3 +21,12 @@ export const checkMaxShares = async (context: HookContext): Promise<HookContext>
   }
   return context
 }
+
+export default {
+  before: {
+    all: [],
+    create: [
+      checkMaxShares,
+    ],
+  },
+}

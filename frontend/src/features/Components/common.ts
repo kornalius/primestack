@@ -192,8 +192,8 @@ export const commonProperties = {
 }
 
 export const clickEvent = (e: MouseEvent) => ({
-  x: e.x,
-  y: e.y,
+  x: e.clientX,
+  y: e.clientY,
   shift: e.shiftKey,
   ctrl: e.ctrlKey,
   alt: e.altKey,

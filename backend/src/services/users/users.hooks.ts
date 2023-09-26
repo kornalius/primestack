@@ -110,6 +110,9 @@ const aggregateMaxes = () => async (context: HookContext): Promise<HookContext> 
     const maxes: Maxes = {
       maxShares: 0,
       maxRecords: 0,
+      maxMenus: 0,
+      maxForms: 0,
+      maxEdits: 0,
       maxTables: 0,
       maxFiles: 0,
       maxFileSize: 0,
@@ -125,6 +128,9 @@ const aggregateMaxes = () => async (context: HookContext): Promise<HookContext> 
 
       maxes.maxShares = mixMax(maxesToMix.maxShares, maxes.maxShares)
       maxes.maxRecords = mixMax(maxesToMix.maxRecords, maxes.maxRecords)
+      maxes.maxMenus = mixMax(maxesToMix.maxMenus, maxes.maxMenus)
+      maxes.maxForms = mixMax(maxesToMix.maxForms, maxes.maxForms)
+      maxes.maxEdits = mixMax(maxesToMix.maxEdits, maxes.maxEdits)
       maxes.maxTables = mixMax(maxesToMix.maxTables, maxes.maxTables)
       maxes.maxFiles = mixMax(maxesToMix.maxFiles, maxes.maxFiles)
       maxes.maxFileSize = mixMax(maxesToMix.maxFileSize, maxes.maxFileSize)
@@ -186,12 +192,21 @@ const aggregateGroupPlanId = () => async (context: HookContext): Promise<HookCon
 export default {
   around: {
     all: [],
-    find: [authenticate('jwt')],
-    get: [authenticate('jwt')],
-    create: [],
-    update: [authenticate('jwt')],
-    patch: [authenticate('jwt')],
-    remove: [authenticate('jwt')]
+    find: [
+      authenticate('jwt'),
+    ],
+    get: [
+      authenticate('jwt'),
+    ],
+    update: [
+      authenticate('jwt'),
+    ],
+    patch: [
+      authenticate('jwt'),
+    ],
+    remove: [
+      authenticate('jwt'),
+    ],
   },
   after: {
     all: [

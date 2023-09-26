@@ -25,9 +25,8 @@ const checkMaxTables = async (context: HookContext): Promise<HookContext> => {
     return context
   }
 
-  const { count } = await context.app.service('tables').find({ query: { $limit: 0 } })
   const m = context.params?.user?.rights?.maxes?.maxTables
-  if (m !== -1 && count >= m) {
+  if (m !== -1 && context.data?.list.length >= m) {
     throw new Forbidden(
       `Your plan only supports ${m} tables, please consider upgrading`
     )
@@ -308,7 +307,14 @@ export default {
       checkMaxTables,
       forceCreatedAndUpdated,
     ],
+    update: [
+      checkMaxTables,
+      loadPrev,
+      updateCollections,
+      forceCreatedAndUpdated,
+    ],
     patch: [
+      checkMaxTables,
       loadPrev,
       updateCollections,
       forceCreatedAndUpdated,

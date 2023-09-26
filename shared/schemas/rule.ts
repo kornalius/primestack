@@ -13,6 +13,9 @@ export const maxSchema = Type.Object({
   maxShares: Type.Integer(),
   maxTables: Type.Integer(),
   maxRecords: Type.Integer(),
+  maxMenus: Type.Integer(),
+  maxForms: Type.Integer(),
+  maxEdits: Type.Integer(),
   maxFiles: Type.Integer(),
   maxFileSize: Type.Integer(),
 }, { $id: 'Max', additionalProperties: false })

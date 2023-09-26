@@ -78,7 +78,8 @@
 
               <div class="col-auto">
                 <q-btn
-                  :color="editor.active ? 'red-7' : 'grey-7'"
+                  v-if="(auth.userRights as AnyData).maxes.maxEdits === -1"
+                  :color="editor.active ? 'red-7' : 'green-4'"
                   :disable="editor.active"
                   icon="mdi-pencil-ruler"
                   size="sm"
@@ -96,7 +97,7 @@
               <div class="col-auto">
                 <q-btn
                   icon="mdi-bell-outline"
-                  color="grey-7"
+                  color="orange-7"
                   size="sm"
                   flat
                   round
@@ -127,7 +128,7 @@
                   <span class="text-bold">{{ auth.username }}</span>
                 </div>
                 <div class="row">
-                  <span>{{ auth.userEmail }}</span>
+                  <span>{{ (auth as AnyData).userEmail }}</span>
                 </div>
               </div>
             </div>
@@ -316,6 +317,7 @@ import { useAuth } from '@/features/Auth/store'
 import { useUrl } from '@/composites/url'
 import { useFeathers } from '@/composites/feathers'
 import { useI18n } from 'vue-i18n'
+import { AnyData } from '@/shared/interfaces/commons'
 import SnacksDisplay from '@/features/Snacks/components/Snacks.vue'
 import TabsEditor from '@/features/Tabs/components/TabsEditor.vue'
 import MenusEditor from '@/features/Menus/components/MenusEditor.vue'
