@@ -34,7 +34,11 @@ export const execForType = (
 export const execAction = async (a: ActionElement, args: AnyData) => {
   // eslint-disable-next-line no-underscore-dangle
   const exec = execForType[a._type]
-  await exec({ ...args, ...omit(a, ['_id', '_type', '$scoped']), ...args.$scoped })
+  const aa = Object.keys(omit(a, ['_id', '_type', '$scoped'])).reduce((acc, k) => ({
+    ...acc,
+    [k]: getProp(a[k], args),
+  }), {})
+  await exec({ ...args, ...aa, ...args.$scoped })
 }
 
 export const exec = async (list: ActionElement[], args: AnyData) => {
