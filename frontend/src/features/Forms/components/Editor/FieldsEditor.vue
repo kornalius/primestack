@@ -24,12 +24,15 @@
 </template>
 
 <script setup lang="ts">
+import { Static } from '@feathersjs/typebox'
 import draggable from 'vuedraggable'
-import { TFormField } from '@/shared/interfaces/forms'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useModelValue } from '@/composites/prop'
 import { useAppEditor } from '@/features/App/editor-store'
+import { fieldSchema } from '@/shared/schemas/form'
 import FormElement from './FormElement.vue'
+
+type FormField = Static<typeof fieldSchema>
 
 const props = defineProps<{
   modelValue: unknown[]
@@ -53,7 +56,7 @@ const fields = useModelValue(props, emit)
 
 const editor = useAppEditor()
 
-const remove = (field: TFormField) => {
+const remove = (field: FormField) => {
   const idx = fields.value.findIndex((v) => v._id === field._id)
   if (idx !== -1) {
     fields.value.splice(idx, 1)

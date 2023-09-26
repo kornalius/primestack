@@ -124,27 +124,24 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { useAppEditor } from '@/features/App/editor-store'
 import { useFormElements } from '@/features/Forms/composites'
+import { useActions } from '@/features/Actions/composites'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
-import { TAction } from '@/shared/interfaces/actions'
 import { formSchema } from '@/shared/schemas/form'
 import { tableSchema, tableFieldSchema } from '@/shared/schemas/table'
 import { omitFields } from '@/shared/schema'
 import SectionTitle from '@/features/Fields/components/SectionTitle.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 
-const props = defineProps<{
-  // global actions
-  actions?: TAction[]
-}>()
-
 const forcedTypes = ref({})
 
 const editor = useAppEditor()
 
 const { componentsByType } = useFormElements()
+
+const { actionsByType } = useActions()
 
 /**
  * Menus
@@ -206,19 +203,6 @@ const showTabProperties = computed(() => (
  * Computes the selected form instance
  */
 const form = computed(() => editor.formInstance(editor.formId))
-
-// holds form fields
-const fields = ref([])
-
-/**
- * When the form instance changes, set the fields
- */
-watch(form, () => {
-  if (form.value) {
-    // eslint-disable-next-line no-underscore-dangle
-    fields.value = form.value._fields
-  }
-}, { immediate: true })
 
 /**
  * Computes the selected form field instance
@@ -334,7 +318,7 @@ const selectedActionElement = computed(() => editor.actionElementInstance(editor
  */
 const selectedAction = computed(() => (
   // eslint-disable-next-line no-underscore-dangle
-  props.actions.find((a) => a.type === selectedActionElement.value?._type)
+  actionsByType[selectedActionElement.value?._type]
 ))
 
 /**

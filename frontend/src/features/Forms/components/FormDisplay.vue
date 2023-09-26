@@ -44,7 +44,7 @@
       <component
         :is="componentForField(field)"
         v-else-if="isNumericInput(field)"
-        v-model.number="value[field.field]"
+        v-model.number="value[(field as any).field]"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
         :style="style(field)"
         :rules="serializeRules(t, field)"
@@ -54,7 +54,7 @@
       <component
         :is="componentForField(field)"
         v-else
-        v-model="value[field.field]"
+        v-model="value[(field as any).field]"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
         :style="style(field)"
         :rules="serializeRules(t, field)"
@@ -65,18 +65,22 @@
 </template>
 
 <script setup lang="ts">
+import { Static } from '@feathersjs/typebox'
 import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
-import { TFormField } from '@/shared/interfaces/forms'
 import { getProp, useExpression } from '@/features/Expression/composites'
 import LabelField from '@/features/Fields/components/LabelField.vue'
+import { fieldSchema } from '@/shared/schemas/form'
+import { AnyData } from '@/shared/interfaces/commons'
 import { useFormElements } from '../composites'
 import FormDisplayRow from './FormDisplayRow.vue'
 import FormDisplayCard from './FormDisplayCard.vue'
 
+type FormField = Static<typeof fieldSchema>
+
 const props = defineProps<{
   modelValue: Record<string, unknown>
-  fields: TFormField[]
+  fields: FormField[]
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -106,7 +110,7 @@ const value = useModelValue(props, emit)
 
 const ctx = buildCtx()
 
-const displayValue = (field: TFormField) => (
-  getProp(field.modelValue || value.value[field.field], ctx)
+const displayValue = (field: FormField) => (
+  getProp((field as AnyData).modelValue || value.value[(field as AnyData).field], ctx)
 )
 </script>

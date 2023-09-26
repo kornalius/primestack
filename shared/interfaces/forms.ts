@@ -1,5 +1,8 @@
-import { TSchema } from '@feathersjs/typebox'
+import { Static, TSchema } from '@feathersjs/typebox'
+import { fieldSchema } from '../schemas/form'
 import { AnyData } from './commons'
+
+type FormField = Static<typeof fieldSchema>
 
 export interface TFormFieldCategory {
   icon: string
@@ -46,24 +49,7 @@ export interface TFormComponent {
   // can you desactivate the drag & drop to play with the component?
   interactable?: boolean
   // for input fields (v-model), convert the value to numeric and not string
-  numericInput?: boolean | ((field: TFormField) => boolean)
+  numericInput?: boolean | ((field: FormField) => boolean)
   // map event arguments to context
   eventArgs?: EventArgs
-}
-
-export interface TFormColumn {
-  _id: string
-  name: string
-  _type: string
-  size: number
-  _fields: TFormField[]
-  [k: string]: unknown
-}
-
-export interface TFormField {
-  _id: string
-  name: string
-  _type: string
-  _columns?: TFormColumn[]
-  [k: string]: unknown
 }

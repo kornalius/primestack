@@ -80,6 +80,8 @@ const editor = useAppEditor()
 </script>
 
 <style scoped lang="sass">
+@import 'quasar/src/css/variables'
+
 .margin
   border: 1px solid $grey-9
   background: $grey-2

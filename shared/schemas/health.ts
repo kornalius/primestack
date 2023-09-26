@@ -16,5 +16,5 @@ export const schema = Type.Object(
       remove: Type.Number(),
     }),
   },
-  { $id: 'Health', additionalProperties: false }
+  { $id: 'Health', additionalProperties: false },
 )

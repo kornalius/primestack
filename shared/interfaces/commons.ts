@@ -1,8 +1,8 @@
 import { Type } from '@feathersjs/typebox'
 
-type Id = string;
-type NullableString = string | null;
-type Timestamp = NullableString;
+type Id = string
+type NullableString = string | null
+type Timestamp = NullableString
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyData = Record<string, any>

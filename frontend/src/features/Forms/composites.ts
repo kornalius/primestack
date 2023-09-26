@@ -1,9 +1,7 @@
 import { Static, TSchema } from '@feathersjs/typebox'
 import startCase from 'lodash/startCase'
 import omit from 'lodash/omit'
-import {
-  EventArgs, EventArgsFn, TFormColumn, TFormField,
-} from '@/shared/interfaces/forms'
+import { EventArgs, EventArgsFn } from '@/shared/interfaces/forms'
 import { AnyData, T18N } from '@/shared/interfaces/commons'
 import {
   components,
@@ -19,8 +17,11 @@ import { getProp } from '@/features/Expression/composites'
 import { useAppEditor } from '@/features/App/editor-store'
 import { actionSchema } from '@/shared/schemas/actions'
 import { tableFieldSchema } from '@/shared/schemas/table'
+import { columnSchema, fieldSchema } from '@/shared/schemas/form'
 
 type TableField = Static<typeof tableFieldSchema>
+type FormField = Static<typeof fieldSchema>
+type FormColumn = Static<typeof columnSchema>
 
 type Action = Static<typeof actionSchema>
 
@@ -31,10 +32,24 @@ const validators = useValidators()
  *
  * @param f
  */
-const eventArgsForField = (f: TFormField | TFormColumn): EventArgs | undefined => (
+const eventArgsForField = (f: FormField | FormColumn): EventArgs | undefined => (
   // eslint-disable-next-line no-underscore-dangle
   componentsByType[f._type]?.eventArgs
 )
+
+/**
+ * Returns the argument keys for a field event
+ *
+ * @param f Field
+ * @param name
+ */
+const argNames = (f: FormField | FormColumn, name: string): string[] => {
+  const eventArgsFn = eventArgsForField(f)?.[name]
+  if (eventArgsFn) {
+    return Object.keys(eventArgsFn({}))
+  }
+  return []
+}
 
 export const useFormElements = () => ({
   componentForField,
@@ -49,7 +64,7 @@ export const useFormElements = () => ({
 
   flattenFields,
 
-  fieldBinds: (field: TFormField | TFormColumn, schema: TSchema, ctx: AnyData): AnyData => {
+  fieldBinds: (field: FormField | FormColumn, schema: TSchema, ctx: AnyData): AnyData => {
     const fieldsToOmit = [
       '_id',
       'name',
@@ -85,11 +100,12 @@ export const useFormElements = () => ({
     return Object.keys(omit(field, fieldsToOmit))
       .reduce((acc, k) => {
         let fieldname = k
+        const prop = schema.properties[k] as AnyData
         // if (ctx.editor.active) {
         //   return { ...acc, [k]: field[k] }
         // }
         // if it's an action, use onXxxx event key names instead
-        if (schema.properties[k] && getTypeFor(schema.properties[k]) === 'action') {
+        if (prop && getTypeFor(schema.properties[k]) === 'action') {
           const eventArgsFn = eventArgsForField(field)?.[k]
           return {
             ...acc,
@@ -97,47 +113,51 @@ export const useFormElements = () => ({
           }
         }
         // schema property specifies its own prop name
-        if (schema.properties[k] && schema.properties[k].propname) {
-          fieldname = schema.properties[k].propname
+        if (prop && prop.propname) {
+          fieldname = prop.propname
         }
         return { ...acc, [fieldname]: getProp(field[k], ctx) }
       }, {})
   },
 
-  schemaForField: (f: TFormField | TFormColumn): TSchema | undefined => (
+  schemaForField: (f: FormField | FormColumn): TSchema | undefined => (
     // eslint-disable-next-line no-underscore-dangle
     componentsByType[f._type]?.schema
   ),
 
   eventArgsForField,
 
-  // eslint-disable-next-line no-underscore-dangle
-  isRow: (field: TFormField): boolean => field._type === 'row',
+  argNames,
 
   // eslint-disable-next-line no-underscore-dangle
-  isCard: (field: TFormField): boolean => field._type === 'card',
+  isRow: (field: FormField): boolean => field._type === 'row',
 
   // eslint-disable-next-line no-underscore-dangle
-  isIcon: (field: TFormField): boolean => field._type === 'icon',
+  isCard: (field: FormField): boolean => field._type === 'card',
 
   // eslint-disable-next-line no-underscore-dangle
-  isTable: (field: TFormField): boolean => field._type === 'table',
+  isIcon: (field: FormField): boolean => field._type === 'icon',
 
   // eslint-disable-next-line no-underscore-dangle
-  isParagraph: (field: TFormField): boolean => field._type === 'paragraph',
+  isTable: (field: FormField): boolean => field._type === 'table',
 
   // eslint-disable-next-line no-underscore-dangle
-  isLabel: (field: TFormField): boolean => field._type === 'label',
+  isParagraph: (field: FormField): boolean => field._type === 'paragraph',
+
+  // eslint-disable-next-line no-underscore-dangle
+  isLabel: (field: FormField): boolean => field._type === 'label',
 
   serializeRules: (
     t: T18N,
-    field: TFormField,
+    field: FormField,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ): ((...args: any[]) => (val: string) => true | string)[] => (
-    (field.rules as AnyData[])?.map((r) => validators[r.type](t, omit(r, ['type'])))
+    ((field as AnyData).rules as AnyData[])?.map((r) => (
+      validators[r.type](t, omit(r, ['type']))
+    ))
   ),
 
-  isNumericInput: (field: TFormField): boolean => {
+  isNumericInput: (field: FormField): boolean => {
     // eslint-disable-next-line no-underscore-dangle
     const comp = componentsByType[field._type]
     if (comp) {
@@ -160,10 +180,11 @@ export const useFormElements = () => ({
       border = `${b.width}px ${b.style} ${b.color}`
     }
 
-    const tl = b?.radius?.topLeft ? `${b?.radius?.topLeft}px` : '0'
-    const tr = b?.radius?.topRight ? `${b?.radius?.topRight}px` : '0'
-    const br = b?.radius?.bottomLeft ? `${b?.radius?.bottomLeft}px` : '0'
-    const bl = b?.radius?.bottomRight ? `${b?.radius?.bottomRight}px` : '0'
+    const radius = b?.radius as AnyData
+    const tl = radius?.topLeft ? `${radius?.topLeft}px` : '0'
+    const tr = radius?.topRight ? `${radius?.topRight}px` : '0'
+    const br = radius?.bottomLeft ? `${radius?.bottomLeft}px` : '0'
+    const bl = radius?.bottomRight ? `${radius?.bottomRight}px` : '0'
 
     return {
       paddingTop: field.padding?.top,
@@ -192,15 +213,16 @@ export const useFormElements = () => ({
       type: string,
       f: TableField,
       options?: AnyData,
-    ): TFormField | undefined => {
+    ): FormField | FormColumn | undefined => {
       const component = componentsByType[type]
       if (component) {
-        const field = editor.addFieldToForm(component, options)
-        field.field = f.name
-        field.label = f.name
-        field.disable = f.readonly
-        field.readonly = f.readonly
-        return field
+        return editor.addFieldToForm(component, {
+          ...options,
+          field: f.name,
+          label: f.name,
+          disable: f.readonly,
+          readonly: f.readonly,
+        })
       }
       return undefined
     }

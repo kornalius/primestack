@@ -10,20 +10,20 @@
     <template #default="{ value: m }">
       <q-item
         class="Drawer__item left-drawer-expanded"
-        :class="{ selected: editor.selectedMenu === m._id }"
+        :class="{ selected: editor.selectedMenu === (m as any)._id }"
         tag="router-link"
-        :to="m.href || menuUrl(m._id)"
-        :target="m.target as string"
+        :to="(m as any).href || menuUrl((m as any)._id)"
+        :target="(m as any).target as string"
         clickable
-        @click.stop="selectMenu(m._id)"
+        @click.stop="selectMenu((m as any)._id)"
       >
         <q-item-section avatar>
-          <q-icon :name="m.icon" :color="m.color" />
+          <q-icon :name="(m as any).icon" :color="(m as any).color" />
         </q-item-section>
 
         <q-item-section>
-          <q-item-label :class="{ [`text-${m.color}`]: true }">
-            {{ m.label }}
+          <q-item-label :class="{ [`text-${(m as any).color}`]: true }">
+            {{ (m as any).label }}
           </q-item-label>
         </q-item-section>
       </q-item>

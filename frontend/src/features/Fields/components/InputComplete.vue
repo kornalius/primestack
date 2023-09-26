@@ -290,6 +290,8 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang="sass">
+@import 'quasar/src/css/variables'
+
 .menu
   position: absolute
   z-index: 10000

@@ -153,16 +153,21 @@ const sidesOptions = computed(() => [
 
 const style = computed(() => {
   const b = value.value
+
   const border = `${b.width}px ${b.style} ${b.color}`
-  const tl = b.radius.topLeft ? `${b.radius.topLeft}px` : '0'
-  const tr = b.radius.topRight ? `${b.radius.topRight}px` : '0'
-  const br = b.radius.bottomLeft ? `${b.radius.bottomLeft}px` : '0'
-  const bl = b.radius.bottomRight ? `${b.radius.bottomRight}px` : '0'
+
+  const radius = b.radius as AnyData
+  const tl = radius.topLeft ? `${radius.topLeft}px` : '0'
+  const tr = radius.topRight ? `${radius.topRight}px` : '0'
+  const br = radius.bottomLeft ? `${radius.bottomLeft}px` : '0'
+  const bl = radius.bottomRight ? `${radius.bottomRight}px` : '0'
+
+  const sides = b.sides as AnyData
   return {
-    borderTop: b.sides.top ? border : 'none',
-    borderBottom: b.sides.bottom ? border : 'none',
-    borderLeft: b.sides.left ? border : 'none',
-    borderRight: b.sides.right ? border : 'none',
+    borderTop: sides.top ? border : 'none',
+    borderBottom: sides.bottom ? border : 'none',
+    borderLeft: sides.left ? border : 'none',
+    borderRight: sides.right ? border : 'none',
     borderRadius: `${tl} ${tr} ${bl} ${br}`,
   }
 })

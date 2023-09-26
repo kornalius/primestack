@@ -116,27 +116,31 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { TFormField, TFormColumn } from '@/shared/interfaces/forms'
+import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
 import { useAppEditor } from '@/features/App/editor-store'
 import { useQuery } from '@/features/Query/composites'
 import { useExpression } from '@/features/Expression/composites'
 import { stringValue } from '@/composites/utilities'
+import { columnSchema, fieldSchema } from '@/shared/schemas/form'
 import TableEditor from '@/features/Forms/components/Editor/TableEditor.vue'
 import { useFormElements } from '../../composites'
 import FormElementRow from './FormElementRow.vue'
 import FormElementCard from './FormElementCard.vue'
 
+type FormField = Static<typeof fieldSchema>
+type FormColumn = Static<typeof columnSchema>
+
 const props = defineProps<{
-  modelValue: TFormField
+  modelValue: FormField
   selected?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'click', value: string): void,
-  (e: 'remove', value: TFormField): void,
-  (e: 'update:model-value', value: TFormField): void,
+  (e: 'remove', value: FormField): void,
+  (e: 'update:model-value', value: FormField): void,
 }>()
 
 const {
@@ -176,7 +180,7 @@ const onClick = () => {
   emit('click', props.modelValue._id)
 }
 
-const onColumnClick = (column: TFormColumn) => {
+const onColumnClick = (column: FormColumn) => {
   emit('click', column._id)
 }
 
@@ -198,6 +202,8 @@ const toggleInteractable = () => {
 </script>
 
 <style scoped lang="sass">
+@import 'quasar/src/css/variables'
+
 .form-element
   position: relative
   margin: 8px 0

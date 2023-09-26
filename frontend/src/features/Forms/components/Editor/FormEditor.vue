@@ -88,9 +88,9 @@ import { Static } from '@feathersjs/typebox'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import draggable from 'vuedraggable'
-import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
+import { TFormComponent } from '@/shared/interfaces/forms'
 import { useModelValue } from '@/composites/prop'
-import { formSchema } from '@/shared/schemas/form'
+import { columnSchema, fieldSchema, formSchema } from '@/shared/schemas/form'
 import { useAppEditor } from '@/features/App/editor-store'
 import { useFormElements } from '@/features/Forms/composites'
 import { stringValue } from '@/composites/utilities'
@@ -99,6 +99,8 @@ import { useAuth } from '@/features/Auth/store'
 import FieldsEditor from './FieldsEditor.vue'
 
 type Form = Static<typeof formSchema>
+type FormField = Static<typeof fieldSchema>
+type FormColumn = Static<typeof columnSchema>
 
 const props = defineProps<{
   modelValue: unknown[]
@@ -132,7 +134,9 @@ const visibleComponents = computed(() => components.filter((c) => !c.hidden))
 
 const editor = useAppEditor()
 
-const cloneComponent = (component: TFormComponent): TFormField | undefined => editor.createFormField(component)
+const cloneComponent = (component: TFormComponent): FormField | FormColumn | undefined => (
+  editor.createFormField(component)
+)
 
 watch(() => props.form?.tableId, (newValue, oldValue) => {
   if (!oldValue && newValue && fields.value.length === 0) {

@@ -927,6 +927,7 @@ const createAction = (): Action => {
   const act = editor.actionInstance(value.value)
   if (act) {
     editor.setActionId(act._id)
+    editor.setActionEvent(props.keyName)
     return act
   }
 
@@ -949,6 +950,8 @@ const fields = computed(() => (
 </script>
 
 <style scoped lang="sass">
+@import 'quasar/src/css/variables'
+
 .action-input
   width: 100%
   height: 40px

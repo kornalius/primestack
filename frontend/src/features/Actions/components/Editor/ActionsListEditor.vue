@@ -22,7 +22,6 @@
       <template #item="{ index }">
         <action-element
           v-model="actionList[index]"
-          :actions="actions"
           :selected="editor.isActionElementSelected(actionList[index]._id)"
           @click="editor.selectActionElement"
           @remove="remove"
@@ -39,14 +38,12 @@ import { useAppEditor } from '@/features/App/editor-store'
 import { useModelValue } from '@/composites/prop'
 import { actionElementSchema } from '@/shared/schemas/actions'
 import { AnyData } from '@/shared/interfaces/commons'
-import { TFrontAction } from '@/features/Actions/interface'
 import ActionElement from './ActionElement.vue'
 
 type Action = Static<typeof actionElementSchema>
 
 const props = defineProps<{
   modelValue: Action[]
-  actions: TFrontAction[]
   emptyMessage?: string
 }>()
 

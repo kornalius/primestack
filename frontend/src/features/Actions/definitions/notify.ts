@@ -33,6 +33,7 @@ export default {
     }
   },
   component: Notify,
+  hideTitle: true,
   exec: async ({
     level,
     message,

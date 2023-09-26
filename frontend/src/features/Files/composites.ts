@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios'
+import axios, { AxiosResponse, AxiosProgressEvent } from 'axios'
 import VueI18n from 'vue-i18n'
 import { Static } from '@feathersjs/typebox'
 import { schema } from '@/shared/schemas/file'
@@ -351,7 +351,7 @@ export const useFiles = (t: ((key: VueI18n.Path, values?: VueI18n.PathValue[]) =
     const formData = new FormData()
     formData.append('file', domFile, domFile.name)
 
-    const onUploadProgress = (event) => {
+    const onUploadProgress = (event: AxiosProgressEvent) => {
       const percentage = Math.round((100 * event.loaded) / event.total)
       // eslint-disable-next-line no-param-reassign
       file.state = fileStates.UPLOAD_PROGRESS

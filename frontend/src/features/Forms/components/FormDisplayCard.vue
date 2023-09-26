@@ -12,7 +12,7 @@
     >
       <form-display
         v-model="value"
-        :fields="cardSection._fields"
+        :fields="cardSection._fields as FormField[]"
       />
     </q-card-section>
 
@@ -28,7 +28,7 @@
     >
       <form-display
         v-model="value"
-        :fields="cardAction._fields"
+        :fields="cardAction._fields as FormField[]"
       />
     </q-card-actions>
   </q-card>
@@ -36,16 +36,20 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { TFormColumn, TFormField } from '@/shared/interfaces/forms'
+import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
 import { useExpression } from '@/features/Expression/composites'
+import { columnSchema, fieldSchema } from '@/shared/schemas/form'
 import { useFormElements } from '../composites'
 import FormDisplay from './FormDisplay.vue'
 
+type FormField = Static<typeof fieldSchema>
+type FormColumn = Static<typeof columnSchema>
+
 const props = defineProps<{
   modelValue: Record<string, unknown>
-  field: TFormField
-  columns: TFormColumn[]
+  field: FormField
+  columns: FormColumn[]
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits

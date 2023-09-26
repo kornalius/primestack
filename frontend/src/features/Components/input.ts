@@ -1,20 +1,24 @@
 import { QInput } from 'quasar'
-import { StringEnum, Type } from '@feathersjs/typebox'
+import { Static, StringEnum, Type } from '@feathersjs/typebox'
 import {
   actionIcon, contentIcon, modelIcon, styleIcon,
 } from '@/shared/icons'
-import { TFormComponent, TFormField } from '@/shared/interfaces/forms'
+import { TFormComponent } from '@/shared/interfaces/forms'
 import ExType from '@/shared/extypes'
+import { fieldSchema } from '@/shared/schemas/form'
+import { AnyData } from '@/shared/interfaces/commons'
 import {
   properties, commonProperties, defaultStyleValues, commonEventArgs,
 } from './common'
+
+type FormField = Static<typeof fieldSchema>
 
 export default {
   type: 'input',
   icon: 'mdi-form-textbox',
   label: 'Input',
   component: QInput,
-  numericInput: (field: TFormField): boolean => field.type === 'number',
+  numericInput: (field: FormField): boolean => (field as AnyData).type === 'number',
   schema: properties([
     commonProperties.state,
     commonProperties.style,

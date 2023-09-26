@@ -225,6 +225,8 @@ const removeFile = (file: StoreFile) => {
 </script>
 
 <style scoped lang="sass">
+@import 'quasar/src/css/variables'
+
 .file-upload
   & .file-upload-area
     position: relative

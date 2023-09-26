@@ -301,8 +301,9 @@ const values = useModelValue(props, emit)
  * @param evt
  */
 const onChange = (evt: AnyData) => {
-  if (evt.moved) {
-    emit('moved', evt.moved.oldIndex, evt.moved.newIndex)
+  const { moved } = evt as { moved: AnyData }
+  if (moved) {
+    emit('moved', moved.oldIndex, moved.newIndex)
   }
 }
 

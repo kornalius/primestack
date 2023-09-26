@@ -119,7 +119,6 @@
           <actions-editor
             v-else-if="editor.actionId"
             v-model="actionList"
-            :actions="actions"
           />
 
           <form-display
@@ -159,6 +158,7 @@
 import {
   computed, onBeforeUnmount, ref, watch,
 } from 'vue'
+import { Static } from '@feathersjs/typebox'
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
@@ -168,22 +168,23 @@ import isEqual from 'lodash/isEqual'
 import { useAppEditor } from '@/features/App/editor-store'
 import { useApp } from '@/features/App/store'
 import { useFormElements } from '@/features/Forms/composites'
-import { useActions } from '@/features/Actions/composites'
 import { useExpression } from '@/features/Expression/composites'
 import { defaultValueForSchema, fieldsToSchema } from '@/shared/schema'
 import { useFeathers } from '@/composites/feathers'
-import { formSchema } from '@/shared/schemas/form'
 import { useUrl } from '@/composites/url'
+import { columnSchema, fieldSchema, formSchema } from '@/shared/schemas/form'
 import { getId } from '@/composites/utilities'
 import { useQuery } from '@/features/Query/composites'
 import { useFiles } from '@/features/Files/composites'
-import { TFormColumn, TFormField } from '@/shared/interfaces/forms'
 import { AnyData } from '@/shared/interfaces/commons'
 import FormEditor from '@/features/Forms/components/Editor/FormEditor.vue'
 import FormDisplay from '@/features/Forms/components/FormDisplay.vue'
 import SchemaTable from '@/features/Tables/components/SchemaTable.vue'
 import ActionsEditor from '@/features/Actions/components/Editor/ActionsEditor.vue'
 import Uploader from '@/features/Files/components/Uploader.vue'
+
+type FormField = Static<typeof fieldSchema>
+type FormColumn = Static<typeof columnSchema>
 
 const props = defineProps<{
   menuId: string
@@ -234,8 +235,6 @@ const actionList = computed(() => (
     ? editor.actionInstance(editor.actionId)?._actions
     : undefined
 ))
-
-const { actions } = useActions()
 
 /**
  * Form
@@ -303,12 +302,13 @@ const tableBinds = computed(() => {
 
 const defaultValues = computed(() => (
   flattenFields(fields.value)
-    .reduce((acc, f: TFormField) => {
+    .reduce((acc, f: FormField) => {
       // eslint-disable-next-line no-underscore-dangle
       const comp = componentsByType[f._type]
       if (comp && !comp.nokey) {
-        const v = f.modelValue !== undefined && f.field !== undefined && f.field !== null
-          ? { [f.field]: defaultValueForSchema(comp.schema.properties.modelValue) }
+        const af = f as AnyData
+        const v = af.modelValue !== undefined && af.field !== undefined && af.field !== null
+          ? { [af.field]: defaultValueForSchema(comp.schema.properties.modelValue) }
           : {}
         return { ...acc, ...v }
       }
@@ -318,31 +318,32 @@ const defaultValues = computed(() => (
 
 const formModelValues = computed(() => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let convertColumn = (col: TFormColumn): AnyData => ({})
+  let convertColumn = (col: FormColumn): AnyData => ({})
 
-  const convertField = (field: TFormField): AnyData => {
+  const convertField = (field: FormField | FormColumn): AnyData => {
+    const f = field as AnyData
     // eslint-disable-next-line no-underscore-dangle
-    if (field._columns) {
+    if (f._columns) {
       // eslint-disable-next-line no-underscore-dangle
-      return field._columns.reduce((acc, col) => ({ ...acc, ...convertColumn(col) }), {})
+      return f._columns.reduce((acc, col) => ({ ...acc, ...convertColumn(col) }), {})
     }
-    if (field.field !== undefined && field.field !== null) {
+    if (f.field !== undefined && f.field !== null) {
       // eslint-disable-next-line no-underscore-dangle
-      const comp = componentsByType[field._type]
-      let v = getProp(field.modelValue, ctx)
+      const comp = componentsByType[f._type]
+      let v = getProp(f.modelValue, ctx)
       if (comp.numericInput && v !== undefined) {
         v = Number(v)
       }
       if (v !== undefined) {
-        return { [field.field]: v }
+        return { [f.field]: v }
       }
     }
     return {}
   }
 
-  convertColumn = (col: TFormColumn): AnyData => (
+  convertColumn = (col: FormColumn): AnyData => (
     // eslint-disable-next-line no-underscore-dangle
-    col._fields?.reduce((acc, f) => ({ ...acc, ...convertField(f) }), {})
+    col._fields?.reduce((acc, f: FormField) => ({ ...acc, ...convertField(f) }), {})
   )
 
   // eslint-disable-next-line no-underscore-dangle

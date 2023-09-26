@@ -1,15 +1,9 @@
 <template>
-  <div class="q-mb-sm q-mr-sm">
+  <div>
     <div class="row q-py-md" style="background-color: #333; border-radius: 4px;">
       <div
         class="col q-px-xs"
-        :style="{
-          fontFamily: 'monospace',
-          backgroundColor: backgroundColor,
-          borderTop: `1px solid ${color}`,
-          borderBottom: `1px solid ${color}`,
-          color,
-        }"
+        :style="style"
       >
         {{ exprToString(modelValue.message) }}
       </div>
@@ -30,7 +24,7 @@ const props = defineProps<{
 const color = computed(() => {
   switch (props.modelValue?.type) {
     case 'log': return '#eee'
-    case 'info': return '#60acff'
+    case 'info': return '#99c0ff'
     case 'warn': return 'orange'
     case 'error': return '#ff4f4f'
     default: return '#eee'
@@ -46,4 +40,12 @@ const backgroundColor = computed(() => {
     default: return '#333'
   }
 })
+
+const style = computed(() => ({
+  fontFamily: 'monospace',
+  backgroundColor: backgroundColor.value,
+  borderTop: `1px solid ${color.value}`,
+  borderBottom: `1px solid ${color.value}`,
+  color: color.value,
+}))
 </script>

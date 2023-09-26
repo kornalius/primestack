@@ -54,26 +54,31 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { TFormField, TFormColumn } from '@/shared/interfaces/forms'
+import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
 // eslint-disable-next-line import/no-cycle
 import { useAppEditor } from '@/features/App/editor-store'
 import { useExpression } from '@/features/Expression/composites'
 import { stringValue } from '@/composites/utilities'
+import { columnSchema, fieldSchema } from '@/shared/schemas/form'
+import { AnyData } from '@/shared/interfaces/commons'
 // eslint-disable-next-line import/no-cycle
 import { useFormElements } from '../../composites'
 import FieldsEditor from './FieldsEditor.vue'
 
+type FormField = Static<typeof fieldSchema>
+type FormColumn = Static<typeof columnSchema>
+
 const props = defineProps<{
-  modelValue: TFormField
+  modelValue: FormField
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
-  (e: 'click', value: TFormColumn): void,
-  (e: 'add', value: TFormColumn): void,
-  (e: 'remove', value: TFormColumn): void,
-  (e: 'update:model-value', value: TFormField): void,
+  (e: 'click', value: FormColumn): void,
+  (e: 'add', value: FormColumn): void,
+  (e: 'remove', value: FormColumn): void,
+  (e: 'update:model-value', value: FormField): void,
 }>()
 
 const field = useModelValue(props, emit)
@@ -91,11 +96,12 @@ const ctx = buildCtx()
 
 const columnIcon = computed(() => stringValue(componentsByType.col?.icon))
 
-const colName = (column: TFormColumn): string => {
-  if (column.col === undefined || column.col === null || column.col === '') {
+const colName = (column: FormColumn): string => {
+  const c = column as AnyData
+  if (c.col === undefined || c.col === null || c.col === '') {
     return 'col'
   }
-  return `col-${column.col}`
+  return `col-${c.col}`
 }
 
 /**
@@ -104,16 +110,18 @@ const colName = (column: TFormColumn): string => {
 
 const editor = useAppEditor()
 
-const onClick = (column: TFormColumn) => {
+const onClick = (column: FormColumn) => {
   emit('click', column)
 }
 
-const onRemoveClick = (column: TFormColumn) => {
+const onRemoveClick = (column: FormColumn) => {
   emit('remove', column)
 }
 </script>
 
 <style scoped lang="sass">
+@import 'quasar/src/css/variables'
+
 .form-row
   position: relative
   min-height: 40px

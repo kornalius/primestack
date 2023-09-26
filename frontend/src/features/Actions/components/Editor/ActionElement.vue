@@ -47,7 +47,10 @@
           </div>
 
           <div class="col">
-            <div class="row">
+            <div
+              v-if="!hideTitle"
+              class="row"
+            >
               <div class="col text-bold">
                 {{ actionLabel }}
               </div>
@@ -74,7 +77,6 @@
     >
       <actions-list-editor
         v-model="actionElement._children"
-        :actions="actions"
         :empty-message="action.childrenMessage"
       />
     </div>
@@ -86,7 +88,6 @@ import { computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
 import { useAppEditor } from '@/features/App/editor-store'
-import { TFrontAction } from '@/features/Actions/interface'
 import { actionElementSchema } from '@/shared/schemas/actions'
 import { useActions } from '@/features/Actions/composites'
 import ActionsListEditor from '@/features/Actions/components/Editor/ActionsListEditor.vue'
@@ -96,7 +97,6 @@ type Action = Static<typeof actionElementSchema>
 
 const props = defineProps<{
   modelValue: Action
-  actions: TFrontAction[]
   selected?: boolean
 }>()
 
@@ -113,6 +113,14 @@ const actionElement = useModelValue(props, emit)
 
 // eslint-disable-next-line no-underscore-dangle
 const action = computed(() => actionsByType[actionElement.value._type])
+
+const hideTitle = computed(() => {
+  const h = action.value?.hideTitle
+  if (typeof h === 'function') {
+    return h(actionElement)
+  }
+  return h
+})
 
 const component = computed(() => componentForAction(actionElement.value))
 
@@ -146,6 +154,8 @@ const actionLabel = computed(() => (
 </script>
 
 <style scoped lang="sass">
+@import 'quasar/src/css/variables'
+
 .action-element
   position: relative
   margin: 8px 0

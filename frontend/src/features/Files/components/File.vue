@@ -117,6 +117,8 @@ const remove = () => {
 </script>
 
 <style scoped lang="sass">
+@import 'quasar/src/css/variables'
+
 .hasError
   color: $negative
 </style>

@@ -38,4 +38,6 @@ export interface TFrontAction extends TAction {
   categories?: Record<string, TActionCategory>
   // execute action command
   exec?: (options: TFrontActionExecOptions) => Promise<void>
+  // hide the action element title?
+  hideTitle?: boolean | ((value: AnyData) => boolean)
 }

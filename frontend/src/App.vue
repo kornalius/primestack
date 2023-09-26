@@ -294,10 +294,7 @@
       </q-list>
     </q-drawer>
 
-    <app-properties
-      v-if="!hideUI"
-      :actions="actions"
-    />
+    <app-properties v-if="!hideUI" />
 
     <q-page-container>
       <snacks-display class="q-pt-md" />
@@ -316,7 +313,6 @@ import { useRoute, useRouter } from 'vue-router'
 // import { useSnacks } from '@/features/Snacks/store'
 import { useAppEditor } from '@/features/App/editor-store'
 import { useAuth } from '@/features/Auth/store'
-import { useActions } from '@/features/Actions/composites'
 import { useUrl } from '@/composites/url'
 import { useFeathers } from '@/composites/feathers'
 import { useI18n } from 'vue-i18n'
@@ -386,8 +382,6 @@ watch(() => editor.active, () => {
   }
   editor.unselectMenu()
 })
-
-const { actions } = useActions()
 
 // function refreshHealth() {
 //   api.service('health').get(0).then((result) => {

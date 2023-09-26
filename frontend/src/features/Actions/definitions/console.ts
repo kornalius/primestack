@@ -9,6 +9,7 @@ export default {
   icon: 'mdi-console',
   component: Console,
   color: 'grey-9',
+  hideTitle: true,
   exec: async (args) => {
     // eslint-disable-next-line no-console
     console[args.type as string](getProp(args.message as string, args))

@@ -15,6 +15,7 @@ export default {
   color: 'blue-4',
   childrenMessage: 'When user press the OK button...',
   component: Dialog,
+  hideTitle: true,
   exec: async (args) => {
     args.quasar.dialog({
       title: args.title as string,

@@ -13,23 +13,28 @@
     >
       <form-display
         v-model="value"
-        :fields="column._fields"
+        :fields="column._fields as FormField[]"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { TFormColumn, TFormField } from '@/shared/interfaces/forms'
+import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
 import { useExpression } from '@/features/Expression/composites'
+import { columnSchema, fieldSchema } from '@/shared/schemas/form'
+import { AnyData } from '@/shared/interfaces/commons'
 import { useFormElements } from '../composites'
 import FormDisplay from './FormDisplay.vue'
 
+type FormField = Static<typeof fieldSchema>
+type FormColumn = Static<typeof columnSchema>
+
 const props = defineProps<{
   modelValue: Record<string, unknown>
-  field: TFormField
-  columns: TFormColumn[]
+  field: FormField
+  columns: FormColumn[]
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -45,10 +50,11 @@ const { buildCtx } = useExpression()
 
 const ctx = buildCtx()
 
-const colName = (column: TFormColumn): string => {
-  if (column.col === undefined || column.col === null || column.col === '') {
+const colName = (column: FormColumn): string => {
+  const c = column as AnyData
+  if (c.col === undefined || c.col === null || c.col === '') {
     return 'col'
   }
-  return `col-${column.col}`
+  return `col-${c.col}`
 }
 </script>

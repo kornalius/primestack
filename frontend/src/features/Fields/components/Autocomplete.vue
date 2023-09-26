@@ -91,6 +91,8 @@ const shouldShowResults = computed(() => (
 </script>
 
 <style scoped lang="sass">
+@import 'quasar/src/css/variables'
+
 .results-container
   position: absolute
   max-height: 300px

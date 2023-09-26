@@ -1,4 +1,6 @@
-import { TFormColumn, TFormComponent, TFormField } from '@/shared/interfaces/forms'
+import { Static } from '@feathersjs/typebox'
+import { TFormComponent } from '@/shared/interfaces/forms'
+import { columnSchema, fieldSchema } from '@/shared/schemas/form'
 import label from './label'
 import chip from './chip'
 import icon from './icon'
@@ -31,6 +33,9 @@ import progress from './progress'
 import separator from './separator'
 import skeleton from './skeleton'
 import spinner from './spinner'
+
+type FormField = Static<typeof fieldSchema>
+type FormColumn = Static<typeof columnSchema>
 
 const addSeparator = (l: string, i: string, c?: string): TFormComponent => ({
   type: '$separator',
@@ -92,7 +97,7 @@ export const componentsByType = (
   ), {})
 )
 
-export const componentForField = (field: TFormField | TFormColumn): TFormComponent | undefined => {
+export const componentForField = (field: FormField | FormColumn): TFormComponent | undefined => {
   // eslint-disable-next-line no-underscore-dangle
   let comp = componentForType[field._type]
   if (typeof comp === 'function') {

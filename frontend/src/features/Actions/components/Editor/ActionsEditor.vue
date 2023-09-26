@@ -81,24 +81,27 @@
         class="q-pa-sm"
         @click="unselectAll"
       >
-        <div class="title text-h6 text-bold row items-center q-px-xs q-mb-sm">
+        <div class="row title items-center q-pa-xs q-mb-sm">
+          <div class="col-auto">
+            <span class="text-h6">
+              {{ title }}
+            </span>
+          </div>
+
           <q-space />
 
           <div class="col-auto">
             <q-btn
               icon="mdi-close"
               size="sm"
-              color="grey-9"
+              color="white text-black"
               round
-              @click="editor.setActionId(undefined)"
+              @click="close"
             />
           </div>
         </div>
 
-        <actions-list-editor
-          v-model="actionList"
-          :actions="actions"
-        />
+        <actions-list-editor v-model="actionList" />
       </q-page>
     </q-page-container>
   </q-layout>
@@ -109,12 +112,14 @@ import { computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import draggable from 'vuedraggable'
 import { useAppEditor } from '@/features/App/editor-store'
-import { TAction } from '@/shared/interfaces/actions'
+import { useAuth } from '@/features/Auth/store'
+import { useActions } from '@/features/Actions/composites'
 import { useModelValue } from '@/composites/prop'
+import { useFormElements } from '@/features/Forms/composites'
 import { actionElementSchema } from '@/shared/schemas/actions'
+import { TAction } from '@/shared/interfaces/actions'
 import { TFrontAction } from '@/features/Actions/interface'
 import { stringValue } from '@/composites/utilities'
-import { useAuth } from '@/features/Auth/store'
 import { isActionAvailable } from '@/shared/plan'
 import ActionsListEditor from './ActionsListEditor.vue'
 
@@ -122,7 +127,6 @@ type ActionElement = Static<typeof actionElementSchema>
 
 const props = defineProps<{
   modelValue: ActionElement[]
-  actions: TFrontAction[]
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -135,13 +139,34 @@ const emit = defineEmits<{
 
 const actionList = useModelValue(props, emit)
 
-const visibleActions = computed(() => props.actions.filter((a) => !a.hidden))
-
 const auth = useAuth()
 
 const editor = useAppEditor()
 
+const { actions } = useActions()
+
+const { componentsByType, argNames } = useFormElements()
+
+const visibleActions = computed(() => actions.filter((a) => !a.hidden))
+
 const cloneAction = (action: TAction) => editor.createActionElement(action)
+
+const selectedField = computed(() => editor.formFieldInstance(editor.selected))
+
+const selectedActionEvent = computed(() => editor.actionEvent)
+
+const eventArgs = computed(() => {
+  // eslint-disable-next-line no-underscore-dangle
+  const component = componentsByType[selectedField.value?._type]
+  if (component) {
+    return argNames(selectedField.value, selectedActionEvent.value)
+  }
+  return []
+})
+
+const title = computed(() => (
+  `${selectedActionEvent.value} (${eventArgs.value.map((s) => `$${s}`).join(', ')})`
+))
 
 const unselectAll = () => {
   if (editor.active) {
@@ -158,13 +183,20 @@ const actionDescription = (action: TAction) => stringValue(action?.description, 
 const actionIcon = (action: TFrontAction) => stringValue(action?.icon, action)
 
 const actionLabel = (action: TFrontAction) => stringValue(action?.label, action)
+
+const close = () => {
+  editor.setActionId(undefined)
+  editor.setActionEvent(undefined)
+}
 </script>
 
 <style scoped lang="sass">
+@import 'quasar/src/css/variables'
+
 .action-button
   width: 90%
   height: 30px
 
 .title
-  background: repeating-linear-gradient(-55deg, #f5d75d, #f5d75d 10px, #969489 10px, #969489 20px)
+  background: repeating-linear-gradient(-55deg, #ffe15f, #ffe15f 10px, #b9b7a9 10px, #b9b7a9 20px)
 </style>

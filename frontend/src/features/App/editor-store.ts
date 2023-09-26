@@ -14,10 +14,10 @@ import { AnyData } from '@/shared/interfaces/commons'
 // eslint-disable-next-line import/no-cycle
 import { flattenActions } from '@/features/Actions/composites'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
-import { fieldSchema, formSchema } from '@/shared/schemas/form'
+import { columnSchema, fieldSchema, formSchema } from '@/shared/schemas/form'
 import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
 import { actionSchema, actionElementSchema } from '@/shared/schemas/actions'
-import { TFormColumn, TFormComponent, TFormField } from '@/shared/interfaces/forms'
+import { TFormComponent } from '@/shared/interfaces/forms'
 import { defaultValueForSchema, defaultValues } from '@/shared/schema'
 import { newNameForField, flattenFields } from '@/shared/form'
 import { TAction } from '@/shared/interfaces/actions'
@@ -26,6 +26,7 @@ type Menu = Static<typeof menuSchema>
 type Tab = Static<typeof tabSchema>
 type Form = Static<typeof formSchema>
 type FormField = Static<typeof fieldSchema>
+type FormColumn = Static<typeof columnSchema>
 type Table = Static<typeof tableSchema>
 type TableField = Static<typeof tableFieldSchema>
 type Action = Static<typeof actionSchema>
@@ -62,6 +63,8 @@ export const useAppEditor = defineStore('app-editor', () => {
     formId: undefined,
     // id of action being edited
     actionId: undefined,
+    // name of action event being edited
+    actionEvent: undefined,
     // menus being edited
     menus: [] as Menu[],
     // forms being edited
@@ -97,6 +100,11 @@ export const useAppEditor = defineStore('app-editor', () => {
    * Selected action id
    */
   const actionId = computed(() => states.value.actionId)
+
+  /**
+   * Selected action event name
+   */
+  const actionEvent = computed(() => states.value.actionEvent)
 
   /**
    * Selected menu id
@@ -423,6 +431,10 @@ export const useAppEditor = defineStore('app-editor', () => {
     states.value.selectedActionElement = undefined
   }
 
+  /**
+   * Sets the current action id being edited
+   * @param id
+   */
   const setActionId = (id: string): void => {
     states.value.actionId = id
     const a = actionInstance(id)
@@ -430,6 +442,15 @@ export const useAppEditor = defineStore('app-editor', () => {
       // eslint-disable-next-line no-underscore-dangle
       selectActionElement(a._actions?.[0]?._id)
     }
+  }
+
+  /**
+   * Sets the current action event name being edited
+   *
+   * @param name Name of the event
+   */
+  const setActionEvent = (name: string): void => {
+    states.value.actionEvent = name
   }
 
   /**
@@ -918,9 +939,9 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @param component Component type to derive new field from
    * @param options Options to add the field
    *
-   * @returns {TFormField} New form field
+   * @returns {FormField | FormColumn} New form field
    */
-  const createFormField = (component: TFormComponent, options?: AnyData): TFormField | undefined => {
+  const createFormField = (component: TFormComponent, options?: AnyData): FormField | FormColumn | undefined => {
     const form = formInstance(states.value.formId)
     if (form) {
       return {
@@ -947,15 +968,15 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @param component Component instance
    * @param options Options to add to the field
    *
-   * @returns {TFormField} New field instance
+   * @returns {FormField | FormColumn} New field instance
    */
-  const addFieldToForm = (component: TFormComponent, options?: AnyData): TFormField | undefined => {
+  const addFieldToForm = (component: TFormComponent, options?: AnyData): FormField | FormColumn | undefined => {
     const form = states.value.forms.find((f) => f._id === states.value.formId)
     if (form) {
       const field = createFormField(component, options)
       if (field) {
         // eslint-disable-next-line no-underscore-dangle
-        form._fields.push(field)
+        form._fields.push(field as FormField)
         setTimeout(() => {
           select(field._id)
         }, 100)
@@ -972,13 +993,13 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @param componentType Type of component of the field
    * @param field Field instance to add the column to
    *
-   * @returns {TFormColumn} New tab instance
+   * @returns {FormColumn} New tab instance
    */
   const addColumnToField = (
     componentsByType: Record<string, TFormComponent>,
     componentType: string,
-    field: TFormField,
-  ): TFormColumn => {
+    field: FormField,
+  ): FormColumn => {
     const form = formInstance(states.value.formId)
 
     let type: string
@@ -1004,7 +1025,7 @@ export const useAppEditor = defineStore('app-editor', () => {
       ...(defaultValues(colComponent.defaultValues) || {}),
       // eslint-disable-next-line no-underscore-dangle
       name: newNameForField(type, flattenFields(form._fields)),
-    } as TFormColumn
+    } as FormColumn
     // eslint-disable-next-line no-underscore-dangle
     field._columns.push(col)
     return col
@@ -1018,7 +1039,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    *
    * @returns {boolean} True is successful
    */
-  const removeColumnFromField = (column: TFormColumn, field: TFormField): boolean => {
+  const removeColumnFromField = (column: FormColumn, field: FormField): boolean => {
     // eslint-disable-next-line no-underscore-dangle
     const index = field._columns.findIndex((c) => c._id === column._id)
     if (index !== -1) {
@@ -1232,6 +1253,7 @@ export const useAppEditor = defineStore('app-editor', () => {
     selectedActionElement,
     formId,
     actionId,
+    actionEvent,
     menus,
     forms,
     tables,
@@ -1289,6 +1311,7 @@ export const useAppEditor = defineStore('app-editor', () => {
     addFieldToTable,
     removeFieldFromTable,
     setActionId,
+    setActionEvent,
     selectActionElement,
     unselectActionElement,
     isActionElementSelected,

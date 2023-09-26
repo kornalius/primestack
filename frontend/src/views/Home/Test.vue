@@ -354,6 +354,8 @@ for (let i = 0; i < 1000; i++) {
 </script>
 
 <style scoped lang="sass">
+@import 'quasar/src/css/variables'
+
 .title
   padding: 4px 8px
   background: $grey-6
