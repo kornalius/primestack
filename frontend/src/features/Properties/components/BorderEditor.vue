@@ -71,7 +71,7 @@
         <div class="previewBox">
           <div
             class="previewBox"
-            style="z-index: 1;"
+            style="z-index: 1; pointer-events: none;"
             :style="style"
           />
 

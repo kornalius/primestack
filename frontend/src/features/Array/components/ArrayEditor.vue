@@ -1,20 +1,10 @@
 <template>
-  <div
-    :class="{
-      row: horizontal,
-      'items-center': horizontal,
-    }"
-  >
+  <div :class="mainClass">
     <!-- Start action buttons -->
 
     <div
       v-if="addButton === 'start' || addButton === undefined"
-      :class="{
-        column: !horizontal,
-        'items-end': !horizontal,
-        'q-my-sm': !horizontal,
-        'inline-block': horizontal,
-      }"
+      :class="actionsClass"
     >
       <div class="col">
         <slot name="actions" />
@@ -90,7 +80,6 @@
 
             <div
               v-if="reorderable"
-              class="q-mr-sm"
               :class="{ 'col-auto': !horizontal, 'inline-block': horizontal }"
               style="cursor: move; padding-bottom: 4px;"
             >
@@ -127,7 +116,6 @@
             <!-- Remove button -->
 
             <div
-              class="q-mx-sm"
               :class="{ 'col-auto': !horizontal, 'inline-block': horizontal }"
               style="width: 30px;"
             >
@@ -434,6 +422,18 @@ watch(currentSelection, (newValue, oldValue) => {
     }
   })
 })
+
+const mainClass = computed(() => ({
+  row: props.horizontal,
+  'items-center': props.horizontal,
+}))
+
+const actionsClass = computed(() => ({
+  column: !props.horizontal,
+  'items-end': !props.horizontal,
+  'q-my-sm': !props.horizontal,
+  'inline-block': props.horizontal,
+}))
 </script>
 
 <style scoped lang="sass">

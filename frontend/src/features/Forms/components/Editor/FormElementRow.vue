@@ -29,7 +29,7 @@
       <div
         v-if="!editor.isDragging && editor.isHovered(column._id)"
         class="action-button bg-grey-9 rounded-borders no-pointer-events"
-        style="left: 0; width: 18px;"
+        style="left: -9px; top: -9px; width: 18px;"
       >
         <q-icon :name="columnIcon" color="white" size="xs" />
       </div>
@@ -45,9 +45,7 @@
         @click="onRemoveClick(column)"
       />
 
-      <fields-editor
-        v-model="column._fields"
-      />
+      <fields-editor v-model="column._fields" />
     </div>
   </div>
 </template>

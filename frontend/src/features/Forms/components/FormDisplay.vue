@@ -12,6 +12,13 @@
         :columns="field._columns"
       />
 
+      <form-display-tabs
+        v-else-if="isTabs(field)"
+        v-model="value"
+        :field="field"
+        :tabs="field._columns"
+      />
+
       <form-display-card
         v-else-if="isCard(field)"
         v-model="value"
@@ -75,6 +82,7 @@ import { AnyData } from '@/shared/interfaces/commons'
 import { useFormElements } from '../composites'
 import FormDisplayRow from './FormDisplayRow.vue'
 import FormDisplayCard from './FormDisplayCard.vue'
+import FormDisplayTabs from './FormDisplayTabs.vue'
 
 type FormField = Static<typeof fieldSchema>
 
@@ -97,6 +105,7 @@ const {
   isNumericInput,
   schemaForField,
   isRow,
+  isTabs,
   isCard,
   isIcon,
   isParagraph,

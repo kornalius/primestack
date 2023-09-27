@@ -33,6 +33,8 @@ import progress from './progress'
 import separator from './separator'
 import skeleton from './skeleton'
 import spinner from './spinner'
+import tabs from './tabs'
+import tab from './tab'
 
 type FormField = Static<typeof fieldSchema>
 type FormColumn = Static<typeof columnSchema>
@@ -53,6 +55,8 @@ export const components = [
   image,
   video,
   skeleton,
+  tabs,
+  tab,
   addSeparator('Progress', 'mdi-progress-clock', 'blue-2'),
   progress,
   spinner,
@@ -97,7 +101,7 @@ export const componentsByType = (
   ), {})
 )
 
-export const componentForField = (field: FormField | FormColumn): TFormComponent | undefined => {
+export const componentForField = (field: FormField | FormColumn): unknown | undefined => {
   // eslint-disable-next-line no-underscore-dangle
   let comp = componentForType[field._type]
   if (typeof comp === 'function') {

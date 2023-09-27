@@ -595,7 +595,8 @@ const app = useApp()
 const title = computed(() => {
   const menuTitle = app.menuInstance?.label
   const tabTitle = app.tabInstance?.label
-  return `${menuTitle && tabTitle ? `[${menuTitle}:${tabTitle}] - ` : ''}PrimeStack`
+  const edit = editor.active ? '* ' : ''
+  return `${edit}${menuTitle && tabTitle ? `[${menuTitle}:${tabTitle}] - ` : ''}PrimeStack`
 })
 
 watch(title, () => {

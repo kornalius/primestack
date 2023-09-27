@@ -10,9 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@feathersjs/typebox": "^5.0.6"
+    "@feathersjs/typebox": "^5.0.6",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.199",
     "tslib": "^2.6.2"
   }
 }

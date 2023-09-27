@@ -1,3 +1,4 @@
+import cloneDeep from 'lodash/cloneDeep'
 import { Static, TSchema, Type } from '@feathersjs/typebox'
 import { tableFieldSchema, tableIndexSchema } from './schemas/table'
 import { AnyData } from './interfaces/commons'
@@ -240,7 +241,7 @@ export const defaultValues = (values: AnyData | undefined): AnyData | undefined 
     if (typeof v === 'function') {
       nv[k] = v()
     } else {
-      nv[k] = v
+      nv[k] = cloneDeep(v)
     }
   })
   return nv

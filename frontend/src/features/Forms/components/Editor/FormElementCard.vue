@@ -25,7 +25,7 @@
       <div
         v-if="!editor.isDragging && editor.isHovered(section._id)"
         class="action-button bg-grey-9 rounded-borders no-pointer-events"
-        style="left: 0; width: 18px;"
+        style="left: -9px; top: -9px; width: 18px;"
       >
         <q-icon :name="sectionIcon" color="white" size="xs" />
       </div>
@@ -71,7 +71,7 @@
       <div
         v-if="!editor.isDragging && editor.isHovered(action._id)"
         class="action-button bg-grey-9 rounded-borders no-pointer-events"
-        style="left: 0; width: 18px;"
+        style="left: -9px; top: -9px; width: 18px;"
       >
         <q-icon :name="actionIcon" color="white" size="xs" />
       </div>

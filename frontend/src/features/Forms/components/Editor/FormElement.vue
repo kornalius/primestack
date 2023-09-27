@@ -13,9 +13,13 @@
     <div
       v-if="!editor.isDragging && editor.isHovered(field._id)"
       class="action-button bg-grey-9 rounded-borders no-pointer-events"
-      style="left: 0; width: 18px;"
+      style="left: -9px; top: -9px; width: 18px;"
     >
-      <q-icon :name="stringValue(component?.icon)" color="white" size="xs" />
+      <q-icon
+        :name="stringValue(component?.icon)"
+        color="white"
+        size="xs"
+      />
     </div>
 
     <q-btn
@@ -63,12 +67,21 @@
       </q-tooltip>
     </q-btn>
 
-    <div class="element">
+    <div
+      ref="element"
+      class="element"
+    >
       <form-element-row
         v-if="isRow(field)"
         v-model="field"
         @remove="(col) => editor.removeColumnFromField(col, field)"
         @click="onColumnClick"
+      />
+
+      <form-element-tabs
+        v-else-if="isTabs(field)"
+        v-model="field"
+        @click="onClick"
       />
 
       <form-element-card
@@ -107,7 +120,7 @@
       <div
         v-if="!editor.isDragging && !activeInteractable"
         class="overlay"
-        :style="{ top: component.type === 'table' ? '48px' : undefined }"
+        :style="{ top: overlayTop }"
         @click.stop="onClick"
       />
     </div>
@@ -115,7 +128,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
 import { useAppEditor } from '@/features/App/editor-store'
@@ -127,6 +140,7 @@ import TableEditor from '@/features/Forms/components/Editor/TableEditor.vue'
 import { useFormElements } from '../../composites'
 import FormElementRow from './FormElementRow.vue'
 import FormElementCard from './FormElementCard.vue'
+import FormElementTabs from './FormElementTabs.vue'
 
 type FormField = Static<typeof fieldSchema>
 type FormColumn = Static<typeof columnSchema>
@@ -149,15 +163,18 @@ const {
   fieldBinds,
   style,
   isRow,
+  isTabs,
   isCard,
   isIcon,
   isTable,
   schemaForField,
 } = useFormElements()
 
-const { buildCtx, getProp } = useExpression()
-
 const field = useModelValue(props, emit)
+
+const element = ref()
+
+const { buildCtx, getProp } = useExpression()
 
 const ctx = buildCtx()
 
@@ -199,6 +216,23 @@ const activeInteractable = ref(false)
 const toggleInteractable = () => {
   activeInteractable.value = !activeInteractable.value
 }
+
+const overlayTop = ref('')
+
+watch([() => props.modelValue, component], () => {
+  setTimeout(() => {
+    overlayTop.value = undefined
+    if (component.value.type === 'table') {
+      const el = element.value?.querySelector('thead')
+      const er = element.value?.getBoundingClientRect() || { top: 0 }
+      const r = el?.getBoundingClientRect() || { top: 0, height: 0 }
+      overlayTop.value = `${r.top - er.top + r.height}px`
+    } else if (component.value.type === 'tabs') {
+      const el = element.value?.querySelector('.q-tabs')
+      overlayTop.value = `${el?.getBoundingClientRect().height || 0}px`
+    }
+  }, 250)
+}, { immediate: true, deep: true })
 </script>
 
 <style scoped lang="sass">

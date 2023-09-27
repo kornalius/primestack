@@ -111,7 +111,7 @@ export const queryToMongo = (q: Query, schema: TableSchema, ctx: AnyData): AnyDa
     }
 
     let prevLogicOp: string
-    groups.forEach((g, index) => {
+    groups?.forEach((g, index) => {
       const crits = reduceCriterias(g.criterias)
       if (Object.keys(crits).length) {
         const l = index === groups.length - 1

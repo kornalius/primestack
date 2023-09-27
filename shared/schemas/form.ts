@@ -2,6 +2,24 @@ import { StringEnum, Type } from '@feathersjs/typebox'
 import { tableIcon } from '../icons'
 import ExType from '../extypes'
 
+export const tabSchema = Type.Object(
+  {
+    _id: ExType.Id(),
+    name: Type.String(),
+    label: Type.Optional(Type.String()),
+    icon: Type.Optional(Type.String()),
+    color: Type.Optional(Type.String()),
+    alert: Type.Optional(Type.String()),
+    alertIcon: Type.Optional(Type.String()),
+    noCaps: Type.Optional(Type.Boolean()),
+    disable: Type.Optional(Type.Boolean()),
+    badgeValue: Type.Optional(Type.String()),
+    badgeColor: Type.Optional(Type.String()),
+    _fields: Type.Array(Type.Object({}, { additionalProperties: true })),
+  },
+  { $id: 'FormTab', additionalProperties: true },
+)
+
 export const columnSchema = Type.Recursive((self) => Type.Object(
   {
     _id: ExType.Id(),

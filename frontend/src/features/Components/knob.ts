@@ -39,6 +39,7 @@ export default {
     }),
   ]),
   defaultValues: {
+    thickness: 1,
     ...defaultStyleValues,
   },
   categories: {

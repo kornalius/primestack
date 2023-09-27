@@ -133,6 +133,9 @@ export const useFormElements = () => ({
   isRow: (field: FormField): boolean => field._type === 'row',
 
   // eslint-disable-next-line no-underscore-dangle
+  isTabs: (field: FormField): boolean => field._type === 'tabs',
+
+  // eslint-disable-next-line no-underscore-dangle
   isCard: (field: FormField): boolean => field._type === 'card',
 
   // eslint-disable-next-line no-underscore-dangle

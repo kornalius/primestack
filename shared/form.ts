@@ -1,3 +1,4 @@
+import startCase from 'lodash/startCase'
 import { Static } from '@feathersjs/typebox'
 import { AnyData } from './interfaces/commons'
 import { columnSchema, fieldSchema } from './schemas/form'
@@ -31,8 +32,6 @@ export const flattenFields = (fields: FormField[] | FormColumn[]): FormField[] =
 
   return flattended
 }
-
-const startCase = (s: string): string => `${s.substring(0, 1).toUpperCase()}${s.substring(1)}`
 
 export const newNameForField = (type: string, fields: AnyData[]): string => {
   let index = 1
