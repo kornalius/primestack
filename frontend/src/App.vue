@@ -23,11 +23,30 @@
               v-for="r in routeTabs"
               :key="r._id"
               :name="r._id"
-              :label="r.label"
-              :icon="r.icon"
               :content-class="`text-${r.color}`"
               :to="menuUrl(routeMenu._id, r._id)"
-            />
+            >
+              <q-icon
+                v-if="r.icon"
+                class="q-mr-sm"
+                :name="r.icon"
+                size="sm"
+              />
+
+              <span class="text-subtitle2">
+                {{ r.label }}
+              </span>
+
+              <q-badge
+                v-if="r.badgeTableId"
+                style="right: -28px;"
+                color="red-9"
+                floating
+                rounded
+              >
+                {{ badgeValues[(r as any)._id] }}
+              </q-badge>
+            </q-route-tab>
           </q-tabs>
         </q-toolbar-title>
 
@@ -309,6 +328,8 @@
 import {
   computed, onMounted, ref, watch,
 } from 'vue'
+import isNil from 'lodash/isNil'
+import { Static } from '@feathersjs/typebox'
 import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
 // import { useSnacks } from '@/features/Snacks/store'
@@ -317,11 +338,17 @@ import { useAuth } from '@/features/Auth/store'
 import { useUrl } from '@/composites/url'
 import { useFeathers } from '@/composites/feathers'
 import { useI18n } from 'vue-i18n'
+import { useExpression } from '@/features/Expression/composites'
+import { tabSchema } from '@/shared/schemas/menu'
+import { queryToMongo } from '@/features/Query/composites'
 import { AnyData } from '@/shared/interfaces/commons'
+import { Query } from '@/shared/interfaces/query'
 import SnacksDisplay from '@/features/Snacks/components/Snacks.vue'
 import TabsEditor from '@/features/Tabs/components/TabsEditor.vue'
 import MenusEditor from '@/features/Menus/components/MenusEditor.vue'
 import AppProperties from '@/features/App/components/AppProperties.vue'
+
+type Tab = Static<typeof tabSchema>
 
 const quasar = useQuasar()
 
@@ -499,4 +526,62 @@ const cancel = () => {
     endEdit()
   }
 }
+
+/**
+ * Badges
+ */
+
+const { buildCtx } = useExpression()
+
+const ctx = buildCtx()
+
+const badgeValues = ref({})
+
+watch(routeTabs, () => {
+  badgeValues.value = {}
+  routeTabs.value?.forEach((r: Tab) => {
+    const {
+      badgeField, badgeFilter, badgeStat, badgeTableId,
+    } = r
+
+    if (badgeTableId) {
+      const userTable = api.service('tables').findOneInStore({ query: {} })
+      const table = userTable.value?.list.find((tt) => tt._id === badgeTableId)
+
+      const q = badgeFilter ? queryToMongo(badgeFilter as Query, table, ctx.$expr) : {}
+
+      if (badgeStat === 'count') {
+        const { total, find } = api.service(badgeTableId).useFind({ query: { ...q, $limit: 0 } })
+        find()
+        badgeValues.value[r._id] = total
+        return
+      }
+
+      const { data, find } = api.service(badgeTableId).useFind({ query: { ...q } })
+      find()
+
+      watch(data, () => {
+        if (badgeStat === 'sum') {
+          if (badgeField) {
+            badgeValues.value[r._id] = data.value.reduce((acc, d) => acc + (d[badgeField] || 0), 0)
+          }
+        } else if (badgeStat === 'average' && badgeField) {
+          badgeValues.value[r._id] = Math.round(data.value.reduce((acc, d) => (
+            acc + (d[badgeField] || 0)
+          ), 0) / data.value.length)
+        } else if (badgeStat === 'filled' && badgeField) {
+          badgeValues.value[r._id] = data.value.filter((d) => !isNil(d[badgeField])).length
+        } else if (badgeStat === 'empty' && badgeField) {
+          badgeValues.value[r._id] = data.value.filter((d) => isNil(d[badgeField])).length
+        } else if (badgeStat === '%filled' && badgeField) {
+          const fc = data.value.filter((d) => !isNil(d[badgeField])).length
+          badgeValues.value[r._id] = `${Math.round((fc / data.value.length) * 100)}%`
+        } else if (badgeStat === '%empty' && badgeField) {
+          const fc = data.value.filter((d) => isNil(d[badgeField])).length
+          badgeValues.value[r._id] = `${Math.round((fc / data.value.length) * 100)}%`
+        }
+      }, { immediate: true })
+    }
+  })
+}, { immediate: true })
 </script>

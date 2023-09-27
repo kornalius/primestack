@@ -33,6 +33,7 @@ interface FieldOptions {
 
 interface QueryOptions {
   disable?: (value: unknown, parent: AnyData) => boolean | string
+  tableProp?: string
   [key: string]: unknown
 }
 
@@ -69,7 +70,7 @@ export default {
   Query: (options: QueryOptions = {}) => Type.Object({}, {
     query: true,
     disable: (value: unknown, parent: AnyData) => (
-      parent.tableId ? false : 'Please select a table first'
+      parent[options.tableProp || 'tableId'] ? false : 'Please select a table first'
     ),
     ...options,
   }),

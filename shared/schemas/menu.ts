@@ -4,6 +4,16 @@ import ExType from '../extypes'
 
 export const targetValues = ['_blank', '_self', '_parent', '_top']
 
+export const badgetStats = [
+  'count',
+  'average',
+  'sum',
+  'filled',
+  'empty',
+  '%filled',
+  '%empty',
+]
+
 export const tabSchema = Type.Object(
   {
     _id: ExType.Id(),
@@ -11,6 +21,10 @@ export const tabSchema = Type.Object(
     icon: ExType.Icon(),
     color: Type.Optional(ExType.Color()),
     formId: ExType.Id({ service: 'forms' }),
+    badgeTableId: Type.Optional(ExType.Table()),
+    badgeFilter: Type.Optional(ExType.Query({ tableProp: 'badgeTableId' })),
+    badgeField: Type.Optional(ExType.Field({ tableProp: 'badgeTableId' })),
+    badgeStat: Type.Optional(StringEnum(badgetStats)),
   },
   {
     $id: 'Tab',
@@ -22,6 +36,10 @@ export const tabSchema = Type.Object(
           'label',
           'icon',
           'color',
+          'badgeTableId',
+          'badgeFilter',
+          'badgeField',
+          'badgeStat',
         ],
       },
     },

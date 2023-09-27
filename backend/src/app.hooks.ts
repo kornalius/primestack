@@ -1,4 +1,5 @@
 import compact from 'lodash/compact'
+import { removeNulls } from '@/hooks/remove-nulls'
 import { countCalls } from './hooks/count-calls'
 import { logError } from './hooks/log-error'
 import { logEvent } from './hooks/log-event'
@@ -21,9 +22,15 @@ export default (app: Application) => {
       ],
       find: [],
       get: [],
-      create: [],
-      update: [],
-      patch: [],
+      create: [
+        removeNulls,
+      ],
+      update: [
+        removeNulls,
+      ],
+      patch: [
+        removeNulls,
+      ],
       remove: []
     },
 

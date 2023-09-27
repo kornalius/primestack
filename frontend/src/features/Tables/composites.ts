@@ -14,7 +14,7 @@ type TableFieldSchema = Static<typeof tableFieldSchema>
  *
  * @returns {AnyData[]} List of extra fields
  */
-const extraFields = (
+export const extraFields = (
   created: boolean,
   updated: boolean,
   softDelete: boolean,
@@ -92,51 +92,53 @@ const extraFields = (
   return fields
 }
 
-export const useTable = () => ({
-  extraFields,
-
-  /**
-   * Build a list of fields from a table
-   *
-   * @param fields Table fields
-   * @param created Add createdAt, createdBy fields
-   * @param updated Add updatedAt, updatedBy fields
-   * @param softDelete Add deletedAt, deletedBy fields
-   * @param userFields Add extra user fields
-   *
-   * @returns {TableFieldSchema[]}
-   */
-  tableFields: (
-    fields: TableFieldSchema[],
-    created: boolean,
-    updated: boolean,
-    softDelete: boolean,
-    userFields?: TableFieldSchema[],
-  ): TableFieldSchema[] => ([
-    {
+/**
+ * Build a list of fields from a table
+ *
+ * @param fields Table fields
+ * @param created Add createdAt, createdBy fields
+ * @param updated Add updatedAt, updatedBy fields
+ * @param softDelete Add deletedAt, deletedBy fields
+ * @param userFields Add extra user fields
+ *
+ * @returns {TableFieldSchema[]}
+ */
+export const tableFields = (
+  fields: TableFieldSchema[],
+  created: boolean,
+  updated: boolean,
+  softDelete: boolean,
+  userFields?: TableFieldSchema[],
+): TableFieldSchema[] => ([
+  {
+    _id: hexObjectId(),
+    name: '_id',
+    type: 'objectid',
+    readonly: true,
+    queryable: true,
+    array: false,
+    optional: false,
+    hidden: true,
+  },
+  ...fields,
+  ...fields
+    .filter((field) => field.refTableId)
+    .map((field) => ({
       _id: hexObjectId(),
-      name: '_id',
-      type: 'objectid',
+      name: refFieldname(field.name),
+      type: 'object',
       readonly: true,
       queryable: true,
       array: false,
       optional: false,
       hidden: true,
-    },
-    ...fields,
-    ...fields
-      .filter((field) => field.refTableId)
-      .map((field) => ({
-        _id: hexObjectId(),
-        name: refFieldname(field.name),
-        type: 'object',
-        readonly: true,
-        queryable: true,
-        array: false,
-        optional: false,
-        hidden: true,
-      })),
-    ...extraFields(created, updated, softDelete),
-    ...(userFields || []),
-  ]),
+    })),
+  ...extraFields(created, updated, softDelete),
+  ...(userFields || []),
+])
+
+export const useTable = () => ({
+  extraFields,
+
+  tableFields,
 })
