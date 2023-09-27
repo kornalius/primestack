@@ -333,6 +333,7 @@ import { Static } from '@feathersjs/typebox'
 import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
 // import { useSnacks } from '@/features/Snacks/store'
+import { useApp } from '@/features/App/store'
 import { useAppEditor } from '@/features/App/editor-store'
 import { useAuth } from '@/features/Auth/store'
 import { useUrl } from '@/composites/url'
@@ -528,7 +529,7 @@ const cancel = () => {
 }
 
 /**
- * Badges
+ * Tab badges
  */
 
 const { buildCtx } = useExpression()
@@ -583,5 +584,21 @@ watch(routeTabs, () => {
       }, { immediate: true })
     }
   })
+}, { immediate: true })
+
+/**
+ * Document Title
+ */
+
+const app = useApp()
+
+const title = computed(() => {
+  const menuTitle = app.menuInstance?.label
+  const tabTitle = app.tabInstance?.label
+  return `${menuTitle && tabTitle ? `[${menuTitle}:${tabTitle}] - ` : ''}PrimeStack`
+})
+
+watch(title, () => {
+  document.title = title.value
 }, { immediate: true })
 </script>
