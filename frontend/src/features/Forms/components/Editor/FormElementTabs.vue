@@ -32,6 +32,7 @@ import { useModelValue } from '@/composites/prop'
 import { fieldSchema } from '@/shared/schemas/form'
 import { useExpression } from '@/features/Expression/composites'
 import { useFormElements } from '@/features/Forms/composites'
+import { useAppEditor } from '@/features/App/editor-store'
 import TabsEditor from '@/features/Tabs/components/TabsEditor.vue'
 import FieldsEditor from '@/features/Forms/components/Editor/FieldsEditor.vue'
 
@@ -72,6 +73,12 @@ watch(() => field.value._columns, () => {
     active.value = field.value?._columns?.[0]?._id
   }
 }, { immediate: true })
+
+const editor = useAppEditor()
+
+watch(active, () => {
+  editor.select(active.value)
+})
 </script>
 
 <style scoped lang="sass">

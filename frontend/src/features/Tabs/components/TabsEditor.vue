@@ -105,7 +105,7 @@ const addTab = () => {
       _id: hexObjectId(),
       _type: 'tab',
       name,
-      label: kebabcase(name).replace('-', ' '),
+      label: startCase(kebabcase(name).replace('-', ' ')),
       _fields: [],
     })
   }
