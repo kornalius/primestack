@@ -43,9 +43,7 @@ const options = ref([])
 
 watch(() => props.tableId, () => {
   if (props.tableId) {
-    const { data, find } = api.service(props.tableId).useFind({
-      query: props.query || {},
-    })
+    const { data, find } = api.service(props.tableId).useFind({ query: props.query || {} })
     find({ query: props.query })
     watch(data, () => {
       options.value = data.value.map((d: AnyData) => (

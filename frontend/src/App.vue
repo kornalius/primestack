@@ -546,8 +546,8 @@ watch(routeTabs, () => {
     } = r
 
     if (badgeTableId) {
-      const userTable = api.service('tables').findOneInStore({ query: {} })
-      const table = userTable.value?.list.find((tt) => tt._id === badgeTableId)
+      const { data: userTables } = api.service('tables').useFind({ query: {} })
+      const table = userTables.value?.[0]?.list.find((tt) => tt._id === badgeTableId)
 
       const q = badgeFilter ? queryToMongo(badgeFilter as Query, table, ctx.$expr) : {}
 

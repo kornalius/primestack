@@ -9,6 +9,7 @@ import video from './video'
 import input from './input'
 import select from './select'
 import lookupSelect from './lookup-select'
+import tagsSelect from './tags-select'
 import table from './table'
 import color from './color'
 import iconSelect from './icon-select'
@@ -64,6 +65,7 @@ export const components = [
   input,
   select,
   lookupSelect,
+  tagsSelect,
   table,
   color,
   iconSelect,

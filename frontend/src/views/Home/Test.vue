@@ -12,6 +12,7 @@
       <q-tab name="SchemaEditor" label="Schema Editor" />
       <q-tab name="Table" label="Table" />
       <q-tab name="Columns" label="Columns Select" />
+      <q-tab name="Tags" label="Tags Select" />
     </q-tabs>
 
     <q-tab-panels v-model="tab" animated>
@@ -122,6 +123,24 @@
           </div>
         </div>
       </q-tab-panel>
+
+      <q-tab-panel name="Tags">
+        <div class="row">
+          <div class="col">
+            <tags-select
+              v-model="tags"
+              table-id="64b806da03ac5093de3f3e78"
+              field="stringField"
+              multiple
+              use-chips
+              clearable
+              options-dense
+              dense
+              outlined
+            />
+          </div>
+        </div>
+      </q-tab-panel>
     </q-tab-panels>
   </q-page>
 </template>
@@ -143,6 +162,7 @@ import QueryEditor from '@/features/Query/components/Editor/QueryEditor.vue'
 import SchemaTable from '@/features/Tables/components/SchemaTable.vue'
 import SchemaEditor from '@/features/Forms/components/Editor/TableEditor.vue'
 import ColumnsSelect from '@/features/Fields/components/ColumnsSelect.vue'
+import TagsSelect from '@/features/Tables/components/TagsSelect.vue'
 
 /**
  * Properties
@@ -351,6 +371,12 @@ for (let i = 0; i < 1000; i++) {
     },
   )
 }
+
+/**
+ * Tags
+ */
+
+const tags = ref([])
 </script>
 
 <style scoped lang="sass">

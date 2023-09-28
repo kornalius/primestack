@@ -115,10 +115,8 @@ export default {
         align: 'left',
       },
     ],
-    visibleColumns: ['name', 'age'],
-    rows: [
-      { name: 'Alain', age: 49 },
-    ],
+    visibleColumns: [],
+    rows: [],
     ...defaultStyleValues,
   },
   categories: {

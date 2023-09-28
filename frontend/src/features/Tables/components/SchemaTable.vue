@@ -74,7 +74,7 @@
           />
 
           <span v-else>
-            {{ col.format ? col.format(p.row[col.field]) : p.row[col.field] }}
+            {{ col.format ? col.format(p.row[(col as any).field]) : p.row[(col as any).field] }}
           </span>
         </q-td>
 
@@ -220,10 +220,10 @@ const data = ref()
 
 const hover = ref()
 
-const userTable = api.service('tables').findOneInStore({ query: {} })
+const { data: userTables } = api.service('tables').useFind({ query: {} })
 
 const table = computed(() => (
-  userTable.value?.list.find((tt) => tt._id === props.tableId)
+  userTables.value?.[0]?.list.find((tt) => tt._id === props.tableId)
 ))
 
 const fields = computed(() => (

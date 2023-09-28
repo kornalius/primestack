@@ -213,12 +213,12 @@ const { mimetypes, maxFileSize } = useFiles(t)
  * Menu
  */
 
-const userMenu = api.service('menus').findOneInStore({ query: {} })
+const { data: userMenus } = api.service('menus').useFind({ query: {} })
 
 const menu = computed(() => (
   editor.active
     ? editor.menuInstance(props.menuId)
-    : userMenu.value?.list.find((m) => m._id === props.menuId)
+    : userMenus.value?.[0]?.list.find((m) => m._id === props.menuId)
 ))
 
 const tab = computed(() => (
@@ -240,12 +240,12 @@ const actionList = computed(() => (
  * Form
  */
 
-const userForm = api.service('forms').findOneInStore({ query: {} })
+const { data: userForms } = api.service('forms').useFind({ query: {} })
 
 const form = computed(() => (
   editor.active
     ? editor.formInstance(tab.value?.formId)
-    : userForm.value?.list.find((f) => f._id === tab.value?.formId)
+    : userForms.value?.[0]?.list.find((f) => f._id === tab.value?.formId)
 ))
 
 const fields = ref([])
@@ -268,10 +268,10 @@ watch(selected, () => {
   app.setSelection(selected.value)
 })
 
-const userTable = api.service('tables').findOneInStore({ query: {} })
+const { data: userTables } = api.service('tables').useFind({ query: {} })
 
 const table = computed(() => (
-  userTable.value?.list.find((tt) => tt._id === form.value?.tableId)
+  userTables.value?.[0]?.list.find((tt) => tt._id === form.value?.tableId)
 ))
 
 const { flattenFields, componentsByType } = useFormElements()
