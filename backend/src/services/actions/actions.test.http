@@ -26,18 +26,6 @@ Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "list": [
-    {
-      "_id": "64cd9a166c9241725a050767",
-      "_actions": [
-        {
-          "_id": "64cd804dfe6b53febf796614",
-          "_type": "patch",
-          "_children": []
-        }
-      ]
-    }
-  ]
 }
 
 > {%
@@ -53,18 +41,6 @@ Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "_id": "{{actionId}}",
-  "list": [
-    {
-      "_id": "64cd9a166c9241725a050767",
-      "_actions": [
-        {
-          "_id": "64cd804dfe6b53febf796614",
-          "_type": "patch",
-          "_children": []
-        }
-      ]
-    }
-  ]
+  "_id": "{{actionId}}"
 }
 ###

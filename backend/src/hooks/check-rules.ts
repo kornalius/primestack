@@ -2,8 +2,10 @@ import { Forbidden } from '@feathersjs/errors'
 import { Static } from '@feathersjs/typebox'
 import { HookContext } from '@/declarations'
 import { schema } from '@/shared/schemas/rule'
+import { schema as tableSchema } from '@/shared/schemas/table'
 
 type Rule = Static<typeof schema>
+type Table = Static<typeof tableSchema>
 
 const methodToRuleName: Record<string, string> = {
   get: 'read',
@@ -30,6 +32,17 @@ export const checkRules = async (context: HookContext) => {
   const { rules } = user
 
   const m = methodToRuleName[method]
+
+  const userTable = (
+    await context.app.service('tables').find({ query: {} })
+  ).data?.[0]
+
+  // check if current user is owner of the service
+  if (userTable) {
+    if (userTable.list.find((t: Table) => t._id.toString() === path)) {
+      return context
+    }
+  }
 
   // if only one rule and it's matching all tables
   if (rules.length === 1 && rules[0].tableId === undefined) {

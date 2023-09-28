@@ -26,68 +26,21 @@ Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "list": [
-    {
-      "_id": "64b410a0a8e639dab4e3e541",
-      "name": "Form 1",
-      "data": {
-        "name": "Bob Cashflow",
-        "active": true
-      },
-      "_fields": [
-        {
-          "_id": "64b40e66fd77c9b5d159bc6c",
-          "name": "Row1",
-          "_type": "row",
-          "_columns": [
-            {
-              "_id": "64b40e6b4ab865f040a443fb",
-              "name": "Col1",
-              "_type": "col",
-              "field": "col1",
-              "size": 6,
-              "_fields": [
-                {
-                  "_id": "64b40d6aec6b76cac94a91e3",
-                  "name": "Input1",
-                  "_type": "input",
-                  "field": "name",
-                  "label": "name",
-                  "dense": true,
-                  "outlined": true
-                }
-              ]
-            },
-            {
-              "_id": "64b40e7b7600abdf0ec85e13",
-              "name": "Col2",
-              "_type": "col",
-              "size": 6,
-              "_fields": [
-                {
-                  "_id": "64b40d708822f84e00862cc9",
-                  "name": "Checkbox1",
-                  "_type": "checkbox",
-                  "field": "active",
-                  "label": "Active?"
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "_id": "64b410a0a8e639dab4e3e542",
-      "name": "Form 2",
-      "_fields": [
-      ]
-    }
-  ]
 }
 
 > {%
   // client.log(response.body._id)
   client.global.set("formId", response.body._id);
 %}
+###
+
+// Patch forms
+PATCH http://localhost:3030/forms/{{formId}}
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "_id": "{{formId}}"
+}
 ###

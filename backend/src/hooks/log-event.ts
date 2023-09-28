@@ -14,7 +14,7 @@ export const logEvent = async (context: HookContext) => {
 
   if (
     // eslint-disable-next-line no-underscore-dangle
-    isServiceAvailable('events', user?._plan.code)
+    isServiceAvailable('events', user?._plan?.code)
     && !servicesToSkip.includes(context.service)
   ) {
     let ownerId = user?._id.toString()

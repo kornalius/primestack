@@ -261,7 +261,7 @@ export const createDynamicService = (app: Application, id: string, t: AnyData) =
 const updateCollections = (context: HookContext) => {
   if (context.data?.list) {
     const d = diff(
-      context.prev.list,
+      context.prev?.list || [],
       context.data.list,
       (value: AnyData) => value._id.toString(),
     )
@@ -306,6 +306,7 @@ export default {
     create: [
       checkMaxTables,
       forceCreatedAndUpdated,
+      updateCollections,
     ],
     update: [
       checkMaxTables,

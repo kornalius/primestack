@@ -19,135 +19,17 @@ Authorization: {{token}}
 
 ###
 
-// Create free plan
+// Create plan
 POST http://localhost:3030/plans
 Accept: application/json
 Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "code": "free",
-  "name": "Free",
-  "description": "Free plan",
-  "price": 0.0,
-  "items": [
-    "1 share",
-    "5 tables",
-    "5 menus",
-    "5 forms",
-    "100 records per table",
-    "25 files",
-    "10MB maximum file size"
-  ],
-  "maxShares": 1,
-  "maxTables": 5,
-  "maxMenus": 5,
-  "maxForms": 5,
-  "maxEdits": -1,
-  "maxRecords": 100,
-  "maxFiles": 25,
-  "maxFileSize": 10000,
-  "bestValue": false,
-  "color": ""
 }
 
 > {%
   // client.log(response.body._id)
   client.global.set("planId", response.body._id);
 %}
-###
-
-// Create personal plan
-POST http://localhost:3030/plans
-Accept: application/json
-Content-Type: application/json
-Authorization: {{token}}
-
-{
-  "code": "personal",
-  "name": "Personal",
-  "description": "Personal plan",
-  "price": 9.99,
-  "items": [
-    "5 shares",
-    "15 tables",
-    "10 menus",
-    "15 forms",
-    "10,000 records per table",
-    "100 files",
-    "25MB maximum file size"
-  ],
-  "maxShares": 5,
-  "maxTables": 15,
-  "maxMenus": 10,
-  "maxForms": 15,
-  "maxEdits": -1,
-  "maxRecords": 10000,
-  "maxFiles": 100,
-  "maxFileSize": 25000,
-  "bestValue": true,
-  "color": "blue-1"
-}
-###
-
-// Create business plan
-POST http://localhost:3030/plans
-Accept: application/json
-Content-Type: application/json
-Authorization: {{token}}
-
-{
-  "code": "business",
-  "name": "Business",
-  "description": "Business plan",
-  "price": 99.99,
-  "items": [
-    "25 shares",
-    "100 tables",
-    "1,000,000 records per table",
-    "5,000 files",
-    "50MB maximum file size"
-  ],
-  "maxShares": 25,
-  "maxTables": 100,
-  "maxMenus": 25,
-  "maxForms": 100,
-  "maxEdits": -1,
-  "maxRecords": 100000,
-  "maxFiles": 5000,
-  "maxFileSize": 50000,
-  "bestValue": false,
-  "color": ""
-}
-###
-
-// Create enterprise plan
-POST http://localhost:3030/plans
-Accept: application/json
-Content-Type: application/json
-Authorization: {{token}}
-
-{
-  "code": "enterprise",
-  "name": "Enterprise",
-  "description": "Enterprise plan",
-  "price": 299.99,
-  "items": [
-    "100 shares",
-    "unlimited tables",
-    "unlimited records per table",
-    "10,000 files",
-    "100MB maximum file size"
-  ],
-  "maxShares": 100,
-  "maxTables": -1,
-  "maxMenus": -1,
-  "maxForms": -1,
-  "maxEdits": -1,
-  "maxRecords": -1,
-  "maxFiles": 10000,
-  "maxFileSize": 100000,
-  "bestValue": false,
-  "color": "orange-1"
-}
 ###

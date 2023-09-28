@@ -50,7 +50,7 @@ export class MongoService<ServiceParams extends Params = Params> extends MongoDB
 export const reservedFields = [
   '_id',
   'createdAt',
-  // 'createdBy',
+  'createdBy',
   'updatedAt',
   'updatedBy',
   'deletedAt',
@@ -180,7 +180,14 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
   // Schema for creating new entries
   const dataSchema = Type.Pick(
     schema,
-    difference(dataKeys || Object.keys(schema.properties), reservedFields) as string[],
+    difference(dataKeys || Object.keys(schema.properties), [
+      '_id',
+      'updatedAt',
+      'updatedBy',
+      'deletedAt',
+      'deletedBy',
+      '_user',
+    ]) as string[],
     { $id: `${schema.$id}Data` }
   )
 
@@ -223,9 +230,10 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
    * Query
    */
 
-  const nonArrayKeys = Object.keys(options.schema.properties).filter((k) => (
-    options.schema.properties[k].type !== 'array'
-  ))
+  const nonArrayKeys = Object.keys(options.schema.properties)
+    .filter((k) => (
+      options.schema.properties[k].type !== 'array'
+    ))
 
   const queryKeys = [
     '_id',

@@ -11,7 +11,7 @@ export default {
     $create: {
       password: passwordHash({ strategy: 'local' })
     },
-    $update: {
+    $patch: {
       password: passwordHash({ strategy: 'local' })
     },
   },

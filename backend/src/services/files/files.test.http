@@ -26,10 +26,6 @@ Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "originalFilename": "Myfile.txt",
-  "mimetype": "text/plain",
-  "size": 10,
-  "encoding": "utf-8"
 }
 
 > {%

@@ -1,5 +1,6 @@
 import dayjs from 'dayjs'
 import isEmpty from 'lodash/isEmpty'
+import compact from 'lodash/compact'
 import { virtual } from '@feathersjs/schema'
 import { HookContext } from '@/declarations'
 import { AnyData } from '@/shared/interfaces/commons'
@@ -71,9 +72,9 @@ const userIds = virtual(async (value: MenuSchema, context: HookContext) => {
     },
   })).data as Share[]
 
-  return [
+  return compact([
     // always return the creator of this menu
-    (value as AnyData).createdBy,
+    (value as AnyData).createdBy?.toString(),
     ...shares
       .filter((s: Share) => {
         // check if share is still valid
@@ -94,7 +95,7 @@ const userIds = virtual(async (value: MenuSchema, context: HookContext) => {
         return false
       })
       .map((s: Share) => s.userId?.toString())
-  ]
+  ])
 })
 
 export default {

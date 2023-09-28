@@ -15,6 +15,8 @@ export const configurationSchema = Type.Intersect([
     debug: Type.Optional(Type.String()),
     socketsListeners: Type.Optional(Type.Number()),
     wsPath: Type.Optional(Type.String()),
+    adminEmail: Type.Optional(Type.String()),
+    adminPwd: Type.Optional(Type.String()),
   }),
 ])
 

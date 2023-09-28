@@ -15,6 +15,7 @@ import appHooks from './app.hooks'
 import { authentication } from './authentication'
 import channels from './channels'
 import mongodb from './mongodb'
+import seed from './seed'
 
 const app: Application = koa(feathers<ServiceTypes>())
 
@@ -105,5 +106,10 @@ info('  - global hooks')
 app.configure(appHooks)
 
 info(`Running in ${app.get('env') || 'development'} mode`)
+
+// seeding
+if (process.argv.includes('--seed')) {
+  app.configure(seed)
+}
 
 export default app

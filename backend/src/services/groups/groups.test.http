@@ -26,24 +26,6 @@ Content-Type: application/json
 Authorization: {{token}}
 
 {
-  "name": "Admin",
-  "description": "Administrators",
-  "maxShares": -1,
-  "maxTables": -1,
-  "maxRecords": -1,
-  "maxMenus": -1,
-  "maxForms": -1,
-  "maxEdits": -1,
-  "maxFiles": -1,
-  "maxFileSize": -1,
-  "rules": [
-    {
-      "read": true,
-      "create": true,
-      "update": true,
-      "delete": true
-    }
-  ]
 }
 
 > {%

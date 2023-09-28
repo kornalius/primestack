@@ -24,10 +24,6 @@ const service = createService(path, Service, {
     }
   ],
   methods: ['find', 'get', 'create', 'patch', 'remove'],
-  validators: {
-    data: ['email', 'password', 'googleId', 'facebookId', 'twitterId', 'githubId', 'auth0Id'],
-    query: ['email', 'password', 'googleId', 'facebookId', 'twitterId', 'githubId', 'auth0Id'],
-  },
   resolvers,
   hooks,
 })

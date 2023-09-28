@@ -65,5 +65,7 @@
     "__name": "SOCKET_LISTENERS",
     "__format": "number"
   },
-  "mongodb": "MONGODB"
+  "mongodb": "MONGODB",
+  "adminEmail": "ADMIN_EMAIL",
+  "adminPwd": "ADMIN_PWD"
 }
