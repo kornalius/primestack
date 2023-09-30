@@ -45,7 +45,7 @@
         v-else-if="isIcon(field)"
         :name="displayValue(field) as string"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
-        :style="style"
+        :style="style(field)"
       />
 
       <component

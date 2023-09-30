@@ -2,6 +2,7 @@ import { RouteRecordRaw } from 'vue-router'
 
 import Home from './home'
 import Login from './login'
+import Form from './form'
 import Menu from './menu'
 import Table from './table'
 import User from './user'
@@ -21,6 +22,7 @@ const routes = [
   },
   ...Login(lazyLoad),
   ...Home(lazyLoad),
+  ...Form(lazyLoad),
   ...Menu(lazyLoad),
   ...Table(lazyLoad),
   ...User(lazyLoad),

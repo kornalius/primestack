@@ -89,6 +89,10 @@
       "unsaved": {
         "title": "Unsaved changes",
         "message": "There are unsaved changes. Are you sure you want to cancel?"
+      },
+      "delete": {
+        "title": "Delete a form",
+        "message": "Are you sure you want to delete this form?"
       }
     },
     "files": {
@@ -99,5 +103,21 @@
     "add": "Create New...",
     "clear": "Clear",
     "remove": "Remove"
+  },
+  "table": {
+    "dialog": {
+      "delete": {
+        "title": "Delete a table",
+        "message": "Are you sure you want to delete this table?"
+      }
+    }
+  },
+  "field": {
+    "dialog": {
+      "delete": {
+        "title": "Delete a field",
+        "message": "Are you sure you want to delete this field?"
+      }
+    }
   }
 }

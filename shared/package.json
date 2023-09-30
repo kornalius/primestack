@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@feathersjs/typebox": "^5.0.6",
+    "crypto-random-hex": "^1.0.0",
     "lodash": "^4.17.21"
   },
   "devDependencies": {

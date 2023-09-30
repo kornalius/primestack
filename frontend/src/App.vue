@@ -8,13 +8,13 @@
       <q-toolbar>
         <q-toolbar-title>
           <tabs-editor
-            v-if="editor.active && selectedMenuObject"
+            v-if="editor.active && !editor.formsEditor && selectedMenuObject"
             v-model="selectedMenuObject.tabs"
             :menu="selectedMenuObject"
           />
 
           <q-tabs
-            v-else
+            v-else-if="!editor.active"
             align="left"
             inline-label
             dense
@@ -98,7 +98,7 @@
               <div class="col-auto">
                 <q-btn
                   v-if="(auth.userRights as AnyData).maxes.maxEdits === -1"
-                  :color="editor.active ? 'red-7' : 'green-4'"
+                  :color="editor.active ? 'red-7' : 'blue-4'"
                   :disable="editor.active"
                   icon="mdi-pencil-ruler"
                   size="sm"
@@ -257,7 +257,27 @@
           <q-item
             v-if="editor.active"
             class="Drawer__item"
-            :class="{ leftDrawerExpanded, selected: $route.path === tableUrl() }"
+            :class="{ leftDrawerExpanded, selected: $route.path.startsWith(formUrl()) }"
+            :to="formUrl()"
+            name="forms"
+            tag="router-link"
+            clickable
+          >
+            <q-item-section avatar>
+              <q-icon name="mdi-format-line-style" />
+            </q-item-section>
+
+            <q-item-section v-if="leftDrawerExpanded">
+              <q-item-label>
+                Forms
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item
+            v-if="editor.active"
+            class="Drawer__item"
+            :class="{ leftDrawerExpanded, selected: $route.path.startsWith(tableUrl()) }"
             :to="tableUrl()"
             name="schemas"
             tag="router-link"
@@ -420,7 +440,7 @@ watch(() => editor.active, () => {
 //   })
 // }
 
-const { menuUrl, tableUrl } = useUrl()
+const { menuUrl, tableUrl, formUrl } = useUrl()
 
 /**
  * Returns the current route menu instance when editor is not active

@@ -1,7 +1,7 @@
 <template>
   <div
     class="row form-row"
-    :style="style(field)"
+    :style="{ ...style(field), ...($attrs.style || {}) }"
   >
     <div
       v-for="column in field._columns"

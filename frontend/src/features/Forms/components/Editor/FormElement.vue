@@ -74,6 +74,7 @@
       <form-element-row
         v-if="isRow(field)"
         v-model="field"
+        :style="component?.styles"
         @remove="(col) => editor.removeColumnFromField(col, field)"
         @click="onColumnClick"
       />
@@ -81,6 +82,7 @@
       <form-element-tabs
         v-else-if="isTabs(field)"
         v-model="field"
+        :style="component?.styles"
         @click="onClick"
       />
 
@@ -88,6 +90,7 @@
         v-else-if="isCard(field)"
         v-model="field"
         class="card"
+        :style="component?.styles"
         @remove="(col) => editor.removeColumnFromField(col, field)"
         @click="onColumnClick"
       />
@@ -99,14 +102,14 @@
         :model-value="displayValue"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
         :query="queryToMongo(field.query, fieldTable, ctx.$expr)"
-        :style="style(field)"
+        :style="{ ...style(field), ...(component?.styles || {}) }"
       />
 
       <q-icon
         v-else-if="isIcon(field)"
         :name="displayValue as string"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
-        :style="style(field)"
+        :style="{ ...style(field), ...(component?.styles || {}) }"
       />
 
       <component
@@ -114,13 +117,13 @@
         v-else
         :model-value="displayValue"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
-        :style="style(field)"
+        :style="{ ...style(field), ...(component?.styles || {}) }"
       />
 
       <div
         v-if="!editor.isDragging && !activeInteractable"
         class="overlay"
-        :style="{ top: overlayTop }"
+        :style="{ ...(component.overlayStyles || {}), top: overlayTop }"
         @click.stop="onClick"
       />
     </div>
@@ -272,6 +275,7 @@ watch([() => props.modelValue, component], () => {
   top: 0
   right: 0
   bottom: 0
+  min-height: 32px
 
 .q-skeleton--anim-wave
   z-index: 0 !important

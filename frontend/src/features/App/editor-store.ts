@@ -43,6 +43,8 @@ export const useAppEditor = defineStore('app-editor', () => {
   const states = ref({
     // are we in an editing session or not?
     active: false,
+    // is the forms editor active or not?
+    formsEditor: false,
     // selected menu id
     selectedMenu: undefined,
     // selected tab id
@@ -85,6 +87,11 @@ export const useAppEditor = defineStore('app-editor', () => {
    * Is the editor active?
    */
   const active = computed(() => states.value.active)
+
+  /**
+   * Is the forms editor active?
+   */
+  const formsEditor = computed(() => states.value.formsEditor)
 
   /**
    * Currently selected form element id
@@ -161,6 +168,15 @@ export const useAppEditor = defineStore('app-editor', () => {
     const a = isEqual(states.value.origSnapshot.actions, states.value.actions)
     return states.value.active && (!f || !t || !m || !a)
   })
+
+  /**
+   * Set the forms editor mode
+   *
+   * @param a Active or not
+   */
+  const setFormsEditor = (a: boolean): void => {
+    states.value.formsEditor = a
+  }
 
   /**
    * Set the form id currently being edited
@@ -566,6 +582,7 @@ export const useAppEditor = defineStore('app-editor', () => {
     unselectMenu()
     unselectTable()
     unselectActionElement()
+    setFormsEditor(false)
     states.value.formId = undefined
     states.value.actionId = undefined
     states.value.selected = undefined
@@ -841,6 +858,45 @@ export const useAppEditor = defineStore('app-editor', () => {
   }
 
   /**
+   * Adds a new form
+   *
+   * @param selectIt Should we select it?
+   *
+   * @returns {Form} New form instance
+   */
+  const addForm = (selectIt?: boolean): Form => {
+    const f: Form = {
+      _id: hexObjectId(),
+      name: newNameForField('form', states.value.forms),
+      _fields: [],
+    }
+    states.value.forms = [...states.value.forms, f]
+    if (selectIt) {
+      states.value.formId = f._id
+    }
+    return f
+  }
+
+  /**
+   * Removes a form
+   *
+   * @param id Id of the form to remove
+   *
+   * @returns {boolean} True is successful
+   */
+  const removeForm = (id: string): boolean => {
+    const index = states.value.forms.findIndex((f) => f._id === id)
+    if (index !== -1) {
+      states.value.forms = [
+        ...states.value.forms.slice(0, index),
+        ...states.value.forms.slice(index + 1),
+      ]
+      return true
+    }
+    return false
+  }
+
+  /**
    * Adds a new menu
    *
    * @param selectIt Should we select it?
@@ -857,7 +913,7 @@ export const useAppEditor = defineStore('app-editor', () => {
       target: '_self',
       tabs: [],
     }
-    states.value.menus.push(m)
+    states.value.menus = [...states.value.menus, m]
     if (selectIt) {
       selectMenu(m._id)
     }
@@ -874,7 +930,10 @@ export const useAppEditor = defineStore('app-editor', () => {
   const removeMenu = (id: string): boolean => {
     const index = states.value.menus.findIndex((m) => m._id === id)
     if (index !== -1) {
-      menus.value.splice(index, 1)
+      states.value.menus = [
+        ...states.value.menus.slice(0, index),
+        ...states.value.menus.slice(index + 1),
+      ]
       return true
     }
     return false
@@ -888,11 +947,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @returns {Tab} New tab instance
    */
   const addTab = (selectIt?: boolean): Tab => {
-    const f: Form = {
-      _id: hexObjectId(),
-      _fields: [],
-    }
-    states.value.forms?.push(f)
+    const f = addForm()
 
     const t: Tab = {
       _id: hexObjectId(),
@@ -921,13 +976,19 @@ export const useAppEditor = defineStore('app-editor', () => {
     const t = tabInstance(id)
     const idx = states.value.forms.findIndex((f) => f._id === t.formId)
     if (idx !== -1) {
-      states.value.forms.splice(idx, 1)
+      states.value.forms = [
+        ...states.value.forms.slice(0, idx),
+        ...states.value.forms.slice(idx + 1),
+      ]
     }
 
     const menu = menuInstance(states.value.selectedMenu)
     const index = menu.tabs.findIndex((tab) => tab._id === id)
     if (index !== -1) {
-      menu.tabs.splice(index, 1)
+      menu.tabs = [
+        ...menu.tabs.slice(0, index),
+        ...menu.tabs.slice(index + 1),
+      ]
       return true
     }
     return false
@@ -1043,8 +1104,13 @@ export const useAppEditor = defineStore('app-editor', () => {
     // eslint-disable-next-line no-underscore-dangle
     const index = field._columns.findIndex((c) => c._id === column._id)
     if (index !== -1) {
-      // eslint-disable-next-line no-underscore-dangle
-      field._columns.splice(index, 1)
+      // eslint-disable-next-line no-underscore-dangle,no-param-reassign
+      field._columns = [
+        // eslint-disable-next-line no-underscore-dangle
+        ...field._columns.slice(0, index),
+        // eslint-disable-next-line no-underscore-dangle
+        ...field._columns.slice(index + 1),
+      ]
       return true
     }
     return false
@@ -1069,7 +1135,7 @@ export const useAppEditor = defineStore('app-editor', () => {
       fields: [],
       indexes: [],
     }
-    states.value.tables.push(t)
+    states.value.tables = [...states.value.tables, t]
     if (selectIt) {
       selectTable(t._id)
     }
@@ -1086,7 +1152,10 @@ export const useAppEditor = defineStore('app-editor', () => {
   const removeTable = (id: string): boolean => {
     const index = states.value.tables.findIndex((m) => m._id === id)
     if (index !== -1) {
-      tables.value.splice(index, 1)
+      states.value.tables = [
+        ...states.value.tables.slice(0, index),
+        ...states.value.tables.slice(index + 1),
+      ]
       return true
     }
     return false
@@ -1114,7 +1183,7 @@ export const useAppEditor = defineStore('app-editor', () => {
         refTableId: undefined,
         refFields: [],
       }
-      table.fields.push(f)
+      table.fields = [...table.fields, f]
       return f
     }
     return undefined
@@ -1129,9 +1198,13 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @returns {boolean} True is successful
    */
   const removeFieldFromTable = (id: string, table: Table): boolean => {
-    const index = table.fields.findIndex((f) => f._id === id)
+    const t = tableInstance(table._id)
+    const index = t.fields.findIndex((f) => f._id === id)
     if (index !== -1) {
-      table.fields.splice(index, 1)
+      t.fields = [
+        ...t.fields.slice(0, index),
+        ...t.fields.slice(index + 1),
+      ]
       return true
     }
     return false
@@ -1151,7 +1224,7 @@ export const useAppEditor = defineStore('app-editor', () => {
       _actions: [],
       ...options,
     }
-    states.value.actions.push(a)
+    states.value.actions = [...states.value.actions, a]
     if (selectIt) {
       setActionId(a._id)
     }
@@ -1168,7 +1241,10 @@ export const useAppEditor = defineStore('app-editor', () => {
   const removeAction = (id: string): boolean => {
     const idx = states.value.actions.findIndex((a) => a._id === id)
     if (idx !== -1) {
-      states.value.actions.splice(idx, 1)
+      states.value.actions = [
+        ...states.value.actions.slice(0, idx),
+        ...states.value.actions.slice(idx + 1),
+      ]
       return true
     }
     return false
@@ -1234,7 +1310,12 @@ export const useAppEditor = defineStore('app-editor', () => {
     const index = currentAction._actions.findIndex((a) => a._id === id)
     if (index !== -1) {
       // eslint-disable-next-line no-underscore-dangle
-      currentAction._actions.splice(index, 1)
+      currentAction._actions = [
+        // eslint-disable-next-line no-underscore-dangle
+        ...currentAction._actions.slice(0, index),
+        // eslint-disable-next-line no-underscore-dangle
+        ...currentAction._actions.slice(index + 1),
+      ]
       return true
     }
     return false
@@ -1245,6 +1326,7 @@ export const useAppEditor = defineStore('app-editor', () => {
   return {
     states,
     active,
+    formsEditor,
     selectedMenu,
     selectedTab,
     selected,
@@ -1274,6 +1356,7 @@ export const useAppEditor = defineStore('app-editor', () => {
     selectTab,
     unselectTab,
     isTabSelected,
+    setFormsEditor,
     startEdit,
     endEdit,
     setFormId,
@@ -1298,6 +1381,8 @@ export const useAppEditor = defineStore('app-editor', () => {
     tableInstance,
     tableFieldInstance,
     isModified,
+    addForm,
+    removeForm,
     addMenu,
     removeMenu,
     addTab,

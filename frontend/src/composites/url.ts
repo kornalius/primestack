@@ -26,4 +26,12 @@ export const useUrl = () => ({
     }
     return `/${u.join('/')}`
   },
+
+  formUrl: (formId?: string, create?: boolean): string => {
+    const u = ['forms', formId]
+    if (create) {
+      u.push('create')
+    }
+    return `/${u.join('/')}`
+  },
 })

@@ -2,7 +2,7 @@
   <q-card
     class="card"
     v-bind="fieldBinds(field, schemaForField(field), ctx)"
-    :style="style(field)"
+    :style="{ ...style(field), ...($attrs.style || {}) }"
   >
     <q-card-section
       v-for="section in sections"

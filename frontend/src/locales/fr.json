@@ -90,14 +90,34 @@
         "title": "Changements non-sauvegardés",
         "message": "Il y a des changements non sauvegardés. Êtes-vous certain de vouloir annuler?"
       },
-      "files": {
-        "title": "Files ({count})"
+      "delete": {
+        "title": "Effacer ce formulaire",
+        "message": "Voulez-vous vraiment effacer ce formulaire?"
       }
+    },
+    "files": {
+      "title": "Fichiers ({count})"
     }
   },
   "buttons": {
     "add": "Nouveau...",
     "clear": "Effacer tout",
     "remove": "Effacer"
+  },
+  "table": {
+    "dialog": {
+      "delete": {
+        "title": "Effacer cete table",
+        "message": "Voulez-vous vraiment effacer cette table?"
+      }
+    }
+  },
+  "field": {
+    "dialog": {
+      "delete": {
+        "title": "Effacer ce champ",
+        "message": "Voulez-vous vraiment effacer ce champ?"
+      }
+    }
   }
 }

@@ -60,16 +60,18 @@ import {
 } from 'vue'
 import hexObjectId from 'hex-object-id'
 import { useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
 import { Static } from '@feathersjs/typebox'
 import { useAppEditor } from '@/features/App/editor-store'
 import { useUrl } from '@/composites/url'
+import { useAuth } from '@/features/Auth/store'
 import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
 import SchemaTable from '@/features/Tables/components/SchemaTable.vue'
 import { eventTable } from '@/shared/schemas/event'
 import { fileTable } from '@/shared/schemas/file'
 import { AddOption } from '@/features/Fields/interfaces'
 import { isServiceAvailable } from '@/shared/plan'
-import { useAuth } from '@/features/Auth/store'
+import { useI18n } from 'vue-i18n'
 
 type Table = Static<typeof tableSchema>
 type TableField = Static<typeof tableFieldSchema>
@@ -79,6 +81,10 @@ const props = defineProps<{
   fieldId?: string
   create?: boolean
 }>()
+
+const quasar = useQuasar()
+
+const { t } = useI18n()
 
 const editor = useAppEditor()
 
@@ -166,9 +172,9 @@ watch(selectedTableField, () => {
 })
 
 const addTable = () => {
-  const t = editor.addTable(true)
-  selectedTable.value = [t]
-  return t
+  const ta = editor.addTable(true)
+  selectedTable.value = [ta]
+  return ta
 }
 
 const addSpecialTable = (type: string) => {
@@ -177,23 +183,39 @@ const addSpecialTable = (type: string) => {
     events: eventTable,
   }
 
-  const t = addTable()
+  const table = addTable()
 
   Object.keys(tables[type]).forEach((k: string) => {
-    t[k] = tables[type][k]
+    table[k] = tables[type][k]
   })
 
-  t.fields.forEach((f) => {
+  table.fields.forEach((f) => {
     // eslint-disable-next-line no-param-reassign
     f._id = f._id || hexObjectId()
   })
 }
 
-const removeTable = (t: Table): void => {
-  if (editor.removeTable(t._id)) {
-    editor.unselectTable()
-    selectedTable.value = []
-  }
+const removeTable = (table: Table): void => {
+  quasar.dialog({
+    title: t('table.dialog.delete.title'),
+    persistent: true,
+    message: t('table.dialog.delete.message'),
+    ok: {
+      label: t('dialog.ok'),
+      color: 'green',
+      outline: true,
+    },
+    cancel: {
+      label: t('dialog.cancel'),
+      color: 'negative',
+      outline: true,
+    },
+  }).onOk(async () => {
+    if (editor.removeTable(table._id)) {
+      editor.unselectTable()
+      selectedTable.value = []
+    }
+  })
 }
 
 const addTableField = () => {
@@ -202,10 +224,26 @@ const addTableField = () => {
 }
 
 const removeTableField = (f: TableField): void => {
-  if (editor.removeFieldFromTable(f._id, selectedTable.value?.[0])) {
-    editor.unselectTableField()
-    selectedTableField.value = []
-  }
+  quasar.dialog({
+    title: t('field.dialog.delete.title'),
+    persistent: true,
+    message: t('field.dialog.delete.message'),
+    ok: {
+      label: t('dialog.ok'),
+      color: 'green',
+      outline: true,
+    },
+    cancel: {
+      label: t('dialog.cancel'),
+      color: 'negative',
+      outline: true,
+    },
+  }).onOk(async () => {
+    if (editor.removeFieldFromTable(f._id, selectedTable.value?.[0])) {
+      editor.unselectTableField()
+      selectedTableField.value = []
+    }
+  })
 }
 
 watch(() => props.create, () => {

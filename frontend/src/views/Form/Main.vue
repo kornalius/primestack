@@ -1,19 +1,20 @@
 <template>
   <q-page class="q-pa-md">
     <q-layout
-      v-if="form"
       view="hHh lpr lFr"
     >
       <q-drawer
-        v-if="!editor.active && !form.hideTable && table"
+        v-if="showDrawer"
         :model-value="true"
-        class="q-pa-sm q-pr-md"
+        class="q-pr-md"
+        :class="{ 'q-pa-sm': !formsViewMode }"
         :width="400"
         side="left"
         behavior="desktop"
         show-if-above
       >
         <schema-table
+          v-if="!formsViewMode"
           v-bind="tableBinds"
           class="full-height"
           :schema="fieldsToSchema(table.fields, `Table-${table._id}`)"
@@ -32,10 +33,32 @@
           @remove="removeRecord"
           @row-click="toggleSelection"
         />
+
+        <ex-table
+          v-else
+          class="full-height"
+          :selected="selected"
+          :schema="formSchemaForDisplay"
+          :rows="editor.forms"
+          add-button="start"
+          remove-button="end"
+          selection-style="single"
+          row-key="_id"
+          virtual-scroll
+          bordered
+          dense
+          flat
+          @add="addForm"
+          @remove="removeForm"
+          @row-click="toggleSelection"
+        />
       </q-drawer>
 
       <q-page-container>
-        <q-page @click="unselectAll">
+        <q-page
+          v-if="form"
+          @click="unselectAll"
+        >
           <div v-if="editor.active && !editor.actionId" class="row">
             <div class="q-mb-sm full-width">
               <div class="row bg-grey-8 items-center q-px-sm">
@@ -158,7 +181,7 @@
 import {
   computed, onBeforeUnmount, ref, watch,
 } from 'vue'
-import { Static } from '@feathersjs/typebox'
+import { Static, TObject } from '@feathersjs/typebox'
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
@@ -180,16 +203,19 @@ import { AnyData } from '@/shared/interfaces/commons'
 import FormEditor from '@/features/Forms/components/Editor/FormEditor.vue'
 import FormDisplay from '@/features/Forms/components/FormDisplay.vue'
 import SchemaTable from '@/features/Tables/components/SchemaTable.vue'
+import ExTable from '@/features/Fields/components/ExTable.vue'
 import ActionsEditor from '@/features/Actions/components/Editor/ActionsEditor.vue'
 import Uploader from '@/features/Files/components/Uploader.vue'
 
+type Form = Static<typeof formSchema>
 type FormField = Static<typeof fieldSchema>
 type FormColumn = Static<typeof columnSchema>
 
 const props = defineProps<{
-  menuId: string
-  tabId: string
+  menuId?: string
+  tabId?: string
   id?: string
+  formId?: string
   create?: boolean
 }>()
 
@@ -208,6 +234,12 @@ const { t } = useI18n()
 const { queryToMongo } = useQuery()
 
 const { mimetypes, maxFileSize } = useFiles(t)
+
+const formsViewMode = computed(() => props.menuId === undefined)
+
+watch(formsViewMode, () => {
+  editor.setFormsEditor(formsViewMode.value)
+}, { immediate: true })
 
 /**
  * Menu
@@ -242,21 +274,19 @@ const actionList = computed(() => (
 
 const { data: userForms } = api.service('forms').useFind({ query: {} })
 
-const form = computed(() => (
-  editor.active
+const form = computed(() => {
+  if (formsViewMode.value) {
+    return editor.active
+      ? editor.formInstance(props.formId)
+      : userForms.value?.[0]?.list.find((f) => f._id === props.formId)
+  }
+
+  return editor.active
     ? editor.formInstance(tab.value?.formId)
     : userForms.value?.[0]?.list.find((f) => f._id === tab.value?.formId)
-))
+})
 
 const fields = ref([])
-
-watch(form, () => {
-  if (form.value) {
-    // eslint-disable-next-line no-underscore-dangle
-    fields.value = form.value._fields || []
-    editor.setFormId(form.value._id)
-  }
-}, { immediate: true, deep: true })
 
 /**
  * Table
@@ -285,9 +315,28 @@ const { buildCtx, getProp } = useExpression()
 const ctx = buildCtx()
 
 /**
+ * Should we show the drawer with a list on the left?
+ */
+const showDrawer = computed(() => (
+  (!editor.active && !form.value?.hideTable && !!table.value && !formsViewMode.value)
+    // we are in forms view mode
+    || (editor.active && formsViewMode.value)
+))
+
+/**
+ * Build a JSON schema for the forms list
+ */
+const formSchemaForDisplay = computed((): TObject => ({
+  properties: pick(formSchema.properties, ['name']),
+} as TObject))
+
+/**
  * Table (continued)
  */
 
+/**
+ * Schema Table binds from form properties
+ */
 const tableBinds = computed(() => {
   const r = pick(form.value, formSchema.tableFields)
   if (typeof r.query === 'object' && Array.isArray(r.query.groups)) {
@@ -300,6 +349,9 @@ const tableBinds = computed(() => {
  * Form (continued)
  */
 
+/**
+ * Extract all default values from all the fields in the form
+ */
 const defaultValues = computed(() => (
   flattenFields(fields.value)
     .reduce((acc, f: FormField) => {
@@ -316,6 +368,9 @@ const defaultValues = computed(() => (
     }, {})
 ))
 
+/**
+ * Extract all fields modelValue
+ */
 const formModelValues = computed(() => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let convertColumn = (col: FormColumn): AnyData => ({})
@@ -420,7 +475,7 @@ const cloneData = async () => {
   prevData.value = cloneDeep(currentData.value)
 }
 
-const { menuUrl } = useUrl()
+const { menuUrl, formUrl } = useUrl()
 
 const saveDisabled = ref(false)
 
@@ -430,7 +485,11 @@ const saveDisabled = ref(false)
  * @param row Selected row value
  */
 const toggleSelection = (row: AnyData): void => {
-  router.push(menuUrl(props.menuId, props.tabId, getId(row)))
+  if (formsViewMode.value) {
+    router.push(formUrl(getId(row)))
+  } else {
+    router.push(menuUrl(props.menuId, props.tabId, getId(row)))
+  }
 }
 
 /**
@@ -450,7 +509,11 @@ watch([currentId, form, defaultValues], () => {
 const refresh = () => {
   currentData.value = {}
   prevData.value = {}
-  router.push(menuUrl(props.menuId, props.tabId))
+  if (formsViewMode.value) {
+    router.push(formUrl(props.formId))
+  } else {
+    router.push(menuUrl(props.menuId, props.tabId))
+  }
 }
 
 /**
@@ -552,6 +615,33 @@ const removeRecord = (value: AnyData) => {
   })
 }
 
+const addForm = () => {
+  toggleSelection(editor.addForm())
+}
+
+const removeForm = (frm: Form) => {
+  quasar.dialog({
+    title: t('form.dialog.delete.title'),
+    persistent: true,
+    message: t('form.dialog.delete.message'),
+    ok: {
+      label: t('dialog.ok'),
+      color: 'green',
+      outline: true,
+    },
+    cancel: {
+      label: t('dialog.cancel'),
+      color: 'negative',
+      outline: true,
+    },
+  }).onOk(async () => {
+    const i = editor.forms.findIndex((f: Form) => f._id === frm._id)
+    if (i !== -1) {
+      editor.forms.splice(i, 1)
+    }
+  })
+}
+
 /**
  * when the props.create is true, create a new temp record
  */
@@ -638,4 +728,12 @@ watch([
   app.setTable(table.value?._id)
   app.setDoc(currentData.value)
 }, { immediate: true })
+
+watch(form, () => {
+  if (form.value) {
+    // eslint-disable-next-line no-underscore-dangle
+    fields.value = form.value._fields || []
+    editor.setFormId(form.value._id)
+  }
+}, { immediate: true, deep: true })
 </script>

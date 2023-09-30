@@ -1,6 +1,7 @@
 <template>
   <q-drawer
     :model-value="editor.active"
+    style="background-color: whitesmoke;"
     :width="400"
     side="right"
   >

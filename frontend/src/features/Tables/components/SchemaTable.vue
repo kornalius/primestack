@@ -1,148 +1,66 @@
 <template>
-  <q-table
+  <ex-table
     v-model:selected="currentSelected"
+    v-model:filter="currentFilter"
     v-bind="$attrs"
-    :rows="filteredRows as any"
-    :columns="columns as any"
-    :selection="selectionStyle"
+    :rows="filteredRows"
+    :schema="schema"
+    :hide-filter="hideFilter"
+    :schema-rows="schemaRows"
+    :disable="disable"
+    :add-button="addButton"
+    :add-function="addFunction"
+    :add-icon="addIcon"
+    :add-label="addLabel"
+    :add-options="addOptions"
+    :add-disable="addDisable"
+    :remove-button="removeButton"
+    :remove-icon="removeIcon"
+    :can-remove="canRemove"
+    :remove-label="removeLabel"
+    :remove-function="removeFunction"
+    :remove-disable="removeDisable"
+    :selection-style="selectionStyle"
+    custom-filter
+    @add="(value) => $emit('add', value)"
+    @add-option="(value) => $emit('add-option', value)"
+    @row-click="(value) => $emit('row-click', value)"
+    @remove="(value) => $emit('remove', value)"
   >
-    <template #top>
-      <div class="row q-gutter-sm full-width items-center">
-        <div class="col-auto">
-          {{ $attrs.title }}
-        </div>
-
-        <div class="col">
-          <filter-editor
-            v-if="!hideFilter"
-            v-model="currentFilter"
-            class="full-width"
-            :fields="fields"
-            placeholder="Filter expression (ex: field:value)"
-            clearable
-            dense
-            outlined
-          />
-        </div>
-
-        <div class="col-auto">
-          <add-button
-            v-if="addButton === 'start'"
-            :label="addLabel"
-            :disable="disable || addDisable"
-            :options="addOptions"
-            @click="addRow"
-            @click-option="(value) => $emit('add-option', value)"
-          />
-        </div>
-      </div>
-    </template>
-
-    <template #body="p">
-      <q-tr
-        :props="p"
-        @mouseover="hover = p.row._id"
-        @mouseleave="hover = undefined"
-        @focus="hover = p.row.id"
-        @blur="hover = undefined"
-        @click="$emit('row-click', p.row)"
-      >
-        <q-td
-          v-if="$attrs.selection !== 'none'"
-          class="q-table--col-auto-width"
-        >
-          <q-checkbox
-            v-if="$attrs.selection === 'multiple'"
-            v-model="p.selected"
-            dense
-          />
-        </q-td>
-
-        <q-td
-          v-for="col in p.cols"
-          :key="col.field"
-          class="cursor-pointer"
-          :props="p"
-        >
-          <property-schema-field
-            v-if="schemaRows && schemaSchema(col.field)"
-            v-model="p.row[col.field]"
-            :parent="p.row"
-            :schema="schemaSchema(col.field)"
-            :key-name="col.field"
-            :label="col.label"
-          />
-
-          <span v-else>
-            {{ col.format ? col.format(p.row[(col as any).field]) : p.row[(col as any).field] }}
-          </span>
-        </q-td>
-
-        <q-btn
-          v-if="removeButton === 'end' && (!canRemove || canRemove(p.row))"
-          v-show="hover === p.row._id"
-          class="remove-button"
-          :disable="disable || removeDisable"
-          :icon="removeIcon || 'mdi-trash-can-outline'"
-          color="red-6"
-          size="sm"
-          round
-          flat
-          @click.stop="removeRow(p.row)"
-        >
-          <q-tooltip :delay="500">
-            {{ removeLabel || 'Delete' }}
-          </q-tooltip>
-        </q-btn>
-      </q-tr>
-    </template>
-
     <template v-for="(_, name) in $slots" #[name]="slotData">
       <slot :name="name" v-bind="slotData" />
     </template>
-  </q-table>
-
-  <add-button
-    v-if="addButton === 'end'"
-    :label="addLabel"
-    :disable="disable || addDisable"
-    :options="addOptions"
-    @click="addRow"
-    @click-option="(value) => $emit('add-option', value)"
-  />
+  </ex-table>
 </template>
 
 <script setup lang="ts">
-import {
-  computed, ref, useAttrs, watch,
-} from 'vue'
+import { computed, ref, watch } from 'vue'
 import omit from 'lodash/omit'
 import sift from 'sift'
-import startCase from 'lodash/startCase'
 import { TSchema } from '@feathersjs/typebox'
 import { useSyncedProp } from '@/composites/prop'
-import { columnAlignmentFor, getTypeFor } from '@/shared/schema'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useFeathers } from '@/composites/feathers'
 import { useQuery } from '@/features/Query/composites'
 import { useTable } from '@/features/Tables/composites'
 import { filterToMongo } from '@/composites/filter'
+import ExTable from '@/features/Fields/components/ExTable.vue'
 import { AddOption } from '@/features/Fields/interfaces'
-import PropertySchemaField from '@/features/Properties/components/PropertySchemaField.vue'
-import AddButton from '@/features/Fields/components/AddButton.vue'
-import FilterEditor from '@/features/Tables/components/FilterEditor.vue'
-
-const attrs = useAttrs()
 
 const props = defineProps<{
+  // rows to display in table
+  rows?: unknown[]
+  // schema to generate columns with
   schema?: TSchema
+  // 2-ways binding for selected rows
   selected?: unknown[]
-  query?: AnyData
-  tableId?: string
+  // 2-ways binding for filter string
   filter?: string
+  // should we hide the filter
   hideFilter?: boolean
   // Renders the rows using schema inputs
   schemaRows?: boolean
+  // are table's interactions disabled?
   disable?: boolean
   // position of the add button
   addButton?: 'start' | 'end'
@@ -168,10 +86,14 @@ const props = defineProps<{
   removeFunction?: (value: unknown) => void
   // should we disable the remove row feature
   removeDisable?: boolean
-  // show temps records from store
-  temps?: boolean
   // type of selection allowed
   selectionStyle?: 'single' | 'multiple' | 'none'
+  // custom mongo query to apply on top of filter
+  query?: AnyData
+  // table id to use for rows
+  tableId?: string
+  // show temps records from store
+  temps?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -194,31 +116,9 @@ const { cleanupQuery } = useQuery()
 
 const { tableFields } = useTable()
 
-const columns = computed(() => {
-  if (!props.schema) {
-    return attrs.columns
-  }
+const dataRows = ref([])
 
-  const cols = []
-  Object.keys(props.schema.properties).forEach((k) => {
-    const p = props.schema.properties[k]
-    const c = {
-      name: k,
-      label: startCase(k),
-      field: k,
-      align: columnAlignmentFor(getTypeFor(p)),
-      sortable: true,
-    }
-    cols.push(c)
-  })
-  return cols
-})
-
-const dataRows = ref()
-
-const data = ref()
-
-const hover = ref()
+const data = ref([])
 
 const { data: userTables } = api.service('tables').useFind({ query: {} })
 
@@ -238,7 +138,7 @@ const fields = computed(() => (
 let filterTimeout = 0
 
 watch([
-  () => attrs.rows,
+  () => props.rows,
   () => props.tableId,
   () => props.query,
   currentFilter,
@@ -273,32 +173,14 @@ watch([
       return
     }
 
-    if (attrs.rows) {
+    if (props.rows) {
       const s = sift(query)
-      dataRows.value = attrs.rows?.filter(s) || []
+      dataRows.value = props.rows?.filter(s) || []
     }
   }, 500)
 }, { immediate: true })
 
-const schemaSchema = (name: string) => props.schema?.properties[name]
-
 const filteredRows = computed(() => data.value || dataRows.value)
-
-const addRow = () => {
-  const newValue = props.addFunction ? props.addFunction() : {}
-  if (newValue) {
-    emit('add', newValue)
-  }
-}
-
-const removeRow = (value: unknown) => {
-  if (!props.canRemove || props.canRemove(value)) {
-    if (props.removeFunction) {
-      props.removeFunction(value)
-    }
-    emit('remove', value)
-  }
-}
 </script>
 
 <style scoped lang="sass">

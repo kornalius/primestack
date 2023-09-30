@@ -10,6 +10,9 @@ export default {
   icon: 'mdi-minus',
   label: 'Separator',
   component: QSeparator,
+  overlayStyles: {
+    padding: '16px 0',
+  },
   nokey: true,
   schema: properties([
     Type.Omit(commonProperties.style, ['dense']),

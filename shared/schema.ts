@@ -1,3 +1,4 @@
+import randomHex from 'crypto-random-hex'
 import cloneDeep from 'lodash/cloneDeep'
 import { Static, TSchema, Type } from '@feathersjs/typebox'
 import { tableFieldSchema, tableIndexSchema } from './schemas/table'
@@ -5,6 +6,28 @@ import { AnyData } from './interfaces/commons'
 
 type TableFieldSchema = Static<typeof tableFieldSchema>
 type TableIndexSchema = Static<typeof tableIndexSchema>
+
+let COUNTER: number | null = null
+let PROCESS_UNIQUE: string | null = null
+
+const hexObjectId = (): string => {
+  if (COUNTER == null) {
+    COUNTER = Math.floor(Math.random() * 0xffffff)
+  }
+
+  if (PROCESS_UNIQUE == null) {
+    PROCESS_UNIQUE = randomHex(5)
+  }
+
+  const time = Math.floor(Date.now() / 1000).toString(16).padStart(8, '0')
+  const inc = (COUNTER = (COUNTER + 1) % 0xffffff).toString(16).padStart(6, '0')
+
+  if (time.length !== 8) {
+    throw new Error('This library only supports dates up until Feb 7th, 2106 06:28:15 UTC')
+  }
+
+  return `${time}${PROCESS_UNIQUE}${inc}`
+}
 
 export interface Index {
   fields: Record<string, number>
@@ -459,6 +482,69 @@ export const fieldsToSchema = (fields: TableFieldSchema[], id: string): TSchema 
     [f.name]: fieldToSchema(f),
   }), {}), { $id: id })
 )
+
+/**
+ * Converts a schema to a table field schema
+ *
+ * @param name Name of the schema key
+ * @param schema Schema
+ *
+ * @returns {TableFieldSchema}
+ */
+export const schemaToField = (name: string, schema: TSchema): TableFieldSchema => {
+  const base = {
+    _id: hexObjectId(),
+    name,
+    readonly: false,
+    queryable: true,
+    array: false,
+    optional: false,
+    hidden: false,
+  }
+
+  const stringType = () => {
+    if (schema.color) {
+      return 'color'
+    }
+    if (schema.icon) {
+      return 'icon'
+    }
+    return schema.format || 'string'
+  }
+
+  switch (schema.type) {
+    case 'string':
+      if (schema.options) {
+        return {
+          ...base,
+          options: schema.options,
+          type: 'string',
+        }
+      }
+      return {
+        ...base,
+        type: stringType(),
+      }
+
+    case 'boolean':
+      return {
+        ...base,
+        type: 'boolean',
+      }
+
+    case 'number':
+      return {
+        ...base,
+        type: 'number',
+      }
+
+    default:
+      return {
+        ...base,
+        type: 'string',
+      }
+  }
+}
 
 /**
  * Converts Table indexes into valid mongo indexes

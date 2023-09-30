@@ -1,5 +1,5 @@
 import { StringEnum, Type } from '@feathersjs/typebox'
-import { tableIcon } from '../icons'
+import { contentIcon, tableIcon } from '../icons'
 import ExType from '../extypes'
 
 export const tabSchema = Type.Object(
@@ -52,6 +52,7 @@ export const fieldSchema = Type.Object(
 export const formSchema = Type.Object(
   {
     _id: ExType.Id(),
+    name: Type.String(),
     data: Type.Optional(ExType.JSON()),
     hideFilter: Type.Optional(Type.Boolean({ skip: true })),
     grid: Type.Optional(Type.Boolean()),
@@ -83,6 +84,12 @@ export const formSchema = Type.Object(
     $id: 'Form',
     additionalProperties: true,
     categories: {
+      content: {
+        icon: contentIcon,
+        names: [
+          'name',
+        ],
+      },
       table: {
         icon: tableIcon,
         names: [

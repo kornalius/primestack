@@ -2,7 +2,7 @@
   <tabs-editor
     v-model="field._columns"
     v-model:tab="active"
-    v-bind="fieldBinds(field, schemaForField(field), ctx)"
+    v-bind="{ ...fieldBinds(field, schemaForField(field), ctx), ...$attrs }"
   />
 
   <div class="panels">

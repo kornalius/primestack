@@ -26,6 +26,10 @@ export interface TFormComponent {
   color?: string | ((value?: AnyData) => string)
   // component to use
   component?: unknown
+  // component styles to apply while editing
+  styles?: AnyData
+  // apply some styling to the overlay while editing
+  overlayStyles?: AnyData
   // icon for the component
   icon: string | ((value?: AnyData) => string)
   // don't create a key for preview data

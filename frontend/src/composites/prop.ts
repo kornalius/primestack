@@ -21,15 +21,18 @@ const cloneValue = (value: unknown): unknown => (
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const useProp = (props: AnyData, name: string): Ref => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!(props as any)[name]) {
-    return ref()
-  }
+  const p = props as any
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const r = ref(cloneValue((props as any)[name]))
+  // if (!p[name]) {
+  //   return ref()
+  // }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  watch((): Ref => cloneDeep((props as any)[name]), (newValue, oldValue): void => {
+  const r = ref(cloneValue(p[name]))
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  watch((): Ref => cloneDeep(p[name]), (newValue, oldValue) => {
     if (!isEqual(newValue, oldValue)) {
       r.value = cloneValue(newValue)
     }
@@ -47,18 +50,21 @@ export const useSyncedProp = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   props: Record<string, any>,
   name: string,
-  emit: (e: string, ...args) => void,
+  emit: (e: string, ...args: unknown[]) => void,
 ): Ref => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (!(props as any)[name]) {
-    return ref()
-  }
+  const p = props as any
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const r = ref(cloneValue((props as any)[name]))
+  // if (!p[name]) {
+  //   return ref()
+  // }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  watch((): Ref => cloneDeep((props as any)[name]), (newValue, oldValue): void => {
+  const r = ref(cloneValue(p[name]))
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  watch((): Ref => cloneDeep(p[name]), (newValue, oldValue) => {
     if (!isEqual(newValue, oldValue)) {
       r.value = cloneValue(newValue)
     }
@@ -79,7 +85,7 @@ export const useSyncedProp = (
 export const useModelValue = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   props: Record<string, any>,
-  emit: (e: string, ...args) => void,
+  emit: (e: string, ...args: unknown[]) => void,
   defaultValue?: unknown,
 ): Ref => computed({
   get: () => (props.modelValue !== undefined ? props.modelValue : defaultValue),
