@@ -49,6 +49,49 @@ export const fieldSchema = Type.Object(
   { $id: 'FormField', additionalProperties: true },
 )
 
+/**
+ * Schema for visual table component editor column
+ */
+export const formTableColumnSchema = Type.Object({
+  _id: ExType.Id(),
+  name: Type.String(),
+  label: Type.String(),
+  field: ExType.Field({ tableProp: 'tableId' }),
+  required: Type.Boolean(),
+  align: Type.String({
+    options: [
+      { value: 'left', icon: 'mdi-format-align-left' },
+      { value: 'center', icon: 'mdi-format-align-center' },
+      { value: 'right', icon: 'mdi-format-align-right' },
+    ],
+    toggles: true,
+  }),
+  sortable: Type.Boolean(),
+  sortOrder: Type.String({
+    options: [
+      { value: 'ad', icon: 'mdi-sort-alphabetical-ascending' },
+      { value: 'da', icon: 'mdi-sort-alphabetical-descending' },
+    ],
+    toggles: true,
+  }),
+}, {
+  categories: {
+    content: {
+      icon: contentIcon,
+      names: [
+        'name',
+        'field',
+        'label',
+        'align',
+        'required',
+        'sortable',
+        'sortOrder',
+      ],
+    },
+  },
+  horizontalPopup: true,
+})
+
 export const formSchema = Type.Object(
   {
     _id: ExType.Id(),

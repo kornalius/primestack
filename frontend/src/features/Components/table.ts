@@ -1,9 +1,11 @@
+import hexObjectId from 'hex-object-id'
 import { StringEnum, Type } from '@feathersjs/typebox'
+import ExType from '@/shared/extypes'
 import { actionIcon, contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { AnyData } from '@/shared/interfaces/commons'
 import SchemaTable from '@/features/Tables/components/SchemaTable.vue'
-import ExType from '@/shared/extypes'
+import { formTableColumnSchema } from '@/shared/schemas/form'
 import {
   properties, commonProperties, defaultStyleValues, commonEventArgs,
 } from './common'
@@ -22,28 +24,7 @@ export default {
       grid: Type.Boolean(),
       gridHeader: Type.Boolean(),
       loading: Type.Boolean(),
-      columns: Type.Array(Type.Object({
-        name: Type.String(),
-        label: Type.String(),
-        field: Type.String(),
-        required: Type.Boolean(),
-        align: Type.String({
-          options: [
-            { value: 'left', icon: 'mdi-format-align-left' },
-            { value: 'center', icon: 'mdi-format-align-center' },
-            { value: 'right', icon: 'mdi-format-align-right' },
-          ],
-          toggles: true,
-        }),
-        sortable: Type.Boolean(),
-        sortOrder: Type.String({
-          options: [
-            { value: 'ad', icon: 'mdi-sort-alphabetical-ascending' },
-            { value: 'da', icon: 'mdi-sort-alphabetical-descending' },
-          ],
-          toggles: true,
-        }),
-      }, { horizontalPopup: true })),
+      columns: Type.Array(formTableColumnSchema),
       visibleColumns: Type.Array(Type.String()),
       title: Type.String(),
       hideHeader: Type.Boolean(),
@@ -103,15 +84,15 @@ export default {
     hideFilter: true,
     columns: [
       {
-        name: 'name',
-        label: 'Name',
-        field: 'name',
+        _id: hexObjectId(),
+        name: 'col1',
+        label: 'Col1',
         align: 'left',
       },
       {
-        name: 'age',
-        label: 'Age',
-        field: 'age',
+        _id: hexObjectId(),
+        name: 'col2',
+        label: 'Col2',
         align: 'left',
       },
     ],

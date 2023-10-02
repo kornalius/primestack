@@ -25,6 +25,19 @@
       :categories="selectedAction.categories"
     />
 
+    <!-- Table Column properties -->
+
+    <properties-editor
+      v-else-if="showFormTableColumnProperties"
+      v-model="selectedFormTableColumn"
+      v-model:forced-types="forcedTypes"
+      :prop-name="''"
+      :schema="selectedFormColumnSchema"
+      :categories="selectedFormColumnSchema.categories"
+      :labels="selectedFormColumnSchema.labels"
+      :disabled-properties="disabledFormTableColumnProperties"
+    />
+
     <!-- Form Field properties -->
 
     <properties-editor
@@ -130,7 +143,7 @@ import { useAppEditor } from '@/features/App/editor-store'
 import { useFormElements } from '@/features/Forms/composites'
 import { useActions } from '@/features/Actions/composites'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
-import { formSchema } from '@/shared/schemas/form'
+import { formSchema, formTableColumnSchema } from '@/shared/schemas/form'
 import { tableSchema, tableFieldSchema } from '@/shared/schemas/table'
 import { omitFields } from '@/shared/schema'
 import SectionTitle from '@/features/Fields/components/SectionTitle.vue'
@@ -166,7 +179,7 @@ const selectedMenuSchema = computed(() => (
  * Should we show menu properties?
  */
 const showMenuProperties = computed(() => (
-  selectedMenu.value && selectedMenuSchema.value
+  !!selectedMenu.value && !!selectedMenuSchema.value
 ))
 
 /**
@@ -193,7 +206,7 @@ const selectedTabSchema = computed(() => (
  * Should we show the tab properties?
  */
 const showTabProperties = computed(() => (
-  selectedMenu.value && selectedTabIndex.value !== -1 && selectedTabSchema.value
+  !!selectedMenu.value && selectedTabIndex.value !== -1 && !!selectedTabSchema.value
 ))
 
 /**
@@ -209,6 +222,13 @@ const form = computed(() => editor.formInstance(editor.formId))
  * Computes the selected form field instance
  */
 const selectedField = computed(() => editor.formFieldInstance(editor.selected))
+
+/**
+ * Computes the selected form's table column instance
+ */
+const selectedFormTableColumn = computed(() => (
+  editor.formTableColumnInstance(editor.selectedFormTableColumn)
+))
 
 /**
  * Computes the selected form field component
@@ -227,7 +247,14 @@ const showFormProperties = computed(() => !!form.value)
  * Should we show the form field properties?
  */
 const showFieldProperties = computed(() => (
-  selectedComponent.value && selectedField.value
+  !!selectedComponent.value && !!selectedField.value
+))
+
+/**
+ * Should we show the form's table column properties?
+ */
+const showFormTableColumnProperties = computed(() => (
+  !!selectedField.value && !!selectedFormTableColumn.value
 ))
 
 /**
@@ -257,14 +284,14 @@ const selectedTableField = computed(() => (
  * Should we show the table properties?
  */
 const showTableProperties = computed(() => (
-  selectedTable.value && !selectedTableField.value
+  !!selectedTable.value && !selectedTableField.value
 ))
 
 /**
  * Should we show the table field properties?
  */
 const showTableFieldProperties = computed(() => (
-  selectedTable.value && selectedTableField.value
+  !!selectedTable.value && !!selectedTableField.value
 ))
 
 /**
@@ -286,6 +313,15 @@ const selectedSchemaFieldSchema = computed(() => (
 ))
 
 /**
+ * Computes the selected table field schema
+ */
+const selectedFormColumnSchema = computed(() => (
+  selectedFormTableColumn.value
+    ? omitFields(formTableColumnSchema, ['_id'])
+    : undefined
+))
+
+/**
  * Computes a list of disabled table property names
  */
 const disabledTableProperties = computed((): string[] | undefined => {
@@ -299,6 +335,16 @@ const disabledTableProperties = computed((): string[] | undefined => {
  * Computes if table field properties are disabled or not
  */
 const disabledTableFieldProperties = computed((): string[] | undefined => {
+  if (selectedTable.value?.service) {
+    return Object.keys(selectedSchemaFieldSchema.value.properties)
+  }
+  return undefined
+})
+
+/**
+ * Computes if form's table column properties are disabled or not
+ */
+const disabledFormTableColumnProperties = computed((): string[] | undefined => {
   if (selectedTable.value?.service) {
     return Object.keys(selectedSchemaFieldSchema.value.properties)
   }
@@ -326,6 +372,6 @@ const selectedAction = computed(() => (
  * Should we show the action element properties?
  */
 const showActionElementProperties = computed(() => (
-  selectedActionElement.value && selectedAction.value
+  !!selectedActionElement.value && !!selectedAction.value
 ))
 </script>

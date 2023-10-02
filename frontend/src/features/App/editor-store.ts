@@ -14,7 +14,9 @@ import { AnyData } from '@/shared/interfaces/commons'
 // eslint-disable-next-line import/no-cycle
 import { flattenActions } from '@/features/Actions/composites'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
-import { columnSchema, fieldSchema, formSchema } from '@/shared/schemas/form'
+import {
+  columnSchema, fieldSchema, formSchema, formTableColumnSchema,
+} from '@/shared/schemas/form'
 import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
 import { actionSchema, actionElementSchema } from '@/shared/schemas/actions'
 import { TFormComponent } from '@/shared/interfaces/forms'
@@ -27,6 +29,7 @@ type Tab = Static<typeof tabSchema>
 type Form = Static<typeof formSchema>
 type FormField = Static<typeof fieldSchema>
 type FormColumn = Static<typeof columnSchema>
+type FormTableColumn = Static<typeof formTableColumnSchema>
 type Table = Static<typeof tableSchema>
 type TableField = Static<typeof tableFieldSchema>
 type Action = Static<typeof actionSchema>
@@ -57,6 +60,8 @@ export const useAppEditor = defineStore('app-editor', () => {
     selectedActionElement: undefined,
     // selected form element id
     selected: undefined,
+    // selected form table component column
+    selectedFormTableColumn: undefined,
     // id of element being hovered on with the mouse
     hovered: undefined,
     // is something being dragged?
@@ -134,6 +139,11 @@ export const useAppEditor = defineStore('app-editor', () => {
   const selectedTableField = computed(() => states.value.selectedTableField)
 
   /**
+   * Selected form table component column id
+   */
+  const selectedFormTableColumn = computed(() => states.value.selectedFormTableColumn)
+
+  /**
    * Selected action element id
    */
   const selectedActionElement = computed(() => states.value.selectedActionElement)
@@ -170,6 +180,62 @@ export const useAppEditor = defineStore('app-editor', () => {
   })
 
   /**
+   * Returns the form instance from an id
+   *
+   * @param id Id of the form
+   *
+   * @returns {Form|undefined} Instance of the form
+   */
+  const formInstance = (id: string): Form | undefined => (
+    states.value.forms?.find
+      ? states.value.forms?.find((f) => f._id === id)
+      : undefined
+  )
+
+  /**
+   * Returns a flattened list of instance of form's fields
+   */
+  const flatFields = (): FormField[] => (
+    // eslint-disable-next-line no-underscore-dangle
+    flattenFields(formInstance(states.value.formId)?._fields || [])
+  )
+
+  /**
+   * Returns the form field instance from an id
+   *
+   * @param id Id of the form field
+   *
+   * @returns {FormField|undefined} Instance of the form field
+   */
+  const formFieldInstance = (id: string): FormField | undefined => (
+    // eslint-disable-next-line no-underscore-dangle
+    flatFields().find((f) => f._id === id) as FormField
+  )
+
+  /**
+   * Return the form's table element instance for the column
+   *
+   * @param id Id of the form's table column
+   *
+   * @returns {FormField} Form's table instance
+   */
+  const formInstanceForTableColumn = (id: string): FormField => {
+    // eslint-disable-next-line no-underscore-dangle
+    const fc = flatFields()
+    for (let i = 0; i < fc.length; i++) {
+      // eslint-disable-next-line no-underscore-dangle
+      if (fc[i]._type === 'table') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const col = (fc[i] as any)?.columns.find((c: FormTableColumn) => c._id === id)
+        if (col) {
+          return fc[i]
+        }
+      }
+    }
+    return undefined
+  }
+
+  /**
    * Set the forms editor mode
    *
    * @param a Active or not
@@ -195,6 +261,7 @@ export const useAppEditor = defineStore('app-editor', () => {
   const select = (id: string): void => {
     if (!document.querySelector('.q-popup-edit')) {
       states.value.selected = id
+      states.value.selectedFormTableColumn = undefined
     }
   }
 
@@ -207,6 +274,7 @@ export const useAppEditor = defineStore('app-editor', () => {
     if (!document.querySelector('.q-popup-edit')) {
       if (states.value.selected === id) {
         states.value.selected = undefined
+        states.value.selectedFormTableColumn = undefined
       }
     }
   }
@@ -217,6 +285,7 @@ export const useAppEditor = defineStore('app-editor', () => {
   const unselectAll = (): void => {
     if (!document.querySelector('.q-popup-edit')) {
       states.value.selected = undefined
+      states.value.selectedFormTableColumn = undefined
     }
   }
 
@@ -229,6 +298,54 @@ export const useAppEditor = defineStore('app-editor', () => {
    */
   const isSelected = (id: string): boolean => (
     states.value.selected === id
+  )
+
+  /**
+   * Selects a form's table component column
+   *
+   * @param id Id of the table column
+   */
+  const selectFormTableColumn = (id: string): void => {
+    if (!document.querySelector('.q-popup-edit')) {
+      const fc = formInstanceForTableColumn(id)
+      if (fc) {
+        select(fc._id)
+      }
+      states.value.selectedFormTableColumn = id
+    }
+  }
+
+  /**
+   * Unselects currently selected form's table component column
+   */
+  const unselectFormTableColumn = (): void => {
+    if (!document.querySelector('.q-popup-edit')) {
+      states.value.selectedFormTableColumn = undefined
+    }
+  }
+
+  /**
+   * Checks to see if a form's table column is being selected or not
+   *
+   * @param id Id of the form's table colum
+   *
+   * @returns {boolean} True if the form's table column is selected
+   */
+  const isFormTableColumnSelected = (id: string): boolean => (
+    states.value.selectedFormTableColumn === id
+  )
+
+  /**
+   * Returns the currently selected table component column instance from an id
+   *
+   * @param id Id of the table component column
+   *
+   * @returns {TableField|undefined} Instance of the table column
+   */
+  const formTableColumnInstance = (id: string): TableField | undefined => (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (formInstanceForTableColumn(id) as any)?.columns
+      .find((c: FormTableColumn) => c._id === id)
   )
 
   /**
@@ -428,7 +545,8 @@ export const useAppEditor = defineStore('app-editor', () => {
       return undefined
     }
     // eslint-disable-next-line no-underscore-dangle
-    return flattenActions(currentAction._actions).find((a) => a._id === id)
+    return flattenActions(currentAction._actions)
+      .find((a) => a._id === id)
   }
 
   /**
@@ -591,37 +709,13 @@ export const useAppEditor = defineStore('app-editor', () => {
   }
 
   /**
-   * Resets an editing session to its original snapshot when editing was last started started
+   * Resets an editing session to its original snapshot when
+   * editing was last started started
    */
   const reset = (): void => {
     saveToStore(states.value.origSnapshot)
     states.value.origSnapshot = {} as Snapshot
   }
-
-  /**
-   * Returns the form instance from an id
-   *
-   * @param id Id of the form
-   *
-   * @returns {Form|undefined} Instance of the form
-   */
-  const formInstance = (id: string): Form | undefined => (
-    states.value.forms?.find
-      ? states.value.forms?.find((f) => f._id === id)
-      : undefined
-  )
-
-  /**
-   * Returns the form field instance from an id
-   *
-   * @param id Id of the form field
-   *
-   * @returns {FormField|undefined} Instance of the form field
-   */
-  const formFieldInstance = (id: string): FormField | undefined => (
-    // eslint-disable-next-line no-underscore-dangle
-    flattenFields(formInstance(states.value.formId)?._fields || []).find((f) => f._id === id) as FormField
-  )
 
   /**
    * Computes if the form can be saved properly
@@ -633,21 +727,19 @@ export const useAppEditor = defineStore('app-editor', () => {
       return false
     }
 
-    const form = formInstance(states.value.formId)
-
     const nameExists = (field: FormField): boolean => {
       if (!field.name) {
         return false
       }
       // eslint-disable-next-line no-underscore-dangle
-      return !!flattenFields(form._fields)
+      return !!flatFields()
         .find((f: FormField) => f.name
           && f._id !== field._id
           && f.name.toLowerCase() === field.name.toLowerCase())
     }
 
     // eslint-disable-next-line no-underscore-dangle
-    return !flattenFields(form?._fields || []).find((f) => nameExists(f))
+    return !flatFields().find((f) => nameExists(f))
   })
 
   /**
@@ -804,7 +896,8 @@ export const useAppEditor = defineStore('app-editor', () => {
    */
   const menuInstance = (id: string): Menu | undefined => (
     states.value.menus?.find
-      ? states.value.menus?.find((m) => m._id === id)
+      ? states.value.menus
+        ?.find((m) => m._id === id)
       : undefined
   )
 
@@ -831,7 +924,8 @@ export const useAppEditor = defineStore('app-editor', () => {
   const tableFieldInstance = (id: string): TableField | undefined => {
     for (let i = 0; i < states.value.tables.length; i++) {
       const t = states.value.tables[i]
-      const field = t.fields.find((f) => f._id === id)
+      const field = t.fields
+        .find((f) => f._id === id)
       if (field) {
         return field
       }
@@ -849,7 +943,8 @@ export const useAppEditor = defineStore('app-editor', () => {
   const tabInstance = (id: string): Tab | undefined => {
     for (let i = 0; i < states.value.menus.length; i++) {
       const m = states.value.menus[i]
-      const tab = m.tabs.find((t) => t._id === id)
+      const tab = m.tabs
+        .find((t) => t._id === id)
       if (tab) {
         return tab
       }
@@ -885,7 +980,8 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @returns {boolean} True is successful
    */
   const removeForm = (id: string): boolean => {
-    const index = states.value.forms.findIndex((f) => f._id === id)
+    const index = states.value.forms
+      .findIndex((f) => f._id === id)
     if (index !== -1) {
       states.value.forms = [
         ...states.value.forms.slice(0, index),
@@ -928,7 +1024,8 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @returns {boolean} True is successful
    */
   const removeMenu = (id: string): boolean => {
-    const index = states.value.menus.findIndex((m) => m._id === id)
+    const index = states.value.menus
+      .findIndex((m) => m._id === id)
     if (index !== -1) {
       states.value.menus = [
         ...states.value.menus.slice(0, index),
@@ -974,7 +1071,8 @@ export const useAppEditor = defineStore('app-editor', () => {
    */
   const removeTab = (id: string): boolean => {
     const t = tabInstance(id)
-    const idx = states.value.forms.findIndex((f) => f._id === t.formId)
+    const idx = states.value.forms
+      .findIndex((f) => f._id === t.formId)
     if (idx !== -1) {
       states.value.forms = [
         ...states.value.forms.slice(0, idx),
@@ -983,7 +1081,8 @@ export const useAppEditor = defineStore('app-editor', () => {
     }
 
     const menu = menuInstance(states.value.selectedMenu)
-    const index = menu.tabs.findIndex((tab) => tab._id === id)
+    const index = menu.tabs
+      .findIndex((tab) => tab._id === id)
     if (index !== -1) {
       menu.tabs = [
         ...menu.tabs.slice(0, index),
@@ -1002,7 +1101,10 @@ export const useAppEditor = defineStore('app-editor', () => {
    *
    * @returns {FormField | FormColumn} New form field
    */
-  const createFormField = (component: TFormComponent, options?: AnyData): FormField | FormColumn | undefined => {
+  const createFormField = (
+    component: TFormComponent,
+    options?: AnyData,
+  ): FormField | FormColumn | undefined => {
     const form = formInstance(states.value.formId)
     if (form) {
       return {
@@ -1017,7 +1119,7 @@ export const useAppEditor = defineStore('app-editor', () => {
         ...(defaultValues(component.defaultValues) || {}),
         ...(options || {}),
         // eslint-disable-next-line no-underscore-dangle
-        name: newNameForField(component.type, flattenFields(form._fields)),
+        name: newNameForField(component.type, flatFields()),
       }
     }
     return undefined
@@ -1031,8 +1133,12 @@ export const useAppEditor = defineStore('app-editor', () => {
    *
    * @returns {FormField | FormColumn} New field instance
    */
-  const addFieldToForm = (component: TFormComponent, options?: AnyData): FormField | FormColumn | undefined => {
-    const form = states.value.forms.find((f) => f._id === states.value.formId)
+  const addFieldToForm = (
+    component: TFormComponent,
+    options?: AnyData,
+  ): FormField | FormColumn | undefined => {
+    const form = states.value.forms
+      .find((f) => f._id === states.value.formId)
     if (form) {
       const field = createFormField(component, options)
       if (field) {
@@ -1061,8 +1167,6 @@ export const useAppEditor = defineStore('app-editor', () => {
     componentType: string,
     field: FormField,
   ): FormColumn => {
-    const form = formInstance(states.value.formId)
-
     let type: string
 
     if (componentType === 'row') {
@@ -1085,7 +1189,7 @@ export const useAppEditor = defineStore('app-editor', () => {
         ), {}),
       ...(defaultValues(colComponent.defaultValues) || {}),
       // eslint-disable-next-line no-underscore-dangle
-      name: newNameForField(type, flattenFields(form._fields)),
+      name: newNameForField(type, flatFields()),
     } as FormColumn
     // eslint-disable-next-line no-underscore-dangle
     field._columns.push(col)
@@ -1102,7 +1206,8 @@ export const useAppEditor = defineStore('app-editor', () => {
    */
   const removeColumnFromField = (column: FormColumn, field: FormField): boolean => {
     // eslint-disable-next-line no-underscore-dangle
-    const index = field._columns.findIndex((c) => c._id === column._id)
+    const index = field._columns
+      .findIndex((c) => c._id === column._id)
     if (index !== -1) {
       // eslint-disable-next-line no-underscore-dangle,no-param-reassign
       field._columns = [
@@ -1150,7 +1255,8 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @returns {boolean} True is successful
    */
   const removeTable = (id: string): boolean => {
-    const index = states.value.tables.findIndex((m) => m._id === id)
+    const index = states.value.tables
+      .findIndex((m) => m._id === id)
     if (index !== -1) {
       states.value.tables = [
         ...states.value.tables.slice(0, index),
@@ -1199,7 +1305,8 @@ export const useAppEditor = defineStore('app-editor', () => {
    */
   const removeFieldFromTable = (id: string, table: Table): boolean => {
     const t = tableInstance(table._id)
-    const index = t.fields.findIndex((f) => f._id === id)
+    const index = t.fields
+      .findIndex((f) => f._id === id)
     if (index !== -1) {
       t.fields = [
         ...t.fields.slice(0, index),
@@ -1239,7 +1346,8 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @returns {boolean} True is successful
    */
   const removeAction = (id: string): boolean => {
-    const idx = states.value.actions.findIndex((a) => a._id === id)
+    const idx = states.value.actions
+      .findIndex((a) => a._id === id)
     if (idx !== -1) {
       states.value.actions = [
         ...states.value.actions.slice(0, idx),
@@ -1307,7 +1415,8 @@ export const useAppEditor = defineStore('app-editor', () => {
   const removeActionElement = (id: string): boolean => {
     const currentAction = actionInstance(states.value.actionId)
     // eslint-disable-next-line no-underscore-dangle
-    const index = currentAction._actions.findIndex((a) => a._id === id)
+    const index = currentAction._actions
+      .findIndex((a) => a._id === id)
     if (index !== -1) {
       // eslint-disable-next-line no-underscore-dangle
       currentAction._actions = [
@@ -1332,6 +1441,7 @@ export const useAppEditor = defineStore('app-editor', () => {
     selected,
     selectedTable,
     selectedTableField,
+    selectedFormTableColumn,
     selectedActionElement,
     formId,
     actionId,
@@ -1344,6 +1454,9 @@ export const useAppEditor = defineStore('app-editor', () => {
     unselect,
     unselectAll,
     isSelected,
+    selectFormTableColumn,
+    unselectFormTableColumn,
+    isFormTableColumnSelected,
     hovered,
     hover,
     unhover,
@@ -1377,6 +1490,7 @@ export const useAppEditor = defineStore('app-editor', () => {
     preventSystemUndoRedo,
     formInstance,
     formFieldInstance,
+    formTableColumnInstance,
     menuInstance,
     tableInstance,
     tableFieldInstance,

@@ -1,6 +1,7 @@
 <template>
   <schema-table
     v-model:selected="selected"
+    class="table-editor"
     v-bind="$attrs"
     :columns="cols"
     hide-filter
@@ -26,9 +27,17 @@
             @mouseleave="hover = -1"
             @focus="hover = index as number"
             @blur="hover = -1"
-            @click.stop=""
           >
-            {{ cols[index].label }}
+            <div
+              :class="{
+                label: true,
+                hovered: hover === index,
+                selected: editor.isFormTableColumnSelected(cols[index]._id),
+              }"
+              @click.stop="editor.selectFormTableColumn(cols[index]._id)"
+            >
+              {{ cols[index].label }}
+            </div>
 
             <q-btn
               v-show="hover === index"
@@ -62,6 +71,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import draggable from 'vuedraggable'
+import hexObjectId from 'hex-object-id'
 import startCase from 'lodash/startCase'
 import { useSyncedProp } from '@/composites/prop'
 import { useAppEditor } from '@/features/App/editor-store'
@@ -109,6 +119,7 @@ const addColumn = (): void => {
   }
 
   cols.value.push({
+    _id: hexObjectId(),
     name: newName,
     label: startCase(newName),
     field: undefined,
@@ -143,4 +154,15 @@ const removeColumn = (index: number): void => {
   position: absolute
   top: 12px
   left: -6px
+</style>
+
+<style lang="sass">
+.table-editor
+  thead tr th
+    .label
+      &.selected
+        outline: 2px solid $blue-grey-5 !important
+
+      &.hovered
+        outline: 1px dashed $blue-grey-4
 </style>
