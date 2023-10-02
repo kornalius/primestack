@@ -19,6 +19,7 @@
       v-if="showActionElementProperties"
       v-model="selectedActionElement"
       v-model:forced-types="forcedTypes"
+      :parents="[form, selectedField, selectedActionElement]"
       :prop-name="''"
       :schema="selectedAction.schema"
       :labels="selectedAction.labels"
@@ -31,6 +32,7 @@
       v-else-if="showFormTableColumnProperties"
       v-model="selectedFormTableColumn"
       v-model:forced-types="forcedTypes"
+      :parents="[form, selectedField, selectedFormTableColumn]"
       :prop-name="''"
       :schema="selectedFormColumnSchema"
       :categories="selectedFormColumnSchema.categories"
@@ -44,18 +46,21 @@
       v-else-if="showFieldProperties"
       v-model="selectedField"
       v-model:forced-types="forcedTypes"
+      :parents="[form, selectedField]"
       :prop-name="''"
       :schema="selectedComponent.schema"
       :labels="selectedComponent.labels"
       :categories="selectedComponent.categories"
+      include-form-data-fields
     />
 
-    <!-- Table properties -->
+    <!-- Table editor properties -->
 
     <properties-editor
       v-else-if="showTableProperties"
       v-model="selectedTable"
       v-model:forced-types="forcedTypes"
+      :parents="[selectedTable]"
       :prop-name="''"
       :schema="selectedTableSchema"
       :categories="selectedTableSchema.categories"
@@ -63,12 +68,13 @@
       :disabled-properties="disabledTableProperties"
     />
 
-    <!-- Table Field properties -->
+    <!-- Table editor Field properties -->
 
     <properties-editor
       v-else-if="showTableFieldProperties"
       v-model="selectedTableField"
       v-model:forced-types="forcedTypes"
+      :parents="[selectedTable, selectedTableField]"
       :prop-name="''"
       :schema="selectedSchemaFieldSchema"
       :categories="selectedSchemaFieldSchema.categories"
@@ -90,6 +96,7 @@
       <properties-editor
         v-if="showMenuProperties"
         v-model="selectedMenu"
+        :parents="[selectedMenu]"
         :prop-name="''"
         :schema="selectedMenuSchema"
         :categories="selectedMenuSchema.categories"
@@ -109,6 +116,7 @@
       <properties-editor
         v-if="showTabProperties"
         v-model="selectedMenu.tabs[selectedTabIndex]"
+        :parents="[selectedMenu, selectedMenu.tabs[selectedTabIndex]]"
         :prop-name="''"
         :schema="selectedTabSchema"
         :categories="selectedTabSchema.categories"
@@ -128,6 +136,7 @@
       <properties-editor
         v-if="showFormProperties"
         v-model="form"
+        :parents="[form]"
         :prop-name="''"
         :schema="selectedFormSchema"
         :categories="selectedFormSchema.categories"

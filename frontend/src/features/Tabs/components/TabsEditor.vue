@@ -10,8 +10,8 @@
       v-model="tabs"
       :add-function="addTab"
       :remove-function="removeTab"
-      add-button="end"
       :horizontal="!$attrs.vertical"
+      add-button="end"
       no-separator
       reorderable
       @click.stop=""
@@ -32,6 +32,7 @@
           :label="t.label"
           :icon="t.icon"
           :content-class="`text-${t.color}`"
+          @click="$emit('click-tab', (t as Tab))"
         />
       </template>
     </array-editor>
@@ -65,6 +66,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'update:model-value', value: Tab[]): void,
   (e: 'update:tab', value: string): void,
+  (e: 'click-tab', value: Tab): void,
 }>()
 
 const tabs = useModelValue(props, emit)

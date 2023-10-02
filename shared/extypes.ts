@@ -1,5 +1,6 @@
 import { Type } from '@feathersjs/typebox'
 import { AnyData } from './interfaces/commons'
+import { getParentProp } from './properties'
 
 interface DateOptions {
   formatMinimum?: string
@@ -69,8 +70,10 @@ export default {
 
   Query: (options: QueryOptions = {}) => Type.Object({}, {
     query: true,
-    disable: (value: unknown, parent: AnyData) => (
-      parent[options.tableProp || 'tableId'] ? false : 'Please select a table first'
+    disable: (value: unknown, parents: AnyData[]) => (
+      getParentProp(parents, options.tableProp || 'tableId')
+        ? false
+        : 'Please select a table first'
     ),
     ...options,
   }),

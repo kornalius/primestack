@@ -370,10 +370,12 @@
     v-else-if="type === 'object' && typeof value === 'object' && property"
     v-model="value"
     v-model:forced-types="currentForcedTypes"
-    :prop-name="keyName"
+    :parents="parents"
+    :prop-name="propName"
     :schema="objectSchema"
     :horizontal="objectIsHorizontal"
     :disable="disabled"
+    :include-form-data-fields="includeFormDataFields"
     :labels="objectSchema.labels"
     embed-label
     flat
@@ -404,9 +406,11 @@
       <properties-editor
         v-model="scope.value"
         v-model:forced-types="currentForcedTypes"
-        :prop-name="keyName"
+        :parents="parents"
+        :prop-name="propName"
         :schema="objectSchema"
         :horizontal="objectIsHorizontalPopup"
+        :include-form-data-fields="includeFormDataFields"
         :labels="objectSchema?.labels"
         embed-label
         flat
@@ -431,10 +435,12 @@
         v-if="arraySchemaIsObject"
         v-model="value[index]"
         v-model:forced-types="currentForcedTypes"
-        :prop-name="subPropName(index)"
-        :schema="dynamicArraySchema(value[index])"
-        :categories="dynamicArraySchema(value[index]).categories"
+        :parents="[...parents, value]"
+        :prop-name="subPropName(propName, index)"
+        :schema="dynamicArraySchema(schema, value[index])"
+        :categories="dynamicArraySchema(schema, value[index]).categories"
         :horizontal="arrayIsHorizontal"
+        :include-form-data-fields="includeFormDataFields"
         :labels="arraySchema.labels"
         embed-label
         flat
@@ -444,10 +450,11 @@
         v-else
         v-model="value[index]"
         v-model:forced-types="currentForcedTypes"
-        :parent="parent"
-        :prop-name="subPropName(index)"
+        :parents="[...parents, value]"
+        :prop-name="subPropName(propName, index)"
         :schema="arraySchema"
         :required="arraySchema.required"
+        :include-form-data-fields="includeFormDataFields"
         embed-label
       />
     </template>
@@ -489,10 +496,12 @@
             v-if="arraySchemaIsObject"
             v-model="scope.value[index]"
             v-model:forced-types="currentForcedTypes"
-            :prop-name="subPropName(index)"
-            :schema="dynamicArraySchema(scope.value[index])"
-            :categories="dynamicArraySchema(scope.value[index]).categories"
+            :parents="[...parents, scope.value]"
+            :prop-name="subPropName(propName, index)"
+            :schema="dynamicArraySchema(schema, scope.value[index])"
+            :categories="dynamicArraySchema(schema, scope.value[index]).categories"
             :horizontal="arrayIsHorizontalPopup"
+            :include-form-data-fields="includeFormDataFields"
             :labels="arraySchema.labels"
             embed-label
             flat
@@ -502,10 +511,11 @@
             v-else
             v-model="scope.value[index]"
             v-model:forced-types="currentForcedTypes"
-            :parent="scope.value"
-            :prop-name="subPropName(index)"
+            :parents="[...parents, scope.value]"
+            :prop-name="subPropName(propName, index)"
             :schema="arraySchema"
             :required="arraySchema.required"
+            :include-form-data-fields="includeFormDataFields"
             embed-label
           />
         </template>
@@ -549,8 +559,10 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import omit from 'lodash/omit'
+import last from 'lodash/last'
 import hexObjectId from 'hex-object-id'
-import { Static, TSchema, Type } from '@feathersjs/typebox'
+import { Static, TSchema } from '@feathersjs/typebox'
+import { AnyData } from '@/shared/interfaces/commons'
 import { useI18n } from 'vue-i18n'
 import {
   defaultValueForSchema,
@@ -560,14 +572,11 @@ import {
 } from '@/shared/schema'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { useQuery } from '@/features/Query/composites'
-import { AnyData } from '@/shared/interfaces/commons'
 import { actionSchema } from '@/shared/schemas/actions'
-import { ruleTypes } from '@/features/Components/common'
-import { fieldSchema } from '@/shared/schemas/form'
 import { useAppEditor } from '@/features/App/editor-store'
 import { useTable } from '@/features/Tables/composites'
-import { useFormElements } from '@/features/Forms/composites'
 import { useExpression } from '@/features/Expression/composites'
+import { useProperties } from '@/features/Properties/composites'
 import PaddingEditor from '@/features/Properties/components/PaddingEditor.vue'
 import MarginEditor from '@/features/Properties/components/MarginEditor.vue'
 import BorderEditor from '@/features/Properties/components/BorderEditor.vue'
@@ -587,8 +596,6 @@ import VariableSelect from '@/features/Variables/components/VariableSelect.vue'
 import PropertyHighlight from '@/features/Properties/components/PropertyHighlight.vue'
 import BtnToggleMulti from '@/features/Fields/components/BtnToggleMulti.vue'
 
-type FormField = Static<typeof fieldSchema>
-
 type Action = Static<typeof actionSchema>
 
 const props = defineProps<{
@@ -596,8 +603,8 @@ const props = defineProps<{
   modelValue: unknown
   // is the property disabled or not?
   disable?: boolean
-  // parent object containing the modelValue
-  parent: unknown
+  // parent component values
+  parents: AnyData[]
   // table to use
   schema: TSchema
   // complex UI for PropertyEditor mainly
@@ -609,9 +616,11 @@ const props = defineProps<{
   // embed the label inside the input
   embedLabel?: boolean
   // property name in the model for the property being edited
-  keyName: string
+  propName: string
   // object that stores the forced types selected by the user
   forcedTypes?: Record<string, string>
+  // include extra form data fields in Field selector
+  includeFormDataFields?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -628,8 +637,6 @@ const tempJson = ref()
 
 const editor = useAppEditor()
 
-const { flattenFields } = useFormElements()
-
 const { isExpr, exprCode } = useExpression()
 
 const { queryToString } = useQuery()
@@ -640,22 +647,18 @@ const { t } = useI18n()
 
 const isNameField = computed(() => props.schema.name === true)
 
-const checkDuplicateName = (v: string): true | string => {
-  if (props.schema.name === true && v) {
-    const form = editor.formInstance(editor.formId)
-    if (form) {
-      // eslint-disable-next-line no-underscore-dangle
-      const found = flattenFields(form._fields)
-        .find((f: FormField) => f.name
-          && f._id !== props.parent._id
-          && f.name.toLowerCase() === v.toLowerCase())
-      if (found) {
-        return t('field_errors.name')
-      }
-    }
-  }
-  return true
-}
+const {
+  nameExists, dynamicArraySchema, getParentProp, subPropName,
+} = useProperties(t)
+
+const checkDuplicateName = (v: string): true | string => (
+  nameExists(
+    editor.formInstance(editor.formId),
+    props.schema,
+    last(props.parents)?._id,
+    v,
+  )
+)
 
 const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
 
@@ -664,7 +667,7 @@ const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
  */
 const type = computed((): string => {
   const p = props.schema
-  return getTypeFor(p, currentForcedTypes.value?.[props.keyName])
+  return getTypeFor(p, currentForcedTypes.value?.[props.propName])
 })
 
 /**
@@ -748,26 +751,6 @@ const multiple = computed((): boolean => {
 const arraySchema = computed(() => props.schema.items)
 
 /**
- * Dynamic array schema for rules editing
- *
- * @param val Field value
- *
- * @returns {TSchema}
- */
-const dynamicArraySchema = (val: AnyData): TSchema => {
-  if (props.schema.rules) {
-    const rt = ruleTypes.find((r) => r.name === val.type)
-    if (rt?.options) {
-      return Type.Intersect([
-        arraySchema.value,
-        rt.options,
-      ])
-    }
-  }
-  return arraySchema.value
-}
-
-/**
  * Schema for an object property
  */
 const objectSchema = computed(() => props.schema)
@@ -776,7 +759,7 @@ const objectSchema = computed(() => props.schema)
  * Computes if the schema of the array is an object type
  */
 const arraySchemaIsObject = computed(() => (
-  getTypeFor(arraySchema.value, currentForcedTypes.value?.[props.keyName]) === 'object'
+  getTypeFor(arraySchema.value, currentForcedTypes.value?.[props.propName]) === 'object'
 ))
 
 /**
@@ -798,17 +781,6 @@ const objectIsHorizontal = computed(() => objectSchema.value?.horizontal)
  * Computes if we use an horizontal layout for editing an object in a popup
  */
 const objectIsHorizontalPopup = computed(() => objectSchema.value?.horizontalPopup)
-
-/**
- * Build a property sub-name from the current property name (ex: a new item in an object)
- *
- * @param name Name of the item
- *
- * @returns {string} New item name
- */
-const subPropName = (name: string | number): string => (
-  props.keyName ? `${props.keyName}.${name.toString()}` : name.toString()
-)
 
 /**
  * Add a new item to the value when of type array
@@ -847,10 +819,10 @@ const form = computed(() => (
  * Computes the user's table id from the schema of the form's tableId
  */
 const tableId = computed((): string | undefined => (
-  (props.schema.tableProp && value.value?.[props.schema.tableProp] as string)
-    || (props.schema.tableProp && props.parent?.[props.schema.tableProp] as string)
-    || props.parent?.tableId
-    || form.value?.tableId
+  getParentProp(
+    props.parents,
+    props.schema.tableProp || '../tableId',
+  )
 ))
 
 /**
@@ -893,7 +865,7 @@ const disabled = computed((): boolean => {
     return true
   }
   if (props.schema?.disable) {
-    return props.schema.disable(value.value, props.parent) !== false
+    return props.schema.disable(value.value, props.parents) !== false
   }
   return false
 })
@@ -903,7 +875,7 @@ const disabled = computed((): boolean => {
  */
 const disabledLabel = computed((): string | undefined => (
   disabled.value
-    ? props.schema?.disable?.(value.value, props.parent)
+    ? props.schema?.disable?.(value.value, props.parents)
     : undefined
 ))
 
@@ -911,11 +883,13 @@ const disabledLabel = computed((): string | undefined => (
  * Computes the fields from the form's data property
  */
 const extraFields = computed(() => (
-  Object.keys(form.value?.data || {}).map((k) => ({
-    _id: hexObjectId(),
-    name: k,
-    type: primaryToType(form.value?.data?.[k]),
-  }))
+  props.includeFormDataFields
+    ? Object.keys(form.value?.data || {}).map((k) => ({
+      _id: hexObjectId(),
+      name: k,
+      type: primaryToType(form.value?.data?.[k]),
+    }))
+    : []
 ))
 
 /**
@@ -927,7 +901,7 @@ const createAction = (): Action => {
   const act = editor.actionInstance(value.value)
   if (act) {
     editor.setActionId(act._id)
-    editor.setActionEvent(props.keyName)
+    editor.setActionEvent(props.propName)
     return act
   }
 

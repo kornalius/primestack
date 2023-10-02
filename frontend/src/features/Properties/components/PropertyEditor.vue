@@ -26,11 +26,12 @@
       v-model="value"
       v-model:forced-types="currentForcedTypes"
       :disable="disable"
-      :parent="parent"
+      :parents="parents"
       :schema="schema"
-      :key-name="propName"
+      :prop-name="propName"
       :label="label"
       :embed-label="embedLabel"
+      :include-form-data-fields="includeFormDataFields"
       property
     />
   </div>
@@ -107,11 +108,12 @@
             v-model="value"
             v-model:forced-types="currentForcedTypes"
             :disable="disable"
-            :parent="parent"
+            :parents="parents"
             :schema="schema"
-            :key-name="propName"
+            :prop-name="propName"
             :label="label"
             :embed-label="embedLabel"
+            :include-form-data-fields="includeFormDataFields"
             property
           />
         </div>
@@ -199,10 +201,12 @@
                     v-if="arraySchemaIsObject"
                     v-model="scope.value[index]"
                     v-model:forced-types="currentForcedTypes"
+                    :parents="[...parents, scope.value]"
                     :disable="disable"
-                    :prop-name="subPropName(index)"
-                    :schema="dynamicArraySchema(scope.value[index])"
+                    :prop-name="subPropName(propName, index)"
+                    :schema="dynamicArraySchema(schema, scope.value[index])"
                     :horizontal="arrayIsHorizontalPopup"
+                    :include-form-data-fields="includeFormDataFields"
                     :labels="arraySchema?.labels"
                     embed-label
                     flat
@@ -212,11 +216,12 @@
                     v-else
                     v-model="scope.value[index]"
                     v-model:forced-types="currentForcedTypes"
-                    :parent="parent"
+                    :parents="[...parents, scope.value]"
                     :disable="disable"
-                    :prop-name="subPropName(index)"
+                    :prop-name="subPropName(propName, index)"
                     :schema="arraySchema"
                     :required="arraySchema.required"
+                    :include-form-data-fields="includeFormDataFields"
                     embed-label
                   />
                 </template>
@@ -259,9 +264,10 @@
             v-model="value"
             v-model:forced-types="currentForcedTypes"
             :disable="disable"
-            :parent="parent"
+            :parents="parents"
             :schema="schema"
-            :key-name="propName"
+            :prop-name="propName"
+            :include-form-data-fields="includeFormDataFields"
             :label="label"
             embed-label
             property
@@ -274,13 +280,14 @@
 
 <script setup lang="ts">
 import { computed, watch } from 'vue'
-import { TSchema, Type } from '@feathersjs/typebox'
+import { TSchema } from '@feathersjs/typebox'
+import { useI18n } from 'vue-i18n'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { getTypeFor, defaultValueForSchema, validForExpr } from '@/shared/schema'
 import { useAppEditor } from '@/features/App/editor-store'
 import { useExpression } from '@/features/Expression/composites'
+import { useProperties } from '@/features/Properties/composites'
 import { AnyData } from '@/shared/interfaces/commons'
-import { ruleTypes } from '@/features/Components/common'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import PropertyLabel from '@/features/Properties/components/PropertyLabel.vue'
@@ -292,8 +299,8 @@ const props = defineProps<{
   modelValue: unknown
   // is the property disabled?
   disable?: boolean
-  // parent object containing the modelValue
-  parent: unknown
+  // parent component values
+  parents: AnyData[]
   // schema for this property
   schema: TSchema
   // is the property required?
@@ -308,6 +315,8 @@ const props = defineProps<{
   forcedTypes?: Record<string, string>
   // use an horizontal layout to display the properties
   horizontal?: boolean
+  // include extra form data fields in Field selector
+  includeFormDataFields?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -324,6 +333,10 @@ const { isExpr, exprCode, stringToExpr } = useExpression()
 
 const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
 
+const { t } = useI18n()
+
+const { subPropName, dynamicArraySchema, types } = useProperties(t)
+
 /**
  * Computes the type of the property from the schema
  */
@@ -335,13 +348,9 @@ const type = computed((): string | undefined => {
 /**
  * Computes the types allowed for a property in the schema
  */
-const multipleTypes = computed((): string[] | undefined => {
-  const p = props.schema
-  if (p?.anyOf) {
-    return p.anyOf.map((t) => t.type)
-  }
-  return undefined
-})
+const multipleTypes = computed((): string[] | undefined => (
+  types(props.schema)
+))
 
 /**
  * Should we show the expression button next to the property?
@@ -364,19 +373,6 @@ watch(value, () => {
  * Computes the array schema for the property
  */
 const arraySchema = computed(() => props.schema.items)
-
-const dynamicArraySchema = (val: AnyData): TSchema => {
-  if (props.schema.rules) {
-    const rt = ruleTypes.find((r) => r.name === val.type)
-    if (rt?.options) {
-      return Type.Intersect([
-        arraySchema.value,
-        rt.options,
-      ])
-    }
-  }
-  return arraySchema.value
-}
 
 /**
  * Is the property part of an horizontal layout?
@@ -419,23 +415,12 @@ const removeItem = (arr: unknown[], index: number): boolean => {
 /**
  * Change the type the property to another
  *
- * @param t New type assigned to the property
+ * @param newType New type assigned to the property
  */
-const changeType = (t: string) => {
-  currentForcedTypes.value[props.propName] = t
+const changeType = (newType: string) => {
+  currentForcedTypes.value[props.propName] = newType
   emit('update:model-value', undefined)
 }
-
-/**
- * Build a property sub-name from the current property name (ex: a new item in an object)
- *
- * @param name Name of the item
- *
- * @returns {string} New item name
- */
-const subPropName = (name: string | number): string => (
-  props.propName ? `${props.propName}.${name.toString()}` : name.toString()
-)
 
 /**
  * Is the property non-expandable?

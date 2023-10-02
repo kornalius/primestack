@@ -1,7 +1,9 @@
 import hexObjectId from 'hex-object-id'
 import { StringEnum, Type } from '@feathersjs/typebox'
 import ExType from '@/shared/extypes'
-import { actionIcon, contentIcon, styleIcon } from '@/shared/icons'
+import {
+  actionIcon, contentIcon, modelIcon, styleIcon,
+} from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { AnyData } from '@/shared/interfaces/commons'
 import SchemaTable from '@/features/Tables/components/SchemaTable.vue'
@@ -76,7 +78,7 @@ export default {
   ], false),
   defaultValues: {
     separator: 'horizontal',
-    selection: 'none',
+    selectionStyle: 'none',
     virtualScrollSliceSize: 30,
     virtualScrollSliceRatioBefore: 1,
     virtualScrollSliceRatioAfter: 1,
@@ -106,13 +108,7 @@ export default {
       names: [
         'name',
         'title',
-        'rows',
-        'rowKey',
-        'columns',
-        'visibleColumns',
-        'tableId',
-        'query',
-        'selection',
+        'selectionStyle',
         'filter',
         'hideFilter',
         'noDataLabel',
@@ -132,6 +128,16 @@ export default {
         'virtualScrollStickySizeStart',
         'virtualScrollStickySizeEnd',
         'tableColspan',
+      ],
+    },
+    model: {
+      icon: modelIcon,
+      names: [
+        'tableId',
+        'query',
+        'rows',
+        'rowKey',
+        'visibleColumns',
       ],
     },
     style: {

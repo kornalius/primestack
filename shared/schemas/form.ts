@@ -56,7 +56,7 @@ export const formTableColumnSchema = Type.Object({
   _id: ExType.Id(),
   name: Type.String(),
   label: Type.String(),
-  field: ExType.Field({ tableProp: 'tableId' }),
+  field: ExType.Field({ tableProp: '../tableId' }),
   required: Type.Boolean(),
   align: Type.String({
     options: [

@@ -1,6 +1,6 @@
 import { Type } from '@feathersjs/typebox'
 import { TAction } from '../interfaces/actions'
-import { AnyData } from '../interfaces/commons'
+import ExType from '../extypes'
 
 export const fieldSchema = Type.Object({
   name: Type.String({ field: true }),
@@ -13,13 +13,8 @@ export default {
   description: 'Patch a single or multiple records in a table',
   schema: Type.Object({
     tableId: Type.String({ objectid: true, tableid: true }),
-    id: Type.Optional(Type.String({ objectid: true })),
-    query: Type.Optional(Type.Object({}, {
-      query: true,
-      disable: (value: unknown, parent: AnyData) => (
-        parent.tableId ? false : 'Please select a table first'
-      ),
-    })),
+    id: Type.Optional(ExType.Id()),
+    query: Type.Optional(ExType.Query()),
     fields: Type.Array(fieldSchema),
   }),
 } as TAction

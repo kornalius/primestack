@@ -67,9 +67,9 @@
           <property-schema-field
             v-if="schemaRows && schemaSchema(col.field)"
             v-model="p.row[col.field]"
-            :parent="p.row"
+            :parents="[p.row]"
             :schema="schemaSchema(col.field)"
-            :key-name="col.field"
+            :prop-name="col.field"
             :label="col.label"
           />
 

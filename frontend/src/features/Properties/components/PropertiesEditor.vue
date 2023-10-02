@@ -28,13 +28,14 @@
       :key="name"
       v-model="value[name]"
       v-model:forced-types="currentForcedTypes"
-      :parent="value"
+      :parents="parents"
       :disable="disable || disabledProperties?.includes(name)"
-      :prop-name="subPropName(name)"
+      :prop-name="subPropName(propName, name)"
       :schema="schema.properties[name]"
       :required="schema.required.includes(name)"
       :label="label(name)"
       :embed-label="embedLabel"
+      :include-form-data-fields="includeFormDataFields"
       horizontal
     />
   </div>
@@ -52,13 +53,14 @@
       :key="name"
       v-model="value[name]"
       v-model:forced-types="currentForcedTypes"
-      :parent="value"
+      :parents="parents"
       :disable="disable || disabledProperties?.includes(name)"
-      :prop-name="subPropName(name)"
+      :prop-name="subPropName(propName, name)"
       :schema="schema.properties[name]"
       :required="schema.required.includes(name)"
       :label="label(name)"
       :embed-label="embedLabel"
+      :include-form-data-fields="includeFormDataFields"
     />
   </q-list>
 </template>
@@ -67,13 +69,18 @@
 import { computed, ref, watch } from 'vue'
 import startCase from 'lodash/startCase'
 import { TSchema } from '@feathersjs/typebox'
-import { useModelValue, useSyncedProp } from '@/composites/prop'
-import PropertyEditor from '@/features/Properties/components/PropertyEditor.vue'
+import { useI18n } from 'vue-i18n'
+import { AnyData } from '@/shared/interfaces/commons'
 import { TFormFieldCategory } from '@/shared/interfaces/forms'
+import { useModelValue, useSyncedProp } from '@/composites/prop'
+import { useProperties } from '@/features/Properties/composites'
+import PropertyEditor from '@/features/Properties/components/PropertyEditor.vue'
 
 const props = defineProps<{
   // object's value
   modelValue: Record<string, unknown>
+  // parent component values
+  parents: AnyData[]
   // schema to extract property definitions from
   schema: TSchema
   // is the editor disabled?
@@ -94,6 +101,8 @@ const props = defineProps<{
   horizontal?: boolean
   // list of disabled property names
   disabledProperties?: string[]
+  // include extra form data fields in Field selector
+  includeFormDataFields?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -103,6 +112,10 @@ const emit = defineEmits<{
 }>()
 
 const value = useModelValue(props, emit)
+
+const { t } = useI18n()
+
+const { subPropName } = useProperties(t)
 
 const currentForcedTypes = props.forcedTypes
   ? useSyncedProp(props, 'forcedTypes', emit)
@@ -133,17 +146,6 @@ const displayableCategories = computed((): boolean => {
   }
   return false
 })
-
-/**
- * Build a property sub-name from the current property name (ex: a new item in an object)
- *
- * @param name Name of the item
- *
- * @returns {string} New item name
- */
-const subPropName = (name: string | number): string => (
-  props.propName ? `${props.propName}.${name}` : name.toString()
-)
 
 /**
  * When the properties change, select the first one

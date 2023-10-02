@@ -4,6 +4,7 @@ import {
 import compact from 'lodash/compact'
 import { postalCodes } from '@/features/Validation/helpers'
 import { sizeString as gSizeString } from '@/shared/interfaces/commons'
+import ExType from '@/shared/extypes'
 
 export interface RuleType {
   name: string
@@ -63,13 +64,13 @@ export const ruleTypes: RuleType[] = [
   {
     name: 'before',
     options: Type.Object({
-      date: Type.String({ format: 'date' }),
+      date: ExType.Date(),
     }),
   },
   {
     name: 'after',
     options: Type.Object({
-      date: Type.String({ format: 'date' }),
+      date: ExType.Date(),
     }),
   },
   {
@@ -138,7 +139,7 @@ export const commonProperties = {
   }),
 
   field: Type.Object({
-    field: Type.String({ field: true }),
+    field: ExType.Field(),
   }),
 
   state: Type.Object({
@@ -150,7 +151,7 @@ export const commonProperties = {
     dense: Type.Boolean(),
     border: Type.Object({
       style: Type.String(),
-      color: Type.String({ color: true }),
+      color: ExType.Color(),
       width: Type.Number(),
       sides: Type.Array(Type.String()),
     }, { style: true, border: true }),
@@ -182,12 +183,12 @@ export const commonProperties = {
   }),
 
   events: Type.Object({
-    update: Type.String({ objectid: true, action: true }),
-    focus: Type.String({ objectid: true, action: true }),
-    blur: Type.String({ objectid: true, action: true }),
-    keydown: Type.String({ objectid: true, action: true }),
-    keypress: Type.String({ objectid: true, action: true }),
-    keyup: Type.String({ objectid: true, action: true }),
+    update: ExType.Action(),
+    focus: ExType.Action(),
+    blur: ExType.Action(),
+    keydown: ExType.Action(),
+    keypress: ExType.Action(),
+    keyup: ExType.Action(),
   }),
 }
 

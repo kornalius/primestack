@@ -1,6 +1,6 @@
 import { Type } from '@feathersjs/typebox'
 import { TAction } from '../interfaces/actions'
-import { AnyData } from '../interfaces/commons'
+import ExType from '../extypes'
 
 export default {
   type: 'remove',
@@ -8,11 +8,6 @@ export default {
   description: 'Remove records from a table',
   schema: Type.Object({
     tableId: Type.String({ objectid: true, tableid: true }),
-    query: Type.Optional(Type.Object({}, {
-      query: true,
-      disable: (value: unknown, parent: AnyData) => (
-        parent.tableId ? false : 'Please select a table first'
-      ),
-    })),
+    query: Type.Optional(ExType.Query()),
   }),
 } as TAction

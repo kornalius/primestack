@@ -3,6 +3,7 @@
     v-model="field._columns"
     v-model:tab="active"
     v-bind="{ ...fieldBinds(field, schemaForField(field), ctx), ...$attrs }"
+    @click-tab="(tab) => editor.select(tab._id)"
   />
 
   <div class="panels">
