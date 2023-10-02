@@ -44,8 +44,9 @@
     <q-btn
       v-if="showExpr"
       class="q-mr-sm"
-      icon="mdi-flash"
+      :disable="disabled"
       :color="isExpr(value) ? 'orange-8' : 'grey-5'"
+      icon="mdi-flash"
       size="sm"
       flat
       dense
@@ -124,7 +125,7 @@
           <q-btn
             v-if="showExpr"
             class="q-mr-sm"
-            :disable="disable"
+            :disable="disabled"
             :color="isExpr(value) ? 'orange-8' : 'grey-5'"
             icon="mdi-flash"
             size="sm"
@@ -171,6 +172,7 @@
           <q-btn
             v-if="type === 'array' && Array.isArray(value)"
             style="position: absolute; left: 8px; top: 14px;"
+            :disable="disabled"
             size="sm"
             color="grey-7"
             dense
@@ -336,6 +338,19 @@ const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
 const { t } = useI18n()
 
 const { subPropName, dynamicArraySchema, types } = useProperties(t)
+
+/**
+ * Is editing disabled?
+ */
+const disabled = computed((): boolean => {
+  if (props.disable) {
+    return true
+  }
+  if (props.schema?.disable) {
+    return props.schema.disable(value.value, props.parents) !== false
+  }
+  return false
+})
 
 /**
  * Computes the type of the property from the schema

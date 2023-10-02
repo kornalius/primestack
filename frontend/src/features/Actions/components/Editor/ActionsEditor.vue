@@ -185,8 +185,8 @@ const actionIcon = (action: TFrontAction) => stringValue(action?.icon, action)
 const actionLabel = (action: TFrontAction) => stringValue(action?.label, action)
 
 const close = () => {
-  editor.setActionId(undefined)
   editor.setActionEvent(undefined)
+  editor.setActionId(undefined)
 }
 </script>
 

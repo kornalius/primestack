@@ -5,6 +5,10 @@
     :rows="filteredRows"
     :columns="columns as any"
     :selection="selectionStyle"
+    :visible-columns="($attrs.visibleColumns?.length
+      ? $attrs.visibleColumns
+      : undefined
+    ) as unknown[]"
   >
     <template #top>
       <div class="row q-gutter-sm full-width items-center">
@@ -40,6 +44,7 @@
 
     <template #body="p">
       <q-tr
+        class="cursor-pointer"
         :props="p"
         @mouseover="hover = p.row._id"
         @mouseleave="hover = undefined"
@@ -48,11 +53,11 @@
         @click="$emit('row-click', p.row)"
       >
         <q-td
-          v-if="$attrs.selection !== 'none'"
+          v-if="selectionStyle !== 'none'"
           class="q-table--col-auto-width"
         >
           <q-checkbox
-            v-if="$attrs.selection === 'multiple'"
+            v-if="selectionStyle === 'multiple'"
             v-model="p.selected"
             dense
           />
@@ -61,7 +66,6 @@
         <q-td
           v-for="col in p.cols"
           :key="col.field"
-          class="cursor-pointer"
           :props="p"
         >
           <property-schema-field
@@ -74,7 +78,11 @@
           />
 
           <span v-else>
-            {{ col.format ? col.format(p.row[(col as any).field]) : p.row[(col as any).field] }}
+            {{
+              col.format
+                ? col.format(p.row[(col as AnyData).field])
+                : p.row[(col as AnyData).field]
+            }}
           </span>
         </q-td>
 
@@ -118,10 +126,12 @@ import {
 } from 'vue'
 import sift from 'sift'
 import startCase from 'lodash/startCase'
+import omit from 'lodash/omit'
 import { TSchema } from '@feathersjs/typebox'
 import { useSyncedProp } from '@/composites/prop'
 import { columnAlignmentFor, getTypeFor, schemaToField } from '@/shared/schema'
 import { filterToMongo } from '@/composites/filter'
+import { AnyData } from '@/shared/interfaces/commons'
 import { AddOption } from '@/features/Fields/interfaces'
 import PropertySchemaField from '@/features/Properties/components/PropertySchemaField.vue'
 import AddButton from '@/features/Fields/components/AddButton.vue'
@@ -189,13 +199,13 @@ const currentSelected = useSyncedProp(props, 'selected', emit)
 const currentFilter = useSyncedProp(props, 'filter', emit)
 
 const columns = computed(() => {
-  if (!props.schema) {
-    return attrs.columns
+  if (attrs.columns) {
+    return attrs.columns.map((c) => omit(c, ['_id']))
   }
 
   const cols = []
-  Object.keys(props.schema.properties).forEach((k) => {
-    const p = props.schema.properties[k]
+  Object.keys(props.schema?.properties).forEach((k) => {
+    const p = props.schema?.properties[k]
     const c = {
       name: k,
       label: startCase(k),
@@ -211,8 +221,8 @@ const columns = computed(() => {
 const hover = ref()
 
 const fields = computed(() => (
-  Object.keys(props.schema.properties).map((k) => (
-    schemaToField(k, props.schema.properties[k])
+  Object.keys(props.schema?.properties).map((k) => (
+    schemaToField(k, props.schema?.properties[k])
   ))
 ))
 

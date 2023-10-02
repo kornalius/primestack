@@ -70,7 +70,22 @@
       </span>
     </div>
 
-    <q-icon name="mdi-flash" />
+    <q-icon
+      name="mdi-flash"
+      :color="value ? 'orange-8' : 'grey-5'"
+    />
+
+    <q-btn
+      v-if="value"
+      class="action-clear-btn"
+      :disable="disabled"
+      icon="mdi-close-circle"
+      color="grey-5"
+      flat
+      dense
+      round
+      @click.stop="clearAction"
+    />
   </div>
 
   <!-- Boolean -->
@@ -910,6 +925,7 @@ const createAction = (): Action => {
     true,
   )
   value.value = a._id
+  editor.setActionEvent(props.propName)
   return a
 }
 
@@ -921,22 +937,36 @@ const fields = computed(() => (
     table.value?.softDelete,
   )
 ))
+
+const clearAction = () => {
+  editor.setActionId(undefined)
+  editor.setActionEvent(undefined)
+  const id = value.value
+  if (id) {
+    editor.removeAction(id)
+  }
+  value.value = undefined
+}
 </script>
 
 <style scoped lang="sass">
 @import 'quasar/src/css/variables'
 
 .action-input
+  position: relative
   width: 100%
   height: 40px
   padding: 8px
   outline: 1px solid $grey-5
   border-radius: 3px
-  position: relative
   background: white
 
   & .q-icon
     position: absolute
     right: 8px
     top: 13px
+
+  & .action-clear-btn
+    position: absolute
+    right: 24px
 </style>

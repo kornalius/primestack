@@ -2,7 +2,6 @@
   <ex-table
     v-model:selected="currentSelected"
     v-model:filter="currentFilter"
-    class="ex-table"
     v-bind="$attrs"
     :rows="filteredRows"
     :schema="schema"
