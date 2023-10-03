@@ -39,7 +39,7 @@
 
               <div class="col q-ml-sm">
                 <span :class="`text-${actionColor(value)} text-bold`">
-                  {{ actionLabel(value) }}
+                  {{ $t(actionLabel(value)) }}
                 </span>
               </div>
             </div>
@@ -57,7 +57,7 @@
               @click="editor.addActionElement(value, true)"
             >
               <q-tooltip :delay="500">
-                {{ actionDescription(value) }}
+                {{ $t(actionDescription(value)) }}
               </q-tooltip>
 
               <q-icon :name="actionIcon(value)" :color="actionIconColor(value)" />

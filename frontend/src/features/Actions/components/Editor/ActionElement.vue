@@ -34,7 +34,7 @@
 
       <div class="cursor-pointer">
         <q-tooltip :delay="500">
-          {{ actionDescription }}
+          {{ $t(actionDescription) }}
         </q-tooltip>
 
         <div class="row">
@@ -77,7 +77,7 @@
     >
       <actions-list-editor
         v-model="actionElement._children"
-        :empty-message="action.childrenMessage"
+        :empty-message="$t(actionChildrenMessage)"
       />
     </div>
   </div>
@@ -150,6 +150,10 @@ const actionIcon = computed(() => (
 
 const actionLabel = computed(() => (
   stringValue(action.value?.label, actionElement.value)
+))
+
+const actionChildrenMessage = computed(() => (
+  stringValue(action.value?.childrenMessage, actionElement.value)
 ))
 </script>
 

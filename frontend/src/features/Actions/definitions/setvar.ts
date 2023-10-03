@@ -10,6 +10,8 @@ export default {
   icon: 'mdi-pencil',
   color: 'blue-6',
   component: Setvar,
+  description: 'actions.setvar.description',
+  childrenMessage: 'actions.setvar.childrenMessage',
   exec: async (args) => {
     const variables = useVariables()
     variables.set(args.name as string, stringToExpr(args.value as string))

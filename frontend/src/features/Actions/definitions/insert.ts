@@ -9,6 +9,8 @@ export default {
   icon: 'mdi-database-plus',
   color: 'green-5',
   component: Insert,
+  description: 'actions.insert.description',
+  childrenMessage: 'actions.insert.childrenMessage',
   exec: async (ctx) => {
     const data = fieldsArrayToObject(ctx.fields as [], ctx)
     await ctx.api.service(ctx.tableId as string).create(data, {})

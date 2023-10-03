@@ -20,18 +20,18 @@ const separator = (label: string, icon: string, color?: string): TFrontAction =>
 })
 
 export const actions = [
-  separator('Interactions', 'mdi-message-badge', 'green-2'),
+  separator('actions.separators.interactions', 'mdi-message-badge', 'green-2'),
   console,
   dialog,
   notify,
-  separator('Flow', 'mdi-source-branch', 'purple-2'),
+  separator('actions.separators.flow', 'mdi-source-branch', 'purple-2'),
   ifExpr,
-  separator('Interactions', 'mdi-open-in-app', 'blue-2'),
+  separator('actions.separators.navigation', 'mdi-open-in-app', 'blue-2'),
   navigate,
-  separator('Variables', 'mdi-variable', 'red-2'),
+  separator('actions.separators.variables', 'mdi-variable', 'red-2'),
   setvar,
   unsetvar,
-  separator('Table', 'mdi-database', 'orange-2'),
+  separator('actions.separators.table', 'mdi-database', 'orange-2'),
   insert,
   patch,
   remove,

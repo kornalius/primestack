@@ -14,7 +14,8 @@ export default {
   ...globalIf,
   icon: 'mdi-source-branch',
   color: 'purple-3',
-  childrenMessage: 'If the expression evaluates to True, execute these...',
+  description: 'actions.if.description',
+  childrenMessage: 'actions.if.childrenMessage',
   component: If,
   exec: async (args) => {
     const r = runExpr(args.expr as string, args.$expr)

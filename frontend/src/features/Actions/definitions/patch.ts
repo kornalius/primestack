@@ -12,6 +12,8 @@ export default {
   icon: 'mdi-database-edit',
   color: 'orange-8',
   component: Patch,
+  description: 'actions.patch.description',
+  childrenMessage: 'actions.patch.childrenMessage',
   exec: async (ctx) => {
     const data = fieldsArrayToObject(ctx.fields as [], ctx)
 

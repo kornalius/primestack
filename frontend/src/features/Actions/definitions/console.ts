@@ -7,6 +7,8 @@ export default {
   ...globalConsole,
   icon: 'mdi-console',
   component: Console,
+  description: 'actions.console.description',
+  childrenMessage: 'actions.console.childrenMessage',
   color: 'grey-9',
   hideTitle: true,
   exec: async (args) => {

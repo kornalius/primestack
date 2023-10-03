@@ -13,7 +13,8 @@ export default {
   ...globalDialog,
   icon: 'mdi-dock-window',
   color: 'blue-4',
-  childrenMessage: 'When user press the OK button...',
+  description: 'actions.dialog.description',
+  childrenMessage: 'actions.dialog.childrenMessage',
   component: Dialog,
   hideTitle: true,
   exec: async (args) => {

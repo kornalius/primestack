@@ -140,5 +140,54 @@
   },
   "query": {
     "missingField": "Missing '{{name}}' field"
+  },
+  "actions": {
+    "dialog": {
+      "description": "Displays a dialog on the screen with buttons for user's confirmation",
+      "childrenMessage": "When user press the OK button..."
+    },
+    "console": {
+      "description": "Output messages directly in the browser's console",
+      "childrenMessage": ""
+    },
+    "if": {
+      "description": "Evaluate an expression",
+      "childrenMessage": "If the expression is True, execute these actions..."
+    },
+    "insert": {
+      "description": "Insert a new record in a table",
+      "childrenMessage": ""
+    },
+    "navigate": {
+      "description": "Navigate to another url",
+      "childrenMessage": ""
+    },
+    "notify": {
+      "description": "Displays a notification bar",
+      "childrenMessage": ""
+    },
+    "patch": {
+      "description": "Patch a new record in a table",
+      "childrenMessage": ""
+    },
+    "remove": {
+      "description": "Remove a new record from a table",
+      "childrenMessage": ""
+    },
+    "setvar": {
+      "description": "Set a variable value",
+      "childrenMessage": ""
+    },
+    "unsetvar": {
+      "description": "Unset a variable",
+      "childrenMessage": ""
+    },
+    "separators": {
+      "interactions": "Interactions",
+      "flow": "Flow",
+      "navigation": "Navigation",
+      "variables": "Variables",
+      "table": "Table"
+    }
   }
 }

@@ -154,7 +154,7 @@ export const routeMeta = (
   route: RouteLocationNormalized | RouteRecordNormalized | RouteRecordRaw,
   path: string,
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  ...args
+  ...args: unknown[]
 ): void | Promise<void> | string | number | boolean | AnyData | undefined => {
   const m = get(route?.meta, path)
   if (typeof m === 'function') {

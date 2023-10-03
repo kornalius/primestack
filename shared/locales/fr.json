@@ -140,5 +140,54 @@
   },
   "query": {
     "missingField": "Champ '{{name}}' manquant"
+  },
+  "actions": {
+    "dialog": {
+      "description": "Affiche un dialogue à l'écran avec des boutons pour confirmation de l'utilisateur",
+      "childrenMessage": "Quand le bouton 'OK' est appuyé..."
+    },
+    "console": {
+      "description": "Écrit un message directement dans la console du fureteur",
+      "childrenMessage": ""
+    },
+    "if": {
+      "description": "Évalue une expression",
+      "childrenMessage": "Si l'expression est vraie, éxécute les actions suivantes..."
+    },
+    "insert": {
+      "description": "Insère un enregistrement dans une table",
+      "childrenMessage": ""
+    },
+    "navigate": {
+      "description": "Navigue vers un autre lien",
+      "childrenMessage": ""
+    },
+    "notify": {
+      "description": "Affiche une bar de notification",
+      "childrenMessage": ""
+    },
+    "patch": {
+      "description": "Corrige un enregistrement dans une table",
+      "childrenMessage": ""
+    },
+    "remove": {
+      "description": "Enlève un enregistrement d'une table",
+      "childrenMessage": ""
+    },
+    "setvar": {
+      "description": "Change la valeur d'une variable",
+      "childrenMessage": ""
+    },
+    "unsetvar": {
+      "description": "Efface la valeur d'une variable",
+      "childrenMessage": ""
+    },
+    "separators": {
+      "interactions": "Interactions",
+      "flow": "Flux",
+      "navigation": "Navigation",
+      "variables": "Variables",
+      "table": "Table"
+    }
   }
 }

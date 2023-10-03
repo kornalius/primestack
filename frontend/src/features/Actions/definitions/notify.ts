@@ -34,6 +34,8 @@ export default {
   },
   component: Notify,
   hideTitle: true,
+  description: 'actions.notify.description',
+  childrenMessage: 'actions.notify.childrenMessage',
   exec: async ({
     level,
     message,

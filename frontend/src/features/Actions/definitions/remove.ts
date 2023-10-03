@@ -8,6 +8,8 @@ export default {
   ...globalRemove,
   icon: 'mdi-database-minus',
   color: 'red-5',
+  description: 'actions.remove.description',
+  childrenMessage: 'actions.remove.childrenMessage',
   exec: async (ctx) => {
     if (ctx.id) {
       await ctx.api.service(ctx.tableId as string)
