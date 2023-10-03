@@ -57,6 +57,7 @@
         <properties-editor
           v-model="testProperties"
           v-model:forced-types="forcedTypes"
+          :parents="[]"
           :prop-name="''"
           :schema="schema"
         />
