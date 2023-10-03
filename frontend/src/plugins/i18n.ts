@@ -1,8 +1,8 @@
 import { createI18n } from 'vue-i18n'
 import { getEnv } from '@/utils/variables'
 
-import fr from '@/locales/fr.json'
-import en from '@/locales/en.json'
+import fr from '@/shared/locales/fr.json'
+import en from '@/shared/locales/en.json'
 
 const I18N_LOCALE = getEnv(import.meta.env.VITE_I18N_LOCALE) as string | undefined
 const I18N_FALLBACK_LOCALE = getEnv(import.meta.env.VITE_I18N_FALLBACK_LOCALE) as

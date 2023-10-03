@@ -54,6 +54,7 @@
     "@feathersjs/typebox": "^5.0.6",
     "dayjs": "^1.11.8",
     "deep-diff": "^1.0.2",
+    "i18next": "^23.5.1",
     "lodash": "^4.17.21",
     "mongodb": "^5.6.0",
     "winston": "^3.9.0"

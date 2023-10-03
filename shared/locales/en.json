@@ -110,7 +110,8 @@
         "title": "Delete a table",
         "message": "Are you sure you want to delete this table?"
       }
-    }
+    },
+    "sameTableResolve": "Cannot resolve on the same table"
   },
   "field": {
     "dialog": {
@@ -119,5 +120,25 @@
         "message": "Are you sure you want to delete this field?"
       }
     }
+  },
+  "paid_feature": {
+    "action": "Action {{type}} is a paid feature",
+    "component": "Component {{type}} is a paid feature",
+    "file_one": "Your plan only supports a total of {{fileCount}} file, please consider upgrading",
+    "file_other": "Your plan only supports a total of {{fileCount}} files, please consider upgrading",
+    "fileSize": "Your plan only supports file sizes up to {{size}}, please consider upgrading",
+    "form_one": "Your plan only supports {{formCount}} form, please consider upgrading",
+    "form_other": "Your plan only supports {{formCount}} forms, please consider upgrading",
+    "menu_one": "Your plan only supports {{menuCount}} menu, please consider upgrading",
+    "menu_other": "Your plan only supports {{menuCount}} menus, please consider upgrading",
+    "share_one": "Your plan only supports {{shareCount}} share, please consider upgrading",
+    "share_other": "Your plan only supports {{shareCount}} shares, please consider upgrading",
+    "table_one": "Your plan only supports {{tableCount}} table, please consider upgrading",
+    "table_other": "Your plan only supports {{tableCount}} tables, please consider upgrading",
+    "record_one": "Your plan only supports {{recordCount}} record per table, please consider upgrading",
+    "record_other": "Your plan only supports {{recordCount}} records per table, please consider upgrading"
+  },
+  "query": {
+    "missingField": "Missing '{{name}}' field"
   }
 }

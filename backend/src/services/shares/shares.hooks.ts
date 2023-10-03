@@ -1,3 +1,4 @@
+import i18next from 'i18next'
 import { HookContext } from '@feathersjs/feathers'
 import { Forbidden } from '@feathersjs/errors'
 
@@ -15,9 +16,11 @@ export const checkMaxShares = async (context: HookContext): Promise<HookContext>
   })
   const m = context.params?.user?.rights?.maxes?.maxShares
   if (m !== -1 && count >= m) {
-    throw new Forbidden(
-      `Your plan only supports ${m} shares, please consider upgrading to create more`
-    )
+    throw new Forbidden(i18next.t('paid_feature.share', {
+      shareCount: m,
+      count: m,
+      lng: context.params?.user?.lng || 'en',
+    }))
   }
   return context
 }

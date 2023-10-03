@@ -110,7 +110,8 @@
         "title": "Effacer cete table",
         "message": "Voulez-vous vraiment effacer cette table?"
       }
-    }
+    },
+    "sameTableResolve": "Ne peut resoudre sur la même table"
   },
   "field": {
     "dialog": {
@@ -119,5 +120,25 @@
         "message": "Voulez-vous vraiment effacer ce champ?"
       }
     }
+  },
+  "paid_feature": {
+    "action": "L'action {{type}} est une fonctionnalité payante",
+    "component": "La composante {{type}} est une fonctionnalité payante",
+    "file_one": "Votre plan actuel supporte seulement un total de {{fileCount}} fichier, svp considerez la mise-à-jour de votre plan",
+    "file_other": "Votre plan actuel supporte seulement un total de {{fileCount}} fichiers, svp considerez la mise-à-jour de votre plan",
+    "fileSize": "Votre plan actuel supporte seulement des fichiers de tailles inférieur à {{size}}, svp considerez la mise-à-jour de votre plan",
+    "form_one": "Votre plan actuel supporte seulement {{formCount}} formulaire, svp considerez la mise-à-jour de votre plan",
+    "form_other": "Votre plan actuel supporte seulement {{formCount}} formulaires, svp considerez la mise-à-jour de votre plan",
+    "menu_one": "Votre plan actuel supporte seulement {{menuCount}} menu, svp considerez la mise-à-jour de votre plan",
+    "menu_other": "Votre plan actuel supporte seulement {{menuCount}} menus, svp considerez la mise-à-jour de votre plan",
+    "share_one": "Votre plan actuel supporte seulement {{shareCount}} partage, svp considerez la mise-à-jour de votre plan",
+    "share_other": "Votre plan actuel supporte seulement {{shareCount}} partages, svp considerez la mise-à-jour de votre plan",
+    "table_one": "Votre plan actuel supporte seulement {{tableCount}} table, svp considerez la mise-à-jour de votre plan",
+    "table_other": "Votre plan actuel supporte seulement {{tableCount}} tables, svp considerez la mise-à-jour de votre plan",
+    "record_one": "Votre plan actuel supporte seulement {{recordCount}} enregistrement par table, svp considerez la mise-à-jour de votre plan",
+    "record_other": "Votre plan actuel supporte seulement {{recordCount}} enregistrements par table, svp considerez la mise-à-jour de votre plan"
+  },
+  "query": {
+    "missingField": "Champ '{{name}}' manquant"
   }
 }

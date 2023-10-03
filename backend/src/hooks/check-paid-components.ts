@@ -1,3 +1,4 @@
+import i18next from 'i18next'
 import { Forbidden } from '@feathersjs/errors'
 import { HookContext } from '@/declarations'
 import { formSchema } from '@/shared/schemas/form'
@@ -23,8 +24,11 @@ export const checkPaidComponents = async (context: HookContext) => {
     fields.forEach((f) => {
       // eslint-disable-next-line no-underscore-dangle
       if (!isComponentAvailable(f._type, _plan.code)) {
-        // eslint-disable-next-line no-underscore-dangle
-        throw new Forbidden(`Component ${f._type} is a paid feature`)
+        throw new Forbidden(i18next.t('paid_feature.component', {
+          // eslint-disable-next-line no-underscore-dangle
+          type: f._type,
+          lng: user.lng || 'en',
+        }))
       }
     })
   })

@@ -17,6 +17,8 @@ export const configurationSchema = Type.Intersect([
     wsPath: Type.Optional(Type.String()),
     adminEmail: Type.Optional(Type.String()),
     adminPwd: Type.Optional(Type.String()),
+    locale: Type.Optional(Type.String()),
+    fallbackLocale: Type.Optional(Type.String()),
   }),
 ])
 

@@ -14,6 +14,7 @@ import services from './services'
 import appHooks from './app.hooks'
 import { authentication } from './authentication'
 import channels from './channels'
+import i18n from './i18n'
 import mongodb from './mongodb'
 import seed from './seed'
 
@@ -87,6 +88,9 @@ app.configure(
     })
   })
 )
+
+info('Setting up i18n...')
+app.configure(i18n)
 
 info('Setting up MongoDB...')
 app.configure(mongodb)

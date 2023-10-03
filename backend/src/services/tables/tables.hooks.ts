@@ -15,6 +15,7 @@ import { createService, MongoService } from '@/service'
 import { checkRules } from '@/hooks/check-rules'
 import { AdapterId, NullableAdapterId } from '@feathersjs/mongodb/src/adapter'
 import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
+import i18next from 'i18next'
 
 type Table = Static<typeof tableSchema>
 type TableField = Static<typeof tableFieldSchema>
@@ -27,9 +28,11 @@ const checkMaxTables = async (context: HookContext): Promise<HookContext> => {
 
   const m = context.params?.user?.rights?.maxes?.maxTables
   if (m !== -1 && context.data?.list.length >= m) {
-    throw new Forbidden(
-      `Your plan only supports ${m} tables, please consider upgrading`
-    )
+    throw new Forbidden(i18next.t('paid_feature.table', {
+      tableCount: m,
+      count: m,
+      lng: context.params?.user?.lng || 'en',
+    }))
   }
   return context
 }
@@ -43,9 +46,11 @@ const checkMaxRecords = async (context: HookContext): Promise<HookContext> => {
   const { count } = await context.app.service(context.path).find({ query: { $limit: 0 } })
   const m = context.params?.user?.rights?.maxes?.maxRecords
   if (m !== -1 && count >= m) {
-    throw new Forbidden(
-      `Your plan only supports ${m} records per table, please consider upgrading`
-    )
+    throw new Forbidden(i18next.t('paid_feature.record', {
+      recordCount: m,
+      count: m,
+      lng: context.params?.user?.lng || 'en',
+    }))
   }
   return context
 }
@@ -205,7 +210,9 @@ export const createDynamicService = (app: Application, id: string, t: AnyData) =
       ) => {
         if (record[f.name]) {
           if (f.refTableId === t._id) {
-            throw new BadRequest('Cannot resolve on the same table')
+            throw new BadRequest(i18next.t('table.sameTableResolve', {
+              lng: context.params?.user?.lng || 'en',
+            }))
           }
 
           if (f.array) {

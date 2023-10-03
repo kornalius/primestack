@@ -1,3 +1,4 @@
+import i18next from 'i18next'
 import { HookContext } from '@feathersjs/feathers'
 import { BadRequest, Forbidden } from '@feathersjs/errors'
 import { formatSize } from '@/shared/files/utils'
@@ -11,9 +12,11 @@ const checkMaxFiles = async (context: HookContext): Promise<HookContext> => {
   const { count } = await context.app.service(context.path).find({ query: { $limit: 0 } })
   const m = context.params?.user?.rights?.maxes?.maxFiles
   if (m !== -1 && count >= m) {
-    throw new Forbidden(
-      `Your plan only supports a total of ${m} file(s), please consider upgrading`
-    )
+    throw new Forbidden(i18next.t('paid_feature.file', {
+      fileCount: m,
+      count: m,
+      lng: context.params?.user?.lng || 'en',
+    }))
   }
   return context
 }
@@ -26,9 +29,10 @@ const checkMaxFileSize = async (context: HookContext): Promise<HookContext> => {
 
   const m = context.params?.user?.rights?.maxes?.maxFileSize
   if (m !== -1 && context.data.size >= m) {
-    throw new Forbidden(
-      `Your plan only supports file sizes up to ${formatSize(m)}, please consider upgrading`
-    )
+    throw new Forbidden(i18next.t('paid_feature.fileSize', {
+      size: formatSize(m),
+      lng: context.params?.user?.lng || 'en',
+    }))
   }
   return context
 }
@@ -42,11 +46,18 @@ const checkRequiredQueryFields = async (context: HookContext): Promise<HookConte
   // if no query provided
   if (context.method === 'find') {
     if (!context.params?.query.tableId) {
-      throw new BadRequest('Missing tableId field')
+      throw new BadRequest(i18next.t('query.missingField', {
+        name: 'tableId',
+        lng: context.params?.user?.lng || 'en',
+      }))
     }
 
     if (!context.params?.query.docId) {
-      throw new BadRequest('Missing docId field')
+      throw new BadRequest(i18next.t('query.missingField', {
+        // eslint-disable-next-line no-underscore-dangle
+        name: 'docId',
+        lng: context.params?.user?.lng || 'en',
+      }))
     }
   }
   return context
