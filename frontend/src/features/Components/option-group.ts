@@ -10,7 +10,7 @@ import {
 export default {
   type: 'option-group',
   icon: 'mdi-radiobox-marked',
-  label: 'Option Group',
+  label: 'components.option-group.label',
   component: QOptionGroup,
   schema: properties([
     commonProperties.state,

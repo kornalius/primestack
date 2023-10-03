@@ -10,7 +10,7 @@ import {
 export default {
   type: 'toggle',
   icon: 'mdi-toggle-switch-off-outline',
-  label: 'Toggle',
+  label: 'components.toggle.label',
   component: QToggle,
   schema: properties([
     commonProperties.state,

@@ -12,7 +12,7 @@ import {
 export default {
   type: 'lookup-select',
   icon: 'mdi-database-search',
-  label: 'Lookup Select',
+  label: 'components.lookup-select.label',
   component: LookupSelect,
   schema: properties([
     commonProperties.state,

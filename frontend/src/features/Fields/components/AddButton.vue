@@ -13,7 +13,7 @@
     @click="$emit('click')"
   >
     <q-tooltip :delay="500">
-      {{ label || t('buttons.add') }}
+      {{ label || $t('buttons.add') }}
     </q-tooltip>
   </q-btn>
 
@@ -31,7 +31,7 @@
     @click="$emit('click')"
   >
     <q-tooltip :delay="500">
-      {{ label || t('buttons.add') }}
+      {{ label || $t('buttons.add') }}
     </q-tooltip>
 
     <q-list style="min-width: 100px">
@@ -70,7 +70,6 @@
 
 <script setup lang="ts">
 import { AddOption } from '@/features/Fields/interfaces'
-import { useI18n } from 'vue-i18n'
 
 defineProps<{
   // label for the button
@@ -88,6 +87,4 @@ defineEmits<{
   (e: 'click'): void,
   (e: 'click-option', value: string): void,
 }>()
-
-const { t } = useI18n()
 </script>

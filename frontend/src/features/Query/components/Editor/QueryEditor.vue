@@ -7,7 +7,7 @@
       <div class="col">
         <table-select
           v-model="currentSchemaId"
-          label="Select a table..."
+          :label="$t('query.select_table')"
           options-dense
           dense
           outlined
@@ -22,7 +22,7 @@
       <div class="col-3">
         <q-input
           v-model="query.limit"
-          label="Limit"
+          :label="$t('query.limit')"
           type="number"
           dense
           outlined
@@ -32,7 +32,7 @@
       <div class="col-3">
         <q-input
           v-model="query.skip"
-          label="Skip"
+          :label="$t('query.skip')"
           type="number"
           dense
           outlined
@@ -53,7 +53,7 @@
           <div class="col">
             <query-group-editor
               v-model="query.groups[index]"
-              :label="`Group ${index + 1}`"
+              :label="`${$t('query.group')} ${index + 1}`"
               :disable="disable || !currentSchemaId"
               :color="palette[index % palette.length]"
               :fields="fields"

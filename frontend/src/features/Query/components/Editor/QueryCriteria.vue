@@ -5,7 +5,7 @@
         v-model="field.fieldId"
         :disable="disable"
         :fields="fields"
-        label="Fieldname"
+        :label="$t('query.fieldname')"
         options-dense
         clearable
         dense
@@ -45,7 +45,7 @@
         <q-input
           v-else-if="fieldType === 'string'"
           v-model="field.value"
-          label="Value"
+          :label="$t('query.value')"
           clearable
           dense
           outlined
@@ -55,8 +55,8 @@
         <q-input
           v-else-if="fieldType === 'number'"
           v-model.number="field.value"
+          :label="$t('query.value')"
           type="number"
-          label="Value"
           dense
           outlined
           @keydown="editor.preventSystemUndoRedo"

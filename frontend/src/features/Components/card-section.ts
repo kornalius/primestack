@@ -6,7 +6,7 @@ import { properties, commonProperties, defaultStyleValues } from './common'
 export default {
   type: 'card-section',
   icon: 'mdi-card-text-outline',
-  label: 'Card Section',
+  label: 'components.card-section.label',
   col: true,
   nokey: true,
   hidden: true,

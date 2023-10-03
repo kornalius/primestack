@@ -14,7 +14,11 @@
       :key="k"
       :name="k"
       :icon="categories[k].icon"
-    />
+    >
+      <q-tooltip :delay="500">
+        {{ $t(`properties.categories.${k}`) }}
+      </q-tooltip>
+    </q-tab>
   </q-tabs>
 
   <!-- Horizontal layout -->

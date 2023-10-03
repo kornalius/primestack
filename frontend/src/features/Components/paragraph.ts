@@ -8,7 +8,7 @@ import { properties, commonProperties, defaultStyleValues } from './common'
 export default {
   type: 'paragraph',
   icon: 'mdi-text-box-edit-outline',
-  label: 'Paragraph',
+  label: 'components.paragraph.label',
   component: Editor,
   interactable: true,
   schema: properties([

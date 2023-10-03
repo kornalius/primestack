@@ -16,7 +16,7 @@ type FormField = Static<typeof fieldSchema>
 export default {
   type: 'input',
   icon: 'mdi-form-textbox',
-  label: 'Input',
+  label: 'components.input.label',
   component: QInput,
   numericInput: (field: FormField): boolean => (field as AnyData).type === 'number',
   schema: properties([

@@ -15,7 +15,7 @@
 
         <template #action>
           <q-btn
-            label="Dismiss"
+            :label="$t('buttons.dismiss')"
             flat
             @click="removeSnack(snack.id)"
           />

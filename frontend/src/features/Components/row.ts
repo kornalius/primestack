@@ -8,7 +8,7 @@ import { properties, commonProperties, defaultStyleValues } from './common'
 export default {
   type: 'row',
   icon: 'mdi-view-column-outline',
-  label: 'Row',
+  label: 'components.row.label',
   component: FormElementRow,
   row: true,
   nokey: true,

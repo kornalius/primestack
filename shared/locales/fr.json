@@ -102,7 +102,9 @@
   "buttons": {
     "add": "Nouveau...",
     "clear": "Effacer tout",
-    "remove": "Effacer"
+    "remove": "Effacer",
+    "delete": "Effacer",
+    "dismiss": "Fermer"
   },
   "table": {
     "dialog": {
@@ -189,5 +191,197 @@
       "variables": "Variables",
       "table": "Table"
     }
+  },
+  "editor": {
+    "save": {
+      "title": "Sauvegarder",
+      "tooltip": "Sauvegarder les changements"
+    },
+    "cancel": {
+      "title": "Annuler",
+      "tooltip": "Annuler les changements"
+    },
+    "tables": {
+      "title": "Tables",
+      "tooltip": "Modifier les structures des tables"
+    },
+    "forms": {
+      "title": "Formulaires",
+      "tooltip": "Modifier les formulaires"
+    },
+    "preview": {
+      "title": "Prévisualiser",
+      "tooltip": "Prévisualiser le formulaire"
+    },
+    "data": {
+      "title": "Données",
+      "tooltip": "Afficher ou cacher les données du formulaire"
+    }
+  },
+  "app": {
+    "user_menu": {
+      "tooltip": "Menu utilisateur"
+    },
+    "search": {
+      "tooltip": "Recherche globale"
+    },
+    "notifications": {
+      "tooltip": "Notifications"
+    },
+    "editor_toggle": {
+      "tooltip": "Accèder à l'éditeur UI"
+    },
+    "upgrade": {
+      "title": "Mettre à jour",
+      "tooltip": "Mettre votre plan à jour"
+    },
+    "profile": {
+      "title": "Profil",
+      "tooltip": "Profil de l'utilisateur"
+    },
+    "logout": {
+      "title": "Déconnexion",
+      "tooltip": "Déconnexion"
+    },
+    "no_results": "Aucun résultat"
+  },
+  "expressions": {
+  },
+  "filter": {
+    "expression": "Expression de filtre (ex: field:value)"
+  },
+  "components": {
+    "button": {
+      "label": "Bouton"
+    },
+    "button-toggle": {
+      "label": "Boutons"
+    },
+    "card": {
+      "label": "Carte"
+    },
+    "card-actions": {
+      "label": "Actions de carte"
+    },
+    "card-section": {
+      "label": "Section de carte"
+    },
+    "checkbox": {
+      "label": "Case à cocher"
+    },
+    "chip": {
+      "label": "Puce"
+    },
+    "col": {
+      "label": "Colonne"
+    },
+    "color": {
+      "label": "Ceuilleur de couleurs"
+    },
+    "date": {
+      "label": "Ceuilleur de date"
+    },
+    "icon": {
+      "label": "Icône"
+    },
+    "icon-select": {
+      "label": "Ceuilleur d'icône"
+    },
+    "image": {
+      "label": "Image"
+    },
+    "input": {
+      "label": "Saisi de texte"
+    },
+    "knob": {
+      "label": "Poignée"
+    },
+    "label": {
+      "label": "Libelé"
+    },
+    "lookup-select": {
+      "label": "Sélecteur de jointures"
+    },
+    "option-group": {
+      "label": "Groupe d'options"
+    },
+    "paragraph": {
+      "label": "Paragraphe"
+    },
+    "progress": {
+      "label": "Progrès"
+    },
+    "range": {
+      "label": "Sélecteur d'écarts"
+    },
+    "rating": {
+      "label": "Sélecteur d'évaluation"
+    },
+    "row": {
+      "label": "Ligne"
+    },
+    "select": {
+      "label": "Sélecteur"
+    },
+    "separator": {
+      "label": "Séparateur"
+    },
+    "skeleton": {
+      "label": "Skelète"
+    },
+    "slider": {
+      "label": "Glissière"
+    },
+    "space": {
+      "label": "Espaceur"
+    },
+    "spinner": {
+      "label": "Spinner"
+    },
+    "tab": {
+      "label": "Onglet"
+    },
+    "table": {
+      "label": "Table"
+    },
+    "tabs": {
+      "label": "Onglets"
+    },
+    "tags-select": {
+      "label": "Ceuilleur de mots clés "
+    },
+    "time": {
+      "label": "Ceuilleur d'heure"
+    },
+    "toggle": {
+      "label": "Basculateur"
+    },
+    "video": {
+      "label": "Vidéo"
+    },
+    "separators": {
+      "display": "Affichage",
+      "progress":  "Progrès",
+      "inputs": "Saisies",
+      "buttons":  "Boutons",
+      "flexbox": "Flexbox",
+      "card":  "Cartes"
+    }
+  },
+  "properties": {
+    "categories": {
+      "model": "Modèle",
+      "content": "Contenu",
+      "table": "Table",
+      "style": "Style",
+      "action": "Action"
+    },
+    "array": {
+      "add": "Cliquez ici pour ajouter un item"
+    },
+    "title": "Éditeur de propriétés",
+    "menu": "Menu",
+    "tab": "Onglet",
+    "form": "Formulaire"
   }
 }

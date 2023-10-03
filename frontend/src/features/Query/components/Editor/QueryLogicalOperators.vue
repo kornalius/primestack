@@ -13,9 +13,10 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
 import { QueryLogicalOp } from '@/shared/interfaces/query'
-import { computed } from 'vue'
 
 const props = defineProps<{
   modelValue: QueryLogicalOp
@@ -29,13 +30,15 @@ const emit = defineEmits<{
 
 const value = useModelValue(props, emit)
 
+const { t } = useI18n()
+
 const options = computed(() => ([
   {
-    label: 'And',
+    label: t('query.and'),
     value: 'and',
   },
   {
-    label: 'Or',
+    label: t('query.or'),
     value: 'or',
   },
 ]))

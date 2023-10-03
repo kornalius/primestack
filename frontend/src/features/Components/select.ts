@@ -14,7 +14,7 @@ import {
 export default {
   type: 'select',
   icon: 'mdi-form-select',
-  label: 'Select',
+  label: 'components.select.label',
   component: (data: AnyData) => (
     data.tableId ? ServiceSelect : QSelect
   ),

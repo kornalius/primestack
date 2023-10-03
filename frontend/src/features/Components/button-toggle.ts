@@ -10,7 +10,7 @@ import {
 export default {
   type: 'button-toggle',
   icon: 'mdi-checkbox-multiple-blank',
-  label: 'Buttons',
+  label: 'components.button-toggle.label',
   component: QBtnToggle,
   schema: properties([
     commonProperties.state,

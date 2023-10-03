@@ -12,7 +12,7 @@ import {
 export default {
   type: 'date',
   icon: 'mdi-calendar',
-  label: 'Date',
+  label: 'components.date.label',
   component: QDate,
   schema: properties([
     commonProperties.state,

@@ -24,7 +24,7 @@
           @click="clear"
         >
           <q-tooltip :delay="500">
-            {{ clearLabel || 'Clear' }}
+            {{ clearLabel || $t('buttons.clear') }}
           </q-tooltip>
         </q-btn>
 
@@ -131,7 +131,7 @@
                 @click="removeItem(values[index])"
               >
                 <q-tooltip :delay="500">
-                  {{ removeLabel || 'Remove' }}
+                  {{ removeLabel || $t('buttons.remove') }}
                 </q-tooltip>
               </q-btn>
             </div>
@@ -170,7 +170,7 @@
           @click="clear"
         >
           <q-tooltip :delay="500">
-            {{ clearLabel || 'Clear' }}
+            {{ clearLabel || $t('buttons.clear') }}
           </q-tooltip>
         </q-btn>
 

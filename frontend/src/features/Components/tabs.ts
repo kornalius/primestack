@@ -11,7 +11,7 @@ import {
 export default {
   type: 'tabs',
   icon: 'mdi-tab',
-  label: 'Tabs',
+  label: 'components.tabs.label',
   component: QTabs,
   schema: properties([
     commonProperties.state,

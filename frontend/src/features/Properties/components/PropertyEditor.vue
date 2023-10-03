@@ -194,8 +194,8 @@
                 :remove-function="(v: unknown, idx: number) => removeItem(scope.value, idx)"
                 :disable="disable"
                 :no-separator="!arraySchemaIsObject"
+                :add-label="$t('properties.array.add')"
                 add-button="end"
-                add-label="Click here to add a new item"
                 reorderable
               >
                 <template #default="{ index }">

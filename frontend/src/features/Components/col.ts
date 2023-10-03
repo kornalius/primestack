@@ -6,7 +6,7 @@ import { properties, commonProperties, defaultStyleValues } from './common'
 export default {
   type: 'col',
   icon: 'mdi-table-column',
-  label: 'Column',
+  label: 'components.col.label',
   col: true,
   nokey: true,
   hidden: true,

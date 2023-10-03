@@ -6,7 +6,7 @@ import { properties } from './common'
 export default {
   type: 'space',
   icon: 'mdi-keyboard-space',
-  label: 'Spacer',
+  label: 'components.space.label',
   component: QSpace,
   nokey: true,
   schema: properties([], false),

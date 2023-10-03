@@ -19,7 +19,9 @@
               v-close-popup
               @click="unit = u"
             >
-              <q-item-section>{{ u }}</q-item-section>
+              <q-item-section>
+                {{ u }}
+              </q-item-section>
             </q-item>
           </q-list>
         </q-menu>

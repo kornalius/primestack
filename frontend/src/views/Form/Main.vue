@@ -63,26 +63,36 @@
             <div class="q-mb-sm full-width">
               <div class="row bg-grey-8 items-center q-px-sm">
                 <div class="col">
-                  <span class="text-h6 text-white">Form</span>
+                  <span class="text-h6 text-white">
+                    {{ form.name }}
+                  </span>
                 </div>
 
                 <div class="col-auto">
                   <q-toggle
                     v-model="preview"
                     class="q-ml-sm text-white"
-                    label="Preview"
+                    :label="$t('editor.preview.title')"
                     left-label
                     dense
-                  />
+                  >
+                    <q-tooltip :delay="500">
+                      {{ $t('editor.preview.tooltip') }}
+                    </q-tooltip>
+                  </q-toggle>
 
                   <q-toggle
                     v-model="showPreviewFormData"
                     class="q-ml-sm text-white"
                     :disable="!preview"
-                    label="Data"
+                    :label="$t('editor.data.title')"
                     left-label
                     dense
-                  />
+                  >
+                    <q-tooltip :delay="500">
+                      {{ $t('editor.data.tooltip') }}
+                    </q-tooltip>
+                  </q-toggle>
                 </div>
               </div>
             </div>
@@ -106,18 +116,26 @@
               align="right"
             >
               <q-btn
-                label="Save"
+                :label="$t('editor.save.title')"
                 color="positive"
                 outline
                 @click="submit"
-              />
+              >
+                <q-tooltip :delay="500">
+                  {{ $t('editor.save.tooltip') }}
+                </q-tooltip>
+              </q-btn>
 
               <q-btn
-                label="Cancel"
+                :label="$t('editor.cancel.title')"
                 color="negative"
                 flat
                 @click="resetForm"
-              />
+              >
+                <q-tooltip :delay="500">
+                  {{ $t('editor.save.tooltip') }}
+                </q-tooltip>
+              </q-btn>
             </q-card-actions>
 
             <q-expansion-item

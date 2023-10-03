@@ -10,7 +10,7 @@ import {
 export default {
   type: 'button',
   icon: 'mdi-button-pointer',
-  label: 'Button',
+  label: 'components.button.label',
   component: QBtn,
   schema: properties([
     commonProperties.state,

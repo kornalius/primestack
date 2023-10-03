@@ -54,25 +54,33 @@
           v-if="editor.active"
           :disable="!editor.canSave"
           icon="mdi-check"
-          label="Save"
+          :label="$t('editor.save.title')"
           color="green-4"
           size="sm"
           outline
           no-caps
           @click="save"
-        />
+        >
+          <q-tooltip :delay="500">
+            {{ $t('editor.save.tooltip') }}
+          </q-tooltip>
+        </q-btn>
 
         <q-btn
           v-if="editor.active"
-          class="q-ml-sm"
+          class="q-mx-sm"
           icon="mdi-check"
-          label="Cancel"
+          :label="$t('editor.cancel.title')"
           color="red-3"
           size="sm"
           outline
           no-caps
           @click="cancel"
-        />
+        >
+          <q-tooltip :delay="500">
+            {{ $t('editor.cancel.tooltip') }}
+          </q-tooltip>
+        </q-btn>
 
         <q-btn
           v-if="auth.authenticated"
@@ -82,6 +90,10 @@
           dense
           round
         >
+          <q-tooltip :delay="500">
+            {{ $t('app.user_menu.tooltip') }}
+          </q-tooltip>
+
           <q-menu max-width="400px" fit>
             <div class="row q-pa-md q-gutter-sm items-center">
               <div class="col-auto">
@@ -92,7 +104,11 @@
                   flat
                   round
                   v-close-popup
-                />
+                >
+                  <q-tooltip :delay="500">
+                    {{ $t('app.search.tooltip') }}
+                  </q-tooltip>
+                </q-btn>
               </div>
 
               <div class="col-auto">
@@ -108,7 +124,7 @@
                   @click="editor.startEdit"
                 >
                   <q-tooltip :delay="500">
-                    Toggle editor
+                    {{ $t('app.editor_toggle.tooltip') }}
                   </q-tooltip>
                 </q-btn>
               </div>
@@ -121,18 +137,26 @@
                   flat
                   round
                   v-close-popup
-                />
+                >
+                  <q-tooltip :delay="500">
+                    {{ $t('app.notifications.tooltip') }}
+                  </q-tooltip>
+                </q-btn>
               </div>
 
               <div class="col">
                 <q-btn
                   color="green-7"
                   size="sm"
-                  label="Upgrade"
+                  :label="$t('app.upgrade.title')"
                   no-caps
                   outline
                   v-close-popup
-                />
+                >
+                  <q-tooltip :delay="500">
+                    {{ $t('app.upgrade.tooltip') }}
+                  </q-tooltip>
+                </q-btn>
               </div>
             </div>
 
@@ -160,12 +184,16 @@
                 v-close-popup
                 @click="profileClick"
               >
+                <q-tooltip :delay="500">
+                  {{ $t('app.profile.tooltip') }}
+                </q-tooltip>
+
                 <q-item-section avatar>
                   <q-icon name="mdi-account-edit" />
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>
-                    User Profile
+                    {{ $t('app.profile.title') }}
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -175,12 +203,16 @@
                 v-close-popup
                 @click="logout"
               >
+                <q-tooltip :delay="500">
+                  {{ $t('app.logout.tooltip') }}
+                </q-tooltip>
+
                 <q-item-section avatar>
                   <q-icon name="mdi-logout" />
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>
-                    Logout
+                    {{ $t('app.logout.title') }}
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -263,13 +295,17 @@
             tag="router-link"
             clickable
           >
+            <q-tooltip :delay="500" anchor="bottom left">
+              {{ $t('editor.forms.tooltip') }}
+            </q-tooltip>
+
             <q-item-section avatar>
               <q-icon name="mdi-format-line-style" />
             </q-item-section>
 
             <q-item-section v-if="leftDrawerExpanded">
               <q-item-label>
-                Forms
+                {{ $t('editor.forms.title') }}
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -283,13 +319,17 @@
             tag="router-link"
             clickable
           >
+            <q-tooltip :delay="500" anchor="bottom left">
+              {{ $t('editor.tables.tooltip') }}
+            </q-tooltip>
+
             <q-item-section avatar>
               <q-icon name="mdi-database-cog" />
             </q-item-section>
 
             <q-item-section v-if="leftDrawerExpanded">
               <q-item-label>
-                Tables
+                {{ $t('editor.tables.title') }}
               </q-item-label>
             </q-item-section>
           </q-item>

@@ -12,7 +12,7 @@ import {
 export default {
   type: 'range',
   icon: 'mdi-arrow-left-right',
-  label: 'Range',
+  label: 'components.range.label',
   component: QRange,
   schema: properties([
     commonProperties.state,

@@ -10,7 +10,7 @@ import {
 export default {
   type: 'chip',
   icon: 'mdi-square-rounded',
-  label: 'Chip',
+  label: 'components.chip.label',
   component: QChip,
   schema: properties([
     commonProperties.state,

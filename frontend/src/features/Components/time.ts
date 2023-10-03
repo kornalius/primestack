@@ -10,7 +10,7 @@ import {
 export default {
   type: 'time',
   icon: 'mdi-clock-outline',
-  label: 'Time',
+  label: 'components.time.label',
   component: QTime,
   schema: properties([
     commonProperties.state,

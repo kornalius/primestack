@@ -3,7 +3,7 @@
     <q-drawer
       :model-value="true"
       class="q-pa-sm"
-      :width="180"
+      :width="200"
       side="left"
       behavior="desktop"
       show-if-above
@@ -39,7 +39,7 @@
 
               <div class="col q-ml-sm">
                 <span :class="`text-${componentColor(value)} text-bold`">
-                  {{ componentLabel(value) }}
+                  {{ $t(componentLabel(value)) }}
                 </span>
               </div>
             </div>
@@ -48,7 +48,7 @@
               v-else-if="value.type !== ''"
               class="form-component q-mx-sm"
               :icon="componentIcon(value)"
-              :label="componentLabel(value)"
+              :label="$t(componentLabel(value))"
               :disabled="!isComponentAvailable(value.type, auth.user._plan.code)"
               type="button"
               size="12px"
@@ -74,9 +74,7 @@
         class="q-pa-sm"
         @click="unselectAll"
       >
-        <fields-editor
-          v-model="fields"
-        />
+        <fields-editor v-model="fields" />
       </q-page>
     </q-page-container>
   </q-layout>

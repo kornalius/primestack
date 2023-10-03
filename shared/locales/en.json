@@ -102,7 +102,9 @@
   "buttons": {
     "add": "Create New...",
     "clear": "Clear",
-    "remove": "Remove"
+    "remove": "Remove",
+    "delete": "Delete",
+    "dismiss": "Dismiss"
   },
   "table": {
     "dialog": {
@@ -139,7 +141,15 @@
     "record_other": "Your plan only supports {{recordCount}} records per table, please consider upgrading"
   },
   "query": {
-    "missingField": "Missing '{{name}}' field"
+    "missingField": "Missing '{{name}}' field",
+    "select_table": "Select a table...",
+    "fieldname": "Fieldname",
+    "value": "Value",
+    "limit": "Limit",
+    "skip": "Skip",
+    "group": "Group",
+    "and": "And",
+    "or": "Or"
   },
   "actions": {
     "dialog": {
@@ -189,5 +199,197 @@
       "variables": "Variables",
       "table": "Table"
     }
+  },
+  "editor": {
+    "save": {
+      "title": "Save",
+      "tooltip": "Save changes"
+    },
+    "cancel": {
+      "title": "Cancel",
+      "tooltip": "Cancel changes"
+    },
+    "tables": {
+      "title": "Tables",
+      "tooltip": "Edit tables structures"
+    },
+    "forms": {
+      "title": "Forms",
+      "tooltip": "Edit forms"
+    },
+    "preview": {
+      "title": "Preview",
+      "tooltip": "Preview form"
+    },
+    "data": {
+      "title": "Data",
+      "tooltip": "Show or hide form data"
+    }
+  },
+  "app": {
+    "user_menu": {
+      "tooltip": "User menu"
+    },
+    "search": {
+      "tooltip": "Search anywhere"
+    },
+    "notifications": {
+      "tooltip": "User notifications"
+    },
+    "editor_toggle": {
+      "tooltip": "Access UI editor"
+    },
+    "upgrade": {
+      "title": "Upgrade",
+      "tooltip": "Upgrade your plan"
+    },
+    "profile": {
+      "title": "Profile",
+      "tooltip": "User's profile"
+    },
+    "logout": {
+      "title": "Logout",
+      "tooltip": "Logout"
+    },
+    "no_results": "No Results"
+  },
+  "expressions": {
+  },
+  "filter": {
+    "expression": "Filter expression (ex: field:value)"
+  },
+  "components": {
+    "button": {
+      "label": "Button"
+    },
+    "button-toggle": {
+      "label": "Buttons"
+    },
+    "card": {
+      "label": "Card"
+    },
+    "card-actions": {
+      "label": "Card Actions"
+    },
+    "card-section": {
+      "label": "Card Section"
+    },
+    "checkbox": {
+      "label": "Checkbox"
+    },
+    "chip": {
+      "label": "Chip"
+    },
+    "col": {
+      "label": "Column"
+    },
+    "color": {
+      "label": "Color Picker"
+    },
+    "date": {
+      "label": "Date Picker"
+    },
+    "icon": {
+      "label": "Icon"
+    },
+    "icon-select": {
+      "label": "Icon Picker"
+    },
+    "image": {
+      "label": "image"
+    },
+    "input": {
+      "label": "Input"
+    },
+    "knob": {
+      "label": "Knob"
+    },
+    "label": {
+      "label": "Label"
+    },
+    "lookup-select": {
+      "label": "Lookup Selector"
+    },
+    "option-group": {
+      "label": "Options Group"
+    },
+    "paragraph": {
+      "label": "Paragraph"
+    },
+    "progress": {
+      "label": "Progress"
+    },
+    "range": {
+      "label": "Range Selector"
+    },
+    "rating": {
+      "label": "Rating Selector"
+    },
+    "row": {
+      "label": "Row"
+    },
+    "select": {
+      "label": "Select"
+    },
+    "separator": {
+      "label": "Separator"
+    },
+    "skeleton": {
+      "label": "Skeleton"
+    },
+    "slider": {
+      "label": "Slider"
+    },
+    "space": {
+      "label": "Spacer"
+    },
+    "spinner": {
+      "label": "Spinner"
+    },
+    "tab": {
+      "label": "Tab"
+    },
+    "table": {
+      "label": "Table"
+    },
+    "tabs": {
+      "label": "Tabs"
+    },
+    "tags-select": {
+      "label": "Tags Picker"
+    },
+    "time": {
+      "label": "Time Picker"
+    },
+    "toggle": {
+      "label": "Toggle"
+    },
+    "video": {
+      "label": "Video"
+    },
+    "separators": {
+      "display": "Display",
+      "progress":  "Progress",
+      "inputs": "Inputs",
+      "buttons":  "Buttons",
+      "flexbox": "Flexbox",
+      "card":  "Card"
+    }
+  },
+  "properties": {
+    "categories": {
+      "model": "Model",
+      "content": "Content",
+      "table": "Table",
+      "style": "Style",
+      "action": "Action"
+    },
+    "array": {
+      "add": "Click here to add a new item"
+    },
+    "title": "Property Editor",
+    "menu": "Menu",
+    "tab": "Tab",
+    "form": "Form"
   }
 }

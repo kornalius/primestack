@@ -10,7 +10,7 @@
     <template #no-option>
       <q-item>
         <q-item-section class="text-grey">
-          No results
+          {{ $t('app.no_results') }}
         </q-item-section>
       </q-item>
     </template>

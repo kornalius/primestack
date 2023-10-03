@@ -12,7 +12,7 @@ import {
 export default {
   type: 'tags-select',
   icon: 'mdi-form-select',
-  label: 'Tags',
+  label: 'components.tags-select.label',
   component: TagsSelect,
   schema: properties([
     commonProperties.state,

@@ -8,7 +8,7 @@
     <!-- Title -->
 
     <section-title
-      title="Property Editor"
+      :title="$t('properties.title')"
       class="text-bold"
       color="blue-grey-4"
     />
@@ -87,7 +87,7 @@
 
       <section-title
         v-if="showMenuProperties"
-        title="Menu"
+        :title="$t('properties.menu')"
         icon="mdi-menu"
       />
 
@@ -107,7 +107,7 @@
 
       <section-title
         v-if="showTabProperties"
-        title="Tab"
+        :title="$t('properties.tab')"
         icon="mdi-tab"
       />
 
@@ -127,7 +127,7 @@
 
       <section-title
         v-if="showFormProperties"
-        title="Form"
+        :title="$t('properties.form')"
         icon="mdi-window-maximize"
       />
 

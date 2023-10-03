@@ -7,7 +7,7 @@ import { properties, commonProperties, defaultStyleValues } from './common'
 export default {
   type: 'video',
   icon: 'mdi-movie-open',
-  label: 'Video',
+  label: 'components.video.label',
   component: QVideo,
   schema: properties([
     Type.Omit(commonProperties.style, ['dense']),

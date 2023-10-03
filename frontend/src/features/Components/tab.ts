@@ -9,7 +9,7 @@ import {
 export default {
   type: 'tab',
   icon: 'mdi-tab',
-  label: 'Tab',
+  label: 'components.tab.label',
   nokey: true,
   hidden: true,
   schema: properties([

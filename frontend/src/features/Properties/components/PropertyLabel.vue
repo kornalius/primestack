@@ -24,7 +24,9 @@
               v-close-popup
               @click="$emit('change-type', t)"
             >
-              <q-item-section>{{ t }}</q-item-section>
+              <q-item-section>
+                {{ t }}
+              </q-item-section>
             </q-item>
           </q-list>
         </q-menu>

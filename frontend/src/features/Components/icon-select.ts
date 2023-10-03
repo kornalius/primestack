@@ -12,7 +12,7 @@ import {
 export default {
   type: 'icon-select',
   icon: 'mdi-form-select',
-  label: 'Icon Select',
+  label: 'components.icon-select.label',
   component: IconField,
   schema: properties([
     commonProperties.state,

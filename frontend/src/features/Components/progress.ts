@@ -8,7 +8,7 @@ import { properties, commonProperties, defaultStyleValues } from './common'
 export default {
   type: 'progress',
   icon: 'mdi-progress-helper',
-  label: 'Progress',
+  label: 'components.progress.label',
   component: QCircularProgress,
   numericInput: true,
   schema: properties([

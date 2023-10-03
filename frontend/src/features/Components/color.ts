@@ -10,7 +10,7 @@ import {
 export default {
   type: 'color',
   icon: 'mdi-eyedropper-variant',
-  label: 'Color',
+  label: 'components.color.label',
   component: ColorField,
   schema: properties([
     commonProperties.state,

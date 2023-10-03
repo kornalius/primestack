@@ -8,7 +8,7 @@ import { properties, commonProperties, defaultStyleValues } from './common'
 export default {
   type: 'icon',
   icon: 'mdi-cube-outline',
-  label: 'Icon',
+  label: 'components.icon.label',
   component: QIcon,
   schema: properties([
     commonProperties.size,

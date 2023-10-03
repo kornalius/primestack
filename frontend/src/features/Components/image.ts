@@ -10,7 +10,7 @@ import {
 export default {
   type: 'image',
   icon: 'mdi-image',
-  label: 'Image',
+  label: 'components.image.label',
   component: QImg,
   schema: properties([
     commonProperties.size,

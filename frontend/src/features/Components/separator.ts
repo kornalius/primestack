@@ -8,7 +8,7 @@ import { properties, commonProperties, defaultStyleValues } from './common'
 export default {
   type: 'separator',
   icon: 'mdi-minus',
-  label: 'Separator',
+  label: 'components.separator.label',
   component: QSeparator,
   overlayStyles: {
     padding: '16px 0',

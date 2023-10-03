@@ -6,7 +6,7 @@ import { properties, commonProperties, defaultStyleValues } from './common'
 export default {
   type: 'card-actions',
   icon: 'mdi-gesture-tap-button',
-  label: 'Card Actions',
+  label: 'components.card-actions.label',
   col: true,
   nokey: true,
   hidden: true,

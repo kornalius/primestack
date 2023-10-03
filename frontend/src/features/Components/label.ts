@@ -8,7 +8,7 @@ import { properties, commonProperties, defaultStyleValues } from './common'
 export default {
   type: 'label',
   icon: 'mdi-format-color-text',
-  label: 'Label',
+  label: 'components.label.label',
   component: LabelField,
   schema: properties([
     commonProperties.state,

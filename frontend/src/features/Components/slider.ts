@@ -12,7 +12,7 @@ import {
 export default {
   type: 'slider',
   icon: 'mdi-tune-variant',
-  label: 'Slider',
+  label: 'components.slider.label',
   component: QSlider,
   numericInput: true,
   schema: properties([

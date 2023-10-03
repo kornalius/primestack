@@ -10,7 +10,7 @@ import {
 export default {
   type: 'checkbox',
   icon: 'mdi-check',
-  label: 'Checkbox',
+  label: 'components.checkbox.label',
   component: QCheckbox,
   schema: properties([
     commonProperties.state,

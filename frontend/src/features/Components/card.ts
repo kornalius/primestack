@@ -9,7 +9,7 @@ import { properties, commonProperties, defaultStyleValues } from './common'
 export default {
   type: 'card',
   icon: 'mdi-card-bulleted',
-  label: 'Card',
+  label: 'components.card.label',
   component: FormElementCard,
   row: true,
   col: true,

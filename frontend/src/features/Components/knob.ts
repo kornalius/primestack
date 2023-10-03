@@ -10,7 +10,7 @@ import { properties, commonProperties, defaultStyleValues } from './common'
 export default {
   type: 'knob',
   icon: 'mdi-knob',
-  label: 'Knob',
+  label: 'components.knob.label',
   component: QKnob,
   numericInput: true,
   schema: properties([

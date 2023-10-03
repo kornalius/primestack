@@ -22,7 +22,7 @@
             v-model="currentFilter"
             class="full-width"
             :fields="fields"
-            placeholder="Filter expression (ex: field:value)"
+            placeholder="$t('filter.expression')"
             clearable
             dense
             outlined
@@ -99,7 +99,7 @@
           @click.stop="removeRow(p.row)"
         >
           <q-tooltip :delay="500">
-            {{ removeLabel || 'Delete' }}
+            {{ removeLabel || $t('buttons.delete') }}
           </q-tooltip>
         </q-btn>
       </q-tr>

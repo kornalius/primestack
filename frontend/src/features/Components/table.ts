@@ -15,7 +15,7 @@ import {
 export default {
   type: 'table',
   icon: 'mdi-table',
-  label: 'Table',
+  label: 'components.table.label',
   component: SchemaTable,
   schema: properties([
     commonProperties.state,

@@ -17,7 +17,7 @@
         <q-item-section>
           <q-item-label class="text-blue-4">
             <q-icon name="mdi-plus" size="xs" />
-            {{ createLabel || 'Create new...' }}
+            {{ createLabel || $t('buttons.add') }}
           </q-item-label>
         </q-item-section>
       </q-item>

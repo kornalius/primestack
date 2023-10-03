@@ -8,7 +8,7 @@ import { properties, commonProperties, defaultStyleValues } from './common'
 export default {
   type: 'spinner',
   icon: 'mdi-vanish',
-  label: 'Spinner',
+  label: 'components.spinner.label',
   component: QSpinnerIos,
   nokey: true,
   schema: properties([

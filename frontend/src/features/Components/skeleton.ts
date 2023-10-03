@@ -7,7 +7,7 @@ import { properties, commonProperties, defaultStyleValues } from './common'
 export default {
   type: 'skeleton',
   icon: 'mdi-timer-sand',
-  label: 'Skeleton',
+  label: 'components.skeleton.label',
   component: QSkeleton,
   nokey: true,
   schema: properties([

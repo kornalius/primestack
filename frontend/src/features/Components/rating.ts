@@ -10,7 +10,7 @@ import {
 export default {
   type: 'rating',
   icon: 'mdi-star',
-  label: 'Rating',
+  label: 'components.rating.label',
   component: QRating,
   numericInput: true,
   schema: properties([
