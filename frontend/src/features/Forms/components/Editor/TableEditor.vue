@@ -152,7 +152,7 @@ const removeColumn = (index: number): void => {
 
   &.dense
     right: 28px
-    top: 0px
+    top: 0
 
 .remove
   position: absolute
