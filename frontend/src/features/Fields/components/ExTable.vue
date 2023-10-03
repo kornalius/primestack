@@ -53,7 +53,7 @@
         @click="$emit('row-click', p.row)"
       >
         <q-td
-          v-if="selectionStyle !== 'none'"
+          v-if="![undefined, 'none'].includes(selectionStyle)"
           class="q-table--col-auto-width"
         >
           <q-checkbox
@@ -65,7 +65,7 @@
 
         <q-td
           v-for="col in p.cols"
-          :key="col.field"
+          :key="col.name"
           :props="p"
         >
           <property-schema-field
@@ -80,8 +80,8 @@
           <span v-else>
             {{
               col.format
-                ? col.format(p.row[(col as AnyData).field])
-                : p.row[(col as AnyData).field]
+                ? col.format(col.value)
+                : col.value
             }}
           </span>
         </q-td>
@@ -131,7 +131,6 @@ import { TSchema } from '@feathersjs/typebox'
 import { useSyncedProp } from '@/composites/prop'
 import { columnAlignmentFor, getTypeFor, schemaToField } from '@/shared/schema'
 import { filterToMongo } from '@/composites/filter'
-import { AnyData } from '@/shared/interfaces/commons'
 import { AddOption } from '@/features/Fields/interfaces'
 import PropertySchemaField from '@/features/Properties/components/PropertySchemaField.vue'
 import AddButton from '@/features/Fields/components/AddButton.vue'

@@ -146,7 +146,7 @@ export default {
       icon: styleIcon,
       names: [
         'dense',
-        'disabled',
+        'disable',
         'readonly',
         'color',
         'separator',

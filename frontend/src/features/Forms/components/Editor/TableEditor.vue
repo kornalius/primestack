@@ -41,7 +41,7 @@
 
             <q-btn
               v-show="hover === index"
-              class="remove"
+              :class="{ remove: true, dense: $attrs.dense }"
               :disable="disable || removeColumnDisable"
               :icon="removeColumnIcon || 'mdi-trash-can-outline'"
               color="red-6"
@@ -55,7 +55,7 @@
       </draggable>
 
       <q-btn
-        class="add"
+        :class="{ add: true, dense: $attrs.dense }"
         :disable="disable || addColumnDisable"
         :icon="addColumnIcon || 'mdi-plus'"
         color="primary"
@@ -150,10 +150,19 @@ const removeColumn = (index: number): void => {
   top: 12px
   right: 24px
 
+  &.dense
+    right: 28px
+    top: 0px
+
 .remove
   position: absolute
   top: 12px
   left: -6px
+
+  &.dense
+    left: -10px
+    top: 4px
+
 </style>
 
 <style lang="sass">
