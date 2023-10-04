@@ -22,7 +22,7 @@
             v-model="currentFilter"
             class="full-width"
             :fields="fields"
-            placeholder="$t('filter.expression')"
+            :placeholder="$t('filter.expression')"
             clearable
             dense
             outlined
