@@ -7,10 +7,10 @@
             <div class="row">
               <div class="col">
                 <div class="text-h5">
-                  Edit Profile
+                  {{ $t('user_profile.title') }}
                 </div>
                 <div>
-                  Complete your profile
+                  {{ $t('user_profile.sub_title') }}
                 </div>
               </div>
             </div>
@@ -23,33 +23,33 @@
               </div>
               <div class="col">
                 <q-btn color="primary" rounded unelevated>
-                  Add Photo...
+                  {{ $t('user_profile.add_photo') }}
                 </q-btn>
               </div>
             </div>
 
             <div class="row q-gutter-sm q-pt-md">
               <div class="col">
-                <q-input v-model="user.username" label="User Name" />
+                <q-input v-model="user.username" :label="$t('user_profile.username')" />
               </div>
               <div class="col">
-                <q-input v-model="user.email" label="Email Address" />
+                <q-input v-model="user.email" :label="$t('user_profile.email')" />
               </div>
             </div>
 
             <div class="row q-gutter-sm">
               <div class="col">
-                <q-input v-model="user.firstname" label="First Name" />
+                <q-input v-model="user.firstname" :label="$t('user_profile.firstname')" />
               </div>
               <div class="col">
-                <q-input v-model="user.lastname" label="Last Name" />
+                <q-input v-model="user.lastname" :label="$t('user_profile.lastname')" />
               </div>
             </div>
           </q-card-section>
 
           <q-card-actions align="right">
             <q-btn color="primary" unelevated @click="updateProfile">
-              Update Profile
+              {{ $t('user_profile.update') }}
             </q-btn>
           </q-card-actions>
         </q-card>
@@ -63,7 +63,7 @@
             <div class="row">
               <div class="col">
                 <div class="text-h6">
-                  Change Password
+                  {{ $t('user_profile.change_password') }}
                 </div>
               </div>
             </div>
@@ -72,7 +72,7 @@
           <q-card-section>
             <div class="row q-gutter-sm items-center">
               <div class="col">
-                Current Password
+                {{ $t('user_profile.current_password') }}
               </div>
               <div class="col">
                 <q-input v-model="currentPassword" label="Current Passsword" />
@@ -81,29 +81,26 @@
 
             <div class="row q-gutter-sm items-center">
               <div class="col">
-                New Password
+                {{ $t('user_profile.new_password') }}
               </div>
               <div class="col">
-                <q-input v-model="newPassword" label="New Passsword" />
+                <q-input v-model="newPassword" :label="$t('user_profile.new_password')" />
               </div>
             </div>
 
             <div class="row q-gutter-sm items-center">
               <div class="col">
-                Current New Password
+                {{ $t('user_profile.current_new_password') }}
               </div>
               <div class="col">
-                <q-input v-model="confirmPassword" label="Confirm New Passsword" />
+                <q-input v-model="confirmPassword" :label="$t('user_profile.confirm_new_password')" />
               </div>
             </div>
           </q-card-section>
 
           <q-card-actions align="right">
-            <q-btn
-              color="primary"
-              unelevated
-            >
-              Change Password
+            <q-btn color="primary" unelevated>
+              {{ $t('user_profile.change_password') }}
             </q-btn>
           </q-card-actions>
         </q-card>

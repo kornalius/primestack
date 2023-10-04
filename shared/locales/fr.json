@@ -383,5 +383,38 @@
     "menu": "Menu",
     "tab": "Onglet",
     "form": "Formulaire"
+  },
+  "login": {
+    "email": "Courriel",
+    "password": "Mot de passe",
+    "login": "Connexion",
+    "not_registered": "Vous n'avez pas de compte?",
+    "create_account": "Créer un compte"
+  },
+  "logout": {
+    "message": "Déconnexion en cours..."
+  },
+  "404": {
+    "title": "404",
+    "message": "Oups. Il n'y a rien ici...",
+    "go_home": "Revenir à l'acceuil"
+  },
+  "upload": {
+    "message": "Choisissez un fichier ou glissez-en un ici..."
+  },
+  "user_profile": {
+    "title": "Modifier le profile",
+    "sub_title": "Complèter votre profile",
+    "add_photo": "Ajouter une photo...",
+    "username": "Nom d'utilisateur",
+    "email": "Adresse courriel",
+    "firstname": "Prénom",
+    "lastname": "Nom",
+    "update": "Mettre à jour le profile",
+    "change_password": "Modifier le mot de passe",
+    "current_password": "Mote de passe actuel",
+    "new_password": "Nouveau mot de passe",
+    "current_new_password": "Nouveau mot de passe actuel",
+    "confirm_new_password": "Confirmer votre mot de passe"
   }
 }

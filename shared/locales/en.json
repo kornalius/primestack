@@ -391,5 +391,38 @@
     "menu": "Menu",
     "tab": "Tab",
     "form": "Form"
+  },
+  "login": {
+    "email": "Email",
+    "password": "Password",
+    "login": "Login",
+    "not_registered": "Not registered?",
+    "create_account": "Create an account"
+  },
+  "logout": {
+    "message": "Logging you out..."
+  },
+  "404": {
+    "title": "404",
+    "message": "Oops. Nothing here...",
+    "go_home": "Go Home"
+  },
+  "upload": {
+    "message": "Select a file or drag one here..."
+  },
+  "user_profile": {
+    "title": "Edit Profile",
+    "sub_title": "Complete your profile",
+    "add_photo": "Add Photo...",
+    "username": "User Name",
+    "email": "Email Address",
+    "firstname": "First name",
+    "lastname": "Last name",
+    "update": "Update Profile",
+    "change_password": "Change Password",
+    "current_password": "Current Password",
+    "new_password": "New Password",
+    "current_new_password": "Current New Password",
+    "confirm_new_password": "Confirm New Password"
   }
 }

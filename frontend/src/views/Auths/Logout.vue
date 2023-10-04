@@ -1,7 +1,7 @@
 <template>
   <q-page class="bg-blue window-height window-width row justify-center items-center">
     <span class="text-h1 text-white">
-      Logging you out...
+      {{ $t('logout.message') }}
     </span>
   </q-page>
 </template>

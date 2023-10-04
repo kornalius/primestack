@@ -2,18 +2,18 @@
   <div class="fullscreen bg-blue text-white text-center q-pa-md flex flex-center">
     <div>
       <div style="font-size: 30vh">
-        404
+        {{ $t('404.title') }}
       </div>
 
       <div class="text-h2" style="opacity:.4">
-        Oops. Nothing here...
+        {{ $t('404.message') }}
       </div>
 
       <q-btn
         class="q-mt-xl"
+        :label="$t('404.go_home')"
         color="white"
         text-color="blue"
-        label="Go Home"
         to="/"
         unelevated
         no-caps

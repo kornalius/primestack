@@ -1,11 +1,11 @@
 <template>
   <div class="q-pa-md flex flex-center">
     <uploader
+      :label="$t('upload.message')"
       :accept="mimetypes"
       :max-file-size="maxFileSize"
       :max-files="10"
       :query="{}"
-      label="Select a file or drag one here..."
     />
   </div>
 </template>

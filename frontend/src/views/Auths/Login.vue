@@ -22,7 +22,7 @@
             <q-card-section>
               <q-input
                 v-model="email"
-                label="email"
+                :label="$t('login.email')"
                 type="email"
                 autocomplete="email"
                 :rules="[isRequired(t), isEmail(t)]"
@@ -33,7 +33,7 @@
 
               <q-input
                 v-model="password"
-                label="password"
+                :label="$t('login.password')"
                 type="password"
                 autocomplete="password"
                 :rules="[isRequired(t)]"
@@ -46,7 +46,7 @@
             <q-card-actions class="q-px-md">
               <q-btn
                 class="full-width"
-                label="Login"
+                :label="$t('login.login')"
                 type="submit"
                 color="primary"
                 size="lg"
@@ -57,9 +57,9 @@
 
           <q-card-section class="text-center q-pa-none">
             <p class="text-grey-8">
-              Not registered?
+              {{ $t('login.not_registered') }}
               <router-link to="/signup">
-                Create an account
+                {{ $t('login.create_account') }}
               </router-link>
             </p>
           </q-card-section>
