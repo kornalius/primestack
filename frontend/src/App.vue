@@ -26,6 +26,13 @@
               :content-class="`text-${r.color}`"
               :to="menuUrl(routeMenu._id, r._id)"
             >
+              <q-tooltip
+                v-if="r.description"
+                :delay="500"
+              >
+                {{ r.description }}
+              </q-tooltip>
+
               <q-icon
                 v-if="r.icon"
                 class="q-mr-sm"
@@ -351,6 +358,14 @@
               :target="m.target"
               clickable
             >
+              <q-tooltip
+                v-if="m.description"
+                :delay="500"
+                anchor="bottom left"
+              >
+                {{ m.description }}
+              </q-tooltip>
+
               <q-item-section avatar>
                 <q-icon :name="m.icon" :color="m.color" />
               </q-item-section>

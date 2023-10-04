@@ -18,6 +18,7 @@ export const tabSchema = Type.Object(
   {
     _id: ExType.Id(),
     label: Type.String(),
+    description: Type.Optional(Type.String()),
     icon: ExType.Icon(),
     color: Type.Optional(ExType.Color()),
     formId: ExType.Id({ service: 'forms' }),
@@ -34,6 +35,7 @@ export const tabSchema = Type.Object(
         icon: contentIcon,
         names: [
           'label',
+          'description',
           'icon',
           'color',
           'badgeTableId',
@@ -50,6 +52,7 @@ export const menuSchema = Type.Object(
   {
     _id: ExType.Id(),
     label: Type.String(),
+    description: Type.Optional(Type.String()),
     icon: ExType.Icon(),
     color: Type.Optional(ExType.Color()),
     href: Type.Optional(Type.String()),
@@ -64,6 +67,7 @@ export const menuSchema = Type.Object(
         icon: contentIcon,
         names: [
           'label',
+          'description',
           'icon',
           'href',
           'target',
