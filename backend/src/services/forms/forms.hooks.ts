@@ -14,7 +14,7 @@ const checkMaxForms = async (context: HookContext): Promise<HookContext> => {
     throw new Forbidden(i18next.t('paid_feature.form', {
       formCount: m,
       count: m,
-      lng: context.params?.user?.lng || 'en',
+      lng: context.params?.user?.lng as string || 'en',
     }))
   }
   return context

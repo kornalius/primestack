@@ -11,6 +11,8 @@ import groups from '@/features/Groups/service'
 import plans from '@/features/Plans/service'
 import shares from '@/features/Shares/service'
 import tables from '@/features/Tables/service'
+// eslint-disable-next-line import/no-cycle
+import stats from '@/features/Stats/service'
 import menus from '@/features/Menus/service'
 import forms from '@/features/Forms/service'
 import actions from '@/features/Actions/service'
@@ -85,6 +87,7 @@ export const api = createPiniaClient(feathersClient, {
     plans,
     shares,
     tables,
+    stats,
     menus,
     forms,
     actions,

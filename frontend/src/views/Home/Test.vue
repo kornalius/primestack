@@ -13,6 +13,7 @@
       <q-tab name="Table" label="Table" />
       <q-tab name="Columns" label="Columns Select" />
       <q-tab name="Tags" label="Tags Select" />
+      <q-tab name="Stats" label="Stats" />
     </q-tabs>
 
     <q-tab-panels v-model="tab" animated>
@@ -142,14 +143,28 @@
           </div>
         </div>
       </q-tab-panel>
+
+      <q-tab-panel name="Stats">
+        <div class="row">
+          <div class="col">
+            <div>Count: {{ count.value }}</div>
+            <div>Sum: {{ sum.value }}</div>
+            <div>Average: {{ avg.value }}</div>
+            <div>Mininum: {{ min.value }}</div>
+            <div>Maximum: {{ max.value }}</div>
+            <div>Empty: {{ empty.value }}</div>
+            <div>Not Empty: {{ notEmpty.value }}</div>
+            <div>% Empty: {{ pctEmpty.value }}</div>
+            <div>% Not Empty: {{ pctNotEmpty.value }}</div>
+          </div>
+        </div>
+      </q-tab-panel>
     </q-tab-panels>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import {
-  computed, Ref, ref,
-} from 'vue'
+import { computed, Ref, ref } from 'vue'
 import sample from 'lodash/sample'
 import hexObjectId from 'hex-object-id'
 import { Type } from '@feathersjs/typebox'
@@ -164,6 +179,7 @@ import SchemaTable from '@/features/Tables/components/SchemaTable.vue'
 import SchemaEditor from '@/features/Forms/components/Editor/TableEditor.vue'
 import ColumnsSelect from '@/features/Fields/components/ColumnsSelect.vue'
 import TagsSelect from '@/features/Tables/components/TagsSelect.vue'
+import { useStats } from '@/features/Stats/store'
 
 /**
  * Properties
@@ -378,6 +394,22 @@ for (let i = 0; i < 1000; i++) {
  */
 
 const tags = ref([])
+
+/**
+ * Stats
+ */
+
+const stats = useStats()
+
+const count = stats.count({ tableId: '64b806da03ac5093de3f3e78', field: 'numberField', query: { stringField: 'A' } })
+const avg = stats.avg({ tableId: '64b806da03ac5093de3f3e78', field: 'numberField' })
+const sum = stats.sum({ tableId: '64b806da03ac5093de3f3e78', field: 'numberField' })
+const min = stats.min({ tableId: '64b806da03ac5093de3f3e78', field: 'numberField' })
+const max = stats.max({ tableId: '64b806da03ac5093de3f3e78', field: 'numberField' })
+const empty = stats.empty({ tableId: '64b806da03ac5093de3f3e78', field: 'numberField' })
+const notEmpty = stats.notEmpty({ tableId: '64b806da03ac5093de3f3e78', field: 'numberField' })
+const pctEmpty = stats.pctEmpty({ tableId: '64b806da03ac5093de3f3e78', field: 'numberField' })
+const pctNotEmpty = stats.pctNotEmpty({ tableId: '64b806da03ac5093de3f3e78', field: 'numberField' })
 </script>
 
 <style scoped lang="sass">

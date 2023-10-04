@@ -118,7 +118,7 @@ const filter = (
     } else {
       const cols = props.columns.filter((col) => col.filterable)
       filteredOptions.value = props.options.filter((row) => (
-        !!cols.find((col) => row[col.field].toString().toLowerCase().indexOf(val) !== -1)
+        !!cols.find((col) => row[col.field]?.toString().toLowerCase().indexOf(val) !== -1)
       ))
     }
   })

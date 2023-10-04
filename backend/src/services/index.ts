@@ -7,6 +7,7 @@ import plans from './plans/plans.service'
 import shares from './shares/shares.service'
 import users from './users/users.service'
 import tables from './tables/tables.service'
+import stats from './stats/stats.service'
 import menus from './menus/menus.service'
 import forms from './forms/forms.service'
 import actions from './actions/actions.service'
@@ -34,6 +35,9 @@ export default function (app: Application): void {
 
   info('    - Tables')
   app.configure(tables)
+
+  info('    - Stats')
+  app.configure(stats)
 
   info('    - Menus')
   app.configure(menus)

@@ -424,5 +424,8 @@
     "new_password": "New Password",
     "current_new_password": "Current New Password",
     "confirm_new_password": "Confirm New Password"
+  },
+  "stats": {
+    "invalid_type": "Invalid type specified"
   }
 }

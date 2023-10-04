@@ -1,0 +1,26 @@
+// Login
+POST http://localhost:3030/authentication
+Content-Type: application/json
+
+{
+  "strategy": "local",
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+> {% client.global.set("token", response.body.accessToken); %}
+###
+
+// Create stats
+POST http://localhost:3030/stats
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "uuid": "64b806da03ac5093de3f3e42",
+  "path": "64b806da03ac5093de3f3e78",
+  "field": "numberField",
+  "type": "count"
+}
+###

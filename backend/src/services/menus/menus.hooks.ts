@@ -13,7 +13,7 @@ const checkMaxMenus = async (context: HookContext): Promise<HookContext> => {
     throw new Forbidden(i18next.t('paid_feature.menu', {
       menuCount: m,
       count: m,
-      lng: context.params?.user?.lng || 'en',
+      lng: context.params?.user?.lng as string || 'en',
     }))
   }
   return context

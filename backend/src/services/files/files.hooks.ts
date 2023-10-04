@@ -15,7 +15,7 @@ const checkMaxFiles = async (context: HookContext): Promise<HookContext> => {
     throw new Forbidden(i18next.t('paid_feature.file', {
       fileCount: m,
       count: m,
-      lng: context.params?.user?.lng || 'en',
+      lng: context.params?.user?.lng as string || 'en',
     }))
   }
   return context
@@ -31,7 +31,7 @@ const checkMaxFileSize = async (context: HookContext): Promise<HookContext> => {
   if (m !== -1 && context.data.size >= m) {
     throw new Forbidden(i18next.t('paid_feature.fileSize', {
       size: formatSize(m),
-      lng: context.params?.user?.lng || 'en',
+      lng: context.params?.user?.lng as string || 'en',
     }))
   }
   return context
@@ -48,7 +48,7 @@ const checkRequiredQueryFields = async (context: HookContext): Promise<HookConte
     if (!context.params?.query.tableId) {
       throw new BadRequest(i18next.t('query.missingField', {
         name: 'tableId',
-        lng: context.params?.user?.lng || 'en',
+        lng: context.params?.user?.lng as string || 'en',
       }))
     }
 
@@ -56,7 +56,7 @@ const checkRequiredQueryFields = async (context: HookContext): Promise<HookConte
       throw new BadRequest(i18next.t('query.missingField', {
         // eslint-disable-next-line no-underscore-dangle
         name: 'docId',
-        lng: context.params?.user?.lng || 'en',
+        lng: context.params?.user?.lng as string || 'en',
       }))
     }
   }

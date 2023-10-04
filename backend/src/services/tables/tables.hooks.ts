@@ -1,3 +1,4 @@
+import i18next from 'i18next'
 import diff from '@/diff-arrays'
 import { Application } from '@feathersjs/koa'
 import { pick } from 'lodash'
@@ -15,7 +16,6 @@ import { createService, MongoService } from '@/service'
 import { checkRules } from '@/hooks/check-rules'
 import { AdapterId, NullableAdapterId } from '@feathersjs/mongodb/src/adapter'
 import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
-import i18next from 'i18next'
 
 type Table = Static<typeof tableSchema>
 type TableField = Static<typeof tableFieldSchema>
@@ -31,7 +31,7 @@ const checkMaxTables = async (context: HookContext): Promise<HookContext> => {
     throw new Forbidden(i18next.t('paid_feature.table', {
       tableCount: m,
       count: m,
-      lng: context.params?.user?.lng || 'en',
+      lng: context.params?.user?.lng as string || 'en',
     }))
   }
   return context
@@ -49,7 +49,7 @@ const checkMaxRecords = async (context: HookContext): Promise<HookContext> => {
     throw new Forbidden(i18next.t('paid_feature.record', {
       recordCount: m,
       count: m,
-      lng: context.params?.user?.lng || 'en',
+      lng: context.params?.user?.lng as string || 'en',
     }))
   }
   return context
@@ -65,7 +65,6 @@ class DynamicService extends MongoService {
     return undefined
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async create(data: AnyData, params?: Params): Promise<AnyData>
   async create(data: AnyData[], params?: Params): Promise<AnyData[]>
   async create(data: AnyData | AnyData[], params?: Params): Promise<AnyData | AnyData[]>
@@ -85,7 +84,6 @@ class DynamicService extends MongoService {
     return super.create(data, params)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async get(id: AdapterId, params?: Params) {
     const { app } = (this.options as AnyData)
     const t = await this.getTable()
@@ -102,7 +100,6 @@ class DynamicService extends MongoService {
     return super.get(id, params)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async find(params?: Params & { paginate?: PaginationOptions }): Promise<Paginated<AnyData>>
   async find(params?: Params & { paginate: false }): Promise<AnyData[]>
   async find(params?: Params): Promise<Paginated<AnyData> | AnyData[]>
@@ -122,7 +119,6 @@ class DynamicService extends MongoService {
     return super.find(params)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async update(id: AdapterId, data: AnyData, params?: Params): Promise<AnyData> {
     const t = await this.getTable()
     if (t) {
@@ -211,7 +207,7 @@ export const createDynamicService = (app: Application, id: string, t: AnyData) =
         if (record[f.name]) {
           if (f.refTableId === t._id) {
             throw new BadRequest(i18next.t('table.sameTableResolve', {
-              lng: context.params?.user?.lng || 'en',
+              lng: context.params?.user?.lng as string || 'en',
             }))
           }
 
