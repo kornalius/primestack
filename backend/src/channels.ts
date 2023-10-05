@@ -38,9 +38,9 @@ export default function (app: Application): void {
   })
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-  app.service('stats').publish('calculate', (data: any, context: HookContext) => {
-    return [app.channel('stats')]
-  })
+  app.service('stats').publish('calculate', (data: any, context: HookContext) => (
+    [app.channel('stats')]
+  ))
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
   app.publish(async (data: any, context: HookContext) => {

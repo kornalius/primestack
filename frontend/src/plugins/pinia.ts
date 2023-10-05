@@ -1,6 +1,7 @@
 import { createPinia } from 'pinia'
 import { createPiniaClient } from 'feathers-pinia'
 import { Static } from '@feathersjs/typebox'
+// eslint-disable-next-line import/no-cycle
 import { feathersClient } from '@/feathers'
 import { AnyData } from '@/shared/interfaces/commons'
 

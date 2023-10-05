@@ -4,8 +4,9 @@ import socketio from '@feathersjs/socketio-client'
 import authentication from '@feathersjs/authentication-client'
 import io from 'socket.io-client'
 import { useSnacks } from '@/features/Snacks/store'
-import { getEnv } from './utils/variables'
+// eslint-disable-next-line import/no-cycle
 import { useStats } from '@/features/Stats/store'
+import { getEnv } from './utils/variables'
 
 const API_URL = getEnv(import.meta.env.VITE_API_URL) as string
 const API_PATH = getEnv(import.meta.env.VITE_API_PATH) as string
