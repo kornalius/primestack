@@ -14,6 +14,7 @@
       <q-tab name="Columns" label="Columns Select" />
       <q-tab name="Tags" label="Tags Select" />
       <q-tab name="Stats" label="Stats" />
+      <q-tab name="ValueBoxes" label="Value Boxes" />
     </q-tabs>
 
     <q-tab-panels v-model="tab" animated>
@@ -147,15 +148,102 @@
       <q-tab-panel name="Stats">
         <div class="row">
           <div class="col">
-            <div>Count: {{ count.value }}</div>
-            <div>Sum: {{ sum.value }}</div>
-            <div>Average: {{ avg.value }}</div>
-            <div>Mininum: {{ min.value }}</div>
-            <div>Maximum: {{ max.value }}</div>
-            <div>Empty: {{ empty.value }}</div>
-            <div>Not Empty: {{ notEmpty.value }}</div>
-            <div>% Empty: {{ pctEmpty.value }}</div>
-            <div>% Not Empty: {{ pctNotEmpty.value }}</div>
+            <div>Count: {{ count?.value || 0 }}</div>
+            <div>Sum: {{ sum?.value || 0 }}</div>
+            <div>Average: {{ avg?.value || 0 }}</div>
+            <div>Mininum: {{ min?.value || 0 }}</div>
+            <div>Maximum: {{ max?.value || 0 }}</div>
+            <div>Empty: {{ empty?.value || 0 }}</div>
+            <div>Not Empty: {{ notEmpty?.value || 0 }}</div>
+            <div>% Empty: {{ pctEmpty?.value || 0 }}</div>
+            <div>% Not Empty: {{ pctNotEmpty?.value || 0 }}</div>
+          </div>
+        </div>
+      </q-tab-panel>
+
+      <q-tab-panel name="ValueBoxes">
+        <div class="row q-gutter-sm items-center">
+          <div class="col">
+            <value-box
+              :model-value="137845"
+              :diff="0.682"
+              value-color="white"
+              format-value="currency"
+              label="Profile Report"
+              label-color="white"
+              tag="YEAR 2023"
+              tag-color="orange"
+              format-diff="percent"
+              icon="mdi-lead-pencil"
+              color="grey-8"
+              icon-color="grey-5"
+              diff-color="green-4"
+              diff-icon="mdi-arrow-up"
+              diff-icon-color="green-4"
+              diff-icon-size="xs"
+            />
+          </div>
+
+          <div class="col">
+            <value-box
+              :model-value="-137845"
+              value-color="white"
+              format-value="currency"
+              label="Profile Report"
+              label-color="white"
+              tag="YEAR 2022"
+              tag-color="orange"
+              format-diff="percent"
+              icon="mdi-chat"
+              icon-color="blue-grey-6"
+              color="blue-4"
+              diff-color="red-9"
+            />
+          </div>
+
+          <div class="col">
+            <value-box
+              :model-value="137845"
+              :diff="0.682"
+              :container-class="{ 'shadow-4': true }"
+              value-color="grey-8"
+              format-value="currency"
+              label="Profile Report"
+              label-color="grey-8"
+              label-style="subtitle1"
+              format-diff="percent"
+              icon="mdi-chart-line"
+              icon-color="orange-6"
+              color="orange-3"
+              diff-color="green-4"
+              diff-icon="mdi-arrow-up"
+              diff-icon-color="green-4"
+              diff-icon-size="xs"
+              diff-icon-suffix
+            />
+          </div>
+
+          <div class="col">
+            <value-box
+              :model-value="137845"
+              :diff="0.682"
+              value-color="grey-8"
+              value-style="subtitle2"
+              format-value="currency"
+              label="Profile Report"
+              label-color="grey-8"
+              label-style="subtitle1"
+              format-diff="percent"
+              icon="mdi-chart-line"
+              icon-color="red-6"
+              color="red-3"
+              diff-color="green-4"
+              diff-style="subtitle2"
+              diff-icon="mdi-arrow-up"
+              diff-icon-color="green-4"
+              diff-icon-size="xs"
+              diff-icon-suffix
+            />
           </div>
         </div>
       </q-tab-panel>
@@ -180,6 +268,7 @@ import SchemaEditor from '@/features/Forms/components/Editor/TableEditor.vue'
 import ColumnsSelect from '@/features/Fields/components/ColumnsSelect.vue'
 import TagsSelect from '@/features/Tables/components/TagsSelect.vue'
 import { useStats } from '@/features/Stats/store'
+import ValueBox from '@/features/Fields/components/ValueBox.vue'
 
 /**
  * Properties

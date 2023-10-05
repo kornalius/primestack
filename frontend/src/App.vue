@@ -51,7 +51,7 @@
                 floating
                 rounded
               >
-                {{ badgeValues[(r as any)._id] }}
+                {{ badgeValues[(r as AnyData)._id]?.value }}
               </q-badge>
             </q-route-tab>
           </q-tabs>
@@ -403,7 +403,6 @@
 import {
   computed, onMounted, ref, watch,
 } from 'vue'
-import isNil from 'lodash/isNil'
 import { Static } from '@feathersjs/typebox'
 import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
@@ -423,6 +422,7 @@ import SnacksDisplay from '@/features/Snacks/components/Snacks.vue'
 import TabsEditor from '@/features/Tabs/components/TabsEditor.vue'
 import MenusEditor from '@/features/Menus/components/MenusEditor.vue'
 import AppProperties from '@/features/App/components/AppProperties.vue'
+import { useStats } from '@/features/Stats/store'
 
 type Tab = Static<typeof tabSchema>
 
@@ -611,14 +611,15 @@ const { buildCtx } = useExpression()
 
 const ctx = buildCtx()
 
+const stats = useStats()
+
 const badgeValues = ref({})
 
 watch(routeTabs, () => {
-  badgeValues.value = {}
   routeTabs.value?.forEach((r: Tab) => {
     const {
-      badgeField, badgeFilter, badgeStat, badgeTableId,
-    } = r
+      badgeField, badgeFilter, badgeStat, badgeTableId, badgeGroupFields,
+    } = r as Tab
 
     if (badgeTableId) {
       const { data: userTables } = api.service('tables').useFind({ query: {} })
@@ -626,37 +627,13 @@ watch(routeTabs, () => {
 
       const q = badgeFilter ? queryToMongo(badgeFilter as Query, table, ctx.$expr) : {}
 
-      if (badgeStat === 'count') {
-        const { total, find } = api.service(badgeTableId).useFind({ query: { ...q, $limit: 0 } })
-        find()
-        badgeValues.value[r._id] = total
-        return
-      }
-
-      const { data, find } = api.service(badgeTableId).useFind({ query: { ...q } })
-      find()
-
-      watch(data, () => {
-        if (badgeStat === 'sum') {
-          if (badgeField) {
-            badgeValues.value[r._id] = data.value.reduce((acc, d) => acc + (d[badgeField] || 0), 0)
-          }
-        } else if (badgeStat === 'average' && badgeField) {
-          badgeValues.value[r._id] = Math.round(data.value.reduce((acc, d) => (
-            acc + (d[badgeField] || 0)
-          ), 0) / data.value.length)
-        } else if (badgeStat === 'filled' && badgeField) {
-          badgeValues.value[r._id] = data.value.filter((d) => !isNil(d[badgeField])).length
-        } else if (badgeStat === 'empty' && badgeField) {
-          badgeValues.value[r._id] = data.value.filter((d) => isNil(d[badgeField])).length
-        } else if (badgeStat === '%filled' && badgeField) {
-          const fc = data.value.filter((d) => !isNil(d[badgeField])).length
-          badgeValues.value[r._id] = `${Math.round((fc / data.value.length) * 100)}%`
-        } else if (badgeStat === '%empty' && badgeField) {
-          const fc = data.value.filter((d) => isNil(d[badgeField])).length
-          badgeValues.value[r._id] = `${Math.round((fc / data.value.length) * 100)}%`
-        }
-      }, { immediate: true })
+      badgeValues.value[r._id] = stats.newStat({
+        tableId: badgeTableId,
+        query: q,
+        type: badgeStat as string,
+        field: badgeField,
+        groupFields: badgeGroupFields,
+      })
     }
   })
 }, { immediate: true })

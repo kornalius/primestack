@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ComputedRef } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import hexObjectId from 'hex-object-id'
+// eslint-disable-next-line import/no-cycle
 import { useFeathers } from '@/composites/feathers'
 import { AnyData } from '@/shared/interfaces/commons'
 import { schema as statSchema } from '@/shared/schemas/stats'
@@ -20,6 +21,23 @@ interface NewStatOptions extends StatOptions {
 }
 
 export const useStats = defineStore('stats', () => {
+  const update = async (tableId: string) => {
+    const { api } = useFeathers()
+
+    const stats = api.service('stats').findInStore({ query: { path: tableId } })
+
+    stats?.data?.value.forEach((s) => {
+      api.service('stats').patch(s._id, {
+        uuid: s._id,
+        path: tableId,
+        field: s.field,
+        type: s.type,
+        groupFields: s.groupFields,
+        query: s.query,
+      })
+    })
+  }
+
   const newStat = (options: NewStatOptions): ComputedRef<Stat> => {
     const { api } = useFeathers()
 
@@ -31,16 +49,39 @@ export const useStats = defineStore('stats', () => {
       query,
     } = options
 
-    const id = hexObjectId()
-
-    api.service('stats').create({
-      uuid: id,
-      path: tableId,
-      field,
-      type,
-      groupFields,
-      query,
+    const s = api.service('stats').findOneInStore({
+      query: {
+        path: tableId,
+        field,
+        type,
+        groupFields,
+        query,
+      },
     })
+
+    let id: string
+
+    if (!s.value) {
+      id = hexObjectId()
+      api.service('stats').create({
+        uuid: id,
+        path: tableId,
+        field,
+        type,
+        groupFields,
+        query,
+      })
+    } else {
+      id = s.value._id
+      api.service('stats').patch(s.value._id, {
+        uuid: s.value._id,
+        path: tableId,
+        field: s.value.field,
+        type: s.value.type,
+        groupFields: s.value.groupFields,
+        query: s.value.query,
+      })
+    }
 
     // return computed(() => ({ _id: id, uuid: id, path: tableId, field, type, value: 0 }))
     const { data } = api.service('stats').useGet(id)
@@ -98,6 +139,7 @@ export const useStats = defineStore('stats', () => {
   }
 
   return {
+    update,
     newStat,
     count,
     avg,

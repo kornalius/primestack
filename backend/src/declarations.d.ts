@@ -103,6 +103,8 @@ export interface CreateServiceOptions {
   authentication?: boolean
   // supported method names for the service (ex: 'get', 'find', 'create', 'update', 'patch', 'remove')
   methods?: string[]
+  // custom event names
+  events?: string[]
   // indexes to create
   indexes?: Index[]
   // should we manage createdAt and createdBy fields automatically?

@@ -453,7 +453,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
       // eslint-disable-next-line new-cap
       app.use(name, new klass(o), {
         methods: options.methods,
-        events: [],
+        events: options.events || [],
         koa: options.middlewares,
       })
 
@@ -593,7 +593,7 @@ export const createSchemalessService = (name: string, klass: Newable<AnyData>, o
       // eslint-disable-next-line new-cap
       app.use(name, new klass(o), {
         methods: options.methods,
-        events: [],
+        events: options.events || [],
         koa: options.middlewares,
       })
 

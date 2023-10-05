@@ -5,6 +5,7 @@ import authentication from '@feathersjs/authentication-client'
 import io from 'socket.io-client'
 import { useSnacks } from '@/features/Snacks/store'
 import { getEnv } from './utils/variables'
+import { useStats } from '@/features/Stats/store'
 
 const API_URL = getEnv(import.meta.env.VITE_API_URL) as string
 const API_PATH = getEnv(import.meta.env.VITE_API_PATH) as string
@@ -127,3 +128,13 @@ export const feathersClient = feathers()
       all: [(context: HookContext) => errorHandler(context)],
     },
   })
+
+/**
+ * When receiving stats calculate event (to update all stats for a specific path)
+ */
+socket.on('stats calculate', (data) => {
+  const { update } = useStats()
+  if (data?.path) {
+    update(data.path)
+  }
+})

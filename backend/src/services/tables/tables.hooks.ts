@@ -69,7 +69,8 @@ class DynamicService extends MongoService {
   async create(data: AnyData[], params?: Params): Promise<AnyData[]>
   async create(data: AnyData | AnyData[], params?: Params): Promise<AnyData | AnyData[]>
   async create(data: AnyData | AnyData[], params?: Params): Promise<AnyData | AnyData[]> {
-    const { app } = (this.options as AnyData)
+    const { app, name } = this.options as AnyData
+
     const t = await this.getTable()
     if (t) {
       switch (t.service) {
@@ -81,7 +82,9 @@ class DynamicService extends MongoService {
           break
       }
     }
-    return super.create(data, params)
+    const r = await super.create(data, params)
+    app.service('stats').emit('calculate', { path: name })
+    return r
   }
 
   async get(id: AdapterId, params?: Params) {
@@ -120,6 +123,8 @@ class DynamicService extends MongoService {
   }
 
   async update(id: AdapterId, data: AnyData, params?: Params): Promise<AnyData> {
+    const { app, name } = this.options as AnyData
+
     const t = await this.getTable()
     if (t) {
       switch (t.service) {
@@ -131,13 +136,17 @@ class DynamicService extends MongoService {
           break
       }
     }
-    return super.update(id, data, params)
+    const r = await super.update(id, data, params)
+    app.service('stats').emit('calculate', { path: name })
+    return r
   }
 
   async patch(id: null, data: AnyData, params?: Params): Promise<AnyData[]>
   async patch(id: AdapterId, data: AnyData, params?: Params): Promise<AnyData>
   async patch(id: NullableAdapterId, data: AnyData, params?: Params): Promise<AnyData | AnyData[]>
   async patch(id: NullableAdapterId, data: AnyData, params?: Params): Promise<AnyData | AnyData[]> {
+    const { app, name } = this.options as AnyData
+
     const t = await this.getTable()
     if (t) {
       switch (t.service) {
@@ -149,14 +158,17 @@ class DynamicService extends MongoService {
           break
       }
     }
-    return super.patch(id, data, params)
+    const r = await super.patch(id, data, params)
+    app.service('stats').emit('calculate', { path: name })
+    return r
   }
 
   async remove(id: AdapterId, params?: Params): Promise<AnyData>
   async remove(id: null, params?: Params): Promise<AnyData[]>
   async remove(id: NullableAdapterId, params?: Params): Promise<AnyData | AnyData[]>
   async remove(id: NullableAdapterId, params?: Params): Promise<AnyData | AnyData[]> {
-    const { app } = (this.options as AnyData)
+    const { app, name } = this.options as AnyData
+
     const t = await this.getTable()
     if (t) {
       switch (t.service) {
@@ -168,7 +180,9 @@ class DynamicService extends MongoService {
           break
       }
     }
-    return super.remove(id, params)
+    const r = await super.remove(id, params)
+    app.service('stats').emit('calculate', { path: name })
+    return r
   }
 }
 

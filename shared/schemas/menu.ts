@@ -6,12 +6,14 @@ export const targetValues = ['_blank', '_self', '_parent', '_top']
 
 export const badgetStats = [
   'count',
-  'average',
+  'avg',
   'sum',
-  'filled',
+  'min',
+  'max',
   'empty',
-  '%filled',
+  '!empty',
   '%empty',
+  '%!empty',
 ]
 
 export const tabSchema = Type.Object(
@@ -25,6 +27,7 @@ export const tabSchema = Type.Object(
     badgeTableId: Type.Optional(ExType.Table()),
     badgeFilter: Type.Optional(ExType.Query({ tableProp: 'badgeTableId' })),
     badgeField: Type.Optional(ExType.Field({ tableProp: 'badgeTableId' })),
+    badgeGroupFields: Type.Optional(Type.Array(ExType.Field({ tableProp: 'badgeTableId' }))),
     badgeStat: Type.Optional(StringEnum(badgetStats)),
   },
   {
@@ -42,6 +45,7 @@ export const tabSchema = Type.Object(
           'badgeFilter',
           'badgeField',
           'badgeStat',
+          'badgeGroupFields',
         ],
       },
     },

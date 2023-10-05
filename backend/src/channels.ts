@@ -31,7 +31,15 @@ export default function (app: Application): void {
 
       // Add it to own specific user channel
       app.channel(`users/${user?._id}`).join(connection)
+
+      // Add it to the stats channel
+      app.channel('stats').join(connection)
     }
+  })
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
+  app.service('stats').publish('calculate', (data: any, context: HookContext) => {
+    return [app.channel('stats')]
   })
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
