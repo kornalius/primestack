@@ -356,6 +356,12 @@
     "toggle": {
       "label": "Basculateur"
     },
+    "value-box": {
+      "label": "Boîte Valeur"
+    },
+    "stat-box": {
+      "label": "Boîte Stat Table"
+    },
     "video": {
       "label": "Vidéo"
     },
@@ -418,6 +424,17 @@
     "confirm_new_password": "Confirmer votre mot de passe"
   },
   "stats": {
-    "invalid_type": "Type invalide"
+    "invalid_type": "Type invalide",
+    "labels": {
+      "count": "Total de documents",
+      "avg": "Moyenne de {{field}}",
+      "sum": "Somme de {{field}}",
+      "min": "Minimum de {{field}}",
+      "max": "Maximum de {{field}}",
+      "empty": "{{field}} vides",
+      "notEmpty": "{{field}} remplis",
+      "pctEmpty": "% {{field}} vides",
+      "pctNotempty": "% {{field}} remplis"
+    }
   }
 }

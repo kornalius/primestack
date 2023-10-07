@@ -19,8 +19,8 @@ export default {
     commonProperties.events,
     Type.Object({
       label: Type.String(),
-      color: ExType.Color(),
-      textColor: ExType.Color(),
+      color: ExType.Color({ quasarPalette: true }),
+      textColor: ExType.Color({ quasarPalette: true }),
       to: Type.String(),
       target: Type.String(),
       replace: Type.Boolean(),

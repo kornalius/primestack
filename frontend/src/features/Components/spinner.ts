@@ -15,7 +15,7 @@ export default {
     commonProperties.size,
     Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
-      color: ExType.Color(),
+      color: ExType.Color({ quasarPalette: true }),
       thickness: Type.Number(),
     }),
   ], false),

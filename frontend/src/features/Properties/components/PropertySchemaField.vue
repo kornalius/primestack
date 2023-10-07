@@ -231,7 +231,7 @@
     :label="embedLabel ? label : undefined"
     :outlined="property"
     :disable="disabled"
-    quasar-palette
+    :quasar-palette="schema.quasarPalette"
     dense
     @keydown="editor.preventSystemUndoRedo"
   />
@@ -572,7 +572,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import omit from 'lodash/omit'
 import last from 'lodash/last'
 import hexObjectId from 'hex-object-id'
@@ -647,6 +647,22 @@ const emit = defineEmits<{
 
 // eslint-disable-next-line vue/no-setup-props-destructure
 const value = useModelValue(props, emit, defaultValueForSchema(props.schema))
+
+watch(value, () => {
+  const p = props.schema
+  if (p.type === 'number') {
+    if (typeof p.minimum === 'number') {
+      if (value.value < p.minimum) {
+        value.value = p.minimum
+      }
+    }
+    if (typeof p.maximum === 'number') {
+      if (value.value > p.maximum) {
+        value.value = p.maximum
+      }
+    }
+  }
+})
 
 const tempJson = ref()
 

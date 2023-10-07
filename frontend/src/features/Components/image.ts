@@ -50,7 +50,7 @@ export default {
         'none',
         'scale-down',
       ]),
-      spinnerColor: ExType.Color(),
+      spinnerColor: ExType.Color({ quasarPalette: true }),
       spinnerSize: sizeString,
       load: ExType.Action(),
       error: ExType.Action(),

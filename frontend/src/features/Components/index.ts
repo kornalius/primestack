@@ -36,6 +36,8 @@ import skeleton from './skeleton'
 import spinner from './spinner'
 import tabs from './tabs'
 import tab from './tab'
+import valueBox from './value-box'
+import statBox from './stat-box'
 
 type FormField = Static<typeof fieldSchema>
 type FormColumn = Static<typeof columnSchema>
@@ -58,6 +60,8 @@ export const components = [
   skeleton,
   tabs,
   tab,
+  valueBox,
+  statBox,
   addSeparator('components.separators.progress', 'mdi-progress-clock', 'blue-2'),
   progress,
   spinner,

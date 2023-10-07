@@ -367,6 +367,12 @@
     "video": {
       "label": "Video"
     },
+    "value-box": {
+      "label": "Value Box"
+    },
+    "stat-box": {
+      "label": "Table Stat Box"
+    },
     "separators": {
       "display": "Display",
       "progress":  "Progress",
@@ -426,6 +432,17 @@
     "confirm_new_password": "Confirm New Password"
   },
   "stats": {
-    "invalid_type": "Invalid type specified"
+    "invalid_type": "Invalid type specified",
+    "labels": {
+      "count": "Documents count",
+      "avg": "{{field}}'s average",
+      "sum": "{{field}}'s sum",
+      "min": "{{field}}'s minimum",
+      "max": "{{field}}'s maximum",
+      "empty": "Empty {{field}}",
+      "notEmpty": "Non empty {{field}}",
+      "pctEmpty": "Empty {{field}} %",
+      "pctNotempty": "Non empty {{field}} %"
+    }
   }
 }

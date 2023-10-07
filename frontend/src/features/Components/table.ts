@@ -55,7 +55,7 @@ export default {
       selectionStyle: StringEnum(['single', 'multiple', 'none']),
       binaryStateSort: Type.Boolean(),
       columnSortOrder: Type.String(),
-      color: ExType.Color(),
+      color: ExType.Color({ quasarPalette: true }),
       flat: Type.Boolean(),
       bordered: Type.Boolean(),
       square: Type.Boolean(),

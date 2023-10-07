@@ -24,7 +24,6 @@
           label="Color"
           css-color
           hide-bottom-space
-          quasar-palette
           outlined
           dense
           @keydown="editor.preventSystemUndoRedo"

@@ -43,6 +43,10 @@ interface IdOptions {
   [key: string]: unknown
 }
 
+interface ColorOptions {
+  quasarPalette?: boolean
+}
+
 const Id = (options: IdOptions = {}) => Type.String({ objectid: true, ...options })
 
 export default {
@@ -56,7 +60,7 @@ export default {
 
   Time: (options: TimeOptions = {}) => Type.String({ format: 'time', ...options }),
 
-  Color: (options = {}) => Type.String({ color: true, ...options }),
+  Color: (options: ColorOptions = {}) => Type.String({ color: true, ...options }),
 
   Icon: (options = {}) => Type.String({ icon: true, ...options }),
 

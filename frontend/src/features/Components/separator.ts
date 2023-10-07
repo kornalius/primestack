@@ -20,7 +20,7 @@ export default {
       spaced: Type.Boolean(),
       inset: Type.Boolean(),
       vertical: Type.Boolean(),
-      color: ExType.Color(),
+      color: ExType.Color({ quasarPalette: true }),
     }),
   ], false),
   defaultValues: {

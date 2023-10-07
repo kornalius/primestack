@@ -2,9 +2,10 @@
   <q-input
     v-model="value"
     v-bind="$attrs"
-    :class="{ 'color-input': true, cssColor, isTextWhite }"
-    :bg-color="!cssColor ? value : undefined"
-    :style="{ background: cssColor ? value : undefined }"
+    :class="{ 'color-input': true, cssColor: !quasarPalette, isTextWhite }"
+    :bg-color="quasarPalette ? value : undefined"
+    :style="{ background: !quasarPalette ? value : undefined }"
+    clearable
   >
     <template #append>
       <q-icon
@@ -41,7 +42,6 @@ import { useModelValue } from '@/composites/prop'
 
 const props = defineProps<{
   modelValue: string | null | undefined
-  cssColor?: boolean
   quasarPalette?: boolean
 }>()
 
@@ -70,9 +70,7 @@ const quasarColors = computed(() => (
 ))
 
 const palette = computed(() => (
-  props.quasarPalette
-    ? quasarColors.value.map((c) => c.color)
-    : undefined
+  quasarColors.value.map((c) => c.color)
 ))
 
 watch(value, () => {
@@ -83,7 +81,7 @@ watch(value, () => {
     if (color) {
       emit(
         'update:model-value',
-        !props.cssColor && !props.quasarPalette ? color.name : color.color,
+        props.quasarPalette ? color.name : color.color,
       )
     }
   } else if (value.value?.startsWith('#')) {
@@ -93,7 +91,15 @@ watch(value, () => {
     if (color) {
       emit(
         'update:model-value',
-        !props.cssColor && !props.quasarPalette ? color.name : color.color,
+        props.quasarPalette ? color.name : color.color,
+      )
+    }
+  } else {
+    const color = quasarColors.value.find((c) => c.name === value.value)
+    if (color) {
+      emit(
+        'update:model-value',
+        props.quasarPalette ? color.name : color.color,
       )
     }
   }

@@ -20,7 +20,7 @@ export default {
       modelValue: Type.Boolean(),
       label: Type.String(),
       leftLabel: Type.Boolean(),
-      color: ExType.Color(),
+      color: ExType.Color({ quasarPalette: true }),
       keepColor: Type.Boolean(),
       checkedIcon: ExType.Icon(),
       uncheckedIcon: ExType.Icon(),

@@ -184,10 +184,10 @@ export const useFormElements = () => ({
     }
 
     const radius = b?.radius as AnyData
-    const tl = radius?.topLeft ? `${radius?.topLeft}px` : '0'
-    const tr = radius?.topRight ? `${radius?.topRight}px` : '0'
-    const br = radius?.bottomLeft ? `${radius?.bottomLeft}px` : '0'
-    const bl = radius?.bottomRight ? `${radius?.bottomRight}px` : '0'
+    const tl = radius?.topLeft || '0'
+    const tr = radius?.topRight || '0'
+    const br = radius?.bottomLeft || '0'
+    const bl = radius?.bottomRight || '0'
 
     return {
       paddingTop: field.padding?.top,

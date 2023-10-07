@@ -83,7 +83,6 @@ export const useStats = defineStore('stats', () => {
       })
     }
 
-    // return computed(() => ({ _id: id, uuid: id, path: tableId, field, type, value: 0 }))
     const { data } = api.service('stats').useGet(id)
 
     return data

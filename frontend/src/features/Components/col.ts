@@ -1,6 +1,7 @@
 import { Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
+import ExType from '@/shared/extypes'
 import { properties, commonProperties, defaultStyleValues } from './common'
 
 export default {
@@ -32,7 +33,7 @@ export default {
         toggles: true,
         clearable: true,
       }),
-      backgroundColor: Type.String({ color: true }),
+      backgroundColor: ExType.Color(),
     }),
   ], false),
   defaultValues: {

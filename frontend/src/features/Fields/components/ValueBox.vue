@@ -1,5 +1,8 @@
 <template>
-  <div :class="containerClass">
+  <div
+    :class="containerClass"
+    :style="$attrs.style"
+  >
     <div class="row full-height">
       <div class="col">
         <div
@@ -25,12 +28,12 @@
         </div>
 
         <div
-          v-if="diff && diffIcon"
+          v-if="hasDiff"
           class="row q-mb-xs items-center"
         >
           <div class="col-auto">
             <q-icon
-              v-if="diffIcon && !diffIconSuffix"
+              v-if="hasDiffIcon && !diffIconSuffix"
               :name="diffIcon"
               :color="diffIconColor"
               :size="diffIconSize"
@@ -41,7 +44,7 @@
             </span>
 
             <q-icon
-              v-if="diffIcon && diffIconSuffix"
+              v-if="hasDiffIcon && diffIconSuffix"
               :name="diffIcon"
               :color="diffIconColor"
               :size="diffIconSize"
@@ -50,7 +53,7 @@
         </div>
 
         <div
-          v-if="value !== undefined"
+          v-if="hasValue"
           class="row q-mb-xs items-center"
         >
           <div class="col">
@@ -81,15 +84,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { AnyData } from '@/shared/interfaces/commons'
-
-type Size = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
-
-type FormatStyle = 'currency' | 'decimal' | 'percent'
-
-type TextStyle = 'subtitle1' | 'subtitle2'
-| 'body1' | 'body2'
-| 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
-| 'caption' | 'overline'
+import {
+  validCurrencyCodes, ValueBoxFormatStyle, ValueBoxSize, ValueBoxTextStyle,
+} from '@/features/Fields/interfaces'
 
 const props = defineProps<{
   modelValue: number | undefined
@@ -98,9 +95,11 @@ const props = defineProps<{
   // value color
   valueColor?: string
   // format value style
-  formatValue?: FormatStyle
+  valueFormat?: typeof ValueBoxFormatStyle[string]
   // format value style
-  valueStyle?: TextStyle
+  valueStyle?: typeof ValueBoxTextStyle[string]
+  // format valud decimal digits
+  valueDigits?: number
   // format value currency
   valueCurrency?: string
   // hide the currency symbol
@@ -112,7 +111,7 @@ const props = defineProps<{
   // label color
   labelColor?: string
   // format value style
-  labelStyle?: TextStyle
+  labelStyle?: typeof ValueBoxTextStyle[string]
   // icon
   icon?: string
   // icon color
@@ -121,40 +120,56 @@ const props = defineProps<{
   tag?: string
   // tag color
   tagColor?: string
-  // difference value
   // format value style
-  tagStyle?: TextStyle
+  tagStyle?: typeof ValueBoxTextStyle[string]
+  // difference value
   diff?: number
   // format diff label style
-  formatDiff?: FormatStyle
+  diffFormat?: typeof ValueBoxFormatStyle[string]
+  // format diff decimal digits
+  diffDigits?: number
+  // format diff currency
+  diffCurrency?: string
+  // hide the diff currency symbol
+  diffCurrencyNarrow?: boolean
   // diff color
   diffColor?: string
-  // diff icon
   // format value style
-  diffStyle?: TextStyle
+  diffStyle?: typeof ValueBoxTextStyle[string]
+  // diff icon
   diffIcon?: string
   // diff icon color
   diffIconColor?: string
   // tag label size
-  diffIconSize?: Size
+  diffIconSize?: typeof ValueBoxSize[string]
   // should we place the diff icon after the diff value
   diffIconSuffix?: boolean
 }>()
 
-const format = (style: FormatStyle, value: number, digits = 0): string => (
+const format = (
+  style: typeof ValueBoxFormatStyle[string],
+  value: number,
+  currency?: string,
+  narrow = false,
+  digits = 0,
+): string => (
   style
     ? new Intl.NumberFormat(
       undefined,
       {
         style,
         localeMatcher: 'best fit',
-        currencyDisplay: props.valueCurrencyNarrow ? 'narrowSymbol' : undefined,
-        currency: props.valueCurrency || 'CAD',
-        minimumFractionDigits: digits,
+        currencyDisplay: narrow ? 'narrowSymbol' : undefined,
+        currency: validCurrencyCodes.includes(props.valueCurrency) ? props.valueCurrency : 'USD',
+        minimumFractionDigits: Math.max(0, Math.min(20, digits)),
       },
     ).format(value || 0)
     : String(value)
 )
+
+const hasValue = computed(() => props.modelValue !== undefined)
+const hasDiff = computed(() => props.diff !== undefined)
+const hasDiffIcon = computed(() => props.diffIcon !== undefined)
 
 const containerClass = computed(() => ({
   container: true,
@@ -171,7 +186,13 @@ const valueClass = computed(() => ({
 }))
 
 const value = computed(() => (
-  format(props.formatValue, props.modelValue)
+  format(
+    props.valueFormat,
+    props.modelValue,
+    props.valueCurrency,
+    props.valueCurrencyNarrow,
+    props.valueDigits,
+  )
 ))
 
 const labelClass = computed(() => ({
@@ -188,7 +209,13 @@ const diffClass = computed(() => ({
 }))
 
 const diffValue = computed(() => (
-  format(props.formatDiff, props.diff, 2)
+  format(
+    props.diffFormat,
+    props.diff,
+    props.diffCurrency,
+    props.diffCurrencyNarrow,
+    props.diffDigits,
+  )
 ))
 
 const tagClass = computed(() => ({

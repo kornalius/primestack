@@ -26,9 +26,9 @@ export default {
       max: Type.Number(),
       noReset: Type.Boolean(),
       noDimming: Type.Boolean(),
-      color: ExType.Color(),
-      colorSelected: ExType.Color(),
-      colorHalf: ExType.Color(),
+      color: ExType.Color({ quasarPalette: true }),
+      colorSelected: ExType.Color({ quasarPalette: true }),
+      colorHalf: ExType.Color({ quasarPalette: true }),
     }),
   ]),
   defaultValues: {

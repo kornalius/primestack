@@ -17,7 +17,7 @@ export default {
       modelValue: ExType.Icon(),
       left: Type.Boolean(),
       right: Type.Boolean(),
-      color: ExType.Color(),
+      color: ExType.Color({ quasarPalette: true }),
       backgroundColor: ExType.Color(),
     }),
   ]),

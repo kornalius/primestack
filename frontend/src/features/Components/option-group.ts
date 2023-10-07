@@ -18,7 +18,7 @@ export default {
     commonProperties.events,
     Type.Object({
       modelValue: Type.String(),
-      color: ExType.Color(),
+      color: ExType.Color({ quasarPalette: true }),
       keepColor: Type.Boolean(),
       type: StringEnum(['radio', 'checkbox', 'toggle']),
       leftLabel: Type.Boolean(),

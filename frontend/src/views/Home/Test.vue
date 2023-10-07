@@ -167,13 +167,14 @@
             <value-box
               :model-value="137845"
               :diff="0.682"
+              :diff-digits="2"
               value-color="white"
-              format-value="currency"
+              value-format="currency"
               label="Profile Report"
               label-color="white"
               tag="YEAR 2023"
               tag-color="orange"
-              format-diff="percent"
+              diff-format="percent"
               icon="mdi-lead-pencil"
               color="grey-8"
               icon-color="grey-5"
@@ -188,16 +189,14 @@
             <value-box
               :model-value="-137845"
               value-color="white"
-              format-value="currency"
+              value-format="currency"
               label="Profile Report"
               label-color="white"
               tag="YEAR 2022"
               tag-color="orange"
-              format-diff="percent"
               icon="mdi-chat"
               icon-color="blue-grey-6"
               color="blue-4"
-              diff-color="red-9"
             />
           </div>
 
@@ -205,17 +204,18 @@
             <value-box
               :model-value="137845"
               :diff="0.682"
+              :diff-digits="2"
               :container-class="{ 'shadow-4': true }"
               value-color="grey-8"
-              format-value="currency"
+              value-format="currency"
               label="Profile Report"
               label-color="grey-8"
               label-style="subtitle1"
-              format-diff="percent"
               icon="mdi-chart-line"
               icon-color="orange-6"
               color="orange-3"
               diff-color="green-4"
+              diff-format="percent"
               diff-icon="mdi-arrow-up"
               diff-icon-color="green-4"
               diff-icon-size="xs"
@@ -224,22 +224,19 @@
           </div>
 
           <div class="col">
-            <value-box
-              :model-value="137845"
-              :diff="0.682"
+            <stat-box
+              type="count"
+              table-id="64b806da03ac5093de3f3e78"
+              field="numberField"
               value-color="grey-8"
               value-style="subtitle2"
-              format-value="currency"
-              label="Profile Report"
               label-color="grey-8"
               label-style="subtitle1"
-              format-diff="percent"
               icon="mdi-chart-line"
               icon-color="red-6"
               color="red-3"
               diff-color="green-4"
               diff-style="subtitle2"
-              diff-icon="mdi-arrow-up"
               diff-icon-color="green-4"
               diff-icon-size="xs"
               diff-icon-suffix
@@ -269,6 +266,7 @@ import ColumnsSelect from '@/features/Fields/components/ColumnsSelect.vue'
 import TagsSelect from '@/features/Tables/components/TagsSelect.vue'
 import { useStats } from '@/features/Stats/store'
 import ValueBox from '@/features/Fields/components/ValueBox.vue'
+import StatBox from '@/features/Tables/components/StatBox.vue'
 
 /**
  * Properties
