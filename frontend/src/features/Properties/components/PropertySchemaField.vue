@@ -439,8 +439,8 @@
     v-else-if="type === 'array' && Array.isArray(value) && property"
     v-model="value"
     add-button="end"
-    :add-function="() => addItem(value)"
-    :remove-function="(v: unknown, idx: number) => removeItem(value, idx)"
+    :add-function="() => addItem()"
+    :remove-function="(v: unknown, idx: number) => removeItem(idx)"
     :no-separator="!arraySchemaIsObject"
     :disable="disabled"
     reorderable
@@ -501,8 +501,8 @@
         v-model="scope.value"
         style="min-width: 600px; min-height: 400px;"
         add-button="end"
-        :add-function="() => addItem(scope.value)"
-        :remove-function="(v: unknown, idx: number) => removeItem(scope.value, idx)"
+        :add-function="() => addItem()"
+        :remove-function="(v: unknown, idx: number) => removeItem(idx)"
         :no-separator="!arraySchemaIsObject"
         reorderable
       >
@@ -816,26 +816,26 @@ const objectIsHorizontalPopup = computed(() => objectSchema.value?.horizontalPop
 /**
  * Add a new item to the value when of type array
  *
- * @param arr Array to add item to
- *
  * @returns {unknown|undefined} The new item added
  */
-const addItem = (arr: unknown[]): unknown | undefined => {
+const addItem = (): unknown | undefined => {
   const newValue = defaultValueForSchema(arraySchema.value)
-  arr.push(newValue)
+  value.value = [...value.value, newValue]
   return newValue
 }
 
 /**
  * Removes an item from the value when it's of type array
  *
- * @param arr Array to remove from
  * @param index Index of the item
  *
  * @returns {boolean} True when item is removed
  */
-const removeItem = (arr: unknown[], index: number): boolean => {
-  arr.splice(index, 1)
+const removeItem = (index: number): boolean => {
+  value.value = [
+    ...value.value.slice(0, index),
+    ...value.value.slice(index + 1),
+  ]
   return true
 }
 

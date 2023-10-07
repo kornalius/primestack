@@ -27,7 +27,7 @@ export const tabSchema = Type.Object(
     badgeTableId: Type.Optional(ExType.Table()),
     badgeFilter: Type.Optional(ExType.Query({ tableProp: 'badgeTableId' })),
     badgeField: Type.Optional(ExType.Field({ tableProp: 'badgeTableId' })),
-    badgeGroupFields: Type.Optional(Type.Array(ExType.Field({ tableProp: 'badgeTableId' }))),
+    badgeGroupFields: Type.Optional(Type.Array(ExType.Field({ tableProp: '../badgeTableId' }))),
     badgeStat: Type.Optional(StringEnum(badgetStats)),
   },
   {
