@@ -6,7 +6,9 @@ import {
   validCurrencyCodes, ValueBoxFormatStyle, ValueBoxSize, ValueBoxTextStyle,
 } from '@/features/Fields/interfaces'
 import StatBox from '@/features/Tables/components/StatBox.vue'
-import { properties, commonProperties, defaultStyleValues } from './common'
+import {
+  properties, commonProperties, defaultStyleValues, styleNames,
+} from './common'
 
 const StatType = StringEnum([
   'count',
@@ -120,9 +122,7 @@ export default {
         'diffIconColor',
         'valueColor',
         'valueStyle',
-        'border',
-        'padding',
-        'margin',
+        ...styleNames,
       ],
     },
   },

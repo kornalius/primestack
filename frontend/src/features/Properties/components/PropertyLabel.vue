@@ -1,7 +1,7 @@
 <template>
   <div
-    class="row justify-end"
-    style="max-height: 40px; overflow-y: hidden;"
+    class="row items-center justify-end"
+    :style="`max-height: ${lineHeight}; overflow-y: hidden;`"
   >
     <div class="col-auto">
       <!-- Multitypes button to offer a menu -->
@@ -11,7 +11,7 @@
         class="q-ml-sm"
         icon="mdi-tag-multiple"
         color="grey-7"
-        size="sm"
+        size="xs"
         flat
         dense
       >
@@ -36,9 +36,16 @@
     <!-- Label -->
 
     <span
-      class="text-bold"
-      style="margin-left: 36px; text-align: end; cursor: default;"
+      class="text-caption"
+      :style="{ 'text-align': 'end', cursor: section ? 'pointer' : 'default' }"
     >
+      <q-icon
+        v-if="icon"
+        :name="icon"
+        :color="color"
+        size="sm"
+      />
+
       <q-tooltip :delay="500">
         {{ label }}
       </q-tooltip>
@@ -48,14 +55,27 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+import { useProperties } from '@/features/Properties/composites'
+
 defineProps<{
   // label to display
   label: string
+  // icon
+  icon?: string
+  // icon color
+  color?: string
   // multiple types to allow selecting from
   multipleTypes?: string[]
+  // is the label part of a section
+  section?: boolean
 }>()
 
 defineEmits<{
   (e: 'change-type', value: string): void,
 }>()
+
+const { t } = useI18n()
+
+const { lineHeight } = useProperties(t)
 </script>

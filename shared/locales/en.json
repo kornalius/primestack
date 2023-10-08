@@ -152,6 +152,7 @@
     "or": "Or"
   },
   "actions": {
+    "title": "Action",
     "dialog": {
       "description": "Displays a dialog on the screen with buttons for user's confirmation",
       "childrenMessage": "When user press the OK button..."
@@ -289,6 +290,9 @@
     "date": {
       "label": "Date Picker"
     },
+    "form": {
+      "label": "Form"
+    },
     "icon": {
       "label": "Icon"
     },
@@ -309,6 +313,9 @@
     },
     "lookup-select": {
       "label": "Lookup Selector"
+    },
+    "menu": {
+      "label": "Menu"
     },
     "option-group": {
       "label": "Options Group"
@@ -351,6 +358,12 @@
     },
     "table": {
       "label": "Table"
+    },
+    "table-column": {
+      "label": "Table Column"
+    },
+    "table-field": {
+      "label": "Table Field"
     },
     "tabs": {
       "label": "Tabs"

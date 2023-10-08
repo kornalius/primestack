@@ -3,7 +3,9 @@ import { Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import FormElementRow from '@/features/Forms/components/Editor/FormElementRow.vue'
-import { properties, commonProperties, defaultStyleValues } from './common'
+import {
+  properties, commonProperties, defaultStyleValues, styleNames,
+} from './common'
 
 export default {
   type: 'row',
@@ -41,9 +43,7 @@ export default {
     style: {
       icon: styleIcon,
       names: [
-        'border',
-        'padding',
-        'margin',
+        ...styleNames,
       ],
     },
   },

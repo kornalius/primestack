@@ -2,7 +2,9 @@ import { Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import ExType from '@/shared/extypes'
-import { properties, commonProperties, defaultStyleValues } from './common'
+import {
+  properties, commonProperties, defaultStyleValues, styleNames,
+} from './common'
 
 export default {
   type: 'col',
@@ -51,9 +53,7 @@ export default {
       icon: styleIcon,
       names: [
         'backgroundColor',
-        'border',
-        'padding',
-        'margin',
+        ...styleNames,
       ],
     },
   },

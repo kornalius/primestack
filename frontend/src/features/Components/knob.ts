@@ -5,7 +5,9 @@ import {
 } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import ExType from '@/shared/extypes'
-import { properties, commonProperties, defaultStyleValues } from './common'
+import {
+  properties, commonProperties, defaultStyleValues, styleNames,
+} from './common'
 
 export default {
   type: 'knob',
@@ -76,9 +78,7 @@ export default {
         'trackColor',
         'fontSize',
         'thickness',
-        'border',
-        'padding',
-        'margin',
+        ...styleNames,
       ],
     },
     action: {

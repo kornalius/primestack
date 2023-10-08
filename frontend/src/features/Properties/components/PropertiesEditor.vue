@@ -1,4 +1,12 @@
 <template>
+  <!-- Section Title & Icon -->
+
+  <section-title
+    v-if="title && icon"
+    :title="title"
+    :icon="icon"
+  />
+
   <!-- Categories tabs -->
 
   <q-tabs
@@ -28,16 +36,19 @@
     class="row q-gutter-sm items-center"
   >
     <property-editor
-      v-for="name in names"
-      :key="name"
-      v-model="value[name]"
+      v-for="n in names"
+      :key="n.name"
+      v-model="value[n.name]"
       v-model:forced-types="currentForcedTypes"
       :parents="parents"
-      :disable="disable || disabledProperties?.includes(name)"
-      :prop-name="subPropName(propName, name)"
-      :schema="schema.properties[name]"
-      :required="schema.required.includes(name)"
-      :label="label(name)"
+      :disable="disable || disabledProperties?.includes(n.name)"
+      :prop-name="subPropName(propName, n.name)"
+      :schema="schema.properties[n.name]"
+      :required="schema.required.includes(n.name)"
+      :label="n.label"
+      :icon="n.icon"
+      :color="n.color"
+      :section-color="n.sectionColor"
       :embed-label="embedLabel"
       :include-form-data-fields="includeFormDataFields"
       horizontal
@@ -52,20 +63,110 @@
     :separator="!flat"
     dense
   >
-    <property-editor
-      v-for="name in names"
-      :key="name"
-      v-model="value[name]"
-      v-model:forced-types="currentForcedTypes"
-      :parents="parents"
-      :disable="disable || disabledProperties?.includes(name)"
-      :prop-name="subPropName(propName, name)"
-      :schema="schema.properties[name]"
-      :required="schema.required.includes(name)"
-      :label="label(name)"
-      :embed-label="embedLabel"
-      :include-form-data-fields="includeFormDataFields"
-    />
+    <template
+      v-for="n in names"
+      :key="n.name"
+    >
+      <property-editor
+        v-if="n.name"
+        v-model="value[n.name]"
+        v-model:forced-types="currentForcedTypes"
+        :parents="parents"
+        :disable="disable || disabledProperties?.includes(n.name)"
+        :prop-name="subPropName(propName, n.name)"
+        :schema="schema.properties[n.name]"
+        :required="schema.required.includes(n.name)"
+        :label="n.label"
+        :icon="n.icon"
+        :color="n.color"
+        :section-color="n.sectionColor"
+        :embed-label="embedLabel"
+        :include-form-data-fields="includeFormDataFields"
+      />
+
+      <q-expansion-item
+        v-else-if="n.children?.length > 0"
+        :header-class="`q-pa-none bg-${n.sectionColor}`"
+        expand-separator
+      >
+        <template #header>
+          <div class="label row q-pr-sm full-width items-center">
+            <div
+              v-if="n.label && !embedLabel"
+              class="col-auto q-mr-md"
+              :style="`width: ${labelWidth};`"
+            >
+              <property-label
+                v-model="value"
+                :label="n.label"
+                :icon="n.icon"
+                :color="n.color"
+                section
+              />
+            </div>
+          </div>
+        </template>
+
+        <template #default>
+          <div
+            :class="{
+              label: true,
+              row: true,
+              'items-center': true,
+              [`bg-${n.sectionColor}`]: true,
+            }"
+          >
+            <!-- Label column -->
+
+            <div
+              class="col-auto q-mr-md"
+              style="text-align: end; cursor: default;"
+              :style="`width: ${labelWidth};`"
+            >
+              <div
+                v-for="c in serializeNames(n.children)"
+                :key="c.name"
+                class="row justify-end items-center"
+                :style="`height: ${lineHeight};`"
+              >
+                <q-icon
+                  v-if="c.icon"
+                  :name="c.icon"
+                  :color="c.color"
+                  size="md"
+                />
+              </div>
+            </div>
+
+            <!-- Value column -->
+
+            <div class="col">
+              <div
+                v-for="c in serializeNames(n.children)"
+                :key="c.name"
+                class="row"
+              >
+                <property-editor
+                  v-model="value[c.name]"
+                  v-model:forced-types="currentForcedTypes"
+                  :parents="parents"
+                  :disable="disable || disabledProperties?.includes(c.name)"
+                  :prop-name="subPropName(propName, c.name)"
+                  :schema="schema.properties[c.name]"
+                  :required="schema.required.includes(c.name)"
+                  :label="c.label"
+                  :icon="c.icon"
+                  :color="c.color"
+                  :section-color="n.sectionColor"
+                  :include-form-data-fields="includeFormDataFields"
+                  embed-label
+                />
+              </div>
+            </div>
+          </div>
+        </template>
+      </q-expansion-item>
+    </template>
   </q-list>
 </template>
 
@@ -75,14 +176,20 @@ import startCase from 'lodash/startCase'
 import { TSchema } from '@feathersjs/typebox'
 import { useI18n } from 'vue-i18n'
 import { AnyData } from '@/shared/interfaces/commons'
-import { TFormFieldCategory } from '@/shared/interfaces/forms'
+import { TFormFieldCategory, PropName } from '@/shared/interfaces/forms'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { useProperties } from '@/features/Properties/composites'
 import PropertyEditor from '@/features/Properties/components/PropertyEditor.vue'
+import SectionTitle from '@/features/Fields/components/SectionTitle.vue'
+import PropertyLabel from '@/features/Properties/components/PropertyLabel.vue'
 
 const props = defineProps<{
   // object's value
   modelValue: Record<string, unknown>
+  // section title
+  title?: string
+  // section icon
+  icon?: string
   // parent component values
   parents: AnyData[]
   // schema to extract property definitions from
@@ -97,8 +204,6 @@ const props = defineProps<{
   propName: string
   // object that stores the forced types selected by the user
   forcedTypes?: Record<string, string>
-  // label overrides
-  labels?: Record<string, string>
   // split schema keys into different categories and order items in the properties list
   categories?: Record<string, TFormFieldCategory>
   // use an horizontal layout to display the properties
@@ -119,7 +224,7 @@ const value = useModelValue(props, emit)
 
 const { t } = useI18n()
 
-const { subPropName } = useProperties(t)
+const { subPropName, labelWidth, lineHeight } = useProperties(t)
 
 const currentForcedTypes = props.forcedTypes
   ? useSyncedProp(props, 'forcedTypes', emit)
@@ -129,14 +234,42 @@ const currentForcedTypes = props.forcedTypes
 const category = ref()
 
 /**
+ * Create a user-friendly label from a property name
+ *
+ * @param name Name of the property
+ *
+ * @returns {string}
+ */
+const label = (name: string): string => startCase(name)
+
+const serializeNames = (names: (string | PropName)[]): PropName[] => (
+  names.map((n: PropName | string) => {
+    if (typeof n === 'string') {
+      return { label: label(n), name: n, children: [] }
+    }
+    return {
+      label: n.label,
+      name: n.name,
+      icon: n.icon,
+      color: n.color,
+      sectionColor: n.sectionColor,
+      children: n.children || [],
+    }
+  })
+)
+
+/**
  * Computes the property names that appear in the selected category or all property names
  */
-const names = computed((): string[] => {
+const names = computed((): PropName[] => {
   if (props.categories) {
-    return props.categories[category.value].names
+    return serializeNames(props.categories[category.value].names)
   }
-  return Object.keys(props.schema.properties)
-    .filter((p) => props.schema.properties[p].hidden !== true)
+
+  return serializeNames(
+    Object.keys(props.schema.properties)
+      .filter((p) => props.schema.properties[p].hidden !== true),
+  )
 })
 
 /**
@@ -160,8 +293,4 @@ watch(() => props.categories, () => {
     category.value = Object.keys(props.categories)[0]
   }
 }, { immediate: true })
-
-const label = (name: string): string => (
-  startCase(props.labels?.[name] || name)
-)
 </script>

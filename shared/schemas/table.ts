@@ -77,24 +77,20 @@ export const tableFieldSchema = Type.Object(
     )),
     refTableId: Type.Optional(ExType.Table()),
     refFields: Type.Optional(Type.Array(
-      ExType.Field({ select: true, tableProp: 'refTableId' }),
+      ExType.Field({ select: true, tableProp: '../refTableId' }),
     )),
   },
   {
     $id: 'TableField',
     additionalProperties: false,
-    labels: {
-      refTableId: 'Reference Table',
-      refFields: 'Referenced Fields',
-    },
     categories: {
       content: {
         icon: contentIcon,
         names: [
           'name',
           'type',
-          'refTableId',
-          'refFields',
+          { name: 'refTableId', label: 'Reference Table' },
+          { name: 'refFields', label: 'Reference Fields' },
           'optional',
           'queryable',
           'array',

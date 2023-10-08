@@ -9,6 +9,10 @@ type Form = Static<typeof formSchema>
 type FormField = Static<typeof fieldSchema>
 
 export const useProperties = (t: T18N) => ({
+  labelWidth: '125px',
+
+  lineHeight: '44px',
+
   getParentProp,
 
   types,
@@ -67,6 +71,6 @@ export const useProperties = (t: T18N) => ({
    * @returns {string} New item name
    */
   subPropName: (propName: string, name: string | number): string => (
-    propName ? `${propName}.${name}` : name.toString()
+    propName ? `${propName}${name ? `.${name}` : ''}` : (name?.toString() || '')
   ),
 })

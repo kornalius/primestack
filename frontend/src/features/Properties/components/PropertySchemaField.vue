@@ -20,6 +20,7 @@
   <q-input
     v-else-if="type === 'string'"
     v-model="value"
+    class="property"
     :label="embedLabel ? label : undefined"
     :outlined="property"
     :disable="disabled"
@@ -28,13 +29,13 @@
     dense
     @keydown="editor.preventSystemUndoRedo"
   >
-    <template #append>
+    <template v-if="hover" #append>
       <!-- Popup edit -->
 
       <q-icon
         :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
         name="mdi-pencil"
-        size="small"
+        size="xs"
       >
         <q-popup-edit
           v-model="value"
@@ -71,8 +72,8 @@
     </div>
 
     <q-icon
-      name="mdi-flash"
       :color="value ? 'orange-8' : 'grey-5'"
+      name="mdi-flash"
     />
 
     <q-btn
@@ -391,7 +392,6 @@
     :horizontal="objectIsHorizontal"
     :disable="disabled"
     :include-form-data-fields="includeFormDataFields"
-    :labels="objectSchema.labels"
     embed-label
     flat
   />
@@ -426,7 +426,6 @@
         :schema="objectSchema"
         :horizontal="objectIsHorizontalPopup"
         :include-form-data-fields="includeFormDataFields"
-        :labels="objectSchema?.labels"
         embed-label
         flat
       />
@@ -456,7 +455,6 @@
         :categories="dynamicArraySchema(schema, value[index]).categories"
         :horizontal="arrayIsHorizontal"
         :include-form-data-fields="includeFormDataFields"
-        :labels="arraySchema.labels"
         embed-label
         flat
       />
@@ -517,7 +515,6 @@
             :categories="dynamicArraySchema(schema, scope.value[index]).categories"
             :horizontal="arrayIsHorizontalPopup"
             :include-form-data-fields="includeFormDataFields"
-            :labels="arraySchema.labels"
             embed-label
             flat
           />
@@ -636,6 +633,8 @@ const props = defineProps<{
   forcedTypes?: Record<string, string>
   // include extra form data fields in Field selector
   includeFormDataFields?: boolean
+  // is the mouse hovering over this property
+  hover?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits

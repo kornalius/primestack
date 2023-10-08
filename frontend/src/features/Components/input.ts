@@ -8,7 +8,7 @@ import ExType from '@/shared/extypes'
 import { fieldSchema } from '@/shared/schemas/form'
 import { AnyData } from '@/shared/interfaces/commons'
 import {
-  properties, commonProperties, defaultStyleValues, commonEventArgs,
+  properties, commonProperties, defaultStyleValues, commonEventArgs, styleNames,
 } from './common'
 
 type FormField = Static<typeof fieldSchema>
@@ -120,9 +120,7 @@ export default {
         'borderless',
         'standout',
         'rounded',
-        'border',
-        'padding',
-        'margin',
+        ...styleNames,
       ],
     },
     action: {

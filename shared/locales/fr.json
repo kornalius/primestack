@@ -144,6 +144,7 @@
     "missingField": "Champ '{{name}}' manquant"
   },
   "actions": {
+    "title": "Action",
     "dialog": {
       "description": "Affiche un dialogue à l'écran avec des boutons pour confirmation de l'utilisateur",
       "childrenMessage": "Quand le bouton 'OK' est appuyé..."
@@ -281,6 +282,9 @@
     "date": {
       "label": "Ceuilleur de date"
     },
+    "form": {
+      "label": "Formulaire"
+    },
     "icon": {
       "label": "Icône"
     },
@@ -301,6 +305,9 @@
     },
     "lookup-select": {
       "label": "Sélecteur de jointures"
+    },
+    "menu": {
+      "label": "Menu"
     },
     "option-group": {
       "label": "Groupe d'options"
@@ -343,6 +350,12 @@
     },
     "table": {
       "label": "Table"
+    },
+    "table-column": {
+      "label": "Colonne de Table"
+    },
+    "table-field": {
+      "label": "Champ de Table"
     },
     "tabs": {
       "label": "Onglets"

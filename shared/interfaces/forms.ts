@@ -4,9 +4,18 @@ import { AnyData } from './commons'
 
 type FormField = Static<typeof fieldSchema>
 
+export interface PropName {
+  label: string
+  name: string
+  icon?: string
+  color?: string
+  sectionColor?: string
+  children?: (PropName | string)[]
+}
+
 export interface TFormFieldCategory {
   icon: string
-  names: string[]
+  names: (PropName | string)[]
 }
 
 export type EventArgsFn = (...args: unknown[]) => AnyData

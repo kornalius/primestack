@@ -3,7 +3,9 @@ import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import Editor from '@/features/Fields/components/Editor.vue'
 import ExType from '@/shared/extypes'
-import { properties, commonProperties, defaultStyleValues } from './common'
+import {
+  properties, commonProperties, defaultStyleValues, styleNames,
+} from './common'
 
 export default {
   type: 'paragraph',
@@ -84,9 +86,7 @@ export default {
         'square',
         'flat',
         'backgroundColor',
-        'border',
-        'padding',
-        'margin',
+        ...styleNames,
       ],
     },
   },

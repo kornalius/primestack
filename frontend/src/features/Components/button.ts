@@ -4,7 +4,7 @@ import { contentIcon, styleIcon, actionIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import ExType from '@/shared/extypes'
 import {
-  properties, commonProperties, defaultStyleValues, commonEventArgs, clickEvent,
+  properties, commonProperties, defaultStyleValues, commonEventArgs, clickEvent, styleNames,
 } from './common'
 
 export default {
@@ -93,9 +93,7 @@ export default {
         'unelevated',
         'fab',
         'fabMini',
-        'border',
-        'padding',
-        'margin',
+        ...styleNames,
       ],
     },
     action: {

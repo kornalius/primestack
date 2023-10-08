@@ -1,7 +1,9 @@
 import { Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import { properties, commonProperties, defaultStyleValues } from './common'
+import {
+  properties, commonProperties, defaultStyleValues, styleNames,
+} from './common'
 
 export default {
   type: 'card-section',
@@ -31,9 +33,7 @@ export default {
       icon: styleIcon,
       names: [
         'horizontal',
-        'border',
-        'padding',
-        'margin',
+        ...styleNames,
       ],
     },
   },

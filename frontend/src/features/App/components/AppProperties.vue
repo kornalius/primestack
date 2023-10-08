@@ -22,8 +22,9 @@
       :parents="[form, selectedField, selectedActionElement]"
       :prop-name="''"
       :schema="selectedAction.schema"
-      :labels="selectedAction.labels"
       :categories="selectedAction.categories"
+      :title="$t('actions.title')"
+      icon="mdi-flash"
     />
 
     <!-- Table Column properties -->
@@ -36,8 +37,9 @@
       :prop-name="''"
       :schema="selectedFormColumnSchema"
       :categories="selectedFormColumnSchema.categories"
-      :labels="selectedFormColumnSchema.labels"
       :disabled-properties="disabledFormTableColumnProperties"
+      :title="$t('components.table-column.label')"
+      icon="mdi-table-column"
     />
 
     <!-- Form Field properties -->
@@ -49,8 +51,9 @@
       :parents="[form, selectedField]"
       :prop-name="''"
       :schema="selectedComponent.schema"
-      :labels="selectedComponent.labels"
       :categories="selectedComponent.categories"
+      :title="$t(selectedComponent.label as string)"
+      :icon="selectedComponent.icon as string"
       include-form-data-fields
     />
 
@@ -64,8 +67,9 @@
       :prop-name="''"
       :schema="selectedTableSchema"
       :categories="selectedTableSchema.categories"
-      :labels="selectedTableSchema.labels"
       :disabled-properties="disabledTableProperties"
+      :title="$t('components.table.label')"
+      icon="mdi-table"
     />
 
     <!-- Table editor Field properties -->
@@ -78,19 +82,12 @@
       :prop-name="''"
       :schema="selectedSchemaFieldSchema"
       :categories="selectedSchemaFieldSchema.categories"
-      :labels="selectedSchemaFieldSchema.labels"
       :disabled-properties="disabledTableFieldProperties"
+      :title="$t('components.table-field.label')"
+      icon="mdi-table"
     />
 
     <template v-else-if="!editor.actionId">
-      <!-- Menu title -->
-
-      <section-title
-        v-if="showMenuProperties"
-        :title="$t('properties.menu')"
-        icon="mdi-menu"
-      />
-
       <!-- Menu properties -->
 
       <properties-editor
@@ -100,15 +97,8 @@
         :prop-name="''"
         :schema="selectedMenuSchema"
         :categories="selectedMenuSchema.categories"
-        :labels="selectedMenuSchema.labels"
-      />
-
-      <!-- Tab title -->
-
-      <section-title
-        v-if="showTabProperties"
-        :title="$t('properties.tab')"
-        icon="mdi-tab"
+        :title="$t('components.menu.label')"
+        icon="mdi-menu"
       />
 
       <!-- Tab properties -->
@@ -120,15 +110,8 @@
         :prop-name="''"
         :schema="selectedTabSchema"
         :categories="selectedTabSchema.categories"
-        :labels="selectedTabSchema.labels"
-      />
-
-      <!-- Form title -->
-
-      <section-title
-        v-if="showFormProperties"
-        :title="$t('properties.form')"
-        icon="mdi-window-maximize"
+        :title="$t('components.tab.label')"
+        icon="mdi-tab"
       />
 
       <!-- Form properties -->
@@ -140,7 +123,8 @@
         :prop-name="''"
         :schema="selectedFormSchema"
         :categories="selectedFormSchema.categories"
-        :labels="selectedFormSchema.labels"
+        :title="$t('components.form.label')"
+        icon="mdi-window-maximize"
       />
     </template>
   </q-drawer>

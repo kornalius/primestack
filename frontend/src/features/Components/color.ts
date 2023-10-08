@@ -4,7 +4,7 @@ import { TFormComponent } from '@/shared/interfaces/forms'
 import ColorField from '@/features/Fields/components/ColorField.vue'
 import ExType from '@/shared/extypes'
 import {
-  properties, commonProperties, defaultStyleValues, commonEventArgs,
+  properties, commonProperties, defaultStyleValues, commonEventArgs, styleNames,
 } from './common'
 
 export default {
@@ -68,9 +68,7 @@ export default {
         'flat',
         'bordered',
         'hideBottomSpace',
-        'border',
-        'padding',
-        'margin',
+        ...styleNames,
       ],
     },
     action: {

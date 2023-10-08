@@ -6,7 +6,7 @@ import {
 import { TFormComponent } from '@/shared/interfaces/forms'
 import ExType from '@/shared/extypes'
 import {
-  properties, commonProperties, sizeString, defaultStyleValues, commonEventArgs,
+  properties, commonProperties, sizeString, defaultStyleValues, commonEventArgs, styleNames,
 } from './common'
 
 export default {
@@ -111,9 +111,7 @@ export default {
         'thumbColor',
         'leftThumbColor',
         'rightThumbColor',
-        'border',
-        'padding',
-        'margin',
+        ...styleNames,
       ],
     },
     action: {

@@ -6,7 +6,9 @@ import {
   validCurrencyCodes, ValueBoxFormatStyle, ValueBoxSize, ValueBoxTextStyle,
 } from '@/features/Fields/interfaces'
 import ValueBox from '@/features/Fields/components/ValueBox.vue'
-import { properties, commonProperties, defaultStyleValues } from './common'
+import {
+  properties, commonProperties, defaultStyleValues, styleNames,
+} from './common'
 
 export default {
   type: 'value-box',
@@ -99,9 +101,7 @@ export default {
         'diffIconColor',
         'valueColor',
         'valueStyle',
-        'border',
-        'padding',
-        'margin',
+        ...styleNames,
       ],
     },
   },

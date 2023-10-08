@@ -3,7 +3,9 @@ import { Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import ExType from '@/shared/extypes'
-import { properties, commonProperties, defaultStyleValues } from './common'
+import {
+  properties, commonProperties, defaultStyleValues, padding, margin,
+} from './common'
 
 export default {
   type: 'separator',
@@ -40,8 +42,8 @@ export default {
         'vertical',
         'spaced',
         'inset',
-        'padding',
-        'margin',
+        padding,
+        margin,
       ],
     },
   },

@@ -6,7 +6,7 @@ import { TFormComponent } from '@/shared/interfaces/forms'
 import LookupSelect from '@/features/Tables/components/LookupSelect.vue'
 import ExType from '@/shared/extypes'
 import {
-  properties, commonProperties, defaultStyleValues, commonEventArgs,
+  properties, commonProperties, defaultStyleValues, commonEventArgs, styleNames,
 } from './common'
 
 export default {
@@ -129,9 +129,7 @@ export default {
         'hideBottomSpace',
         'virtualScrollHorizontal',
         'backgroundColor',
-        'border',
-        'padding',
-        'margin',
+        ...styleNames,
       ],
     },
     action: {

@@ -4,7 +4,9 @@ import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import FormElementCard from '@/features/Forms/components/Editor/FormElementCard.vue'
 import ExType from '@/shared/extypes'
-import { properties, commonProperties, defaultStyleValues } from './common'
+import {
+  properties, commonProperties, defaultStyleValues, styleNames,
+} from './common'
 
 export default {
   type: 'card',
@@ -56,9 +58,7 @@ export default {
         'flat',
         'bordered',
         'backgroundColor',
-        'border',
-        'padding',
-        'margin',
+        ...styleNames,
       ],
     },
   },

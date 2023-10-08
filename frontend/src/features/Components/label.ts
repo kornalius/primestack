@@ -3,7 +3,9 @@ import { contentIcon, styleIcon } from '@/shared/icons'
 import LabelField from '@/features/Fields/components/LabelField.vue'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import ExType from '@/shared/extypes'
-import { properties, commonProperties, defaultStyleValues } from './common'
+import {
+  properties, commonProperties, defaultStyleValues, styleNames,
+} from './common'
 
 export default {
   type: 'label',
@@ -84,9 +86,7 @@ export default {
         'casing',
         'color',
         'backgroundColor',
-        'border',
-        'padding',
-        'margin',
+        ...styleNames,
       ],
     },
   },

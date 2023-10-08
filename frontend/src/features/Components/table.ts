@@ -9,7 +9,7 @@ import { AnyData } from '@/shared/interfaces/commons'
 import SchemaTable from '@/features/Tables/components/SchemaTable.vue'
 import { formTableColumnSchema } from '@/shared/schemas/form'
 import {
-  properties, commonProperties, defaultStyleValues, commonEventArgs,
+  properties, commonProperties, defaultStyleValues, commonEventArgs, styleNames,
 } from './common'
 
 export default {
@@ -117,18 +117,24 @@ export default {
         'noResultsLabel',
         'rowsPerPageLabel',
         'rowsPerPageOptions',
-        'pagination',
+        { name: 'pagination', label: 'Pagination', sectionColor: 'orange-1' },
         'loading',
         'loadingLabel',
         'binaryStateSort',
         'columnSortOrder',
-        'virtualScroll',
-        'virtualScrollSliceSize',
-        'virtualScrollSliceRatioBefore',
-        'virtualScrollSliceRatioAfter',
-        'virtualScrollItemSize',
-        'virtualScrollStickySizeStart',
-        'virtualScrollStickySizeEnd',
+        {
+          label: 'Virtual Scroll',
+          sectionColor: 'purple-1',
+          children: [
+            { name: 'virtualScroll', label: 'Enabled' },
+            { name: 'virtualScrollSliceSize', label: 'Slice Size' },
+            { name: 'virtualScrollSliceRatioBefore', label: 'Slice Ratio Before' },
+            { name: 'virtualScrollSliceRatioAfter', label: 'Slice Ratio After' },
+            { name: 'virtualScrollItemSize', label: 'Item Size' },
+            { name: 'virtualScrollStickySizeStart', label: 'Sticky Size Start' },
+            { name: 'virtualScrollStickySizeEnd', label: 'Sticky Size End' },
+          ],
+        },
         'tableColspan',
       ],
     },
@@ -163,9 +169,7 @@ export default {
         'hidePagination',
         'grid',
         'wrapCells',
-        'border',
-        'padding',
-        'margin',
+        ...styleNames,
       ],
     },
     action: {

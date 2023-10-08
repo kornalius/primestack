@@ -118,7 +118,7 @@ const { tableFields } = useTable()
 
 const dataRows = ref([])
 
-const data = ref([])
+const data = ref()
 
 const { data: userTables } = api.service('tables').useFind({ query: {} })
 

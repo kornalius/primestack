@@ -76,28 +76,28 @@
 
           <q-input
             v-model="value.radius.topLeft"
-            style="position: absolute; top: 4px; left: 20px; width: 50px;"
+            style="position: absolute; top: 8px; left: 8px; width: 66px;"
             dense
             outlined
           />
 
           <q-input
             v-model="value.radius.topRight"
-            style="position: absolute; top: 4px; right: 20px; width: 50px;"
+            style="position: absolute; top: 8px; right: 8px; width: 66px;"
             dense
             outlined
           />
 
           <q-input
             v-model="value.radius.bottomLeft"
-            style="position: absolute; bottom: 4px; left: 20px; width: 50px;"
+            style="position: absolute; bottom: 8px; left: 8px; width: 66px;"
             dense
             outlined
           />
 
           <q-input
             v-model="value.radius.bottomRight"
-            style="position: absolute; bottom: 4px; right: 20px; width: 50px;"
+            style="position: absolute; bottom: 8px; right: 8px; width: 66px;"
             dense
             outlined
           />
@@ -156,10 +156,10 @@ const style = computed(() => {
   const border = `${b.width}px ${b.style} ${b.color}`
 
   const radius = b.radius as AnyData
-  const tl = radius.topLeft ? `${radius.topLeft}px` : '0'
-  const tr = radius.topRight ? `${radius.topRight}px` : '0'
-  const br = radius.bottomLeft ? `${radius.bottomLeft}px` : '0'
-  const bl = radius.bottomRight ? `${radius.bottomRight}px` : '0'
+  const tl = radius.topLeft || '0'
+  const tr = radius.topRight || '0'
+  const br = radius.bottomLeft || '0'
+  const bl = radius.bottomRight || '0'
 
   const sides = b.sides as AnyData
   return {

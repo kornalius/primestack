@@ -5,12 +5,14 @@
     v-if="horizontal && label && !embedLabel"
     class="col-auto q-mr-md"
     :class="{ 'q-mt-sm': type === 'array' }"
-    style="width: 125px;"
+    :style="`width: ${labelWidth};`"
   >
     <property-label
       v-model="value"
       :multiple-types="multipleTypes"
       :label="label"
+      :icon="icon"
+      :color="color"
       allow-expr
       @change-type="changeType"
     />
@@ -73,8 +75,13 @@
 
   <q-item
     v-else-if="nonExpandable"
+    :class="`bg-${sectionColor}`"
     style="padding: 2px 0 !important;"
     dense
+    @mouseover.stop="hover = true"
+    @mouseleave="hover = false"
+    @focus.stop="hover = true"
+    @blur="hover = false"
   >
     <q-item-section>
       <div
@@ -91,12 +98,14 @@
           v-if="label && !embedLabel"
           class="col-auto q-mr-md"
           :class="{ 'q-mt-sm': type === 'array' }"
-          style="width: 125px;"
+          :style="`width: ${labelWidth};`"
         >
           <property-label
             v-model="value"
             :multiple-types="multipleTypes"
             :label="label"
+            :icon="icon"
+            :color="color"
             allow-expr
             @change-type="changeType"
           />
@@ -115,15 +124,16 @@
             :label="label"
             :embed-label="embedLabel"
             :include-form-data-fields="includeFormDataFields"
+            :hover="hover"
             property
           />
         </div>
 
         <!-- Expression button column -->
 
-        <div class="col-auto" style="width: 20px;">
+        <div class="col-auto" style="width: 24px;">
           <q-btn
-            v-if="showExpr"
+            v-if="showExpr && hover"
             class="q-mr-sm"
             :disable="disabled"
             :color="isExpr(value) ? 'orange-8' : 'grey-5'"
@@ -157,7 +167,7 @@
 
   <q-expansion-item
     v-else
-    header-class="q-pa-none"
+    :header-class="`q-pa-none bg-${sectionColor}`"
     expand-separator
   >
     <template #header>
@@ -165,7 +175,7 @@
         <div
           v-if="label && !embedLabel"
           class="col-auto q-mr-md"
-          style="width: 125px;"
+          :style="`width: ${labelWidth};`"
         >
           <!-- Popup array edit button -->
 
@@ -173,13 +183,16 @@
             v-if="type === 'array' && Array.isArray(value)"
             style="position: absolute; left: 8px; top: 14px;"
             :disable="disabled"
-            size="sm"
+            size="xs"
             color="grey-7"
             dense
             flat
             @click.stop=""
           >
-            <q-icon name="mdi-pencil" />
+            <q-icon
+              name="mdi-pencil"
+              size="xs"
+            />
 
             <q-popup-edit
               v-model="value"
@@ -209,7 +222,6 @@
                     :schema="dynamicArraySchema(schema, scope.value[index])"
                     :horizontal="arrayIsHorizontalPopup"
                     :include-form-data-fields="includeFormDataFields"
-                    :labels="arraySchema?.labels"
                     embed-label
                     flat
                   />
@@ -235,7 +247,10 @@
             v-model="value"
             :multiple-types="multipleTypes"
             :label="label"
+            :icon="icon"
+            :color="color"
             :embed-label="embedLabel"
+            section
             @change-type="changeType"
           />
         </div>
@@ -248,6 +263,7 @@
           label: true,
           row: true,
           'items-center': type !== 'array',
+          [`bg-${sectionColor}`]: true,
         }"
       >
         <!-- Label column -->
@@ -256,7 +272,7 @@
           v-if="label && !embedLabel && type !== 'array'"
           class="col-auto q-mr-md"
           :class="{ 'q-mt-sm': type === 'array' }"
-          style="width: 125px;"
+          :style="`width: ${labelWidth};`"
         />
 
         <!-- Value column -->
@@ -281,7 +297,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { TSchema } from '@feathersjs/typebox'
 import { useI18n } from 'vue-i18n'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
@@ -309,6 +325,12 @@ const props = defineProps<{
   required?: boolean
   // label to show for the property in the editor
   label?: string
+  // icon
+  icon?: string
+  // icon color
+  color?: string
+  // background color
+  sectionColor?: string
   // embed the label inside the input
   embedLabel?: boolean
   // property name in the model for the property being edited
@@ -337,7 +359,14 @@ const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
 
 const { t } = useI18n()
 
-const { subPropName, dynamicArraySchema, types } = useProperties(t)
+const {
+  subPropName,
+  dynamicArraySchema,
+  types,
+  labelWidth,
+} = useProperties(t)
+
+const hover = ref(false)
 
 /**
  * Is editing disabled?
@@ -458,8 +487,3 @@ const saveExpr = () => {
   value.value = stringToExpr(value.value)
 }
 </script>
-
-<style scoped lang="sass">
-.label
-  min-height: 40px
-</style>

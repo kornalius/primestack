@@ -271,14 +271,13 @@ const schemaColumns = ref([
     label: 'Methods',
     align: 'left',
     field: 'methods',
-    format: (val) => val.join(', '),
   },
   {
     name: 'fields',
     label: '#Fields',
     align: 'left',
     field: 'fields',
-    format: (val) => val.length,
+    format: (val) => val?.length,
   },
 ])
 

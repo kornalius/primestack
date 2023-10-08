@@ -3,7 +3,9 @@ import { Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import ExType from '@/shared/extypes'
-import { properties, commonProperties, defaultStyleValues } from './common'
+import {
+  properties, commonProperties, defaultStyleValues, styleNames,
+} from './common'
 
 export default {
   type: 'spinner',
@@ -37,9 +39,7 @@ export default {
         'size',
         'color',
         'thickness',
-        'border',
-        'padding',
-        'margin',
+        ...styleNames,
       ],
     },
   },

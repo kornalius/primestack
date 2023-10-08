@@ -192,6 +192,33 @@ export const commonProperties = {
   }),
 }
 
+export const border = {
+  name: 'border',
+  label: 'Borders',
+  color: 'blue-7',
+  icon: 'mdi-table-border',
+}
+
+export const padding = {
+  name: 'padding',
+  label: 'Paddings',
+  color: 'green-7',
+  icon: 'mdi-arrow-expand-horizontal',
+}
+
+export const margin = {
+  name: 'margin',
+  label: 'Margins',
+  color: 'orange-7',
+  icon: 'mdi-arrow-all',
+}
+
+export const styleNames = [
+  border,
+  padding,
+  margin,
+]
+
 export const clickEvent = (e: MouseEvent) => ({
   x: e.clientX,
   y: e.clientY,

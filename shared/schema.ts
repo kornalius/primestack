@@ -204,6 +204,7 @@ export const validForExpr = [
   'select',
   'icon',
   'expr',
+  'toggles',
 ]
 
 /**

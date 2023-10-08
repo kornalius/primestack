@@ -6,7 +6,7 @@ import { TFormComponent } from '@/shared/interfaces/forms'
 import IconField from '@/features/Fields/components/IconField.vue'
 import ExType from '@/shared/extypes'
 import {
-  properties, commonProperties, defaultStyleValues, commonEventArgs,
+  properties, commonProperties, defaultStyleValues, commonEventArgs, styleNames,
 } from './common'
 
 export default {
@@ -117,9 +117,7 @@ export default {
         'hideBottomSpace',
         'virtualScrollHorizontal',
         'backgroundColor',
-        'border',
-        'padding',
-        'margin',
+        ...styleNames,
       ],
     },
     action: {

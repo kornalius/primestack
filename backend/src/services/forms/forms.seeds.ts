@@ -273,6 +273,18 @@ export default async (app: Application, data: AnyData) => {
             _id: '64f8d2ddc5d5795fb8aba99e',
             name: 'Button1',
             _type: 'button',
+            border: {
+              style: 'none',
+              color: 'black',
+              width: 1,
+              sides: {
+                top: 'top',
+                bottom: 'bottom',
+                left: 'left',
+                right: 'right',
+              },
+              radius: {},
+            },
             padding: {},
             margin: {},
             label: 'Insert',
