@@ -66,9 +66,15 @@ export default {
       icon: styleIcon,
       names: [
         'size',
-        'color',
-        'centerColor',
-        'trackColor',
+        {
+          label: 'Colors',
+          sectionColor: 'red-1',
+          children: [
+            'color',
+            'centerColor',
+            'trackColor',
+          ],
+        },
         'thickness',
         'fontSize',
         'animationSpeed',

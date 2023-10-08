@@ -3,11 +3,11 @@ import ExType from '@/shared/extypes'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import {
-  validCurrencyCodes, ValueBoxFormatStyle, ValueBoxSize, ValueBoxTextStyle,
+  validCurrencyCodes, ValueBoxFormatStyle, ValueBoxTextStyle,
 } from '@/features/Fields/interfaces'
 import ValueBox from '@/features/Fields/components/ValueBox.vue'
 import {
-  properties, commonProperties, defaultStyleValues, styleNames,
+  properties, commonProperties, defaultStyleValues, styleNames, sizeString,
 } from './common'
 
 export default {
@@ -43,7 +43,7 @@ export default {
       diffStyle: StringEnum(ValueBoxTextStyle),
       diffIcon: ExType.Icon(),
       diffIconColor: ExType.Color({ quasarPalette: true }),
-      diffIconSize: StringEnum(ValueBoxSize),
+      diffIconSize: sizeString,
       diffIconSuffix: Type.Boolean(),
     }),
   ], false),
@@ -71,36 +71,60 @@ export default {
         'name',
         'icon',
         'label',
-        'modelValue',
-        'valueFormat',
-        'valueDigits',
-        'valueCurrency',
-        'valueCurrencyNarrow',
-        'diff',
-        'diffIcon',
-        'diffIconSize',
-        'diffIconSuffix',
-        'diffFormat',
-        'diffDigits',
-        'diffCurrency',
-        'diffCurrencyNarrow',
+        {
+          label: 'Value',
+          sectionColor: 'orange-1',
+          children: [
+            'modelValue',
+            { name: 'valueFormat', label: 'Format' },
+            { name: 'valueDigits', label: 'Digits' },
+            { name: 'valueCurrency', label: 'Currency' },
+            { name: 'valueCurrencyNarrow', label: 'Narrow Currency' },
+          ],
+        },
+        {
+          label: 'Difference Value',
+          sectionColor: 'purple-1',
+          children: [
+            { name: 'diff', label: 'Value' },
+            { name: 'diffIcon', label: 'Icon' },
+            { name: 'diffIconSize', label: 'Icon Size' },
+            { name: 'diffIconSuffix', label: 'Icon Suffix' },
+            { name: 'diffFormat', label: 'Format' },
+            { name: 'diffDigits', label: 'Digits' },
+            { name: 'diffCurrency', label: 'Currency' },
+            { name: 'diffCurrencyNarrow', label: 'Narrow Currency' },
+          ],
+        },
         'tag',
       ],
     },
     style: {
       icon: styleIcon,
       names: [
-        'color',
-        'iconColor',
-        'labelColor',
-        'labelStyle',
-        'tagColor',
-        'tagStyle',
-        'diffColor',
-        'diffStyle',
-        'diffIconColor',
-        'valueColor',
-        'valueStyle',
+        {
+          label: 'Colors',
+          sectionColor: 'red-1',
+          children: [
+            'color',
+            'iconColor',
+            'labelColor',
+            'tagColor',
+            'diffColor',
+            'diffIconColor',
+            'valueColor',
+          ],
+        },
+        {
+          label: 'Styles',
+          sectionColor: 'purple-1',
+          children: [
+            'labelStyle',
+            'tagStyle',
+            'diffStyle',
+            'valueStyle',
+          ],
+        },
         ...styleNames,
       ],
     },

@@ -46,8 +46,6 @@ export default {
         'options',
         'disable',
         'readonly',
-        'noCaps',
-        'noWrap',
       ],
     },
     style: {
@@ -57,6 +55,8 @@ export default {
         'spread',
         'stack',
         'stretch',
+        'noCaps',
+        'noWrap',
         ...styleNames,
       ],
     },

@@ -79,13 +79,13 @@ export default {
     style: {
       icon: styleIcon,
       names: [
+        'color',
+        'backgroundColor',
         'pre',
         'format',
         'heading',
         'styling',
         'casing',
-        'color',
-        'backgroundColor',
         ...styleNames,
       ],
     },

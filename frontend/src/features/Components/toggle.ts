@@ -47,10 +47,10 @@ export default {
       icon: styleIcon,
       names: [
         'dense',
+        'size',
         'color',
         'iconColor',
         'keepColor',
-        'size',
         ...styleNames,
       ],
     },

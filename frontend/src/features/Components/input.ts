@@ -106,9 +106,15 @@ export default {
       icon: styleIcon,
       names: [
         'dense',
-        'color',
-        'bgColor',
-        'labelColor',
+        {
+          label: 'Colors',
+          sectionColor: 'red-1',
+          children: [
+            'labelColor',
+            'color',
+            { name: 'bgColor', label: 'Background Color' },
+          ],
+        },
         'stackLabel',
         'hideBottomSpace',
         'itemAligned',

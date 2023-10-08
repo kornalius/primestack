@@ -70,14 +70,20 @@ export default {
       icon: 'mdi-gesture-tap-button',
       names: [
         'definitions',
-        'toolbar',
-        'toolbarOutline',
-        'toolbarPush',
-        'toolbarRounded',
-        'toolbarColor',
-        'toolbarTextColor',
-        'toolbarToggleColor',
-        'toolbarBg',
+        {
+          label: 'Toolbar',
+          sectionColor: 'orange-1',
+          children: [
+            { name: 'toolbar', label: 'Buttons' },
+            { name: 'toolbarOutline', label: 'Outline' },
+            { name: 'toolbarPush', label: 'Push' },
+            { name: 'toolbarRounded', label: 'Rounded' },
+            { name: 'toolbarColor', label: 'Color' },
+            { name: 'toolbarTextColor', label: 'Text Color' },
+            { name: 'toolbarToggleColor', label: 'Toggle Color' },
+            { name: 'toolbarBg', label: 'Background Color' },
+          ],
+        },
       ],
     },
     style: {

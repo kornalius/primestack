@@ -54,10 +54,10 @@ export default {
     style: {
       icon: styleIcon,
       names: [
+        'backgroundColor',
         'square',
         'flat',
         'bordered',
-        'backgroundColor',
         ...styleNames,
       ],
     },

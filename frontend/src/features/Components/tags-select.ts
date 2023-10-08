@@ -98,9 +98,15 @@ export default {
       names: [
         'dense',
         'optionsDense',
-        'labelColor',
-        'color',
-        'bgColor',
+        {
+          label: 'Colors',
+          sectionColor: 'red-1',
+          children: [
+            'labelColor',
+            'color',
+            { name: 'bgColor', label: 'Background Color' },
+          ],
+        },
         'stackLabel',
         'hideHint',
         'noErrorIcon',
@@ -115,7 +121,6 @@ export default {
         'itemAligned',
         'hideBottomSpace',
         'virtualScrollHorizontal',
-        'backgroundColor',
         ...styleNames,
       ],
     },

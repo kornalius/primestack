@@ -75,6 +75,7 @@
 
   <q-item
     v-else-if="nonExpandable"
+    class="full-width"
     :class="`bg-${sectionColor}`"
     style="padding: 2px 0 !important;"
     dense

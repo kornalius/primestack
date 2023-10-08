@@ -40,7 +40,6 @@ export default {
         'disable',
         'readonly',
         'label',
-        'leftLabel',
         'checkedIcon',
         'uncheckedIcon',
       ],
@@ -49,6 +48,7 @@ export default {
       icon: styleIcon,
       names: [
         'dense',
+        'leftLabel',
         'color',
         'keepColor',
         ...styleNames,

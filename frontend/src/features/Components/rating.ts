@@ -59,9 +59,15 @@ export default {
       icon: styleIcon,
       names: [
         'size',
-        'color',
-        'colorSelected',
-        'colorHalf',
+        {
+          label: 'Colors',
+          sectionColor: 'red-1',
+          children: [
+            'color',
+            'colorSelected',
+            'colorHalf',
+          ],
+        },
         'noReset',
         'noDimming',
         ...styleNames,

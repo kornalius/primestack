@@ -42,13 +42,13 @@ export default {
         'label',
         'icon',
         'alert',
-        'noCaps',
         'badgeValue',
       ],
     },
     style: {
       icon: styleIcon,
       names: [
+        'noCaps',
         'color',
         'badgeColor',
       ],
