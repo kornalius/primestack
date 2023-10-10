@@ -86,10 +86,22 @@
 
       <q-expansion-item
         v-else-if="n.children?.length > 0"
-        :header-class="`q-pa-none bg-${n.sectionColor}`"
+        header-class="q-pa-none"
         expand-separator
       >
         <template #header>
+          <div
+            v-if="n.sectionColor"
+            :style="{
+              position: 'absolute',
+              left: '0',
+              top: '0',
+              width: '8px',
+              height: '100%',
+              background: getPaletteColor(n.sectionColor),
+            }"
+          />
+
           <div class="label row q-pr-sm full-width items-center">
             <div
               v-if="n.label && !embedLabel"
@@ -113,9 +125,20 @@
               label: true,
               row: true,
               'items-center': true,
-              [`bg-${n.sectionColor}`]: true,
             }"
           >
+            <div
+              v-if="n.sectionColor"
+              :style="{
+                position: 'absolute',
+                left: '0',
+                top: '0',
+                width: '8px',
+                height: '100%',
+                background: getPaletteColor(n.sectionColor),
+              }"
+            />
+
             <!-- Label column -->
 
             <div
@@ -172,6 +195,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import { colors } from 'quasar'
 import startCase from 'lodash/startCase'
 import { TSchema } from '@feathersjs/typebox'
 import { useI18n } from 'vue-i18n'
@@ -223,6 +247,8 @@ const emit = defineEmits<{
 const value = useModelValue(props, emit)
 
 const { t } = useI18n()
+
+const { getPaletteColor } = colors
 
 const { subPropName, labelWidth, lineHeight } = useProperties(t)
 

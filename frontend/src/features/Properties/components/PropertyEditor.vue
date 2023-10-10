@@ -76,7 +76,6 @@
   <q-item
     v-else-if="nonExpandable"
     class="full-width"
-    :class="`bg-${sectionColor}`"
     style="padding: 2px 0 !important;"
     dense
     @mouseover.stop="hover = true"
@@ -168,10 +167,22 @@
 
   <q-expansion-item
     v-else
-    :header-class="`q-pa-none bg-${sectionColor}`"
+    header-class="q-pa-none"
     expand-separator
   >
     <template #header>
+      <div
+        v-if="sectionColor"
+        :style="{
+          position: 'absolute',
+          left: '0',
+          top: '0',
+          width: '8px',
+          height: '100%',
+          background: getPaletteColor(sectionColor),
+        }"
+      />
+
       <div class="label row q-pr-sm full-width items-center">
         <div
           v-if="label && !embedLabel"
@@ -264,9 +275,20 @@
           label: true,
           row: true,
           'items-center': type !== 'array',
-          [`bg-${sectionColor}`]: true,
         }"
       >
+        <div
+          v-if="sectionColor"
+          :style="{
+            position: 'absolute',
+            left: '0',
+            top: '0',
+            width: '8px',
+            height: '100%',
+            background: getPaletteColor(sectionColor),
+          }"
+        />
+
         <!-- Label column -->
 
         <div
@@ -300,6 +322,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { TSchema } from '@feathersjs/typebox'
+import { colors } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { getTypeFor, defaultValueForSchema, validForExpr } from '@/shared/schema'
@@ -359,6 +382,8 @@ const { isExpr, exprCode, stringToExpr } = useExpression()
 const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
 
 const { t } = useI18n()
+
+const { getPaletteColor } = colors
 
 const {
   subPropName,
