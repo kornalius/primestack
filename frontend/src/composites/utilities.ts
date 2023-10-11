@@ -220,4 +220,22 @@ export const booleanValue = (v?: boolean | ((value?: AnyData) => boolean), value
   return v
 }
 
+/**
+ * Extract object keys deeply!!!
+ *
+ * @param o Input object
+ *
+ * @returns {string[]}
+ */
+export const deepKeys = (o: AnyData): string[] => {
+  let keys = []
+  Object.keys(o).forEach((k) => {
+    keys.push(k)
+    if (typeof o[k] === 'object') {
+      keys = [...keys, ...deepKeys(o[k])]
+    }
+  })
+  return keys
+}
+
 export default {}

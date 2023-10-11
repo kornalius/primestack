@@ -1,11 +1,11 @@
 import pick from 'lodash/pick'
 import { TFrontAction, TFrontActionExecOptions } from '@/features/Actions/interface'
 import { AnyData } from '@/shared/interfaces/commons'
-import globalMerge from '@/shared/actions/extract'
+import globalExtract from '@/shared/actions/extract'
 import Extract from '../components/extract.vue'
 
 export default {
-  ...globalMerge,
+  ...globalExtract,
   icon: 'mdi-target-variant',
   component: Extract,
   description: 'actions.extract.description',

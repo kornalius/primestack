@@ -2,6 +2,7 @@ import uniq from 'lodash/uniq'
 import { TFrontAction, TFrontActionExecOptions } from '@/features/Actions/interface'
 import { AnyData } from '@/shared/interfaces/commons'
 import globalMerge from '@/shared/actions/merge'
+import { deepKeys } from '@/composites/utilities'
 import Merge from '../components/merge.vue'
 
 export default {
@@ -15,6 +16,6 @@ export default {
     ...(args.object2 as AnyData),
   }),
   result: (ctx: TFrontActionExecOptions): string[] => (uniq([
-    ...Object.keys(ctx.object1), ...Object.keys(ctx.object2),
+    ...deepKeys(ctx.object1), ...deepKeys(ctx.object2),
   ])),
 } as TFrontAction
