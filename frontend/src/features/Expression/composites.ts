@@ -86,6 +86,34 @@ export const stringToExpr = (v: string): string => {
   return `${quotes}${exprToString(v)}${quotes}`
 }
 
+/**
+ * Convert a value into a string for expression editing
+ *
+ * @param v Value to convert
+ *
+ * @returns {string}
+ */
+export const valueToExpr = (v: unknown): string => (
+  JSON.stringify(v, undefined, 2)
+)
+
+/**
+ * Cleanup a property value
+ *
+ * @param type Type of property
+ *
+ * @returns {unknown}
+ */
+export const clearValue = (type: string): unknown => {
+  if (type === 'json') {
+    return {}
+  }
+  if (type === 'array') {
+    return []
+  }
+  return undefined
+}
+
 const options = {
   max: 500,
   ttl: 1000 * 60 * 5,
@@ -145,9 +173,24 @@ export const buildCtx = (extra?: AnyData) => {
     route,
     router,
     app,
+    variables,
     exec,
     ...(extra || {}),
     $expr: {
+      /**
+       * Get the previous action result or key value from it
+       *
+       * @param path Path to get
+       *
+       * @returns {unknown|undefined}
+       */
+      $$: (path?: string): unknown | undefined => {
+        const r = variables.getRaw('_prevResult')
+        return !path
+          ? r
+          : get(r, path)
+      },
+
       /**
        * Get a variable's value
        *
@@ -742,6 +785,8 @@ export const useExpression = () => ({
   exprCode,
   exprToString,
   stringToExpr,
+  valueToExpr,
+  clearValue,
   runExpr,
   getProp,
   buildCtx,

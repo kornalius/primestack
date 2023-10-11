@@ -16,7 +16,7 @@
       reorderable
       @click.stop=""
     >
-      <template #default="{ value: t }: { value: AnyData }">
+      <template #default="{ value: t }">
         <q-route-tab
           v-if="menu"
           :name="t._id"
@@ -49,7 +49,6 @@ import { useAppEditor } from '@/features/App/editor-store'
 import { useUrl } from '@/composites/url'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { tabSchema, menuSchema } from '@/shared/schemas/menu'
-import { AnyData } from '@/shared/interfaces/commons'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import hexObjectId from 'hex-object-id'
 
@@ -139,7 +138,7 @@ watch(currentTab, () => {
 }, { immediate: true })
 
 onMounted(() => {
-  if (props.menu) {
+  if (props.menu && !props.tab) {
     setTimeout(() => {
       router.push(menuUrl(props.menu._id, tabs.value?.[0]?._id))
     }, 100)

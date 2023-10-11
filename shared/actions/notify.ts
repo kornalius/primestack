@@ -4,7 +4,6 @@ import { TAction } from '../interfaces/actions'
 export default {
   type: 'notify',
   label: 'Notify',
-  description: 'Display a notification bar',
   schema: Type.Object({
     level: StringEnum(['Success', 'Error', 'Info', 'Warning']),
     message: Type.String(),

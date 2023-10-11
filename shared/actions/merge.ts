@@ -1,11 +1,12 @@
 import { Type } from '@feathersjs/typebox'
 import { TAction } from '../interfaces/actions'
+import ExType from '../extypes'
 
 export default {
-  type: 'setvar',
-  label: 'Set Variable',
+  type: 'merge',
+  label: 'Merge',
   schema: Type.Object({
-    name: Type.String({ variable: true }),
-    value: Type.String(),
+    object1: ExType.JSON(),
+    object2: ExType.JSON(),
   }),
 } as TAction

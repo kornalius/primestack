@@ -64,6 +64,15 @@ export const useFormElements = () => ({
 
   flattenFields,
 
+  /**
+   * Returns an object that can be bound to a Vue Component (v-bind)
+   *
+   * @param field Field to bind
+   * @param schema Schema for field
+   * @param ctx Context
+   *
+   * @returns {AnyData}
+   */
   fieldBinds: (field: FormField | FormColumn, schema: TSchema, ctx: AnyData): AnyData => {
     const fieldsToOmit = [
       '_id',
@@ -74,6 +83,11 @@ export const useFormElements = () => ({
       'modelValue',
     ]
 
+    /**
+     * Scan a schema for fields to omit from binding
+     *
+     * @param s Schema
+     */
     const scanSchema = (s: TSchema): void => {
       Object.keys(s.properties).forEach((k) => {
         if (s.properties[k].style) {
@@ -87,12 +101,21 @@ export const useFormElements = () => ({
     const userActions = ctx.api.service('actions')
       .findOneInStore({ query: {} })?.value?.list || []
 
+    /**
+     * Call an event action (exec function)
+     *
+     * @param id Id of the action
+     * @param eventArgsFn Arguments to pass to the exec function
+     */
     const callEventAction = (id: string, eventArgsFn?: EventArgsFn) => (
       async (...args: unknown[]) => {
         const act = userActions.find((a: Action) => a._id === id)
         if (act) {
           // eslint-disable-next-line no-underscore-dangle
-          await ctx.exec(act._actions, { ...ctx, $scoped: eventArgsFn(...args) })
+          await ctx.exec(act._actions, {
+            ...ctx,
+            $scoped: eventArgsFn(...args),
+          })
         }
       }
     )
@@ -101,9 +124,11 @@ export const useFormElements = () => ({
       .reduce((acc, k) => {
         let fieldname = k
         const prop = schema.properties[k] as AnyData
+
         // if (ctx.editor.active) {
         //   return { ...acc, [k]: field[k] }
         // }
+
         // if it's an action, use onXxxx event key names instead
         if (prop && getTypeFor(schema.properties[k]) === 'action') {
           const eventArgsFn = eventArgsForField(field)?.[k]
@@ -112,14 +137,23 @@ export const useFormElements = () => ({
             [`on${startCase(k)}`]: callEventAction(field[k] as string, eventArgsFn),
           }
         }
+
         // schema property specifies its own prop name
         if (prop && prop.propname) {
           fieldname = prop.propname
         }
+
         return { ...acc, [fieldname]: getProp(field[k], ctx) }
       }, {})
   },
 
+  /**
+   * Returns a schema for a field
+   *
+   * @param f Field
+   *
+   * @returns {TSchema|undefined}
+   */
   schemaForField: (f: FormField | FormColumn): TSchema | undefined => (
     // eslint-disable-next-line no-underscore-dangle
     componentsByType[f._type]?.schema
@@ -129,27 +163,84 @@ export const useFormElements = () => ({
 
   argNames,
 
+  /**
+   * Returns true if field is a row
+   *
+   * @param field Field
+   *
+   * @returns {boolean}
+   */
   // eslint-disable-next-line no-underscore-dangle
   isRow: (field: FormField): boolean => field._type === 'row',
 
+  /**
+   * Returns true if field is tabs
+   *
+   * @param field Field
+   *
+   * @returns {boolean}
+   */
   // eslint-disable-next-line no-underscore-dangle
   isTabs: (field: FormField): boolean => field._type === 'tabs',
 
+  /**
+   * Returns true if field is a card
+   *
+   * @param field Field
+   *
+   * @returns {boolean}
+   */
   // eslint-disable-next-line no-underscore-dangle
   isCard: (field: FormField): boolean => field._type === 'card',
 
+  /**
+   * Returns true if field is an icon
+   *
+   * @param field Field
+   *
+   * @returns {boolean}
+   */
   // eslint-disable-next-line no-underscore-dangle
   isIcon: (field: FormField): boolean => field._type === 'icon',
 
+  /**
+   * Returns true if field is a table
+   *
+   * @param field Field
+   *
+   * @returns {boolean}
+   */
   // eslint-disable-next-line no-underscore-dangle
   isTable: (field: FormField): boolean => field._type === 'table',
 
+  /**
+   * Returns true if field is a paragraph
+   *
+   * @param field Field
+   *
+   * @returns {boolean}
+   */
   // eslint-disable-next-line no-underscore-dangle
   isParagraph: (field: FormField): boolean => field._type === 'paragraph',
 
+  /**
+   * Returns true if field is a label
+   *
+   * @param field Field
+   *
+   * @returns {boolean}
+   */
   // eslint-disable-next-line no-underscore-dangle
   isLabel: (field: FormField): boolean => field._type === 'label',
 
+  /**
+   * Serialize field's rules to bind to Quasar Inputs
+   *
+   * @param t i18next function
+   * @param field Field
+   *
+   * @returns {((...args: any[]) => (val: string) => true | string)[]}
+   */
   serializeRules: (
     t: T18N,
     field: FormField,
@@ -160,6 +251,15 @@ export const useFormElements = () => ({
     ))
   ),
 
+  /**
+   * Returns true if the field is considered a numeric input
+   * It returns the 'numericInput' or calls it if a function
+   * from the TFormComponent of the 'field._type'
+   *
+   * @param field Field
+   *
+   * @returns {boolean}
+   */
   isNumericInput: (field: FormField): boolean => {
     // eslint-disable-next-line no-underscore-dangle
     const comp = componentsByType[field._type]
@@ -172,6 +272,14 @@ export const useFormElements = () => ({
     return false
   },
 
+  /**
+   * Returns a Vue Component bindable style object
+   * for all the field's stylable properties
+   *
+   * @param field Field
+   *
+   * @returns {AnyData}
+   */
   style: (field: AnyData): AnyData => {
     // eslint-disable-next-line no-underscore-dangle
     const component = componentsByType[field._type]
@@ -209,6 +317,11 @@ export const useFormElements = () => ({
     }
   },
 
+  /**
+   * Automatically fill with inputs the current form being edited from a table
+   *
+   * @param tableId Id of the table
+   */
   autoGenerateForm: (tableId: string): void => {
     const editor = useAppEditor()
 

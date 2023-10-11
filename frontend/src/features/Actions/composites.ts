@@ -13,43 +13,85 @@ type ActionElement = Static<typeof actionElementSchema>
 type Action = Static<typeof actionElementSchema>
 type Field = Static<typeof fieldSchema>
 
+/**
+ * Object of [type]: action
+ */
 export const actionsByType = (
   actions.reduce((acc, a) => (
     { ...acc, [a.type]: a }
   ), {})
 )
 
+/**
+ * Object of [type]: Vue Component
+ */
 export const componentForType = (
   actions.reduce((acc, a) => (
     { ...acc, [a.type]: a.component }
   ), {})
 )
 
+/**
+ * Object of [type]: Exec functions
+ */
 export const execForType = (
   actions.reduce((acc, a) => (
     { ...acc, [a.type]: a.exec }
   ), {})
 )
 
-export const execAction = async (a: ActionElement, args: AnyData) => {
+/**
+ * Execute an action 'exec' function
+ *
+ * @param a Action instance
+ * @param args Context arguments
+ *
+ * @returns {Promise<AnyData>}
+ */
+export const execAction = async (a: ActionElement, args: AnyData): Promise<AnyData> => {
   // eslint-disable-next-line no-underscore-dangle
-  const exec = execForType[a._type]
-  const aa = Object.keys(omit(a, ['_id', '_type', '$scoped'])).reduce((acc, k) => ({
+  const actionExec = execForType[a._type]
+  const actionArgs = Object.keys(omit(a, ['_id', '_type', '$scoped'])).reduce((acc, k) => ({
     ...acc,
     [k]: getProp(a[k], args),
   }), {})
-  await exec({ ...args, ...aa, ...args.$scoped })
+  return actionExec({ ...args, ...actionArgs, ...args.$scoped })
 }
 
-export const exec = async (list: ActionElement[], args: AnyData) => {
+/**
+ * Execute a list of actions
+ *
+ * @param list Array of actions
+ * @param args Context arguments
+ *
+ * @returns {Promise<AnyData[]>}
+ */
+export const exec = async (list: ActionElement[], args: AnyData): Promise<AnyData[]> => {
   const variables = useVariables()
+  const oldPrevResult = variables.getRaw('_prevResult')
   const old = variables.getRaw('_scoped')
   variables.setRaw('_scoped', args.$scoped)
-  const r = Promise.all(list.map((a) => execAction(a, args)))
+  const promises = Promise.all(
+    list.map(async (a) => {
+      const res = await execAction(a, args)
+      if (res !== undefined) {
+        variables.setRaw('_prevResult', res)
+      }
+      return res
+    }),
+  )
   variables.setRaw('_scoped', old)
-  return r
+  variables.setRaw('_prevResult', oldPrevResult)
+  return promises
 }
 
+/**
+ * Returns the Vue component associated with the action
+ *
+ * @param action Action instance
+ *
+ * @returns {unknown}
+ */
 export const componentForAction = (action: Action): unknown => {
   // eslint-disable-next-line no-underscore-dangle
   let comp = componentForType[action._type]
@@ -59,12 +101,19 @@ export const componentForAction = (action: Action): unknown => {
   return comp
 }
 
+/**
+ * Flatten all actions into a flat array
+ *
+ * @param acts Array of actions
+ *
+ * @returns {ActionElement[]}
+ */
 export const flattenActions = (acts: ActionElement[]): ActionElement[] => {
-  const flattended: ActionElement[] = []
+  const flattened: ActionElement[] = []
 
   const flatten = (list: ActionElement[]): void => {
     list.forEach((a) => {
-      flattended.push(a)
+      flattened.push(a)
 
       // eslint-disable-next-line no-underscore-dangle
       const children = a._children
@@ -76,15 +125,31 @@ export const flattenActions = (acts: ActionElement[]): ActionElement[] => {
 
   flatten(acts)
 
-  return flattended
+  return flattened
 }
 
+/**
+ * Converts an array of fields + values (from properties) into an object to pass to mongo
+ * Also evaluates the expressions inside the values
+ *
+ * @param fields Array of fields
+ * @param ctx Context object
+ *
+ * @returns {AnyData}
+ */
 export const fieldsArrayToObject = (fields: Field[], ctx: AnyData): AnyData => (
   fields.reduce((acc, f) => (
     { ...acc, [f.name]: getProp(f.value, ctx) }
   ), {})
 )
 
+/**
+ * Binds actions arguments to a Vue Component (v-bind)
+ *
+ * @param action Action instance
+ *
+ * @returns {AnyData}
+ */
 export const actionBinds = (action: ActionElement): AnyData => {
   const fieldsToOmit = [
     '_id',
@@ -92,6 +157,89 @@ export const actionBinds = (action: ActionElement): AnyData => {
     '_children',
   ]
   return omit(action, fieldsToOmit)
+}
+
+/**
+ * Finds the parent action of an action
+ *
+ * @param acts Actions array
+ * @param act Action
+ *
+ * @returns {ActionElement|undefined}
+ */
+export const parentAction = (acts: ActionElement[], act: ActionElement): ActionElement | undefined => (
+  flattenActions(acts)
+    .find((a) => (
+      // eslint-disable-next-line no-underscore-dangle
+      a._children.find((c) => c._id === act._id)
+    ))
+)
+
+/**
+ * Computes the results for an array of actions
+ *
+ * @param acts Array of Actions
+ * @param uptoAction Compute until you reach this action
+ * @param ctx Context
+ *
+ * @returns {string[]}
+ */
+export const computeActionResults = (
+  acts: ActionElement[],
+  uptoAction: ActionElement,
+  ctx: AnyData,
+): string[] => {
+  let prevResult = []
+  for (let i = 0; i < acts.length; i++) {
+    const a = acts[i]
+    if (a === uptoAction) {
+      return prevResult
+    }
+    // eslint-disable-next-line no-underscore-dangle
+    const action = actionsByType[a._type]
+    prevResult = typeof action.result === 'function'
+      ? action.result({ ...ctx, ...actionBinds(a) }, prevResult)
+      : prevResult
+  }
+  return prevResult
+}
+
+/**
+ * Returns the action before this action
+ *
+ * @param acts Array of actions
+ * @param a Action instance
+ *
+ * @returns {ActionElement|undefined}
+ */
+export const actionBefore = (acts: ActionElement[], a: ActionElement): ActionElement | undefined => {
+  const parent = parentAction(acts, a)
+  // eslint-disable-next-line no-underscore-dangle
+  const list = parent?._children || acts
+  const idx = list.findIndex((ac) => ac._id === a._id)
+  if (idx !== -1 && idx - 1 >= 0) {
+    return list?.[idx - 1]
+  }
+  return undefined
+}
+
+/**
+ * Returns the action after this action
+ *
+ * @param acts Array of actions
+ * @param a Action instance
+ *
+ * @returns {ActionElement|undefined}
+ */
+export const actionAfter = (acts: ActionElement[], a: ActionElement): ActionElement | undefined => {
+  const parent = parentAction(acts, a)
+  // eslint-disable-next-line no-underscore-dangle
+  const list = parent?._children || acts
+  const idx = list.findIndex((ac) => ac._id === a._id)
+  if (idx !== -1 && idx + 1 < list.length) {
+    return list?.[idx + 1]
+  }
+  return undefined
 }
 
 export const useActions = () => ({
@@ -112,4 +260,12 @@ export const useActions = () => ({
   fieldsArrayToObject,
 
   exec,
+
+  parentAction,
+
+  computeActionResults,
+
+  actionBefore,
+
+  actionAfter,
 })

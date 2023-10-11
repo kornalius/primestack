@@ -85,6 +85,10 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string | undefined 
   if (p.type === 'string' && p.field === true) {
     return 'field'
   }
+  // JSON keys selector dropdown, (optional properties: jsonProp)
+  if (p.type === 'string' && p.jsonkeys === true) {
+    return 'json-keys'
+  }
   // Table id selector
   if (p.type === 'string' && p.objectid === true && p.tableid === true) {
     return 'tableid'
@@ -205,6 +209,7 @@ export const validForExpr = [
   'icon',
   'expr',
   'toggles',
+  'json',
 ]
 
 /**

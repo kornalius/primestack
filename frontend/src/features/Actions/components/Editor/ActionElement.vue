@@ -48,7 +48,7 @@
 
           <div class="col">
             <div
-              v-if="!hideTitle"
+              v-if="!actionHideTitle"
               class="row"
             >
               <div class="col text-bold">
@@ -69,6 +69,15 @@
           </div>
         </div>
       </div>
+
+      <q-icon
+        v-if="action.result && actionAfter(editor.actionInstance(editor.actionId)?._actions, actionElement)"
+        class="result-icon shadow-4"
+        style="background: white; border-radius: 50%;"
+        name="mdi-arrow-down-bold-circle"
+        color="cyan-7"
+        size="sm"
+      />
     </div>
 
     <div
@@ -88,39 +97,36 @@ import { computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
 import { useAppEditor } from '@/features/App/editor-store'
-import { actionElementSchema } from '@/shared/schemas/actions'
 import { useActions } from '@/features/Actions/composites'
+import { actionElementSchema } from '@/shared/schemas/actions'
+import { booleanValue, stringValue } from '@/composites/utilities'
 import ActionsListEditor from '@/features/Actions/components/Editor/ActionsListEditor.vue'
-import { stringValue } from '@/composites/utilities'
 
-type Action = Static<typeof actionElementSchema>
+type ActionElement = Static<typeof actionElementSchema>
 
 const props = defineProps<{
-  modelValue: Action
+  modelValue: ActionElement
   selected?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'click', value: string): void,
-  (e: 'remove', value: Action): void,
-  (e: 'update:model-value', value: Action): void,
+  (e: 'remove', value: ActionElement): void,
+  (e: 'update:model-value', value: ActionElement): void,
 }>()
 
-const { componentForAction, actionBinds, actionsByType } = useActions()
+const {
+  componentForAction,
+  actionBinds,
+  actionsByType,
+  actionAfter,
+} = useActions()
 
 const actionElement = useModelValue(props, emit)
 
 // eslint-disable-next-line no-underscore-dangle
 const action = computed(() => actionsByType[actionElement.value._type])
-
-const hideTitle = computed(() => {
-  const h = action.value?.hideTitle
-  if (typeof h === 'function') {
-    return h(actionElement)
-  }
-  return h
-})
 
 const component = computed(() => componentForAction(actionElement.value))
 
@@ -132,26 +138,72 @@ const onRemoveClick = () => {
   emit('remove', props.modelValue)
 }
 
+/**
+ * Computes the (TAction) action's 'hideTitle' by calling it
+ * if it's a function
+ *
+ * @returns {ComputedRef<boolean>}
+ */
+const actionHideTitle = computed(() => (
+  booleanValue(action.value?.hideTitle, actionElement.value) || false
+))
+
+/**
+ * Computes the (TAction) action's 'color' by calling it
+ * if it's a function
+ *
+ * @returns {ComputedRef<string>}
+ */
 const actionColor = computed(() => (
   stringValue(action.value?.color, actionElement.value) || 'grey-2'
 ))
 
+/**
+ * Computes the (TAction) action's 'iconColor' by calling it
+ * if it's a function
+ *
+ * @returns {ComputedRef<string>}
+ */
 const actionIconColor = computed(() => (
   stringValue(action.value?.iconColor, actionElement.value) || 'grey-9'
 ))
 
+/**
+ * Computes the (TAction) action's 'description' by calling it
+ * if it's a function
+ *
+ * @returns {ComputedRef<string>}
+ */
 const actionDescription = computed(() => (
   stringValue(action.value?.description, actionElement.value)
 ))
 
+/**
+ * Computes the (TAction) action's 'icon' by calling it
+ * if it's a function
+ *
+ * @returns {ComputedRef<string>}
+ */
 const actionIcon = computed(() => (
   stringValue(action.value?.icon, actionElement.value)
 ))
 
+/**
+ * Computes the (TAction) action's 'actionLabel' by calling it
+ * if it's a function
+ *
+ * @returns {ComputedRef<string>}
+ */
 const actionLabel = computed(() => (
   stringValue(action.value?.label, actionElement.value)
 ))
 
+/**
+ * Computes the (TAction) action's 'childrenMessage' by calling it
+ * if it's a function
+ *
+ * @returns {ComputedRef<string>}
+ */
 const actionChildrenMessage = computed(() => (
   stringValue(action.value?.childrenMessage, actionElement.value)
 ))
@@ -186,4 +238,11 @@ const actionChildrenMessage = computed(() => (
   position: absolute
   top: 0
   z-index: 5
+
+.result-icon
+  position: absolute
+  left: 50%
+  bottom: 0
+  z-index: 1000
+  transform: translate(-50%, 65%)
 </style>

@@ -410,8 +410,8 @@ export const useAppEditor = defineStore('app-editor', () => {
    */
   const selectMenu = (id: string): void => {
     if (!document.querySelector('.q-popup-edit')) {
-      states.value.selectedMenu = id
       select(undefined)
+      states.value.selectedMenu = id
     }
   }
 
@@ -433,8 +433,8 @@ export const useAppEditor = defineStore('app-editor', () => {
    */
   const selectTab = (id: string): void => {
     if (!document.querySelector('.q-popup-edit')) {
-      states.value.selectedTab = id
       select(undefined)
+      states.value.selectedTab = id
     }
   }
 

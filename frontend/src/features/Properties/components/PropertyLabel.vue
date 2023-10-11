@@ -18,14 +18,14 @@
         <q-menu>
           <q-list dense>
             <q-item
-              v-for="t in multipleTypes"
-              :key="t"
+              v-for="tp in multipleTypes"
+              :key="tp"
               clickable
               v-close-popup
-              @click="$emit('change-type', t)"
+              @click="$emit('change-type', tp)"
             >
               <q-item-section>
-                {{ t }}
+                {{ tp }}
               </q-item-section>
             </q-item>
           </q-list>
@@ -36,7 +36,7 @@
     <!-- Label -->
 
     <span
-      class="text-caption"
+      class="text-caption text-weight-medium"
       :style="{ 'text-align': 'end', cursor: section ? 'pointer' : 'default' }"
     >
       <q-icon
@@ -49,6 +49,7 @@
       <q-tooltip :delay="500">
         {{ label }}
       </q-tooltip>
+
       {{ label }}:
     </span>
   </div>

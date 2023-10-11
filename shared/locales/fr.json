@@ -153,12 +153,24 @@
       "description": "Écrit un message directement dans la console du fureteur",
       "childrenMessage": ""
     },
+    "extract": {
+      "description": "Extrait des clées à partir d'un objet JSON",
+      "childrenMessage": ""
+    },
+    "getvar": {
+      "description": "Obtiens la valeur d'une variable",
+      "childrenMessage": ""
+    },
     "if": {
       "description": "Évalue une expression",
       "childrenMessage": "Si l'expression est vraie, éxécute les actions suivantes..."
     },
     "insert": {
       "description": "Insère un enregistrement dans une table",
+      "childrenMessage": ""
+    },
+    "merge": {
+      "description": "Combine deux objets JSON ensemble",
       "childrenMessage": ""
     },
     "navigate": {
@@ -190,7 +202,8 @@
       "flow": "Flux",
       "navigation": "Navigation",
       "variables": "Variables",
-      "table": "Table"
+      "table": "Table",
+      "json": "JSON"
     }
   },
   "editor": {

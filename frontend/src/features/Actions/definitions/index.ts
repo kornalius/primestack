@@ -4,6 +4,9 @@ import dialog from './dialog'
 import console from './console'
 import notify from './notify'
 import navigate from './navigate'
+import extract from './extract'
+import merge from './merge'
+import getvar from './getvar'
 import setvar from './setvar'
 import unsetvar from './unsetvar'
 import insert from './insert'
@@ -24,11 +27,15 @@ export const actions = [
   console,
   dialog,
   notify,
+  separator('actions.separators.json', 'mdi-code-json', 'brown-2'),
+  merge,
+  extract,
   separator('actions.separators.flow', 'mdi-source-branch', 'purple-2'),
   ifExpr,
   separator('actions.separators.navigation', 'mdi-open-in-app', 'blue-2'),
   navigate,
   separator('actions.separators.variables', 'mdi-variable', 'red-2'),
+  getvar,
   setvar,
   unsetvar,
   separator('actions.separators.table', 'mdi-database', 'orange-2'),

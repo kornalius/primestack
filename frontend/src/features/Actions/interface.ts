@@ -13,6 +13,9 @@ export interface TFrontActionExecOptions {
   quasar: QVueGlobals
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   api: Application<any, any>
+  editor: AnyData
+  app: AnyData
+  variables: AnyData
   snacks: AnyData
   store: AnyData
   route: RouteLocationNormalizedLoaded,
@@ -37,7 +40,9 @@ export interface TFrontAction extends TAction {
   // split schema keys into different categories and order items in the properties list
   categories?: Record<string, TActionCategory>
   // execute action command
-  exec?: (options: TFrontActionExecOptions) => Promise<void>
+  exec?: (options: TFrontActionExecOptions) => Promise<AnyData | void>
   // hide the action element title?
   hideTitle?: boolean | ((value: AnyData) => boolean)
+  // function called to determine the result keys
+  result?: (ctx: TFrontActionExecOptions, prevResult: string[]) => string[]
 }

@@ -10,7 +10,6 @@ export const fieldSchema = Type.Object({
 export default {
   type: 'patch',
   label: 'Patch',
-  description: 'Patch a single or multiple records in a table',
   schema: Type.Object({
     tableId: Type.String({ objectid: true, tableid: true }),
     id: Type.Optional(ExType.Id()),

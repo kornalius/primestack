@@ -1,11 +1,16 @@
-import { TFrontAction } from '@/features/Actions/interface'
+import { Static } from '@feathersjs/typebox'
+import { TFrontAction, TFrontActionExecOptions } from '@/features/Actions/interface'
 import globalPatch from '@/shared/actions/patch'
 // eslint-disable-next-line import/no-cycle
 import { queryToMongo } from '@/features/Query/composites'
 import { Query } from '@/shared/interfaces/query'
+import { tableSchema } from '@/shared/schemas/table'
+import { tableFields } from '@/features/Tables/composites'
 // eslint-disable-next-line import/no-cycle
 import { fieldsArrayToObject } from '../composites'
 import Patch from '../components/patch.vue'
+
+type Table = Static<typeof tableSchema>
 
 export default {
   ...globalPatch,
@@ -25,5 +30,16 @@ export default {
       await ctx.api.service(ctx.tableId as string)
         .update(null, data, { query: queryToMongo(ctx.query as Query, table, ctx.$expr) })
     }
+  },
+  result: (ctx: TFrontActionExecOptions): string[] => {
+    const table = ctx.editor.tables
+      ?.find((s: Table) => s._id === ctx.tableId) as Table
+    const fields = tableFields(
+      table.fields,
+      table.created,
+      table.updated,
+      table.softDelete,
+    )
+    return fields.map((f) => f.name)
   },
 } as TFrontAction

@@ -161,12 +161,24 @@
       "description": "Output messages directly in the browser's console",
       "childrenMessage": ""
     },
+    "extract": {
+      "description": "Extract keys from a JSON object",
+      "childrenMessage": ""
+    },
+    "getvar": {
+      "description": "Get a variable value",
+      "childrenMessage": ""
+    },
     "if": {
       "description": "Evaluate an expression",
       "childrenMessage": "If the expression is True, execute these actions..."
     },
     "insert": {
       "description": "Insert a new record in a table",
+      "childrenMessage": ""
+    },
+    "merge": {
+      "description": "Merge two JSON object together",
       "childrenMessage": ""
     },
     "navigate": {
@@ -198,7 +210,8 @@
       "flow": "Flow",
       "navigation": "Navigation",
       "variables": "Variables",
-      "table": "Table"
+      "table": "Table",
+      "json": "JSON"
     }
   },
   "editor": {

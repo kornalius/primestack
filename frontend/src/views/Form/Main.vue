@@ -197,7 +197,7 @@
 
 <script setup lang="ts">
 import {
-  computed, onBeforeUnmount, ref, watch,
+  computed, onBeforeMount, onBeforeUnmount, ref, watch,
 } from 'vue'
 import { Static, TObject } from '@feathersjs/typebox'
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from 'vue-router'
@@ -254,10 +254,6 @@ const { queryToMongo } = useQuery()
 const { mimetypes, maxFileSize } = useFiles(t)
 
 const formsViewMode = computed(() => props.menuId === undefined)
-
-watch(formsViewMode, () => {
-  editor.setFormsEditor(formsViewMode.value)
-}, { immediate: true })
 
 /**
  * Menu
@@ -435,8 +431,22 @@ watch(preview, () => {
   }
 })
 
+onBeforeMount(() => {
+  editor.unselectAll()
+})
+
 onBeforeUnmount(() => {
+  editor.setFormsEditor(false)
   editor.setFormId(undefined)
+})
+
+watch(() => props.menuId, () => {
+  if (!props.menuId) {
+    editor.unselectMenu()
+    editor.setFormsEditor(true)
+  } else {
+    editor.setFormsEditor(false)
+  }
 })
 
 /**

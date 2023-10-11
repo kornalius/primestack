@@ -8,9 +8,10 @@
       <q-toolbar>
         <q-toolbar-title>
           <tabs-editor
-            v-if="editor.active && !editor.formsEditor && selectedMenuObject"
+            v-if="editor.active && selectedMenuObject"
             v-model="selectedMenuObject.tabs"
             :menu="selectedMenuObject"
+            :tab="app.tabId"
           />
 
           <q-tabs
@@ -406,7 +407,6 @@ import {
 import { Static } from '@feathersjs/typebox'
 import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
-// import { useSnacks } from '@/features/Snacks/store'
 import { useApp } from '@/features/App/store'
 import { useAppEditor } from '@/features/App/editor-store'
 import { useAuth } from '@/features/Auth/store'
@@ -432,18 +432,11 @@ const { api } = useFeathers()
 
 const { t } = useI18n()
 
-// const snacks = useSnacks()
-
-// onMounted(() => {
-//   snacks.pushError('Error, this is an error')
-//   snacks.pushWarn('Warning, this is a warning')
-//   snacks.pushInfo('Info, this is an info')
-//   snacks.pushSuccess('Success, this is a success')
-// })
-
 const version = import.meta.env.PACKAGE_VERSION
 
 const leftDrawerExpanded = ref(true)
+
+const app = useApp()
 
 const editor = useAppEditor()
 
@@ -641,8 +634,6 @@ watch(routeTabs, () => {
 /**
  * Document Title
  */
-
-const app = useApp()
 
 const title = computed(() => {
   const menuTitle = app.menuInstance?.label

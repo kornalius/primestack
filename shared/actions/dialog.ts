@@ -5,7 +5,6 @@ import { sizeString } from '../interfaces/commons'
 export default {
   type: 'dialog',
   label: 'Dialog',
-  description: 'Display confirmation dialog',
   schema: Type.Object({
     title: Type.String(),
     message: Type.String(),

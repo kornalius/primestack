@@ -10,6 +10,7 @@
 
 <script setup lang="ts">
 import { shallowRef } from 'vue'
+import { Static } from '@feathersjs/typebox'
 import { Codemirror } from 'vue-codemirror'
 import { Marked } from 'marked'
 import { markedHighlight } from 'marked-highlight'
@@ -20,11 +21,16 @@ import { syntaxTree } from '@codemirror/language'
 import { json } from '@codemirror/lang-json'
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
+import { actionElementSchema } from '@/shared/schemas/actions'
+import { computeActionResults, parentAction } from '@/features/Actions/composites'
 import { useModelValue } from '@/composites/prop'
 import { useApp } from '@/features/App/store'
 import { useAppEditor } from '@/features/App/editor-store'
 import { useVariables } from '@/features/Variables/store'
 import { useTable } from '@/features/Tables/composites'
+import { useExpression } from '@/features/Expression/composites'
+
+type ActionElement = Static<typeof actionElementSchema>
 
 const props = defineProps<{
   modelValue: string | null | undefined
@@ -47,7 +53,14 @@ const variables = useVariables()
 
 const { extraFields } = useTable()
 
+const { buildCtx } = useExpression()
+
+const ctx = buildCtx()
+
 const fcts = {
+  $$: '`(path?: string): unknown | undefined`\n\n'
+    + 'Get the previous action result value',
+
   str: '`(format: string, data: object): string`\n\n'
     + 'Formats a string with format specifiers (subsequences beginning with %), \n'
     + 'the additional arguments following format are formatted and inserted in \n'
@@ -626,6 +639,17 @@ const myCompletions = (context: CompletionContext) => {
 
   if (check(['str', 'ArgList', '(', 'String'])) {
     options = []
+  } else if (check(['$$', 'ArgList', '(', 'String'])) {
+    options = []
+    const action = editor.actionElementInstance(editor.selectedActionElement)
+    if (action) {
+      // eslint-disable-next-line no-underscore-dangle
+      const actions = editor.actionInstance(editor.actionId)._actions
+      const parent = parentAction(actions, action)
+      // eslint-disable-next-line no-underscore-dangle
+      const parentActions = parent?._children as ActionElement[] || actions
+      options = toOptions(computeActionResults(parentActions, action, ctx))
+    }
   } else if (check(['val', 'ArgList', '(', 'String'])) {
     options = []
     if (app.doc && Object.keys(app.doc).length) {

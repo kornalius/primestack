@@ -4,6 +4,7 @@
   <div
     v-if="isExpr(value) || type === 'expr'"
     class="row"
+    style="cursor: default;"
   >
     <div class="col overflow-hidden ellipsis" style="max-width: 230px;">
       <property-highlight
@@ -11,6 +12,17 @@
         :disabled="disabled"
         :disabled-label="disabledLabel"
         language="javascript"
+      />
+
+      <q-btn
+        class="clear-btn"
+        :style="{ opacity: isExpr(value) || hover ? 1 : 0 }"
+        icon="mdi-close-circle"
+        color="grey-6"
+        dense
+        flat
+        round
+        @click.stop="cleanValue"
       />
     </div>
   </div>
@@ -26,16 +38,21 @@
     :disable="disabled"
     :rules="[isNameField ? checkDuplicateName : undefined]"
     :hide-bottom-space="!isNameField"
+    :clearable="hover"
     dense
     @keydown="editor.preventSystemUndoRedo"
   >
-    <template v-if="hover" #append>
+    <template #append>
       <!-- Popup edit -->
 
-      <q-icon
-        :class="{ 'cursor-pointer': !disabled, 'cursor-not-allowed': disabled }"
-        name="mdi-pencil"
-        size="xs"
+      <q-btn
+        :style="{ opacity: hover ? 1 : 0 }"
+        icon="mdi-pencil"
+        size="sm"
+        color="grey-7"
+        dense
+        flat
+        round
       >
         <q-popup-edit
           v-model="value"
@@ -50,10 +67,11 @@
             autofocus
             autogrow
             dense
+            clearable
             @keydown="editor.preventSystemUndoRedo"
           />
         </q-popup-edit>
-      </q-icon>
+      </q-btn>
     </template>
   </q-input>
 
@@ -78,10 +96,10 @@
 
     <q-btn
       v-if="value"
-      class="action-clear-btn"
+      class="clear-btn"
       :disable="disabled"
       icon="mdi-close-circle"
-      color="grey-5"
+      color="grey-6"
       flat
       dense
       round
@@ -142,6 +160,7 @@
     :disable="disabled"
     hide-bottom-space
     dense
+    clearable
     @keydown="editor.preventSystemUndoRedo"
   />
 
@@ -155,6 +174,7 @@
     :disable="disabled"
     hide-bottom-space
     dense
+    clearable
     @keydown="editor.preventSystemUndoRedo"
   />
 
@@ -168,6 +188,26 @@
     :option-label="optionLabel"
     :option-value="optionValue"
     :autocomplete="optionLabel"
+    :multiple="multiple"
+    :use-chips="multiple"
+    :outlined="property"
+    :disable="disabled"
+    dense
+    clearable
+    emit-value
+    map-options
+    options-dense
+    @keydown="editor.preventSystemUndoRedo"
+  />
+
+  <!-- Select -->
+
+  <q-select
+    v-else-if="type === 'json-keys'"
+    v-model="value"
+    :label="embedLabel ? label : undefined"
+    :options="jsonKeys"
+    :autocomplete="label"
     :multiple="multiple"
     :use-chips="multiple"
     :outlined="property"
@@ -234,6 +274,7 @@
     :disable="disabled"
     :quasar-palette="schema.quasarPalette"
     dense
+    clearable
     @keydown="editor.preventSystemUndoRedo"
   />
 
@@ -354,6 +395,18 @@
         @keydown="editor.preventSystemUndoRedo"
       />
     </q-popup-edit>
+
+    <q-btn
+      v-if="value"
+      class="clear-btn"
+      :disable="disabled"
+      icon="mdi-close-circle"
+      color="grey-6"
+      flat
+      dense
+      round
+      @click.stop="cleanValue"
+    />
   </div>
 
   <!-- Paddings -->
@@ -577,10 +630,7 @@ import { Static, TSchema } from '@feathersjs/typebox'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useI18n } from 'vue-i18n'
 import {
-  defaultValueForSchema,
-  getTypeFor,
-  optionsForSchema,
-  primaryToType,
+  defaultValueForSchema, getTypeFor, optionsForSchema, primaryToType,
 } from '@/shared/schema'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { useQuery } from '@/features/Query/composites'
@@ -667,7 +717,7 @@ const tempJson = ref()
 
 const editor = useAppEditor()
 
-const { isExpr, exprCode } = useExpression()
+const { isExpr, exprCode, clearValue } = useExpression()
 
 const { queryToString } = useQuery()
 
@@ -706,6 +756,22 @@ const type = computed((): string => {
 const options = computed((): unknown[] | undefined => {
   const p = props.schema
   return optionsForSchema(p)
+})
+
+/**
+ * Returns JSON keys from a property
+ *
+ * @return {string[]}
+ */
+const jsonKeys = computed((): string[] => {
+  const p = props.schema
+  const json = getParentProp(
+    props.parents,
+    p.jsonProp,
+  )
+  return type.value === 'json-keys'
+    ? Object.keys(json || {})
+    : []
 })
 
 interface ToggleOption {
@@ -953,6 +1019,9 @@ const fields = computed(() => (
   )
 ))
 
+/**
+ * Clear an action (remove it from the list of actions too)
+ */
 const clearAction = () => {
   editor.setActionId(undefined)
   editor.setActionEvent(undefined)
@@ -961,6 +1030,10 @@ const clearAction = () => {
     editor.removeAction(id)
   }
   value.value = undefined
+}
+
+const cleanValue = () => {
+  value.value = clearValue(type.value)
 }
 </script>
 
@@ -981,7 +1054,12 @@ const clearAction = () => {
     right: 8px
     top: 13px
 
-  & .action-clear-btn
-    position: absolute
+  & .clear-btn
     right: 24px
+
+.clear-btn
+  position: absolute
+  right: 0
+  top: 50%
+  transform: translateY(-50%)
 </style>

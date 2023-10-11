@@ -96,6 +96,7 @@ const auth = useAuth()
 
 onMounted(() => {
   editor.unselectAll()
+  editor.unselectMenu()
 })
 
 onBeforeUnmount(() => {

@@ -9,7 +9,7 @@ export default {
   component: Unsetvar,
   description: 'actions.unsetvar.description',
   childrenMessage: 'actions.unsetvar.childrenMessage',
-  exec: async ({ name, store }) => {
-    store.unsetVariable(name)
+  exec: async (args) => {
+    args.variables.unsetVariable(args.name as string)
   },
 } as TFrontAction

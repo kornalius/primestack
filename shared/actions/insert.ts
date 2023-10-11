@@ -9,7 +9,6 @@ export const fieldSchema = Type.Object({
 export default {
   type: 'insert',
   label: 'Insert',
-  description: 'Inserts a new record into a table',
   schema: Type.Object({
     tableId: Type.String({ objectid: true, tableid: true }),
     fields: Type.Array(fieldSchema),

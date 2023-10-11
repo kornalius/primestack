@@ -1,8 +1,5 @@
 import { TFrontAction } from '@/features/Actions/interface'
-// eslint-disable-next-line import/no-cycle
-import { stringToExpr } from '@/features/Expression/composites'
 import globalSetvar from '@/shared/actions/setvar'
-import { useVariables } from '@/features/Variables/store'
 import Setvar from '../components/setvar.vue'
 
 export default {
@@ -13,7 +10,6 @@ export default {
   description: 'actions.setvar.description',
   childrenMessage: 'actions.setvar.childrenMessage',
   exec: async (args) => {
-    const variables = useVariables()
-    variables.set(args.name as string, stringToExpr(args.value as string))
+    args.variables.set(args.name as string, args.value as string)
   },
 } as TFrontAction

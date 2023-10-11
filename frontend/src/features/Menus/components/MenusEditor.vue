@@ -10,12 +10,12 @@
     <template #default="{ value: m }">
       <q-item
         class="Drawer__item left-drawer-expanded"
-        :class="{ selected: editor.selectedMenu === (m as any)._id }"
+        :class="{ selected: $route.path.startsWith(menuUrl((m as any)._id)) }"
         tag="router-link"
         :to="(m as any).href || menuUrl((m as any)._id)"
         :target="(m as any).target as string"
         clickable
-        @click.stop="selectMenu((m as any)._id)"
+        @click.stop="editor.selectMenu((m as any)._id)"
       >
         <q-item-section avatar>
           <q-icon :name="(m as any).icon" :color="(m as any).color" />
@@ -38,6 +38,7 @@ import { useModelValue } from '@/composites/prop'
 import { menuSchema } from '@/shared/schemas/menu'
 import { useUrl } from '@/composites/url'
 import { useAppEditor } from '@/features/App/editor-store'
+import { useApp } from '@/features/App/store'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 
 type Menu = Static<typeof menuSchema>
@@ -55,17 +56,15 @@ const menus = useModelValue(props, emit)
 
 const { menuUrl } = useUrl()
 
+const app = useApp()
+
 const editor = useAppEditor()
 
-const selectMenu = (id: string): void => {
-  editor.selectMenu(id)
-  const el: HTMLElement = document.querySelector(`a[href="${menuUrl(id)}"]`)
-  if (el) {
-    el.click()
-  }
-}
-
 onMounted(() => {
-  selectMenu(menus.value?.[0]?._id)
+  const tid = app.tabId
+  const menuId = app.menuId || menus.value?.[0]?._id
+  const menu = menus.value.find((m) => m._id === menuId)
+  editor.selectMenu(menuId)
+  editor.selectTab(tid || menu?.tabs?.[0]?._id)
 })
 </script>

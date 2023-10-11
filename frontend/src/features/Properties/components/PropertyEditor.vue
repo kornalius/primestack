@@ -22,7 +22,7 @@
 
   <div
     v-if="horizontal"
-    class="col"
+    class="col relative-position"
   >
     <property-schema-field
       v-model="value"
@@ -46,6 +46,7 @@
     <q-btn
       v-if="showExpr"
       class="q-mr-sm"
+      :style="{ opacity: isExpr(value) || hover ? 1 : 0 }"
       :disable="disabled"
       :color="isExpr(value) ? 'orange-8' : 'grey-5'"
       icon="mdi-flash"
@@ -61,6 +62,7 @@
         @before-hide="saveExpr"
       >
         <code-editor
+          v-if="typeof value === 'string'"
           v-model="value"
           style="width: 600px; height: 150px;"
           lang-js
@@ -113,7 +115,7 @@
 
         <!-- Value column -->
 
-        <div class="col">
+        <div class="col relative-position">
           <property-schema-field
             v-model="value"
             v-model:forced-types="currentForcedTypes"
@@ -133,8 +135,9 @@
 
         <div class="col-auto" style="width: 24px;">
           <q-btn
-            v-if="showExpr && hover"
+            v-if="showExpr"
             class="q-mr-sm"
+            :style="{ opacity: isExpr(value) || hover ? 1 : 0 }"
             :disable="disabled"
             :color="isExpr(value) ? 'orange-8' : 'grey-5'"
             icon="mdi-flash"
@@ -150,6 +153,7 @@
               @before-hide="saveExpr"
             >
               <code-editor
+                v-if="typeof value === 'string'"
                 v-model="value"
                 style="width: 600px; height: 150px;"
                 lang-js
@@ -377,7 +381,12 @@ const value = useModelValue(props, emit)
 
 const editor = useAppEditor()
 
-const { isExpr, exprCode, stringToExpr } = useExpression()
+const {
+  isExpr,
+  exprCode,
+  stringToExpr,
+  valueToExpr,
+} = useExpression()
 
 const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
 
@@ -503,6 +512,8 @@ const nonExpandable = computed(() => !['object', 'array'].includes(type.value))
 const loadExpr = () => {
   if (isExpr(value.value)) {
     value.value = exprCode(value.value)
+  } else {
+    value.value = valueToExpr(value.value)
   }
 }
 

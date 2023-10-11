@@ -3,10 +3,10 @@ import { TAction } from '../interfaces/actions'
 import ExType from '../extypes'
 
 export default {
-  type: 'remove',
-  label: 'Remove',
+  type: 'extract',
+  label: 'Extract',
   schema: Type.Object({
-    tableId: Type.String({ objectid: true, tableid: true }),
-    query: Type.Optional(ExType.Query()),
+    value: ExType.JSON(),
+    fields: Type.Array(Type.String({ jsonkeys: true, jsonProp: '../value' })),
   }),
 } as TAction
