@@ -1,10 +1,13 @@
 <template>
   <div>
     <div class="row">
-      <div class="col-auto">
-        into table:
+      <div class="col-auto text-bold">
+        Patch
       </div>
-      <div class="col-auto text-bold q-ml-xs text-italic">
+      <div class="col-auto q-ml-xs">
+        into table
+      </div>
+      <div class="col-auto q-ml-xs text-weight-medium text-italic">
         {{ tableName }}
       </div>
     </div>

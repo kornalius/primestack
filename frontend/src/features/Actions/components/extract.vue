@@ -19,7 +19,7 @@
           </div>
 
           <div class="col q-ml-sm">
-            {{ k }}
+            {{ exprToString(k) }}
           </div>
         </div>
       </div>
@@ -32,6 +32,8 @@ import { computed } from 'vue'
 import hljs from 'highlight.js'
 import json from 'highlight.js/lib/languages/json'
 import { AnyData } from '@/shared/interfaces/commons'
+// eslint-disable-next-line import/no-cycle
+import { exprToString } from '@/features/Expression/composites'
 import PropertyHighlight from '@/features/Properties/components/PropertyHighlight.vue'
 
 hljs.registerLanguage('json', json)

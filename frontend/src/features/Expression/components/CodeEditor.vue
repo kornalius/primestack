@@ -58,7 +58,7 @@ const { buildCtx } = useExpression()
 const ctx = buildCtx()
 
 const fcts = {
-  $$: '`(path?: string): unknown | undefined`\n\n'
+  $result: '`(path?: string): unknown | undefined`\n\n'
     + 'Get the previous action result value',
 
   str: '`(format: string, data: object): string`\n\n'
@@ -639,7 +639,7 @@ const myCompletions = (context: CompletionContext) => {
 
   if (check(['str', 'ArgList', '(', 'String'])) {
     options = []
-  } else if (check(['$$', 'ArgList', '(', 'String'])) {
+  } else if (check(['$result', 'ArgList', '(', 'String'])) {
     options = []
     const action = editor.actionElementInstance(editor.selectedActionElement)
     if (action) {

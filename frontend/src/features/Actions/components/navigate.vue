@@ -4,8 +4,8 @@
       to
     </div>
 
-    <div class="col-auto q-ml-xs text-bold">
-      {{ url }}
+    <div class="col-auto q-ml-xs text-weight-medium">
+      {{ exprToString(url) }}
     </div>
   </div>
 </template>
@@ -13,6 +13,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useUrl } from '@/composites/url'
+// eslint-disable-next-line import/no-cycle
+import { exprToString } from '@/features/Expression/composites'
 
 const props = defineProps<{
   modelValue: unknown

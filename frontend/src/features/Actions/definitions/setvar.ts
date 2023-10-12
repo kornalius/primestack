@@ -5,8 +5,8 @@ import Setvar from '../components/setvar.vue'
 export default {
   ...globalSetvar,
   icon: 'mdi-pencil',
-  color: 'blue-6',
   component: Setvar,
+  hideTitle: true,
   description: 'actions.setvar.description',
   childrenMessage: 'actions.setvar.childrenMessage',
   exec: async (args) => {

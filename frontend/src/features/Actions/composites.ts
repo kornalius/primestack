@@ -66,23 +66,21 @@ export const execAction = async (a: ActionElement, args: AnyData): Promise<AnyDa
  *
  * @returns {Promise<AnyData[]>}
  */
-export const exec = async (list: ActionElement[], args: AnyData): Promise<AnyData[]> => {
+export const exec = async (list: ActionElement[], args: AnyData): Promise<void> => {
   const variables = useVariables()
   const oldPrevResult = variables.getRaw('_prevResult')
   const old = variables.getRaw('_scoped')
   variables.setRaw('_scoped', args.$scoped)
-  const promises = Promise.all(
-    list.map(async (a) => {
-      const res = await execAction(a, args)
-      if (res !== undefined) {
-        variables.setRaw('_prevResult', res)
-      }
-      return res
-    }),
-  )
+  for (let i = 0; i < list.length; i++) {
+    const a = list[i]
+    // eslint-disable-next-line no-await-in-loop
+    const res = await execAction(a, args)
+    if (res !== undefined) {
+      variables.setRaw('_prevResult', res)
+    }
+  }
   variables.setRaw('_scoped', old)
   variables.setRaw('_prevResult', oldPrevResult)
-  return promises
 }
 
 /**

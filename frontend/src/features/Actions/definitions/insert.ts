@@ -12,8 +12,8 @@ type Table = Static<typeof tableSchema>
 export default {
   ...globalInsert,
   icon: 'mdi-database-plus',
-  color: 'green-5',
   component: Insert,
+  hideTitle: true,
   description: 'actions.insert.description',
   childrenMessage: 'actions.insert.childrenMessage',
   exec: async (ctx) => {

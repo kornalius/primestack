@@ -9,7 +9,7 @@
 
     <div class="col-auto">
       <q-btn flat disable dense>
-        DISMISS
+        {{ $t('buttons.dismiss') }}
       </q-btn>
     </div>
   </div>

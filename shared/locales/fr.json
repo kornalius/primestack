@@ -145,13 +145,17 @@
   },
   "actions": {
     "title": "Action",
-    "dialog": {
-      "description": "Affiche un dialogue à l'écran avec des boutons pour confirmation de l'utilisateur",
-      "childrenMessage": "Quand le bouton 'OK' est appuyé..."
+    "cancel": {
+      "description": "Annule une pause ou un interval",
+      "childrenMessage": ""
     },
     "console": {
       "description": "Écrit un message directement dans la console du fureteur",
       "childrenMessage": ""
+    },
+    "dialog": {
+      "description": "Affiche un dialogue à l'écran avec des boutons pour confirmation de l'utilisateur",
+      "childrenMessage": "Quand le bouton 'OK' est appuyé..."
     },
     "extract": {
       "description": "Extrait des clées à partir d'un objet JSON",
@@ -172,6 +176,10 @@
     "insert": {
       "description": "Insère un enregistrement dans une table",
       "childrenMessage": ""
+    },
+    "interval": {
+      "description": "Exécuter des actions à intervals réguliers",
+      "childrenMessage": "Exécuter ces actions à intervals réguliers..."
     },
     "merge": {
       "description": "Combine deux objets JSON ensemble",
@@ -196,6 +204,10 @@
     "setvar": {
       "description": "Change la valeur d'une variable",
       "childrenMessage": ""
+    },
+    "timeout": {
+      "description": "Exécuter des actions après un certain temps",
+      "childrenMessage": "Exécuter ces actions après un certain temps..."
     },
     "unsetvar": {
       "description": "Efface la valeur d'une variable",

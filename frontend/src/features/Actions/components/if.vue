@@ -1,7 +1,10 @@
 <template>
   <div class="q-mb-sm q-mr-sm">
-    <div class="row">
-      <div class="col">
+    <div class="row items-center">
+      <div class="col-auto text-bold">
+        If
+      </div>
+      <div class="col q-ml-xs">
         <property-highlight
           :model-value="exprCode(modelValue.expr)"
           language="javascript"

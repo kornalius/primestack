@@ -14,6 +14,9 @@ import insert from './insert'
 import patch from './patch'
 import remove from './remove'
 import ifExpr from './if'
+import interval from './interval'
+import timeout from './timeout'
+import cancel from './cancel'
 
 const separator = (label: string, icon: string, color?: string): TFrontAction => ({
   type: '$separator',
@@ -33,6 +36,9 @@ export const actions = [
   extract,
   separator('actions.separators.flow', 'mdi-source-branch', 'purple-2'),
   ifExpr,
+  timeout,
+  interval,
+  cancel,
   separator('actions.separators.navigation', 'mdi-open-in-app', 'blue-2'),
   navigate,
   separator('actions.separators.variables', 'mdi-variable', 'red-2'),

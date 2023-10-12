@@ -1,18 +1,18 @@
 <template>
   <div class="row items-center">
-    <div v-if="modelValue.name" class="col-auto text-italic">
-      set
+    <div class="col-auto text-bold">
+      Set
     </div>
 
-    <div v-if="modelValue.name" class="col-auto q-ml-xs text-bold">
-      {{ modelValue.name }}
+    <div v-if="modelValue.name" class="col-auto text-weight-medium">
+      <span class="q-chip q-chip--dense">{{ modelValue.name }}</span>
     </div>
 
-    <div v-if="modelValue.value" class="col-auto q-ml-sm text-italic">
+    <div v-if="modelValue.value" class="col-auto">
       to
     </div>
 
-    <div v-if="modelValue.value" class="col-auto q-ml-xs text-bold">
+    <div v-if="modelValue.value" class="col-auto q-ml-xs text-italic">
       {{ exprToString(modelValue.value) }}
     </div>
   </div>

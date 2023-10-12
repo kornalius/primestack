@@ -9,7 +9,6 @@ export default {
   component: Console,
   description: 'actions.console.description',
   childrenMessage: 'actions.console.childrenMessage',
-  color: 'grey-9',
   hideTitle: true,
   exec: async (args) => {
     // eslint-disable-next-line no-console

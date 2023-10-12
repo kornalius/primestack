@@ -159,7 +159,7 @@ export const buildCtx = (extra?: AnyData) => {
        *
        * @returns {unknown|undefined}
        */
-      $$: (path?: string): unknown | undefined => {
+      $result: (path?: string): unknown | undefined => {
         const r = variables.getRaw('_prevResult')
         return !path
           ? r

@@ -1,11 +1,11 @@
 <template>
   <div class="row items-center">
-    <div v-if="modelValue.name" class="col-auto text-italic">
-      get
+    <div v-if="modelValue.name" class="col-auto text-bold">
+      Get
     </div>
 
-    <div v-if="modelValue.name" class="col-auto q-ml-xs text-bold">
-      {{ modelValue.name }}
+    <div v-if="modelValue.name" class="col-auto text-weight-medium">
+      <span class="q-chip q-chip--dense">{{ modelValue.name }}</span>
     </div>
   </div>
 </template>

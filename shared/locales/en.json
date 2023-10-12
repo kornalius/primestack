@@ -153,13 +153,17 @@
   },
   "actions": {
     "title": "Action",
-    "dialog": {
-      "description": "Displays a dialog on the screen with buttons for user's confirmation",
-      "childrenMessage": "When user press the OK button..."
+    "cancel": {
+      "description": "Cancel a timeout or an interval",
+      "childrenMessage": ""
     },
     "console": {
       "description": "Output messages directly in the browser's console",
       "childrenMessage": ""
+    },
+    "dialog": {
+      "description": "Displays a dialog on the screen with buttons for user's confirmation",
+      "childrenMessage": "When user press the OK button..."
     },
     "extract": {
       "description": "Extract keys from a JSON object",
@@ -180,6 +184,10 @@
     "insert": {
       "description": "Insert a new record in a table",
       "childrenMessage": ""
+    },
+    "interval": {
+      "description": "Run children actions at intervals",
+      "childrenMessage": "Execute these actions at intervals..."
     },
     "merge": {
       "description": "Merge two JSON object together",
@@ -204,6 +212,10 @@
     "setvar": {
       "description": "Set a variable value",
       "childrenMessage": ""
+    },
+    "timeout": {
+      "description": "Run children actions after some time",
+      "childrenMessage": "Execute these actions after some time..."
     },
     "unsetvar": {
       "description": "Unset a variable",

@@ -2,6 +2,7 @@ import { Static } from '@feathersjs/typebox'
 import { AnyData } from '@/shared/interfaces/commons'
 import { actionElementSchema } from '@/shared/schemas/actions'
 import globalDialog from '@/shared/actions/dialog'
+import { anyToString } from '@/composites/utilities'
 import { TFrontAction } from '../interface'
 // eslint-disable-next-line import/no-cycle
 import { exec } from '../composites'
@@ -19,9 +20,9 @@ export default {
   hideTitle: true,
   exec: async (args) => {
     args.quasar.dialog({
-      title: args.title as string,
+      title: anyToString(args.title),
       persistent: true,
-      message: args.message as string,
+      message: anyToString(args.message),
       ok: args.ok as AnyData,
       cancel: args.cancel as AnyData,
     }).onOk(() => {

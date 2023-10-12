@@ -15,8 +15,8 @@ type Table = Static<typeof tableSchema>
 export default {
   ...globalPatch,
   icon: 'mdi-database-edit',
-  color: 'orange-8',
   component: Patch,
+  hideTitle: true,
   description: 'actions.patch.description',
   childrenMessage: 'actions.patch.childrenMessage',
   exec: async (ctx) => {

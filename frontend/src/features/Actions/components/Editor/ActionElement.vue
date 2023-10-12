@@ -6,6 +6,7 @@
         selected,
         hovered: editor.isHovered(actionElement._id),
       }"
+      :style="`padding: 4px 4px 4px ${actionColor ? '24px' : '4px'}`"
       @mouseover.stop="editor.hover(actionElement._id)"
       @mouseleave="editor.unhover()"
       @focus.stop="editor.hover(actionElement._id)"
@@ -75,14 +76,14 @@
         class="result-icon shadow-4"
         style="background: white; border-radius: 50%;"
         name="mdi-arrow-down-bold-circle"
-        color="cyan-7"
+        color="green-7"
         size="sm"
       />
     </div>
 
     <div
       v-if="action.acceptsChildren"
-      class="q-ml-lg"
+      class="q-ml-xl"
     >
       <actions-list-editor
         v-model="actionElement._children"
@@ -155,7 +156,7 @@ const actionHideTitle = computed(() => (
  * @returns {ComputedRef<string>}
  */
 const actionColor = computed(() => (
-  stringValue(action.value?.color, actionElement.value) || 'grey-2'
+  stringValue(action.value?.color, actionElement.value)
 ))
 
 /**
@@ -215,7 +216,6 @@ const actionChildrenMessage = computed(() => (
 .action-element
   position: relative
   margin: 8px 0
-  padding: 4px 4px 4px 24px
   width: 100%
   border-radius: 2px
   outline: 1px solid $blue-grey-2
@@ -245,4 +245,5 @@ const actionChildrenMessage = computed(() => (
   bottom: 0
   z-index: 1000
   transform: translate(-50%, 65%)
+  opacity: .65
 </style>

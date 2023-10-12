@@ -5,8 +5,8 @@ import Getvar from '../components/getvar.vue'
 export default {
   ...globalGetvar,
   icon: 'mdi-progress-pencil',
-  color: 'blue-6',
   component: Getvar,
+  hideTitle: true,
   description: 'actions.getvar.description',
   childrenMessage: 'actions.getvar.childrenMessage',
   exec: async (args) => (

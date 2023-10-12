@@ -238,4 +238,18 @@ export const deepKeys = (o: AnyData): string[] => {
   return keys
 }
 
+/**
+ * Convert any value into a user-friendly string
+ *
+ * @param o Value to convert
+ *
+ * @returns {string}
+ */
+export const anyToString = (o: unknown): string => {
+  if (typeof o === 'string') {
+    return o
+  }
+  return JSON.stringify(o, undefined, 2)
+}
+
 export default {}

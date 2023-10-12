@@ -10,7 +10,7 @@
 
       <div class="col-auto q-mx-md">
         <div>
-          <q-icon name="mdi-table-merge-cells" size="sm" />
+          <q-icon name="mdi-arrow-left-right-bold" size="sm" />
         </div>
       </div>
 

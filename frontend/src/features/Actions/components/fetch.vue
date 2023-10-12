@@ -4,13 +4,16 @@
       from
     </div>
 
-    <div class="col-auto q-ml-xs text-bold">
-      {{ modelValue.href }}
+    <div class="col-auto q-ml-xs text-weight-medium">
+      {{ exprToString(modelValue.href) }}
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+// eslint-disable-next-line import/no-cycle
+import { exprToString } from '@/features/Expression/composites'
+
 defineProps<{
   modelValue: unknown
 }>()

@@ -5,8 +5,8 @@ import Unsetvar from '../components/unsetvar.vue'
 export default {
   ...globalUnsetvar,
   icon: 'mdi-pencil-remove',
-  color: 'red-5',
   component: Unsetvar,
+  hideTitle: true,
   description: 'actions.unsetvar.description',
   childrenMessage: 'actions.unsetvar.childrenMessage',
   exec: async (args) => {

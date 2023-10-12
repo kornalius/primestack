@@ -5,7 +5,6 @@ import Navigate from '../components/navigate.vue'
 export default {
   ...globalNavigate,
   icon: 'mdi-earth-arrow-right',
-  color: 'blue-2',
   component: Navigate,
   description: 'actions.navigate.description',
   childrenMessage: 'actions.navigate.childrenMessage',

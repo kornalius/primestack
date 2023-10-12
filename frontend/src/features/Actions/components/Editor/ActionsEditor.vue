@@ -83,7 +83,7 @@
       >
         <div class="row title items-center q-pa-xs q-mb-sm">
           <div class="col-auto">
-            <span class="text-h6">
+            <span class="text-caption text-weight-medium" style="font-size: 20px;">
               {{ title }}
             </span>
           </div>
@@ -108,7 +108,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import draggable from 'vuedraggable'
 import { useAppEditor } from '@/features/App/editor-store'
@@ -151,9 +151,9 @@ const visibleActions = computed(() => actions.filter((a) => !a.hidden))
 
 const cloneAction = (action: TAction) => editor.createActionElement(action)
 
-const selectedField = computed(() => editor.formFieldInstance(editor.selected))
+const selectedField = ref()
 
-const selectedActionEvent = computed(() => editor.actionEvent)
+const selectedActionEvent = ref()
 
 const eventArgs = computed(() => {
   // eslint-disable-next-line no-underscore-dangle
@@ -188,6 +188,11 @@ const close = () => {
   editor.setActionEvent(undefined)
   editor.setActionId(undefined)
 }
+
+onMounted(() => {
+  selectedField.value = editor.formFieldInstance(editor.selected)
+  selectedActionEvent.value = editor.actionEvent
+})
 </script>
 
 <style scoped lang="sass">
@@ -198,5 +203,5 @@ const close = () => {
   height: 30px
 
 .title
-  background: repeating-linear-gradient(-55deg, #ffe15f, #ffe15f 10px, #b9b7a9 10px, #b9b7a9 20px)
+  background: repeating-linear-gradient(-55deg, rgba(255, 221, 93, .25), rgba(255, 255, 95, .25) 10px, #D5D3C5 10px, #D5D3C5 20px)
 </style>
