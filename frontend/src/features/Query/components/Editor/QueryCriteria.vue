@@ -89,7 +89,7 @@
         >
           <code-editor
             v-model="field.value"
-            style="width: 600px; height: 150px;"
+            class="code-editor"
             lang-js
             autofocus
             @keydown="editor.preventSystemUndoRedo"

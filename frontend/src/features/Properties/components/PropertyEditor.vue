@@ -62,9 +62,8 @@
         @before-hide="saveExpr"
       >
         <code-editor
-          v-if="typeof value === 'string'"
-          v-model="value"
-          style="width: 600px; height: 150px;"
+          v-model="tempCode"
+          class="code-editor"
           lang-js
           autofocus
           @keydown="editor.preventSystemUndoRedo"
@@ -153,9 +152,8 @@
               @before-hide="saveExpr"
             >
               <code-editor
-                v-if="typeof value === 'string'"
-                v-model="value"
-                style="width: 600px; height: 150px;"
+                v-model="tempCode"
+                class="code-editor"
                 lang-js
                 autofocus
                 @keydown="editor.preventSystemUndoRedo"
@@ -385,7 +383,6 @@ const {
   isExpr,
   exprCode,
   stringToExpr,
-  valueToExpr,
 } = useExpression()
 
 const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
@@ -506,21 +503,19 @@ const changeType = (newType: string) => {
  */
 const nonExpandable = computed(() => !['object', 'array'].includes(type.value))
 
+const tempCode = ref()
+
 /**
  * Convert the property value expression into the code editor
  */
 const loadExpr = () => {
-  if (isExpr(value.value)) {
-    value.value = exprCode(value.value)
-  } else {
-    value.value = valueToExpr(value.value)
-  }
+  tempCode.value = exprCode(value.value) || ''
 }
 
 /**
  * Convert the expression from the code editor back into the property value
  */
 const saveExpr = () => {
-  value.value = stringToExpr(value.value)
+  value.value = stringToExpr(tempCode.value)
 }
 </script>

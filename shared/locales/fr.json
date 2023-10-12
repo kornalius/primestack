@@ -157,6 +157,10 @@
       "description": "Extrait des clées à partir d'un objet JSON",
       "childrenMessage": ""
     },
+    "fetch": {
+      "description": "Récupérer une ressource sur le réseau\n",
+      "childrenMessage": ""
+    },
     "getvar": {
       "description": "Obtiens la valeur d'une variable",
       "childrenMessage": ""
@@ -203,7 +207,8 @@
       "navigation": "Navigation",
       "variables": "Variables",
       "table": "Table",
-      "json": "JSON"
+      "json": "JSON",
+      "network": "Réseau"
     }
   },
   "editor": {

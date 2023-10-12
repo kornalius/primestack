@@ -384,12 +384,13 @@
       :title="label"
       :disable="disabled"
       auto-save
-      @before-show="tempJson = JSON.stringify(value, undefined, 2)"
+      @before-show="tempJson = JSON.stringify(value || {}, undefined, 2)"
       @before-hide="value = JSON.parse(tempJson)"
     >
       <code-editor
         v-model="tempJson"
-        style="width: 600px; height: 400px;"
+        class="code-editor"
+        style="height: 400px;"
         lang-json
         autofocus
         @keydown="editor.preventSystemUndoRedo"
@@ -717,7 +718,7 @@ const tempJson = ref()
 
 const editor = useAppEditor()
 
-const { isExpr, exprCode, clearValue } = useExpression()
+const { isExpr, exprCode } = useExpression()
 
 const { queryToString } = useQuery()
 
@@ -1033,7 +1034,7 @@ const clearAction = () => {
 }
 
 const cleanValue = () => {
-  value.value = clearValue(type.value)
+  value.value = undefined
 }
 </script>
 

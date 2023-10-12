@@ -6,6 +6,7 @@ import notify from './notify'
 import navigate from './navigate'
 import extract from './extract'
 import merge from './merge'
+import fetch from './fetch'
 import getvar from './getvar'
 import setvar from './setvar'
 import unsetvar from './unsetvar'
@@ -42,4 +43,6 @@ export const actions = [
   insert,
   patch,
   remove,
+  separator('actions.separators.network', 'mdi-wan', 'pink-2'),
+  fetch,
 ]

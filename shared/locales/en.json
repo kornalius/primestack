@@ -165,6 +165,10 @@
       "description": "Extract keys from a JSON object",
       "childrenMessage": ""
     },
+    "fetch": {
+      "description": "Fetch a resource from the network",
+      "childrenMessage": ""
+    },
     "getvar": {
       "description": "Get a variable value",
       "childrenMessage": ""
@@ -211,7 +215,8 @@
       "navigation": "Navigation",
       "variables": "Variables",
       "table": "Table",
-      "json": "JSON"
+      "json": "JSON",
+      "network": "Network"
     }
   },
   "editor": {
