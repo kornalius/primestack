@@ -27,7 +27,13 @@
       />
     </div>
 
-    <div class="col">
+    <div
+      class="col relative-position"
+      @mouseover.stop="hover = true"
+      @mouseleave="hover = false"
+      @focus.stop="hover = true"
+      @blur="hover = false"
+    >
       <div v-if="showValue">
         <!-- Expression -->
 
@@ -39,6 +45,17 @@
           <property-highlight
             :model-value="exprCode(field.value)"
             language="javascript"
+          />
+
+          <q-btn
+            class="clear-btn"
+            :style="{ opacity: hover ? 1 : 0 }"
+            icon="mdi-close-circle"
+            color="grey-6"
+            dense
+            flat
+            round
+            @click.stop="clearValue"
           />
         </div>
 
@@ -89,7 +106,7 @@
         >
           <code-editor
             v-model="field.value"
-            class="code-editor"
+            style="width: 600px; height: 150px;"
             lang-js
             autofocus
             @keydown="editor.preventSystemUndoRedo"
@@ -101,7 +118,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { Static, TSchema } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
 import { tableFieldSchema } from '@/shared/schemas/table'
@@ -130,6 +147,8 @@ const emit = defineEmits<{
 const field = useModelValue(props, emit)
 
 const editor = useAppEditor()
+
+const hover = ref(false)
 
 const { isExpr, exprCode, stringToExpr } = useExpression()
 
@@ -175,4 +194,16 @@ const saveExpr = () => {
     field.value.value = stringToExpr(field.value.value)
   }
 }
+
+const clearValue = () => {
+  field.value.value = undefined
+}
 </script>
+
+<style scoped lang="sass">
+.clear-btn
+  position: absolute
+  right: 0
+  top: 50%
+  transform: translateY(-50%)
+</style>

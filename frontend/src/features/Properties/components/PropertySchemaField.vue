@@ -390,7 +390,7 @@
       <code-editor
         v-model="tempJson"
         class="code-editor"
-        style="height: 400px;"
+        style="width: 600px; height: 400px;"
         lang-json
         autofocus
         @keydown="editor.preventSystemUndoRedo"

@@ -63,7 +63,7 @@
       >
         <code-editor
           v-model="tempCode"
-          class="code-editor"
+          style="width: 600px; height: 150px;"
           lang-js
           autofocus
           @keydown="editor.preventSystemUndoRedo"
@@ -153,7 +153,7 @@
             >
               <code-editor
                 v-model="tempCode"
-                class="code-editor"
+                style="width: 600px; height: 150px;"
                 lang-js
                 autofocus
                 @keydown="editor.preventSystemUndoRedo"
