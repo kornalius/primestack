@@ -90,143 +90,7 @@
           </q-tooltip>
         </q-btn>
 
-        <q-btn
-          v-if="auth.authenticated"
-          icon="mdi-account-circle"
-          aria-label="Menu"
-          flat
-          dense
-          round
-        >
-          <q-tooltip :delay="500">
-            {{ $t('app.user_menu.tooltip') }}
-          </q-tooltip>
-
-          <q-menu max-width="400px" fit>
-            <div class="row q-pa-md q-gutter-sm items-center">
-              <div class="col-auto">
-                <q-btn
-                  icon="mdi-magnify"
-                  color="grey-7"
-                  size="sm"
-                  flat
-                  round
-                  v-close-popup
-                >
-                  <q-tooltip :delay="500">
-                    {{ $t('app.search.tooltip') }}
-                  </q-tooltip>
-                </q-btn>
-              </div>
-
-              <div class="col-auto">
-                <q-btn
-                  v-if="(auth.userRights as AnyData).maxes.maxEdits === -1"
-                  :color="editor.active ? 'red-7' : 'blue-4'"
-                  :disable="editor.active"
-                  icon="mdi-pencil-ruler"
-                  size="sm"
-                  flat
-                  round
-                  v-close-popup
-                  @click="editor.startEdit"
-                >
-                  <q-tooltip :delay="500">
-                    {{ $t('app.editor_toggle.tooltip') }}
-                  </q-tooltip>
-                </q-btn>
-              </div>
-
-              <div class="col-auto">
-                <q-btn
-                  icon="mdi-bell-outline"
-                  color="orange-7"
-                  size="sm"
-                  flat
-                  round
-                  v-close-popup
-                >
-                  <q-tooltip :delay="500">
-                    {{ $t('app.notifications.tooltip') }}
-                  </q-tooltip>
-                </q-btn>
-              </div>
-
-              <div class="col">
-                <q-btn
-                  color="green-7"
-                  size="sm"
-                  :label="$t('app.upgrade.title')"
-                  no-caps
-                  outline
-                  v-close-popup
-                >
-                  <q-tooltip :delay="500">
-                    {{ $t('app.upgrade.tooltip') }}
-                  </q-tooltip>
-                </q-btn>
-              </div>
-            </div>
-
-            <q-separator />
-
-            <div class="row q-pa-md q-gutter-sm items-center">
-              <div class="col-auto">
-                <q-skeleton type="QAvatar" size="50px" animation="none" />
-              </div>
-              <div class="col">
-                <div class="row">
-                  <span class="text-bold">{{ auth.username }}</span>
-                </div>
-                <div class="row">
-                  <span>{{ (auth as AnyData).userEmail }}</span>
-                </div>
-              </div>
-            </div>
-
-            <q-separator />
-
-            <q-list>
-              <q-item
-                clickable
-                v-close-popup
-                @click="profileClick"
-              >
-                <q-tooltip :delay="500">
-                  {{ $t('app.profile.tooltip') }}
-                </q-tooltip>
-
-                <q-item-section avatar>
-                  <q-icon name="mdi-account-edit" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>
-                    {{ $t('app.profile.title') }}
-                  </q-item-label>
-                </q-item-section>
-              </q-item>
-
-              <q-item
-                clickable
-                v-close-popup
-                @click="logout"
-              >
-                <q-tooltip :delay="500">
-                  {{ $t('app.logout.tooltip') }}
-                </q-tooltip>
-
-                <q-item-section avatar>
-                  <q-icon name="mdi-logout" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>
-                    {{ $t('app.logout.title') }}
-                  </q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-menu>
-        </q-btn>
+        <user-menu />
       </q-toolbar>
     </q-header>
 
@@ -414,6 +278,7 @@ import { useUrl } from '@/composites/url'
 import { useFeathersService } from '@/composites/feathers'
 import { useI18n } from 'vue-i18n'
 import { useExpression } from '@/features/Expression/composites'
+import { useStats } from '@/features/Stats/store'
 import { tabSchema } from '@/shared/schemas/menu'
 import { queryToMongo } from '@/features/Query/composites'
 import { AnyData } from '@/shared/interfaces/commons'
@@ -422,7 +287,7 @@ import SnacksDisplay from '@/features/Snacks/components/Snacks.vue'
 import TabsEditor from '@/features/Tabs/components/TabsEditor.vue'
 import MenusEditor from '@/features/Menus/components/MenusEditor.vue'
 import AppProperties from '@/features/App/components/AppProperties.vue'
-import { useStats } from '@/features/Stats/store'
+import UserMenu from '@/features/App/components/UserMenu.vue'
 
 type Tab = Static<typeof tabSchema>
 
@@ -537,20 +402,6 @@ watch(() => auth.authenticated, () => {
     router.push('/login')
   }
 })
-
-/**
- * Go to the profile view
- */
-const profileClick = () => {
-  router.push('/profile')
-}
-
-/**
- * Go to the logout view
- */
-const logout = () => {
-  router.push('/logout')
-}
 
 /**
  * Hide the UI (drawer, topbar etc...) when not authenticated or in the logout route

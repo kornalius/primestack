@@ -274,6 +274,9 @@
       "title": "Déconnexion",
       "tooltip": "Déconnexion"
     },
+    "language": {
+      "tooltip": "Changer la langue"
+    },
     "no_results": "Aucun résultat"
   },
   "expressions": {
@@ -479,5 +482,9 @@
       "pctEmpty": "% {{field}} vides",
       "pctNotempty": "% {{field}} remplis"
     }
+  },
+  "languages": {
+    "en": "Anglais",
+    "fr": "Français"
   }
 }

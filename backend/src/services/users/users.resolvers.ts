@@ -12,7 +12,10 @@ export default {
       password: passwordHash({ strategy: 'local' })
     },
     $patch: {
-      password: passwordHash({ strategy: 'local' })
+      password: passwordHash({ strategy: 'local' }),
+      rights: () => undefined,
+      _plan: () => undefined,
+      _group: () => undefined,
     },
   },
   result: {

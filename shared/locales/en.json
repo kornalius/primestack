@@ -282,6 +282,9 @@
       "title": "Logout",
       "tooltip": "Logout"
     },
+    "language": {
+      "tooltip": "Change language"
+    },
     "no_results": "No Results"
   },
   "expressions": {
@@ -487,5 +490,9 @@
       "pctEmpty": "Empty {{field}} %",
       "pctNotempty": "Non empty {{field}} %"
     }
+  },
+  "languages": {
+    "en": "English",
+    "fr": "French"
   }
 }

@@ -1,16 +1,20 @@
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { defineStore } from 'pinia'
 import { Static } from '@feathersjs/typebox'
-import { useFeathersService } from '@/composites/feathers'
+import { ServiceType, useFeathersService } from '@/composites/feathers'
 import { tableSchema } from '@/shared/schemas/table'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
 import { formSchema } from '@/shared/schemas/form'
+import { schema as userSchema } from '@/shared/schemas/user'
 import { AnyData } from '@/shared/interfaces/commons'
+import { useAuth } from '@/features/Auth/store'
 
 type Table = Static<typeof tableSchema>
 type Menu = Static<typeof menuSchema>
 type Form = Static<typeof formSchema>
 type Tab = Static<typeof tabSchema>
+type User = Static<typeof userSchema>
 
 export const useApp = defineStore('app', () => {
   const states = ref({
@@ -20,6 +24,7 @@ export const useApp = defineStore('app', () => {
     tableId: undefined,
     doc: undefined,
     selection: [],
+    locale: (localStorage.getItem('locale') || navigator.language || 'en').substring(0, 2),
   })
 
   const menuId = computed(() => states.value.menuId)
@@ -35,6 +40,23 @@ export const useApp = defineStore('app', () => {
   const selection = computed(() => states.value.selection)
 
   const hasSelection = computed(() => states.value.selection.length > 0)
+
+  const locale = computed(() => states.value.locale)
+
+  const i18n = useI18n()
+  const auth = useAuth()
+
+  const setLocale = (code: string) => {
+    states.value.locale = code
+    localStorage.setItem('locale', code)
+    i18n.locale.value = code
+    if (auth.userId) {
+      const user = useFeathersService('users')
+        .getFromStore(auth.userId) as ServiceType<User>
+      user.value.locale = code
+      user.value.save()
+    }
+  }
 
   const setMenu = (id: string) => {
     states.value.menuId = id
@@ -94,6 +116,8 @@ export const useApp = defineStore('app', () => {
     return userTable.value?.list.find((t: Table) => t._id === states.value.tableId)
   })
 
+  setLocale(states.value.locale)
+
   return {
     states,
     menuId,
@@ -113,5 +137,7 @@ export const useApp = defineStore('app', () => {
     selection,
     hasSelection,
     setSelection,
+    locale,
+    setLocale,
   }
 })

@@ -13,10 +13,10 @@ export const useAuth = defineStore('auth', () => {
   const processing = computed(() => states.value.processing)
   const authenticated = computed(() => states.value.authenticated)
   const user = computed(() => states.value.user)
-  const userId = computed(() => states.value.user._id)
-  const username = computed(() => states.value.user.username)
-  const userEmail = computed(() => states.value.user.email)
-  const userRights = computed(() => states.value.user.rights)
+  const userId = computed(() => states.value.user?._id)
+  const username = computed(() => states.value.user?.username)
+  const userEmail = computed(() => states.value.user?.email)
+  const userRights = computed(() => states.value.user?.rights)
 
   const reAuthenticate = async (): Promise<void> => {
     try {

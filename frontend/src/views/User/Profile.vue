@@ -1,6 +1,9 @@
 <template>
   <q-page class="q-pa-md">
-    <div class="row">
+    <div
+      v-if="user"
+      class="row"
+    >
       <div class="col">
         <q-card>
           <q-card-section>
