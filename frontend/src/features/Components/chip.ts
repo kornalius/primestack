@@ -18,7 +18,7 @@ export default {
     commonProperties.style,
     commonProperties.events,
     Type.Object({
-      modelValue: Type.Boolean(),
+      visible: Type.Boolean(),
       selected: Type.Boolean(),
       label: Type.String(),
       icon: ExType.Icon(),
@@ -32,8 +32,9 @@ export default {
       click: ExType.Action(),
     }),
   ]),
+  modelValueField: 'visible',
   defaultValues: {
-    modelValue: true,
+    visible: true,
     ...defaultStyleValues,
   },
   categories: {
@@ -41,7 +42,7 @@ export default {
       icon: contentIcon,
       names: [
         'name',
-        'modelValue',
+        'visible',
         'field',
         'disable',
         'readonly',

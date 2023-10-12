@@ -19,7 +19,7 @@ export default {
     commonProperties.events,
     Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
-      modelValue: Type.Number(),
+      value: Type.Number(),
       icon: ExType.Icon(),
       iconSelected: ExType.Icon(),
       iconHalf: ExType.Icon(),
@@ -31,6 +31,7 @@ export default {
       colorHalf: ExType.Color({ quasarPalette: true }),
     }),
   ]),
+  modelValueField: 'value',
   defaultValues: {
     dense: true,
     icon: 'mdi-star-outline',
@@ -45,7 +46,7 @@ export default {
       icon: contentIcon,
       names: [
         'name',
-        'modelValue',
+        'value',
         'field',
         'max',
         'disable',

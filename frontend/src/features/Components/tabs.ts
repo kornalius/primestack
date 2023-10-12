@@ -17,7 +17,7 @@ export default {
     commonProperties.state,
     commonProperties.events,
     Type.Object({
-      modelValue: Type.String(),
+      currentTab: Type.String(),
       breakpoint: Type.Number(),
       vertical: Type.Boolean(),
       stretch: Type.Boolean(),
@@ -40,6 +40,7 @@ export default {
       blur: ExType.Action(),
     }),
   ]),
+  modelValueField: 'currentTab',
   defaultValues: {
     dense: true,
     align: 'left',
@@ -56,8 +57,8 @@ export default {
       icon: contentIcon,
       names: [
         'name',
+        'currentTab',
         'field',
-        'modelValue',
         'disable',
         'align',
         'breakpoint',

@@ -17,7 +17,7 @@ export default {
     commonProperties.size,
     Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
-      modelValue: Type.Number({ min: 0, max: 360 }),
+      value: Type.Number({ min: 0, max: 360 }),
       angle: Type.Number({ min: 0, max: 360 }),
       indeterminate: Type.Boolean(),
       reverse: Type.Boolean(),
@@ -34,6 +34,7 @@ export default {
       animationSpeed: Type.Number(),
     }),
   ]),
+  modelValueField: 'value',
   defaultValues: {
     color: 'primary',
     indeterminate: true,
@@ -54,7 +55,7 @@ export default {
       icon: modelIcon,
       names: [
         'name',
-        'modelValue',
+        'value',
         'field',
         'reverse',
         'indeterminate',

@@ -19,7 +19,7 @@ export default {
     commonProperties.style,
     commonProperties.events,
     Type.Object({
-      modelValue: Type.String(),
+      value: Type.String(),
       tableId: ExType.Table(),
       valueField: ExType.Field(),
       labelField: ExType.Field(),
@@ -68,6 +68,7 @@ export default {
       popupHide: ExType.Action(),
     }),
   ]),
+  modelValueField: 'value',
   defaultValues: {
     valueField: '_id',
     dense: true,
@@ -94,7 +95,7 @@ export default {
       icon: modelIcon,
       names: [
         'name',
-        'modelValue',
+        'value',
         'field',
         'tableId',
         'valueField',

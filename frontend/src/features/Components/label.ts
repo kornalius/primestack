@@ -16,7 +16,7 @@ export default {
     commonProperties.state,
     Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
-      modelValue: Type.String(),
+      label: Type.String(),
       format: Type.String({
         options: [
           { value: 'overline', icon: 'mdi-format-overline' },
@@ -63,6 +63,7 @@ export default {
       backgroundColor: ExType.Color(),
     }),
   ]),
+  modelValueField: 'label',
   defaultValues: {
     styling: [],
     ...defaultStyleValues,
@@ -72,7 +73,7 @@ export default {
       icon: contentIcon,
       names: [
         'name',
-        'modelValue',
+        'label',
         'field',
       ],
     },

@@ -17,7 +17,7 @@ export default {
     commonProperties.style,
     commonProperties.events,
     Type.Object({
-      modelValue: Type.Boolean(),
+      checked: Type.Boolean(),
       label: Type.String(),
       leftLabel: Type.Boolean(),
       color: ExType.Color({ quasarPalette: true }),
@@ -26,8 +26,9 @@ export default {
       uncheckedIcon: ExType.Icon(),
     }),
   ]),
+  modelValueField: 'checked',
   defaultValues: {
-    modelValue: false,
+    checked: false,
     ...defaultStyleValues,
   },
   categories: {
@@ -35,7 +36,7 @@ export default {
       icon: contentIcon,
       names: [
         'name',
-        'modelValue',
+        'checked',
         'field',
         'disable',
         'readonly',

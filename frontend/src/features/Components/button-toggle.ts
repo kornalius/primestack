@@ -17,7 +17,7 @@ export default {
     commonProperties.style,
     commonProperties.events,
     Type.Object({
-      modelValue: Type.String(),
+      value: Type.String(),
       spread: Type.Boolean(),
       noCaps: Type.Boolean(),
       noWrap: Type.Boolean(),
@@ -32,6 +32,7 @@ export default {
       clear: ExType.Action(),
     }),
   ]),
+  modelValueField: 'value',
   defaultValues: {
     ...defaultStyleValues,
   },
@@ -40,7 +41,7 @@ export default {
       icon: contentIcon,
       names: [
         'name',
-        'modelValue',
+        'value',
         'field',
         'clearable',
         'options',

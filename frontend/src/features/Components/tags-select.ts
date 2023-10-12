@@ -19,7 +19,7 @@ export default {
     commonProperties.style,
     commonProperties.events,
     Type.Object({
-      modelValue: Type.String(),
+      value: Type.String(),
       tableId: ExType.Table(),
       field: ExType.Field(),
       virtualScrollHorizontal: Type.Boolean(),
@@ -60,6 +60,7 @@ export default {
       popupHide: ExType.Action(),
     }),
   ]),
+  modelValueField: 'value',
   defaultValues: {
     dense: true,
     outlined: true,
@@ -84,7 +85,7 @@ export default {
       icon: modelIcon,
       names: [
         'name',
-        'modelValue',
+        'value',
         'tableId',
         'field',
         'multiple',

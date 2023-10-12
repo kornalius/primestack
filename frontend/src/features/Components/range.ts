@@ -19,7 +19,7 @@ export default {
     commonProperties.style,
     commonProperties.events,
     Type.Object({
-      modelValue: Type.Object({ min: Type.Number(), max: Type.Number() }),
+      value: Type.Object({ min: Type.Number(), max: Type.Number() }),
       min: Type.Number(),
       max: Type.Number(),
       innerMin: Type.Number(),
@@ -54,8 +54,9 @@ export default {
       pan: ExType.Action(),
     }),
   ]),
+  modelValueField: 'value',
   defaultValues: {
-    modelValue: { min: 0, max: 0 },
+    value: { min: 0, max: 0 },
     step: 1,
     snap: true,
     max: 10,
@@ -77,7 +78,7 @@ export default {
       icon: modelIcon,
       names: [
         'name',
-        'modelValue',
+        'value',
         'field',
         'min',
         'max',

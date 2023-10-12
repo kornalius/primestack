@@ -17,7 +17,7 @@ export default {
     commonProperties.style,
     commonProperties.events,
     Type.Object({
-      modelValue: Type.String(),
+      value: Type.String(),
       color: ExType.Color({ quasarPalette: true }),
       keepColor: Type.Boolean(),
       type: StringEnum(['radio', 'checkbox', 'toggle']),
@@ -30,6 +30,7 @@ export default {
       }, { horizontalPopup: true })),
     }),
   ]),
+  modelValueField: 'value',
   defaultValues: {
     type: 'radio',
     ...defaultStyleValues,
@@ -42,7 +43,7 @@ export default {
       icon: contentIcon,
       names: [
         'name',
-        'modelValue',
+        'value',
         'field',
         'type',
         'options',

@@ -19,7 +19,7 @@ export default {
     commonProperties.style,
     commonProperties.events,
     Type.Object({
-      modelValue: Type.String(),
+      value: Type.String(),
       virtualScrollHorizontal: Type.Boolean(),
       loading: Type.Boolean(),
       clearable: Type.Boolean(),
@@ -56,6 +56,7 @@ export default {
       popupHide: ExType.Action(),
     }),
   ]),
+  modelValueField: 'value',
   defaultValues: {
     dense: true,
     outlined: true,
@@ -81,7 +82,7 @@ export default {
       icon: modelIcon,
       names: [
         'name',
-        'modelValue',
+        'value',
         'field',
         'clearable',
         'multiple',

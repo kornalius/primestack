@@ -21,7 +21,7 @@ export default {
     commonProperties.events,
     Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
-      modelValue: Type.Number({ min: 0, max: 360 }),
+      value: Type.Number({ min: 0, max: 360 }),
       angle: Type.Number({ min: 0, max: 360 }),
       reverse: Type.Boolean(),
       instantFeedback: Type.Boolean(),
@@ -40,6 +40,7 @@ export default {
       dragValue: ExType.Action(),
     }),
   ]),
+  modelValueField: 'value',
   defaultValues: {
     thickness: 1,
     ...defaultStyleValues,
@@ -59,7 +60,7 @@ export default {
       icon: modelIcon,
       names: [
         'name',
-        'modelValue',
+        'value',
         'field',
         'reverse',
         'min',

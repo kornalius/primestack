@@ -17,7 +17,7 @@ export default {
     commonProperties.style,
     commonProperties.events,
     Type.Object({
-      modelValue: Type.String(),
+      value: Type.String(),
       landscape: Type.Boolean(),
       outlined: Type.Boolean(),
       withSeconds: Type.Boolean(),
@@ -33,6 +33,7 @@ export default {
       backgroundColor: ExType.Color(),
     }),
   ]),
+  modelValueField: 'value',
   defaultValues: {
     dense: true,
     outlined: true,
@@ -45,7 +46,7 @@ export default {
       icon: contentIcon,
       names: [
         'name',
-        'modelValue',
+        'value',
         'field',
         'mask',
         'disable',

@@ -208,8 +208,13 @@ const onRemoveClick = () => {
   emit('remove', props.modelValue)
 }
 
+const modelValueForField = computed(() => (
+  // eslint-disable-next-line no-underscore-dangle
+  componentsByType[component.value.type].modelValueField
+))
+
 const displayValue = computed(() => (
-  getProp(field.value.modelValue, ctx)
+  getProp(field.value[modelValueForField.value], ctx)
 ))
 
 const interactable = computed(() => component.value.interactable || false)

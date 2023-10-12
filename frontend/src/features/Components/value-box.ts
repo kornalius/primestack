@@ -18,7 +18,7 @@ export default {
   schema: properties([
     commonProperties.style,
     Type.Object({
-      modelValue: Type.Number(),
+      value: Type.Number(),
       valueColor: ExType.Color({ quasarPalette: true }),
       valueFormat: StringEnum(ValueBoxFormatStyle),
       valueStyle: StringEnum(ValueBoxTextStyle),
@@ -47,6 +47,7 @@ export default {
       diffIconSuffix: Type.Boolean(),
     }),
   ], false),
+  modelValueField: 'value',
   defaultValues: {
     color: 'indigo-5',
     icon: 'mdi-chart-line',
@@ -75,7 +76,7 @@ export default {
           label: 'Value',
           sectionColor: 'orange-1',
           children: [
-            'modelValue',
+            'value',
             { name: 'valueFormat', label: 'Format' },
             { name: 'valueDigits', label: 'Digits' },
             { name: 'valueCurrency', label: 'Currency' },

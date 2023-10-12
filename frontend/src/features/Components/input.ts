@@ -25,7 +25,7 @@ export default {
     commonProperties.rules,
     commonProperties.events,
     Type.Object({
-      modelValue: Type.Union([Type.String(), Type.Null(), Type.Undefined()]),
+      value: Type.Union([Type.String(), Type.Null(), Type.Undefined()]),
       mask: Type.String(),
       fillMask: Type.String(),
       unmaskedValue: Type.Boolean(),
@@ -66,6 +66,7 @@ export default {
       clear: ExType.Action(),
     }),
   ]),
+  modelValueField: 'value',
   defaultValues: {
     type: 'text',
     dense: true,
@@ -91,7 +92,7 @@ export default {
       icon: modelIcon,
       names: [
         'name',
-        'modelValue',
+        'value',
         'field',
         'type',
         'rules',

@@ -65,4 +65,6 @@ export interface TFormComponent {
   numericInput?: boolean | ((field: FormField) => boolean)
   // map event arguments to context
   eventArgs?: EventArgs
+  // specify the modelValue property when no "field" is used
+  modelValueField?: string
 }

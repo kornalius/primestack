@@ -17,7 +17,7 @@ export default {
     commonProperties.style,
     commonProperties.events,
     Type.Object({
-      modelValue: Type.String(),
+      value: Type.String(),
       defaultValue: Type.String(),
       formatModel: StringEnum(['auto', 'hex', 'rgb', 'hexa', 'rgba']),
       defaultView: StringEnum(['spectrum', 'tune', 'palette']),
@@ -36,6 +36,7 @@ export default {
       popupHide: ExType.Action(),
     }),
   ]),
+  modelValueField: 'value',
   defaultValues: {
     dense: true,
     outlined: true,
@@ -48,7 +49,7 @@ export default {
       icon: contentIcon,
       names: [
         'name',
-        'modelValue',
+        'value',
         'field',
         'defaultValue',
         'formatModel',

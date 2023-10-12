@@ -30,7 +30,6 @@ export default {
   schema: properties([
     commonProperties.style,
     Type.Object({
-      modelValue: Type.Number(),
       type: StatType,
       tableId: ExType.Table(),
       field: ExType.Field(),

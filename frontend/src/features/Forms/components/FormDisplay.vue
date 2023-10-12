@@ -48,9 +48,11 @@
         :style="style(field)"
       />
 
+      <!-- Numeric with field -->
+
       <component
         :is="componentForField(field)"
-        v-else-if="isNumericInput(field)"
+        v-else-if="isNumericInput(field) && (field as any).field"
         v-model.number="value[(field as any).field]"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
         :style="style(field)"
@@ -58,10 +60,36 @@
         lazy-rules
       />
 
+      <!-- Numeric without field -->
+
+      <component
+        :is="componentForField(field)"
+        v-else-if="isNumericInput(field)"
+        v-bind="fieldBinds(field, schemaForField(field), ctx)"
+        :model-value="field[modelValueForField(field)]"
+        :style="style(field)"
+        :rules="serializeRules(t, field)"
+        lazy-rules
+      />
+
+      <!-- Regular with field -->
+
+      <component
+        :is="componentForField(field)"
+        v-else-if="(field as any).field"
+        v-model="value[(field as any).field]"
+        v-bind="fieldBinds(field, schemaForField(field), ctx)"
+        :style="style(field)"
+        :rules="serializeRules(t, field)"
+        lazy-rules
+      />
+
+      <!-- Regular without field -->
+
       <component
         :is="componentForField(field)"
         v-else
-        v-model="value[(field as any).field]"
+        :model-value="field[modelValueForField(field)]"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
         :style="style(field)"
         :rules="serializeRules(t, field)"
@@ -79,6 +107,7 @@ import { getProp, useExpression } from '@/features/Expression/composites'
 import LabelField from '@/features/Fields/components/LabelField.vue'
 import { fieldSchema } from '@/shared/schemas/form'
 import { AnyData } from '@/shared/interfaces/commons'
+import { componentsByType } from '@/features/Components'
 import { useFormElements } from '../composites'
 import FormDisplayRow from './FormDisplayRow.vue'
 import FormDisplayCard from './FormDisplayCard.vue'
@@ -119,7 +148,13 @@ const value = useModelValue(props, emit)
 
 const ctx = buildCtx()
 
-const displayValue = (field: FormField) => (
-  getProp((field as AnyData).modelValue || value.value[(field as AnyData).field], ctx)
+const modelValueForField = (field: FormField) => (
+  // eslint-disable-next-line no-underscore-dangle
+  componentsByType[field._type].modelValueField
 )
+
+const displayValue = (field: FormField) => {
+  const f = field as AnyData
+  return getProp(f.field ? value.value[f.field] : f[modelValueForField(field)], ctx)
+}
 </script>

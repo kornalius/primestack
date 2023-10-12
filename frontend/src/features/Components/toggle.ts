@@ -18,7 +18,7 @@ export default {
     commonProperties.style,
     commonProperties.events,
     Type.Object({
-      modelValue: Type.Boolean(),
+      toggled: Type.Boolean(),
       label: Type.String(),
       leftLabel: Type.Boolean(),
       color: ExType.Color({ quasarPalette: true }),
@@ -26,8 +26,9 @@ export default {
       keepColor: Type.Boolean(),
     }),
   ]),
+  modelValueField: 'toggled',
   defaultValues: {
-    modelValue: false,
+    toggled: false,
     ...defaultStyleValues,
   },
   categories: {
@@ -35,7 +36,7 @@ export default {
       icon: contentIcon,
       names: [
         'name',
-        'modelValue',
+        'toggled',
         'field',
         'disable',
         'readonly',

@@ -16,7 +16,7 @@ export default {
     commonProperties.size,
     Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
-      modelValue: Type.String(),
+      src: Type.String(),
       srcset: Type.String(),
       alt: Type.String(),
       sizes: Type.String(),
@@ -56,6 +56,7 @@ export default {
       error: ExType.Action(),
     }),
   ]),
+  modelValueField: 'src',
   defaultValues: {
     loading: 'eager',
     decoding: 'async',
@@ -69,7 +70,7 @@ export default {
       icon: contentIcon,
       names: [
         'name',
-        'modelValue',
+        'src',
         'field',
         'srcset',
         'alt',

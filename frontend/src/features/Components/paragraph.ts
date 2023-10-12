@@ -17,7 +17,7 @@ export default {
     commonProperties.state,
     Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
-      modelValue: Type.String(),
+      text: Type.String(),
       placeholder: Type.String(),
       noRouteFullscreenExit: Type.Boolean(),
       square: Type.Boolean(),
@@ -43,9 +43,10 @@ export default {
       backgroundColor: ExType.Color(),
     }),
   ]),
+  modelValueField: 'text',
   defaultValues: {
     paragraphTag: 'div',
-    modelValue: '',
+    text: '',
     toolbar: [
       ['left', 'center', 'right', 'justify'],
       ['bold', 'italic', 'underline', 'strike'],
@@ -58,7 +59,7 @@ export default {
       icon: contentIcon,
       names: [
         'name',
-        'modelValue',
+        'text',
         'field',
         'noRouteFullscreenExit',
         'placeholder',

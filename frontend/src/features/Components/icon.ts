@@ -16,13 +16,14 @@ export default {
     commonProperties.size,
     Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
-      modelValue: ExType.Icon(),
+      icon: ExType.Icon(),
       left: Type.Boolean(),
       right: Type.Boolean(),
       color: ExType.Color({ quasarPalette: true }),
       backgroundColor: ExType.Color(),
     }),
   ]),
+  modelValueField: 'icon',
   defaultValues: {
     size: 'md',
     ...defaultStyleValues,
@@ -32,7 +33,7 @@ export default {
       icon: contentIcon,
       names: [
         'name',
-        'modelValue',
+        'icon',
         'field',
       ],
     },
