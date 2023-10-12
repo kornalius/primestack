@@ -47,13 +47,14 @@ import { printf } from 'fast-printf'
 import expr2fn from 'kornalius-expr2fn'
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
+import { LocationQueryValue, useRoute, useRouter } from 'vue-router'
 import { useFeathers } from '@/composites/feathers'
 import { useSnacks } from '@/features/Snacks/store'
 import { useVariables } from '@/features/Variables/store'
-import { LocationQueryValue, useRoute, useRouter } from 'vue-router'
 // eslint-disable-next-line import/no-cycle
 import { useAppEditor } from '@/features/App/editor-store'
 import { useApp } from '@/features/App/store'
+import { useUrl } from '@/composites/url'
 import { AnyData } from '@/shared/interfaces/commons'
 // eslint-disable-next-line import/no-cycle
 import { exec } from '@/features/Actions/composites'
@@ -161,6 +162,7 @@ export const buildCtx = (extra?: AnyData) => {
   const router = useRouter()
   const editor = useAppEditor()
   const app = useApp()
+  const url = useUrl()
   const variables = useVariables()
 
   return {
@@ -173,6 +175,7 @@ export const buildCtx = (extra?: AnyData) => {
     route,
     router,
     app,
+    url,
     variables,
     exec,
     ...(extra || {}),

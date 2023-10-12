@@ -64,44 +64,56 @@ const emit = defineEmits<{
   (e: 'create'): void,
 }>()
 
+const reservedTableNames = ['tables', 'menus', 'forms', 'tabs', 'actions']
+
 const value = useModelValue(props, emit)
 
 const { api } = useFeathers()
 
-const { data: tables } = api.service('tables').useFind({ query: {} })
-const { data: forms } = api.service('forms').useFind({ query: {} })
-const { data: menus } = api.service('menus').useFind({ query: {} })
-
-const userTable = computed(() => tables.value?.[0])
-const userForm = computed(() => forms.value?.[0])
-const userMenu = computed(() => menus.value?.[0])
+const userTable = api.service('tables').findOneInStore({ query: {} })
+const userForm = api.service('forms').findOneInStore({ query: {} })
+const userMenu = api.service('menus').findOneInStore({ query: {} })
+const userAction = api.service('actions').findOneInStore({ query: {} })
 
 const data = ref()
 
 const entities = computed(() => {
   switch (props.service) {
     case 'tables':
-      return userTable.value?.list.map((s) => ({
-        label: s.name,
-        value: s._id,
+      return userTable.value?.list.map((t) => ({
+        label: t.name,
+        value: t._id,
       }))
     case 'forms':
-      return userForm.value?.list.map((s) => ({
-        label: s._id,
-        value: s._id,
+      return userForm.value?.list.map((f) => ({
+        label: f._id,
+        value: f._id,
+      }))
+    case 'actions':
+      return userAction.value?.list.map((a) => ({
+        label: a.label,
+        value: a._id,
       }))
     case 'menus':
-      return userMenu.value?.list.map((s) => ({
-        label: s.label,
-        value: s._id,
+      return userMenu.value?.list.map((m) => ({
+        label: m.label,
+        value: m._id,
       }))
+    case 'tabs':
+      return userMenu.value?.list.reduce((acc, m) => ([
+        ...acc,
+        ...m.tabs.map((t) => ({
+          label: `${m.label} > ${t.label}`,
+          value: t._id,
+        })),
+      ]), [])
     default:
       return data?.value
   }
 })
 
 watch([() => props.service, () => props.tableId], () => {
-  if (props.service && !['tables', 'menus', 'forms'].includes(props.service)) {
+  if (props.service && !reservedTableNames.includes(props.service)) {
     const { data: c, find: findEntities } = api.service(props.service).useFind({
       query: props.query || {},
     })

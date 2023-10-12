@@ -81,13 +81,13 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string | undefined 
     return 'number'
   }
 
-  // Field selector dropdown, (optional properties: tableProp)
-  if (p.type === 'string' && p.field === true) {
-    return 'field'
-  }
   // JSON keys selector dropdown, (optional properties: jsonProp)
   if (p.type === 'string' && p.jsonkeys === true) {
     return 'json-keys'
+  }
+  // Field id selector dropdown, (optional properties: tableProp)
+  if (p.type === 'string' && p.objectid === true && p.field === true) {
+    return 'field'
   }
   // Table id selector
   if (p.type === 'string' && p.objectid === true && p.tableid === true) {

@@ -72,6 +72,10 @@ export default {
 
   Expr: (options = {}) => Type.String({ expr: true, ...options }),
 
+  Menu: (options = {}) => Id({ service: 'menus', ...options }),
+
+  Tab: (options = {}) => Id({ service: 'tabs', ...options }),
+
   Query: (options: QueryOptions = {}) => Type.Object({}, {
     query: true,
     disable: (value: unknown, parents: AnyData[]) => (
