@@ -254,7 +254,7 @@ import sample from 'lodash/sample'
 import hexObjectId from 'hex-object-id'
 import { Type } from '@feathersjs/typebox'
 import { useQuery } from '@/features/Query/composites'
-import { useFeathers } from '@/composites/feathers'
+import { useFeathersService } from '@/composites/feathers'
 import { useExpression } from '@/features/Expression/composites'
 import { Query } from '@/shared/interfaces/query'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
@@ -291,8 +291,6 @@ const testProperties = ref({
     right: 0,
   },
 })
-
-const { api } = useFeathers()
 
 const forcedTypes = ref({})
 
@@ -390,7 +388,8 @@ const selection = ref([])
  * Schema
  */
 
-const { data: tables } = api.service('tables').useFind({ uery: {} })
+const { data: tables } = useFeathersService('tables')
+  .useFind(computed(() => ({ query: {} })))
 
 const userTable = computed(() => tables.value?.[0])
 

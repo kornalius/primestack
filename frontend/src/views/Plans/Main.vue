@@ -9,11 +9,11 @@
 </template>
 
 <script setup lang="ts">
-import { useFeathers } from '@/composites/feathers'
+import { computed } from 'vue'
+import { useFeathersService } from '@/composites/feathers'
 import Plan from '@/features/Plans/components/Plan.vue'
 
-const { api } = useFeathers()
-
-const { data: plans, find } = api.service('plans').useFind({ query: {} })
+const { data: plans, find } = useFeathersService('plans')
+  .useFind(computed(() => ({ query: {} })))
 find()
 </script>

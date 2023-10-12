@@ -211,7 +211,7 @@ import { useApp } from '@/features/App/store'
 import { useFormElements } from '@/features/Forms/composites'
 import { useExpression } from '@/features/Expression/composites'
 import { defaultValueForSchema, fieldsToSchema } from '@/shared/schema'
-import { useFeathers } from '@/composites/feathers'
+import { useFeathersService } from '@/composites/feathers'
 import { useUrl } from '@/composites/url'
 import { columnSchema, fieldSchema, formSchema } from '@/shared/schemas/form'
 import { getId } from '@/composites/utilities'
@@ -237,8 +237,6 @@ const props = defineProps<{
   create?: boolean
 }>()
 
-const { api } = useFeathers()
-
 const editor = useAppEditor()
 
 const app = useApp()
@@ -259,7 +257,8 @@ const formsViewMode = computed(() => props.menuId === undefined)
  * Menu
  */
 
-const { data: userMenus } = api.service('menus').useFind({ query: {} })
+const { data: userMenus } = useFeathersService('menus')
+  .useFind(computed(() => ({ query: {} })))
 
 const menu = computed(() => (
   editor.active
@@ -286,7 +285,8 @@ const actionList = computed(() => (
  * Form
  */
 
-const { data: userForms } = api.service('forms').useFind({ query: {} })
+const { data: userForms } = useFeathersService('forms')
+  .useFind(computed(() => ({ query: {} })))
 
 const form = computed(() => {
   if (formsViewMode.value) {
@@ -312,7 +312,8 @@ watch(selected, () => {
   app.setSelection(selected.value)
 })
 
-const { data: userTables } = api.service('tables').useFind({ query: {} })
+const { data: userTables } = useFeathersService('tables')
+  .useFind(computed(() => ({ query: {} })))
 
 const table = computed(() => (
   userTables.value?.[0]?.list.find((tt) => tt._id === form.value?.tableId)
@@ -462,9 +463,9 @@ const qform = ref()
  */
 const getRecord = async (id: string): Promise<AnyData> => {
   if (table.value) {
-    const s = api.service(table.value._id).getFromStore(id, { temps: true })
+    const s = useFeathersService(table.value._id).getFromStore(id, { temps: true })
     if (!s.value) {
-      return api.service(table.value._id).get(id)
+      return useFeathersService(table.value._id).get(id)
     }
     return s.value
   }
@@ -605,7 +606,7 @@ const hasChanges = computed(() => (
  * @param value
  */
 const addRecord = (value?: AnyData) => {
-  const r = api.service(table.value._id).new({
+  const r = useFeathersService(table.value._id).new({
     ...defaultValues.value,
     ...(formModelValues.value || {}),
     ...(value || {}),
@@ -731,10 +732,11 @@ const filesFilter = computed(() => ({
   docId: currentId.value,
 }))
 
-const { data: files, queryWhen } = api.service('files').useFind({
-  query: filesFilter,
-  temps: true,
-})
+const { data: files, queryWhen } = useFeathersService('files')
+  .useFind(computed(() => ({
+    query: filesFilter,
+    temps: true,
+  })))
 queryWhen(() => Object.keys(filesFilter.value).length === 2)
 
 const filesCount = computed(() => files.value?.length || 0)

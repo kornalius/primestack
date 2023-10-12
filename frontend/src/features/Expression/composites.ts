@@ -48,7 +48,7 @@ import expr2fn from 'kornalius-expr2fn'
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
 import { LocationQueryValue, useRoute, useRouter } from 'vue-router'
-import { useFeathers } from '@/composites/feathers'
+import { useFeathers, useFeathersService } from '@/composites/feathers'
 import { useSnacks } from '@/features/Snacks/store'
 import { useVariables } from '@/features/Variables/store'
 // eslint-disable-next-line import/no-cycle
@@ -149,6 +149,7 @@ export const buildCtx = (extra?: AnyData) => {
     app,
     url,
     variables,
+    useFeathersService,
     exec,
     ...(extra || {}),
     $expr: {
@@ -185,7 +186,7 @@ export const buildCtx = (extra?: AnyData) => {
        * @returns {string | undefined} Id of the table
        */
       table: (name: string): string | undefined => {
-        const tables = api.service('tables').findOneInStore({ query: {} })
+        const tables = useFeathersService('tables').findOneInStore({ query: {} })
         const table = tables.value?.list.find((tt: AnyData) => tt.name === name)
         return table?._id
       },
@@ -199,7 +200,7 @@ export const buildCtx = (extra?: AnyData) => {
        * @returns {string | undefined} Id of the field
        */
       field: (tablename: string, fieldname: string): string | undefined => {
-        const tables = api.service('tables').findOneInStore({ query: {} })
+        const tables = useFeathersService('tables').findOneInStore({ query: {} })
         const table = tables.value?.list.find((tt: AnyData) => tt.name === tablename)
         if (table) {
           return table.fields.find((ff: AnyData) => ff.name === fieldname)?._id

@@ -98,7 +98,7 @@ export const useFormElements = () => ({
 
     scanSchema(schema)
 
-    const userActions = ctx.api.service('actions')
+    const userActions = ctx.useFeathersService('actions')
       .findOneInStore({ query: {} })?.value?.list || []
 
     /**

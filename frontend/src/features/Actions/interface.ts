@@ -1,7 +1,9 @@
 import { QVueGlobals } from 'quasar'
+import { PiniaService } from 'feathers-pinia'
 import { RouteLocationNormalizedLoaded, Router } from 'vue-router'
 import { Application } from '@feathersjs/client'
 import { Static } from '@feathersjs/typebox'
+import { FeathersService } from '@feathersjs/feathers'
 import { TAction, TActionCategory } from '@/shared/interfaces/actions'
 import { actionElementSchema } from '@/shared/schemas/actions'
 import { AnyData } from '@/shared/interfaces/commons'
@@ -21,6 +23,7 @@ export interface TFrontActionExecOptions {
   route: RouteLocationNormalizedLoaded,
   router: Router,
   $expr: AnyData,
+  useFeathersService: (servicePath: string) => PiniaService<FeathersService>,
   [key: string]: unknown
 }
 

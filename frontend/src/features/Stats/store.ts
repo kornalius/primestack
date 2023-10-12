@@ -3,7 +3,7 @@ import { ComputedRef } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import hexObjectId from 'hex-object-id'
 // eslint-disable-next-line import/no-cycle
-import { useFeathers } from '@/composites/feathers'
+import { useFeathersService } from '@/composites/feathers'
 import { AnyData } from '@/shared/interfaces/commons'
 import { schema as statSchema } from '@/shared/schemas/stats'
 
@@ -22,12 +22,11 @@ interface NewStatOptions extends StatOptions {
 
 export const useStats = defineStore('stats', () => {
   const update = async (tableId: string) => {
-    const { api } = useFeathers()
-
-    const stats = api.service('stats').findInStore({ query: { path: tableId } })
+    const statService = useFeathersService('stats')
+    const stats = statService.findInStore({ query: { path: tableId } })
 
     stats?.data?.value.forEach((s) => {
-      api.service('stats').patch(s._id, {
+      statService.patch(s._id, {
         uuid: s._id,
         path: tableId,
         field: s.field,
@@ -39,8 +38,6 @@ export const useStats = defineStore('stats', () => {
   }
 
   const newStat = (options: NewStatOptions): ComputedRef<Stat> => {
-    const { api } = useFeathers()
-
     const {
       tableId,
       field,
@@ -49,7 +46,9 @@ export const useStats = defineStore('stats', () => {
       query,
     } = options
 
-    const s = api.service('stats').findOneInStore({
+    const statService = useFeathersService('stats')
+
+    const s = statService.findOneInStore({
       query: {
         path: tableId,
         field,
@@ -63,7 +62,7 @@ export const useStats = defineStore('stats', () => {
 
     if (!s.value) {
       id = hexObjectId()
-      api.service('stats').create({
+      statService.create({
         uuid: id,
         path: tableId,
         field,
@@ -73,7 +72,7 @@ export const useStats = defineStore('stats', () => {
       })
     } else {
       id = s.value._id
-      api.service('stats').patch(s.value._id, {
+      statService.patch(s.value._id, {
         uuid: s.value._id,
         path: tableId,
         field: s.value.field,
@@ -83,7 +82,7 @@ export const useStats = defineStore('stats', () => {
       })
     }
 
-    const { data } = api.service('stats').useGet(id)
+    const { data } = statService.useGet(id)
 
     return data
   }
@@ -125,9 +124,9 @@ export const useStats = defineStore('stats', () => {
   )
 
   const getStat = (tableId: string, type: string, field: string, groupFields?: string[]): Stat | undefined => {
-    const { api } = useFeathers()
+    const statService = useFeathersService('stats')
 
-    return api.service('stats').findOneInStore({
+    return statService.findOneInStore({
       query: {
         path: tableId,
         field,

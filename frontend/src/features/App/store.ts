@@ -1,7 +1,7 @@
-import { computed, Ref, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { Static } from '@feathersjs/typebox'
-import { useFeathers } from '@/composites/feathers'
+import { useFeathersService } from '@/composites/feathers'
 import { tableSchema } from '@/shared/schemas/table'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
 import { formSchema } from '@/shared/schemas/form'
@@ -21,11 +21,6 @@ export const useApp = defineStore('app', () => {
     doc: undefined,
     selection: [],
   })
-
-  const findOneInStore = (service: string): Ref<AnyData> => {
-    const { api } = useFeathers()
-    return api.service(service).findOneInStore({ query: {} })
-  }
 
   const menuId = computed(() => states.value.menuId)
 
@@ -81,7 +76,7 @@ export const useApp = defineStore('app', () => {
   }
 
   const menuInstance = computed((): Menu => {
-    const userMenu = findOneInStore('menus')
+    const userMenu = useFeathersService('menus').findOneInStore({ query: {} })
     return userMenu.value?.list.find((m: Menu) => m._id === states.value.menuId)
   })
 
@@ -90,12 +85,12 @@ export const useApp = defineStore('app', () => {
   ))
 
   const formInstance = computed((): Form => {
-    const userForm = findOneInStore('forms')
+    const userForm = useFeathersService('forms').findOneInStore({ query: {} })
     return userForm.value?.list.find((f: Form) => f._id === states.value.formId)
   })
 
   const tableInstance = computed((): Table => {
-    const userTable = findOneInStore('tables')
+    const userTable = useFeathersService('tables').findOneInStore({ query: {} })
     return userTable.value?.list.find((t: Table) => t._id === states.value.tableId)
   })
 

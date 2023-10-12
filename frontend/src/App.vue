@@ -411,7 +411,7 @@ import { useApp } from '@/features/App/store'
 import { useAppEditor } from '@/features/App/editor-store'
 import { useAuth } from '@/features/Auth/store'
 import { useUrl } from '@/composites/url'
-import { useFeathers } from '@/composites/feathers'
+import { useFeathersService } from '@/composites/feathers'
 import { useI18n } from 'vue-i18n'
 import { useExpression } from '@/features/Expression/composites'
 import { tabSchema } from '@/shared/schemas/menu'
@@ -427,8 +427,6 @@ import { useStats } from '@/features/Stats/store'
 type Tab = Static<typeof tabSchema>
 
 const quasar = useQuasar()
-
-const { api } = useFeathers()
 
 const { t } = useI18n()
 
@@ -482,7 +480,7 @@ watch(() => editor.active, () => {
 })
 
 // function refreshHealth() {
-//   api.service('health').get(0).then((result) => {
+//   useFeathersService('health').get(0).then((result) => {
 //     // eslint-disable-next-line no-console
 //     console.log(result)
 //   })
@@ -512,11 +510,11 @@ const auth = useAuth()
  * Load user's editor data
  */
 const loadUserData = async () => {
-  api.service('users').get(auth.userId)
-  userMenu.value = (await api.service('menus').find({ query: {} })).data?.[0]
-  api.service('tables').find({ query: {} })
-  api.service('forms').find({ query: {} })
-  api.service('actions').find({ query: {} })
+  await useFeathersService('users').get(auth.userId)
+  userMenu.value = (await useFeathersService('menus').find({ query: {} })).data?.[0]
+  await useFeathersService('tables').find({ query: {} })
+  await useFeathersService('forms').find({ query: {} })
+  await useFeathersService('actions').find({ query: {} })
 }
 
 /**
@@ -615,7 +613,8 @@ watch(routeTabs, () => {
     } = r as Tab
 
     if (badgeTableId) {
-      const { data: userTables } = api.service('tables').useFind({ query: {} })
+      const { data: userTables } = useFeathersService('tables')
+        .useFind(computed(() => ({ query: {} })))
       const table = userTables.value?.[0]?.list.find((tt) => tt._id === badgeTableId)
 
       const q = badgeFilter ? queryToMongo(badgeFilter as Query, table, ctx.$expr) : {}

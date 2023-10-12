@@ -18,7 +18,7 @@ export default {
   childrenMessage: 'actions.insert.childrenMessage',
   exec: async (ctx) => {
     const data = fieldsArrayToObject(ctx.fields as [], ctx)
-    await ctx.api.service(ctx.tableId as string).create(data, {})
+    await ctx.useFeathersService(ctx.tableId as string).create(data, {})
   },
   result: (ctx: TFrontActionExecOptions): string[] => {
     const table = ctx.editor.tables

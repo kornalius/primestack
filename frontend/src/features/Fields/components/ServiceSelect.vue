@@ -46,7 +46,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useModelValue } from '@/composites/prop'
-import { useFeathers } from '@/composites/feathers'
+import { useFeathersService } from '@/composites/feathers'
 import { AnyData } from '@/shared/interfaces/commons'
 
 const props = defineProps<{
@@ -68,12 +68,10 @@ const reservedTableNames = ['tables', 'menus', 'forms', 'tabs', 'actions']
 
 const value = useModelValue(props, emit)
 
-const { api } = useFeathers()
-
-const userTable = api.service('tables').findOneInStore({ query: {} })
-const userForm = api.service('forms').findOneInStore({ query: {} })
-const userMenu = api.service('menus').findOneInStore({ query: {} })
-const userAction = api.service('actions').findOneInStore({ query: {} })
+const userTable = useFeathersService('tables').findOneInStore({ query: {} })
+const userForm = useFeathersService('forms').findOneInStore({ query: {} })
+const userMenu = useFeathersService('menus').findOneInStore({ query: {} })
+const userAction = useFeathersService('actions').findOneInStore({ query: {} })
 
 const data = ref()
 
@@ -114,17 +112,15 @@ const entities = computed(() => {
 
 watch([() => props.service, () => props.tableId], () => {
   if (props.service && !reservedTableNames.includes(props.service)) {
-    const { data: c, find: findEntities } = api.service(props.service).useFind({
-      query: props.query || {},
-    })
+    const { data: c, find: findEntities } = useFeathersService(props.service)
+      .useFind(computed(() => ({ query: props.query || {} })))
     findEntities()
     watch(c, () => {
       data.value = c.value
     }, { immediate: true })
   } else if (props.tableId) {
-    const { data: c, find } = api.service(props.tableId).useFind({
-      query: props.query || {},
-    })
+    const { data: c, find } = useFeathersService(props.tableId)
+      .useFind(computed(() => ({ query: props.query || {} })))
     find()
     watch(c, () => {
       data.value = c.value

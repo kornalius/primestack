@@ -7,7 +7,7 @@ import isEqual from 'lodash/isEqual'
 import hexObjectId from 'hex-object-id'
 import { defineStore } from 'pinia'
 import hotkeys from 'hotkeys-js'
-import { useFeathers } from '@/composites/feathers'
+import { useFeathersService } from '@/composites/feathers'
 import cloneDeep from 'lodash/cloneDeep'
 import { useSnacks } from '@/features/Snacks/store'
 import { AnyData } from '@/shared/interfaces/commons'
@@ -606,16 +606,12 @@ export const useAppEditor = defineStore('app-editor', () => {
   /**
    * Reload all instances from the store
    */
-  const loadFromStore = () => {
-    const { api } = useFeathers()
-
-    return {
-      userMenus: api.service('menus').findOneInStore({ query: {} }),
-      userForms: api.service('forms').findOneInStore({ query: {} }),
-      userTables: api.service('tables').findOneInStore({ query: {} }),
-      userActions: api.service('actions').findOneInStore({ query: {} }),
-    }
-  }
+  const loadFromStore = () => ({
+    userMenus: useFeathersService('menus').findOneInStore({ query: {} }),
+    userForms: useFeathersService('forms').findOneInStore({ query: {} }),
+    userTables: useFeathersService('tables').findOneInStore({ query: {} }),
+    userActions: useFeathersService('actions').findOneInStore({ query: {} }),
+  })
 
   /**
    * Save a snapshot to the store and sets the current editing elements to this snapshot
@@ -746,8 +742,6 @@ export const useAppEditor = defineStore('app-editor', () => {
    * Save the editing session into the store
    */
   const save = async (): Promise<void> => {
-    const { api } = useFeathers()
-
     const {
       userMenus,
       userForms,
@@ -756,28 +750,28 @@ export const useAppEditor = defineStore('app-editor', () => {
     } = loadFromStore()
 
     states.value.menus = cloneDeep(
-      (await api.service('menus').patch(userMenus.value._id, {
+      (await useFeathersService('menus').patch(userMenus.value._id, {
         ...userMenus.value,
         list: states.value.menus,
       }) as AnyData).list,
     )
 
     states.value.tables = cloneDeep(
-      (await api.service('tables').patch(userTables.value._id, {
+      (await useFeathersService('tables').patch(userTables.value._id, {
         ...userTables.value,
         list: states.value.tables,
       }) as AnyData).list,
     )
 
     states.value.forms = cloneDeep(
-      (await api.service('forms').patch(userForms.value._id, {
+      (await useFeathersService('forms').patch(userForms.value._id, {
         ...userForms.value,
         list: states.value.forms,
       }) as AnyData).list,
     )
 
     states.value.actions = cloneDeep(
-      (await api.service('actions').patch(userActions.value._id, {
+      (await useFeathersService('actions').patch(userActions.value._id, {
         ...userActions.value,
         list: states.value.actions,
       }) as AnyData).list,

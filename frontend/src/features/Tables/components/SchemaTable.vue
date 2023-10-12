@@ -40,7 +40,7 @@ import sift from 'sift'
 import { TSchema } from '@feathersjs/typebox'
 import { useSyncedProp } from '@/composites/prop'
 import { AnyData } from '@/shared/interfaces/commons'
-import { useFeathers } from '@/composites/feathers'
+import { useFeathersService } from '@/composites/feathers'
 import { useQuery } from '@/features/Query/composites'
 import { useTable } from '@/features/Tables/composites'
 import { filterToMongo } from '@/composites/filter'
@@ -106,8 +106,6 @@ const emit = defineEmits<{
   (e: 'update:selected', value: unknown[]): void,
 }>()
 
-const { api } = useFeathers()
-
 const currentSelected = useSyncedProp(props, 'selected', emit)
 
 const currentFilter = useSyncedProp(props, 'filter', emit)
@@ -120,7 +118,7 @@ const dataRows = ref([])
 
 const data = ref()
 
-const { data: userTables } = api.service('tables').useFind({ query: {} })
+const { data: userTables } = useFeathersService('tables').useFind(computed(() => ({ query: {} })))
 
 const table = computed(() => (
   userTables.value?.[0]?.list.find((tt) => tt._id === props.tableId)
@@ -165,7 +163,8 @@ watch([
   clearTimeout(filterTimeout)
   filterTimeout = setTimeout(() => {
     if (props.tableId) {
-      const dataFind = api.service(props.tableId).useFind({ query, temps: props.temps })
+      const dataFind = useFeathersService(props.tableId)
+        .useFind(computed(() => ({ query, temps: props.temps })))
       dataFind.find({ query })
       watch(dataFind.data, () => {
         data.value = dataFind.data.value

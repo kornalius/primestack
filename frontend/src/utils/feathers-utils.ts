@@ -9,7 +9,7 @@
 // export const removeStoreItems = (servicePath: string, instancesOrIds: AnyData[]): void => {
 //   instancesOrIds.forEach((i) => {
 //     if (typeof i === 'string' || typeof i === 'number') {
-//       const instance = api.service(servicePath).getFromStrore(i)
+//       const instance = useFeathersService(servicePath).getFromStrore(i)
 //       instance.removeFromStore()
 //       return
 //     }

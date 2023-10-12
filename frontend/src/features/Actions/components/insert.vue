@@ -30,7 +30,7 @@ import json from 'highlight.js/lib/languages/json'
 import { AnyData } from '@/shared/interfaces/commons'
 // eslint-disable-next-line import/no-cycle
 import { useActions } from '@/features/Actions/composites'
-import { useFeathers } from '@/composites/feathers'
+import { useFeathersService } from '@/composites/feathers'
 import { useExpression } from '@/features/Expression/composites'
 import PropertyHighlight from '@/features/Properties/components/PropertyHighlight.vue'
 
@@ -42,9 +42,8 @@ const props = defineProps<{
 
 const { fieldsArrayToObject } = useActions()
 
-const { api } = useFeathers()
-
-const { data: tables } = api.service('tables').useFind({ query: {} })
+const { data: tables } = useFeathersService('tables')
+  .useFind(computed(() => ({ query: {} })))
 
 const userTable = computed(() => tables.value?.[0])
 

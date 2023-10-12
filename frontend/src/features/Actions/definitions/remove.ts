@@ -11,11 +11,11 @@ export default {
   childrenMessage: 'actions.remove.childrenMessage',
   exec: async (ctx) => {
     if (ctx.id) {
-      await ctx.api.service(ctx.tableId as string)
+      await ctx.useFeathersService(ctx.tableId as string)
         .remove(ctx.id as string)
     } else {
-      const table = await ctx.api.service('tables').get(ctx.tableId as string)
-      await ctx.api.service(ctx.tableId as string)
+      const table = await ctx.useFeathersService('tables').get(ctx.tableId as string)
+      await ctx.useFeathersService(ctx.tableId as string)
         .remove(null, { query: queryToMongo(ctx.query as Query, table, ctx.$expr) })
     }
   },

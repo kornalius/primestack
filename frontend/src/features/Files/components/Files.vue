@@ -14,7 +14,7 @@
 import { computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { schema } from '@/shared/schemas/file'
-import { useFeathers } from '@/composites/feathers'
+import { useFeathersService } from '@/composites/feathers'
 import { AnyData } from '@/shared/interfaces/commons'
 import FileDocument from './File.vue'
 
@@ -35,14 +35,12 @@ defineEmits<{
   (e: 'remove', file: StoreFile): void,
 }>()
 
-const { api } = useFeathers()
-
 const params = computed(() => ({
   query: props.query,
   temps: true,
 }))
 
-const { data: files, find } = api.service('files').useFind(params)
+const { data: files, find } = useFeathersService('files').useFind(params)
 find()
 </script>
 

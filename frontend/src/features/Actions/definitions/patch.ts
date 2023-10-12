@@ -23,12 +23,12 @@ export default {
     const data = fieldsArrayToObject(ctx.fields as [], ctx)
 
     if (ctx.id) {
-      await ctx.api.service(ctx.tableId as string)
-        .update(ctx.id as string, data, {})
+      await ctx.useFeathersService(ctx.tableId as string)
+        .patch(ctx.id as string, data, {})
     } else {
-      const table = await ctx.api.service('tables').get(ctx.tableId as string)
-      await ctx.api.service(ctx.tableId as string)
-        .update(null, data, { query: queryToMongo(ctx.query as Query, table, ctx.$expr) })
+      const table = await ctx.useFeathersService('tables').get(ctx.tableId as string)
+      await ctx.useFeathersService(ctx.tableId as string)
+        .patch(null, data, { query: queryToMongo(ctx.query as Query, table, ctx.$expr) })
     }
   },
   result: (ctx: TFrontActionExecOptions): string[] => {

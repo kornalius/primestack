@@ -111,14 +111,16 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useFeathers } from '@/composites/feathers'
+import { Static } from '@feathersjs/typebox'
+import { ServiceType, useFeathersService } from '@/composites/feathers'
 import { useAuth } from '@/features/Auth/store'
+import { schema } from '@/shared/schemas/user'
 
-const { api } = useFeathers()
+type User = Static<typeof schema>
 
 const auth = useAuth()
 
-const user = api.service('users').getFromStore(auth.userId)
+const user = useFeathersService('users').getFromStore(auth.userId) as ServiceType<User>
 
 const currentPassword = ref()
 

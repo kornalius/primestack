@@ -52,7 +52,7 @@ import { useI18n } from 'vue-i18n'
 import { useSnacks } from '@/features/Snacks/store'
 import { useFiles } from '@/features/Files/composites'
 import { schema } from '@/shared/schemas/file'
-import { useFeathers } from '@/composites/feathers'
+import { useFeathersService } from '@/composites/feathers'
 import { AnyData } from '@/shared/interfaces/commons'
 import FilesList from './Files.vue'
 
@@ -96,8 +96,6 @@ defineEmits<{
 
 const uploadInput = ref()
 
-const { api } = useFeathers()
-
 const { t } = useI18n()
 
 const snacks = useSnacks()
@@ -115,7 +113,7 @@ const params = computed(() => ({
   temps: true,
 }))
 
-const { data: files, find } = api.service('files').useFind(params)
+const { data: files, find } = useFeathersService('files').useFind(params)
 find()
 
 /**
@@ -178,7 +176,7 @@ const handleFileChange = (e) => {
       } as StoreFile
 
       if (isValidFile(def)) {
-        const f = api.service('files').new(def)
+        const f = useFeathersService('files').new(def)
         f.createInStore()
 
         // stream upload file directly to uploads service

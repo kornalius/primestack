@@ -17,9 +17,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useModelValue } from '@/composites/prop'
-import { useFeathers } from '@/composites/feathers'
+import { useFeathersService } from '@/composites/feathers'
 import { AnyData } from '@/shared/interfaces/commons'
 
 const props = defineProps<{
@@ -37,13 +37,12 @@ const emit = defineEmits<{
 
 const value = useModelValue(props, emit)
 
-const { api } = useFeathers()
-
 const options = ref([])
 
 watch([() => props.tableId, () => props.field], () => {
   if (props.tableId && props.field) {
-    const { data, find } = api.service(props.tableId).useFind({ query: props.query || {} })
+    const { data, find } = useFeathersService(props.tableId)
+      .useFind(computed(() => ({ query: props.query || {} })))
     find({ query: props.query })
     watch(data, () => {
       options.value = data.value.reduce((acc, d: AnyData) => {
