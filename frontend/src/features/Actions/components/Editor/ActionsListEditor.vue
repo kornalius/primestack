@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      v-if="actionList.length === 0 && !editor.isDragging"
+      v-if="emptyMessage && actionList.length === 0 && !editor.isDragging"
       class="text-italic text-grey-8"
     >
       {{ emptyMessage }}
@@ -53,7 +53,7 @@ const emit = defineEmits<{
   (e: 'clear'): void,
   (e: 'moved', oldIndex: number, newIndex: number): void,
   (e: 'select', value: unknown): void,
-  (e: 'update:model-value', value: unknown[]): void,
+  (e: 'update:model-value', value: Action[]): void,
 }>()
 
 const actionList = useModelValue(props, emit)

@@ -15,6 +15,7 @@
       <q-tab name="Tags" label="Tags Select" />
       <q-tab name="Stats" label="Stats" />
       <q-tab name="ValueBoxes" label="Value Boxes" />
+      <q-tab name="JsonEditor" label="Json Editor" />
     </q-tabs>
 
     <q-tab-panels v-model="tab" animated>
@@ -244,12 +245,30 @@
           </div>
         </div>
       </q-tab-panel>
+
+      <q-tab-panel name="JsonEditor">
+        <div class="row q-gutter-sm">
+          <div class="col">
+            <json-editor v-model="json" />
+          </div>
+          <div class="col">
+            <code-editor
+              v-model="jsonText"
+              class="code-editor"
+              style="width: 100%; height: 100vh; background: white;"
+              lang-json
+            />
+          </div>
+        </div>
+      </q-tab-panel>
     </q-tab-panels>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { computed, Ref, ref } from 'vue'
+import {
+  computed, Ref, ref, watch,
+} from 'vue'
 import sample from 'lodash/sample'
 import hexObjectId from 'hex-object-id'
 import { Type } from '@feathersjs/typebox'
@@ -267,6 +286,8 @@ import TagsSelect from '@/features/Tables/components/TagsSelect.vue'
 import { useStats } from '@/features/Stats/store'
 import ValueBox from '@/features/Fields/components/ValueBox.vue'
 import StatBox from '@/features/Tables/components/StatBox.vue'
+import JsonEditor from '@/features/Json/components/Editor/JsonEditor.vue'
+import CodeEditor from '@/features/Expression/components/CodeEditor.vue'
 
 /**
  * Properties
@@ -496,6 +517,32 @@ const empty = stats.empty({ tableId: '64b806da03ac5093de3f3e78', field: 'numberF
 const notEmpty = stats.notEmpty({ tableId: '64b806da03ac5093de3f3e78', field: 'numberField' })
 const pctEmpty = stats.pctEmpty({ tableId: '64b806da03ac5093de3f3e78', field: 'numberField' })
 const pctNotEmpty = stats.pctNotEmpty({ tableId: '64b806da03ac5093de3f3e78', field: 'numberField' })
+
+/**
+ * JSON Editor
+ */
+
+const json = ref({
+  a: 10,
+  b: 20,
+  c: {
+    c1: 30,
+    c2: 40,
+  },
+  d: [
+    { a: 10, b: 20 },
+    'string',
+    true,
+  ],
+  e: 'string',
+  f: true,
+})
+
+const jsonText = ref('{}')
+
+watch(json, () => {
+  jsonText.value = JSON.stringify(json.value, undefined, 2)
+}, { immediate: true, deep: true })
 </script>
 
 <style scoped lang="sass">
