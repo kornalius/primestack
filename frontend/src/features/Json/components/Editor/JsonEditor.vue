@@ -8,7 +8,9 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, onUnmounted, Ref } from 'vue'
 import { useModelValue } from '@/composites/prop'
+import { useJsonEditor } from '@/features/Json/store'
 import { AnyData } from '@/shared/interfaces/commons'
 import JsonItem from '@/features/Json/components/Editor/JsonItem.vue'
 
@@ -22,6 +24,24 @@ const emit = defineEmits<{
 }>()
 
 const item = useModelValue(props, emit)
+
+const jsonEditor = useJsonEditor()
+
+const json = (d?: AnyData | AnyData[]): Ref<AnyData | AnyData[]> | undefined => {
+  if (d) {
+    item.value = d
+    return undefined
+  }
+  return item
+}
+
+onMounted(() => {
+  jsonEditor.startEdit(json)
+})
+
+onUnmounted(() => {
+  jsonEditor.endEdit()
+})
 </script>
 
 <style scoped lang="sass">

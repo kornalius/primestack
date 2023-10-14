@@ -10,6 +10,7 @@
       :parent="item"
       :path="[...path, key]"
       @change-key="changeKey"
+      @remove="remove"
     />
   </ul>
 </template>
@@ -45,6 +46,16 @@ const changeKey = (newKey: string, oldKey: string) => {
       return { ...acc, [newKey]: item.value[oldKey] }
     }
     return { ...acc, [k]: item.value[k] }
+  }, {})
+}
+
+const remove = (key: string) => {
+  const idx = keys.value.indexOf(key)
+  item.value = keys.value.reduce((acc, k, index) => {
+    if (index !== idx) {
+      return { ...acc, [k]: item.value[k] }
+    }
+    return acc
   }, {})
 }
 </script>

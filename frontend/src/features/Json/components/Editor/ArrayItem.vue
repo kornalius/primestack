@@ -9,6 +9,7 @@
       :animation="150"
       easing="cubic-bezier(1, 0, 0, 1)"
       :item-key="(item) => items.indexOf(item)"
+      handle=".drag-handle"
       @start="jsonEditor.setDragging(true)"
       @end="jsonEditor.setDragging(false)"
     >
@@ -19,6 +20,7 @@
           :parent="items"
           :path="[...path, index]"
           @change-key="(newKey, oldKey) => $emit('change-key', newKey, oldKey)"
+          @remove="remove"
         />
       </template>
     </draggable>
@@ -46,6 +48,13 @@ const emit = defineEmits<{
 const items = useModelValue(props, emit)
 
 const jsonEditor = useJsonEditor()
+
+const remove = (idx: number) => {
+  items.value = [
+    ...items.value.slice(0, idx),
+    ...items.value.slice(idx + 1),
+  ]
+}
 </script>
 
 <style scoped lang="sass">

@@ -1,8 +1,7 @@
 import {
-  computed, ref, watch, WatchStopHandle,
+  computed, ref, WatchStopHandle, watch,
 } from 'vue'
 import { Static } from '@feathersjs/typebox'
-import debounce from 'lodash/debounce'
 import isEqual from 'lodash/isEqual'
 import hexObjectId from 'hex-object-id'
 import { defineStore } from 'pinia'
@@ -23,6 +22,7 @@ import { TFormComponent } from '@/shared/interfaces/forms'
 import { defaultValueForSchema, defaultValues } from '@/shared/schema'
 import { newNameForField, flattenFields } from '@/shared/form'
 import { TAction } from '@/shared/interfaces/actions'
+import { useUndo } from '@/features/Undo/store'
 
 type Menu = Static<typeof menuSchema>
 type Tab = Static<typeof tabSchema>
@@ -41,6 +41,8 @@ interface Snapshot {
   tables: Table[]
   actions: Action[]
 }
+
+let previousScope: string
 
 export const useAppEditor = defineStore('app-editor', () => {
   const states = ref({
@@ -82,11 +84,9 @@ export const useAppEditor = defineStore('app-editor', () => {
     actions: [] as Action[],
     // Original snapshot at start of editing
     origSnapshot: {} as Snapshot,
-    // Undo pointer
-    undoPtr: 0,
-    // Undo stack
-    undoStack: [] as Snapshot[],
   })
+
+  const undoStore = useUndo('editor-undo')()
 
   /**
    * Is the editor active?
@@ -599,11 +599,6 @@ export const useAppEditor = defineStore('app-editor', () => {
   )
 
   /**
-   * Maximum size of the undo stack
-   */
-  const maxUndoStack = 25
-
-  /**
    * Reload all instances from the store
    */
   const loadFromStore = () => ({
@@ -648,22 +643,23 @@ export const useAppEditor = defineStore('app-editor', () => {
   /**
    * Creates a snapshot of the current editing elements
    */
-  const snapshot = (): Snapshot => (
-    {
-      menus: cloneDeep(states.value.menus),
-      forms: cloneDeep(states.value.forms),
-      tables: cloneDeep(states.value.tables),
-      actions: cloneDeep(states.value.actions),
-    }
-  )
+  const snapshot = (): Snapshot => ({
+    menus: cloneDeep(states.value.menus),
+    forms: cloneDeep(states.value.forms),
+    tables: cloneDeep(states.value.tables),
+    actions: cloneDeep(states.value.actions),
+  })
 
   /**
-   * Clears the undo stack
+   * Starts watching for changes in the editing session.
+   * If changed, creates a snapshot in the undo stack.
    */
-  const clearUndoStack = (): void => {
-    states.value.undoStack = []
-    states.value.undoPtr = 0
-  }
+  const startWatch = (): WatchStopHandle => watch([
+    () => states.value.menus,
+    () => states.value.forms,
+    () => states.value.tables,
+    () => states.value.actions,
+  ], undoStore.snap(snapshot), { deep: true })
 
   /**
    * Starts an editing session. Also saves an original snapshot.
@@ -683,7 +679,12 @@ export const useAppEditor = defineStore('app-editor', () => {
     states.value.tables = cloneDeep(userTables.value?.list)
     states.value.actions = cloneDeep(userActions.value?.list)
 
+    undoStore.startWatch(startWatch)
+    undoStore.snap(snapshot)()
+
     states.value.origSnapshot = snapshot()
+
+    previousScope = hotkeys.getScope()
 
     hotkeys.setScope('edit')
   }
@@ -692,6 +693,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    * Ends an editing session
    */
   const endEdit = (): void => {
+    undoStore.cancelWatch()
     states.value.active = false
     unselectMenu()
     unselectTable()
@@ -700,8 +702,8 @@ export const useAppEditor = defineStore('app-editor', () => {
     states.value.formId = undefined
     states.value.actionId = undefined
     states.value.selected = undefined
-    clearUndoStack()
-    hotkeys.setScope('app')
+    undoStore.clearUndoStack()
+    hotkeys.setScope(previousScope)
   }
 
   /**
@@ -782,83 +784,24 @@ export const useAppEditor = defineStore('app-editor', () => {
   }
 
   /**
-   * Debounced snap function
-   */
-  const snap = debounce(() => {
-    if (states.value.undoStack.length > maxUndoStack) {
-      states.value.undoStack.shift()
-    }
-    states.value.undoStack = states.value.undoStack.slice(0, states.value.undoPtr + 1)
-    states.value.undoStack.push(snapshot())
-    states.value.undoPtr = states.value.undoStack.length - 1
-  }, 250)
-
-  let stopWatchHandle: WatchStopHandle
-
-  /**
-   * Starts watching for changes in the editing session.
-   * If changed, creates a snapshot in the undo stack.
-   */
-  const startWatch = (): void => {
-    if (!stopWatchHandle) {
-      stopWatchHandle = watch([
-        () => states.value.menus,
-        () => states.value.forms,
-        () => states.value.tables,
-        () => states.value.actions,
-      ], () => {
-        snap()
-      }, { deep: true })
-    }
-  }
-
-  /**
-   * Stop watching for changes in the editing session.
-   */
-  const cancelWatch = (): void => {
-    if (stopWatchHandle) {
-      stopWatchHandle()
-    }
-    stopWatchHandle = undefined
-  }
-
-  /**
-   * Can we undo changes?
-   */
-  const canUndo = computed(() => (
-    states.value.undoPtr > 0
-  ))
-
-  /**
    * Undo current changes to the last snapshot
    */
   const undo = (): boolean => {
-    if (canUndo.value) {
-      cancelWatch()
-      states.value.undoPtr -= 1
-      saveToStore(cloneDeep(states.value.undoStack[states.value.undoPtr]))
-      setTimeout(startWatch, 100)
+    if (undoStore.undo()) {
+      saveToStore(cloneDeep(undoStore.undoStack[undoStore.undoPtr]) as Snapshot)
+      setTimeout(() => undoStore.startWatch(startWatch), 100)
       return true
     }
     return false
   }
 
   /**
-   * Can we redo changes?
-   */
-  const canRedo = computed(() => (
-    states.value.undoPtr < states.value.undoStack.length - 1
-  ))
-
-  /**
    * Redo changes
    */
   const redo = (): boolean => {
-    if (canRedo.value) {
-      cancelWatch()
-      states.value.undoPtr += 1
-      saveToStore(cloneDeep(states.value.undoStack[states.value.undoPtr]))
-      setTimeout(startWatch, 100)
+    if (undoStore.redo()) {
+      saveToStore(cloneDeep(undoStore.undoStack[undoStore.undoPtr] as Snapshot))
+      setTimeout(() => undoStore.startWatch(startWatch), 100)
       return true
     }
     return false
@@ -871,13 +814,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    */
   const preventSystemUndoRedo = (e: KeyboardEvent) => {
     if (states.value.active) {
-      if (e.ctrlKey && e.shiftKey && e.key === 'Z') {
-        redo()
-        e.preventDefault()
-      } else if (e.ctrlKey && e.key === 'z') {
-        undo()
-        e.preventDefault()
-      }
+      undoStore.preventSystemUndoRedo(e)
     }
   }
 
@@ -1424,8 +1361,6 @@ export const useAppEditor = defineStore('app-editor', () => {
     return false
   }
 
-  startWatch()
-
   return {
     states,
     active,
@@ -1476,10 +1411,10 @@ export const useAppEditor = defineStore('app-editor', () => {
     canSave,
     save,
     reset,
-    snap,
-    canUndo,
+    snap: undoStore.snap,
+    canUndo: undoStore.canUndo,
     undo,
-    canRedo,
+    canRedo: undoStore.canRedo,
     redo,
     preventSystemUndoRedo,
     formInstance,

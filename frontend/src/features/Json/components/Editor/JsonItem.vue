@@ -4,7 +4,7 @@
       <div class="row items-center">
         <!-- Expand/Collapse button -->
 
-        <div class="col-auto q-mr-sm relative-position" style="width: 26px;">
+        <div class="col-auto q-mr-sm relative-position" style="width: 20px;">
           <q-btn
             v-if="isArray || isObject"
             :icon="jsonEditor.isPathExpanded(pathString) ? 'mdi-minus' : 'mdi-plus'"
@@ -16,7 +16,17 @@
           />
         </div>
 
-        <div class="col q-px-sm q-mb-xs">
+        <!-- Drag handle -->
+
+        <div
+          v-if="typeof itemKey === 'number'"
+          class="col-auto"
+          style="cursor: move; padding-bottom: 4px;"
+        >
+          <q-icon class="drag-handle" name="mdi-drag" size="large" />
+        </div>
+
+        <div class="col q-mb-xs">
           <div class="row items-center">
             <!-- Types button -->
 
@@ -25,6 +35,7 @@
                 :icon="types[itemType].icon"
                 :color="types[itemType].color"
                 :disable="path.length === 0"
+                tabindex="-1"
                 flat
                 dense
               >
@@ -89,9 +100,11 @@
                 icon="mdi-close"
                 size="sm"
                 color="red-5"
+                tabindex="-1"
                 dense
                 round
                 flat
+                @click="$emit('remove', itemKey)"
               />
             </div>
           </div>
@@ -134,6 +147,7 @@ const props = defineProps<{
 
 // eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
+  (e: 'remove', key: string | number): void,
   (e: 'change-key', newValue: string, oldValue: string): void,
   (e: 'update:model-value', value: unknown): void,
 }>()
@@ -148,11 +162,15 @@ const types = ref({
   boolean: { icon: 'mdi-checkbox-marked', color: 'orange' },
   array: { icon: 'mdi-code-array', color: 'purple' },
   object: { icon: 'mdi-code-braces-box', color: 'grey' },
+  null: { icon: 'mdi-close-box', color: 'red' },
+  undefined: { icon: 'mdi-help-box', color: 'brown' },
 })
 
 const isArray = computed(() => Array.isArray(item.value))
 
-const isObject = computed(() => !isArray.value && typeof item.value === 'object')
+const isObject = computed(() => (
+  !isArray.value && typeof item.value === 'object' && item.value !== null
+))
 
 const itemType = computed(() => {
   if (isArray.value) {
@@ -161,14 +179,24 @@ const itemType = computed(() => {
   if (isObject.value) {
     return 'object'
   }
+  if (item.value === null) {
+    return 'null'
+  }
+  if (item.value === undefined) {
+    return 'undefined'
+  }
   return typeof item.value
 })
 
 const setItemType = (type: string) => {
   if (type === 'string') {
-    item.value = item.value.toString()
+    if (['array', 'object'].includes(itemType.value)) {
+      item.value = ''
+    } else {
+      item.value = (item.value || '').toString()
+    }
   } else if (type === 'number') {
-    item.value = Number(item.value)
+    item.value = Number(item.value) || 0
   } else if (type === 'boolean') {
     if (item.value === 'true') {
       item.value = true
@@ -181,6 +209,10 @@ const setItemType = (type: string) => {
     item.value = [item.value]
   } else if (type === 'object') {
     item.value = { key: item.value }
+  } else if (type === 'null') {
+    item.value = null
+  } else if (type === 'undefined') {
+    item.value = undefined
   }
 }
 

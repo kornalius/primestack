@@ -3,7 +3,8 @@
     v-if="isObjectKey && !focused"
     class="col-auto q-pr-md"
     style="cursor: text;"
-    @click="jsonEditor.setFocusedPath(pathString)"
+    tabindex="0"
+    @focus="focus"
   >
     {{ key }}
   </div>
@@ -13,11 +14,13 @@
     class="col-3 q-mr-sm"
   >
     <q-input
+      ref="input"
       v-model="key"
       autofocus
       dense
       borderless
       @blur="changeKey"
+      @keydown="jsonEditor.preventSystemUndoRedo"
     />
   </div>
 
@@ -62,11 +65,20 @@ const changeKey = () => {
   }
 }
 
+const input = ref()
+
 const isObjectKey = computed(() => typeof key.value === 'string')
 
 const pathString = computed(() => props.path.join('.'))
 
 const focused = computed(() => jsonEditor.focusedPath === pathString.value)
+
+const focus = () => {
+  jsonEditor.setFocusedPath(pathString.value)
+  setTimeout(() => {
+    input.value.select()
+  }, 10)
+}
 </script>
 
 <style scoped lang="sass">
