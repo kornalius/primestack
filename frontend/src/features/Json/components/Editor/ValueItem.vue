@@ -2,9 +2,11 @@
   <q-checkbox
     v-if="typeof value === 'boolean'"
     v-model="value"
+    style="margin-top: 11px;"
+    autofocus
     dense
-    @focus="focused = true"
-    @blur="focused = false"
+    @focus="focus"
+    @blur="blur"
     @keydown="jsonEditor.preventSystemUndoRedo"
   />
 
@@ -14,9 +16,10 @@
     input-class="text-blue"
     type="number"
     borderless
+    autofocus
     dense
-    @focus="focused = true"
-    @blur="focused = false"
+    @focus="focus"
+    @blur="blur"
     @keydown="jsonEditor.preventSystemUndoRedo"
   />
 
@@ -27,8 +30,9 @@
     :label="focused ? undefined : 'null'"
     borderless
     dense
-    @focus="focused = true"
-    @blur="focused = false"
+    autofocus
+    @focus="focus"
+    @blur="blur"
     @keydown="jsonEditor.preventSystemUndoRedo"
   />
 
@@ -38,9 +42,10 @@
     label-color="brown"
     :label="focused ? undefined : 'undefined'"
     borderless
+    autofocus
     dense
-    @focus="focused = true"
-    @blur="focused = false"
+    @focus="focus"
+    @blur="blur"
     @keydown="jsonEditor.preventSystemUndoRedo"
   />
 
@@ -49,15 +54,16 @@
     v-model="value"
     input-class="text-green"
     borderless
+    autofocus
     dense
-    @focus="focused = true"
-    @blur="focused = false"
+    @focus="focus"
+    @blur="blur"
     @keydown="jsonEditor.preventSystemUndoRedo"
   />
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useModelValue } from '@/composites/prop'
 import { useJsonEditor } from '@/features/Json/store'
 
@@ -78,6 +84,18 @@ const value = useModelValue(props, emit)
 const jsonEditor = useJsonEditor()
 
 const focused = ref(false)
+
+const pathString = computed(() => props.path.join('.'))
+
+const focus = () => {
+  jsonEditor.setFocusedPath(pathString.value)
+  focused.value = true
+}
+
+const blur = () => {
+  jsonEditor.setFocusedPath(undefined)
+  focused.value = false
+}
 </script>
 
 <style scoped lang="sass">

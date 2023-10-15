@@ -486,5 +486,11 @@
   "languages": {
     "en": "Anglais",
     "fr": "Français"
+  },
+  "json_editor": {
+    "add": "Cliquer pour insérer après, Alt+Click pour insérer avant",
+    "remove": "Enlever",
+    "expand": "Développer",
+    "collapse": "Fermer"
   }
 }

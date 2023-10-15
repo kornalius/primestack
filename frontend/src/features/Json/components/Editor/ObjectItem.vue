@@ -10,6 +10,8 @@
       :parent="item"
       :path="[...path, key]"
       @change-key="changeKey"
+      @insert-before="insertBefore"
+      @insert-after="insertAfter"
       @remove="remove"
     />
   </ul>
@@ -39,14 +41,60 @@ const item = useModelValue(props, emit)
  */
 const keys = computed(() => Object.keys(item.value))
 
-const changeKey = (newKey: string, oldKey: string) => {
-  const idx = keys.value.indexOf(oldKey)
+const newKey = () => {
+  let i = 1
+  let k = `key${i}`
+  while (keys.value.indexOf(k) !== -1) {
+    k = `key${i}`
+    i += 1
+  }
+  return k
+}
+
+const changeKey = (nk: string, ok: string) => {
+  const idx = keys.value.indexOf(ok)
   item.value = keys.value.reduce((acc, k, index) => {
     if (index === idx) {
-      return { ...acc, [newKey]: item.value[oldKey] }
+      return { ...acc, [nk]: item.value[ok] }
     }
     return { ...acc, [k]: item.value[k] }
   }, {})
+}
+
+const insertBefore = (key: string) => {
+  let tempKeys = [...keys.value]
+  const idx = keys.value.indexOf(key)
+  if (idx === 0) {
+    tempKeys = [
+      newKey(),
+      ...tempKeys,
+    ]
+  } else {
+    tempKeys = [
+      ...tempKeys.slice(0, idx),
+      newKey(),
+      ...tempKeys.slice(idx),
+    ]
+  }
+  item.value = tempKeys.reduce((acc, k) => ({ ...acc, [k]: item.value[k] }), {})
+}
+
+const insertAfter = (key: string) => {
+  let tempKeys = [...keys.value]
+  const idx = keys.value.indexOf(key)
+  if (idx === tempKeys.length - 1) {
+    tempKeys = [
+      ...tempKeys,
+      newKey(),
+    ]
+  } else {
+    tempKeys = [
+      ...tempKeys.slice(0, idx + 1),
+      newKey(),
+      ...tempKeys.slice(idx + 1),
+    ]
+  }
+  item.value = tempKeys.reduce((acc, k) => ({ ...acc, [k]: item.value[k] }), {})
 }
 
 const remove = (key: string) => {

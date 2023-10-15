@@ -20,6 +20,8 @@
           :parent="items"
           :path="[...path, index]"
           @change-key="(newKey, oldKey) => $emit('change-key', newKey, oldKey)"
+          @insert-before="insertBefore"
+          @insert-after="insertAfter"
           @remove="remove"
         />
       </template>
@@ -48,6 +50,36 @@ const emit = defineEmits<{
 const items = useModelValue(props, emit)
 
 const jsonEditor = useJsonEditor()
+
+const insertBefore = (idx: number) => {
+  if (idx === 0) {
+    items.value = [
+      '',
+      ...items.value,
+    ]
+  } else {
+    items.value = [
+      ...items.value.slice(0, idx),
+      '',
+      ...items.value.slice(idx),
+    ]
+  }
+}
+
+const insertAfter = (idx: number) => {
+  if (idx === items.value.length - 1) {
+    items.value = [
+      ...items.value,
+      '',
+    ]
+  } else {
+    items.value = [
+      ...items.value.slice(0, idx + 1),
+      '',
+      ...items.value.slice(idx + 1),
+    ]
+  }
+}
 
 const remove = (idx: number) => {
   items.value = [

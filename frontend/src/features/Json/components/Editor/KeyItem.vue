@@ -58,6 +58,7 @@ watch(() => props.modelValue, () => {
 }, { immediate: true })
 
 const changeKey = () => {
+  jsonEditor.setFocusedKey(undefined)
   jsonEditor.setFocusedPath(undefined)
 
   if (key.value !== props.modelValue) {
@@ -71,10 +72,11 @@ const isObjectKey = computed(() => typeof key.value === 'string')
 
 const pathString = computed(() => props.path.join('.'))
 
-const focused = computed(() => jsonEditor.focusedPath === pathString.value)
+const focused = computed(() => jsonEditor.focusedKey === pathString.value)
 
 const focus = () => {
-  jsonEditor.setFocusedPath(pathString.value)
+  jsonEditor.setFocusedKey(pathString.value)
+  jsonEditor.setFocusedPath(undefined)
   setTimeout(() => {
     input.value.select()
   }, 10)

@@ -494,5 +494,11 @@
   "languages": {
     "en": "English",
     "fr": "French"
+  },
+  "json_editor": {
+    "add": "Click to insert after, Alt+Click to insert before",
+    "remove": "Remove",
+    "expand": "Expand",
+    "collapse": "Collapse"
   }
 }
