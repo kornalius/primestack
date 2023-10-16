@@ -52,40 +52,15 @@ const items = useModelValue(props, emit)
 const jsonEditor = useJsonEditor()
 
 const insertBefore = (idx: number) => {
-  if (idx === 0) {
-    items.value = [
-      '',
-      ...items.value,
-    ]
-  } else {
-    items.value = [
-      ...items.value.slice(0, idx),
-      '',
-      ...items.value.slice(idx),
-    ]
-  }
+  jsonEditor.insertBefore([...props.path, idx].join('.'))
 }
 
 const insertAfter = (idx: number) => {
-  if (idx === items.value.length - 1) {
-    items.value = [
-      ...items.value,
-      '',
-    ]
-  } else {
-    items.value = [
-      ...items.value.slice(0, idx + 1),
-      '',
-      ...items.value.slice(idx + 1),
-    ]
-  }
+  jsonEditor.insertAfter([...props.path, idx].join('.'))
 }
 
 const remove = (idx: number) => {
-  items.value = [
-    ...items.value.slice(0, idx),
-    ...items.value.slice(idx + 1),
-  ]
+  jsonEditor.remove([...props.path, idx].join('.'))
 }
 </script>
 

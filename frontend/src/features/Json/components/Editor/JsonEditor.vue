@@ -1,10 +1,15 @@
 <template>
-  <ul>
-    <json-item
-      v-model="item"
-      :path="[]"
-    />
-  </ul>
+  <div class="json-editor">
+    <div class="text-caption" style="height: 20px; font-size: 14px;">
+      > {{ jsonEditor.focusedPath }}
+    </div>
+    <ul>
+      <json-item
+        v-model="item"
+        :path="[]"
+      />
+    </ul>
+  </div>
 </template>
 
 <script setup lang="ts">

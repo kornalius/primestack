@@ -1,65 +1,72 @@
 <template>
-  <q-checkbox
-    v-if="typeof value === 'boolean'"
-    v-model="value"
-    style="margin-top: 11px;"
-    autofocus
-    dense
-    @focus="focus"
-    @blur="blur"
-    @keydown="jsonEditor.preventSystemUndoRedo"
-  />
+  <div :id="`json-value-${pathString.split('.').join('-')}`">
+    <q-checkbox
+      v-if="typeof value === 'boolean'"
+      v-model="value"
+      style="margin-top: 11px;"
+      :autofocus="jsonEditor.focusedPath === pathString"
+      dense
+      @focus="focus"
+      @blur="blur"
+      @keydown="jsonEditor.keydown"
+      @click.stop=""
+    />
 
-  <q-input
-    v-else-if="typeof value === 'number'"
-    v-model.number="value"
-    input-class="text-blue"
-    type="number"
-    borderless
-    autofocus
-    dense
-    @focus="focus"
-    @blur="blur"
-    @keydown="jsonEditor.preventSystemUndoRedo"
-  />
+    <q-input
+      v-else-if="typeof value === 'number'"
+      v-model.number="value"
+      input-class="text-blue"
+      type="number"
+      :autofocus="jsonEditor.focusedPath === pathString"
+      borderless
+      dense
+      @focus="focus"
+      @blur="blur"
+      @keydown="jsonEditor.keydown"
+      @click.stop=""
+    />
 
-  <q-input
-    v-else-if="value === null"
-    v-model="value"
-    label-color="red"
-    :label="focused ? undefined : 'null'"
-    borderless
-    dense
-    autofocus
-    @focus="focus"
-    @blur="blur"
-    @keydown="jsonEditor.preventSystemUndoRedo"
-  />
+    <q-input
+      v-else-if="value === null"
+      v-model="value"
+      label-color="red"
+      :label="focused ? undefined : 'null'"
+      :autofocus="jsonEditor.focusedPath === pathString"
+      borderless
+      dense
+      @focus="focus"
+      @blur="blur"
+      @keydown="jsonEditor.keydown"
+      @click.stop=""
+    />
 
-  <q-input
-    v-else-if="value === undefined"
-    v-model="value"
-    label-color="brown"
-    :label="focused ? undefined : 'undefined'"
-    borderless
-    autofocus
-    dense
-    @focus="focus"
-    @blur="blur"
-    @keydown="jsonEditor.preventSystemUndoRedo"
-  />
+    <q-input
+      v-else-if="value === undefined"
+      v-model="value"
+      label-color="brown"
+      :label="focused ? undefined : 'undefined'"
+      :autofocus="jsonEditor.focusedPath === pathString"
+      borderless
+      dense
+      @focus="focus"
+      @blur="blur"
+      @keydown="jsonEditor.keydown"
+      @click.stop=""
+    />
 
-  <q-input
-    v-else
-    v-model="value"
-    input-class="text-green"
-    borderless
-    autofocus
-    dense
-    @focus="focus"
-    @blur="blur"
-    @keydown="jsonEditor.preventSystemUndoRedo"
-  />
+    <q-input
+      v-else
+      v-model="value"
+      input-class="text-green"
+      :autofocus="jsonEditor.focusedPath === pathString"
+      borderless
+      dense
+      @focus="focus"
+      @blur="blur"
+      @keydown="jsonEditor.keydown"
+      @click.stop=""
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -88,7 +95,9 @@ const focused = ref(false)
 const pathString = computed(() => props.path.join('.'))
 
 const focus = () => {
-  jsonEditor.setFocusedPath(pathString.value)
+  setTimeout(() => {
+    jsonEditor.setFocusedPath(pathString.value)
+  }, 10)
   focused.value = true
 }
 

@@ -488,9 +488,18 @@
     "fr": "Français"
   },
   "json_editor": {
-    "add": "Cliquer pour insérer après, Alt+Click pour insérer avant",
+    "add": "Cliquer pour insérer après, Alt+Click pour insérer avant, Ctrl+Click pour insérer un enfant",
+    "insertBefore": "Insérer avant",
+    "insertAfter": "Insérer après",
     "remove": "Enlever",
     "expand": "Développer",
-    "collapse": "Fermer"
+    "collapse": "Fermer",
+    "string": "Chaîne ",
+    "number": "Nombre",
+    "boolean": "Booléen",
+    "array": "Tableau",
+    "object": "Objet",
+    "null": "Nul",
+    "undefined": "Indéfinie"
   }
 }

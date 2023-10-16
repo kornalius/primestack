@@ -20,6 +20,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useModelValue } from '@/composites/prop'
+import { useJsonEditor } from '@/features/Json/store'
 import { AnyData } from '@/shared/interfaces/commons'
 import JsonItem from '@/features/Json/components/Editor/JsonItem.vue'
 
@@ -36,75 +37,27 @@ const emit = defineEmits<{
 
 const item = useModelValue(props, emit)
 
+const jsonEditor = useJsonEditor()
+
 /**
  * Extract only item keys
  */
 const keys = computed(() => Object.keys(item.value))
 
-const newKey = () => {
-  let i = 1
-  let k = `key${i}`
-  while (keys.value.indexOf(k) !== -1) {
-    k = `key${i}`
-    i += 1
-  }
-  return k
-}
-
 const changeKey = (nk: string, ok: string) => {
-  const idx = keys.value.indexOf(ok)
-  item.value = keys.value.reduce((acc, k, index) => {
-    if (index === idx) {
-      return { ...acc, [nk]: item.value[ok] }
-    }
-    return { ...acc, [k]: item.value[k] }
-  }, {})
+  jsonEditor.renameKey([...props.path, ok].join('.'), nk)
 }
 
 const insertBefore = (key: string) => {
-  let tempKeys = [...keys.value]
-  const idx = keys.value.indexOf(key)
-  if (idx === 0) {
-    tempKeys = [
-      newKey(),
-      ...tempKeys,
-    ]
-  } else {
-    tempKeys = [
-      ...tempKeys.slice(0, idx),
-      newKey(),
-      ...tempKeys.slice(idx),
-    ]
-  }
-  item.value = tempKeys.reduce((acc, k) => ({ ...acc, [k]: item.value[k] }), {})
+  jsonEditor.insertBefore([...props.path, key].join('.'))
 }
 
 const insertAfter = (key: string) => {
-  let tempKeys = [...keys.value]
-  const idx = keys.value.indexOf(key)
-  if (idx === tempKeys.length - 1) {
-    tempKeys = [
-      ...tempKeys,
-      newKey(),
-    ]
-  } else {
-    tempKeys = [
-      ...tempKeys.slice(0, idx + 1),
-      newKey(),
-      ...tempKeys.slice(idx + 1),
-    ]
-  }
-  item.value = tempKeys.reduce((acc, k) => ({ ...acc, [k]: item.value[k] }), {})
+  jsonEditor.insertAfter([...props.path, key].join('.'))
 }
 
 const remove = (key: string) => {
-  const idx = keys.value.indexOf(key)
-  item.value = keys.value.reduce((acc, k, index) => {
-    if (index !== idx) {
-      return { ...acc, [k]: item.value[k] }
-    }
-    return acc
-  }, {})
+  jsonEditor.remove([...props.path, key].join('.'))
 }
 </script>
 

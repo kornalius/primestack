@@ -496,9 +496,18 @@
     "fr": "French"
   },
   "json_editor": {
-    "add": "Click to insert after, Alt+Click to insert before",
+    "add": "Click to insert after, Alt+Click to insert before, Ctrl+Click to insert a child",
+    "insertBefore": "Insert before",
+    "insertAfter": "Insert after",
     "remove": "Remove",
     "expand": "Expand",
-    "collapse": "Collapse"
+    "collapse": "Collapse",
+    "string": "String",
+    "number": "Number",
+    "boolean": "Boolean",
+    "array": "Array",
+    "object": "Object",
+    "null": "Null",
+    "undefined": "Undefined"
   }
 }
