@@ -47,12 +47,17 @@ interface ColorOptions {
   quasarPalette?: boolean
 }
 
+interface JSONOptions {
+  // for the visual json editor, the child type for the root array or object
+  rootType?: 'array' | 'object' | 'string' | 'number' | 'boolean'
+}
+
 const Id = (options: IdOptions = {}) => Type.String({ objectid: true, ...options })
 
 export default {
   Id,
 
-  JSON: (options = {}) => Type.Object({}, { json: true, ...options }),
+  JSON: (options: JSONOptions = {}) => Type.Object({}, { json: true, ...options }),
 
   Email: (options = {}) => Type.String({ format: 'email', ...options }),
 

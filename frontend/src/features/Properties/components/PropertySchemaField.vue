@@ -383,18 +383,60 @@
       v-model="value"
       :title="label"
       :disable="disabled"
+      max-width="500px"
+      max-height="900px"
       auto-save
-      @before-show="tempJson = JSON.stringify(value || {}, undefined, 2)"
-      @before-hide="value = JSON.parse(tempJson)"
+      @before-show="beforeJsonShow"
+      @before-hide="beforeJsonHide"
     >
-      <code-editor
-        v-model="tempJson"
-        class="code-editor"
-        style="width: 600px; height: 400px;"
-        lang-json
-        autofocus
-        @keydown="editor.preventSystemUndoRedo"
-      />
+      <q-tabs
+        v-model="tab"
+        inline-label
+        dense
+        stretch
+      >
+        <q-tab
+          name="json-editor"
+          icon="mdi-file-tree"
+          :label="$t('json_editor.visual')"
+        />
+
+        <q-tab
+          name="code-editor"
+          icon="mdi-code-json"
+          :label="$t('json_editor.code')"
+        />
+      </q-tabs>
+
+      <q-tab-panels
+        v-model="tab"
+        animated
+      >
+        <q-tab-panel
+          name="json-editor"
+          class="q-pa-none"
+        >
+          <json-editor
+            v-model="value"
+            style="width: 450px; height: 600px; overflow: auto;"
+            :root-child-type="schema.rootType"
+          />
+        </q-tab-panel>
+
+        <q-tab-panel
+          name="code-editor"
+          class="q-pa-none"
+        >
+          <code-editor
+            v-model="tempJson"
+            class="code-editor"
+            style="width: 450px; height: 600px;"
+            lang-json
+            autofocus
+            @keydown="editor.preventSystemUndoRedo"
+          />
+        </q-tab-panel>
+      </q-tab-panels>
     </q-popup-edit>
 
     <q-btn
@@ -658,6 +700,7 @@ import TableFieldSelect from '@/features/Tables/components/TableFieldSelect.vue'
 import VariableSelect from '@/features/Variables/components/VariableSelect.vue'
 import PropertyHighlight from '@/features/Properties/components/PropertyHighlight.vue'
 import BtnToggleMulti from '@/features/Fields/components/BtnToggleMulti.vue'
+import JsonEditor from '@/features/Json/components/Editor/JsonEditor.vue'
 
 type Action = Static<typeof actionSchema>
 
@@ -715,6 +758,10 @@ watch(value, () => {
 })
 
 const tempJson = ref()
+
+const tab = ref('json-editor')
+
+const jsonEditing = ref(false)
 
 const editor = useAppEditor()
 
@@ -1033,9 +1080,54 @@ const clearAction = () => {
   value.value = undefined
 }
 
+/**
+ * Clear the current property value
+ */
 const cleanValue = () => {
   value.value = undefined
 }
+
+/**
+ * Before popup editing JSON property
+ */
+const beforeJsonShow = () => {
+  tempJson.value = JSON.stringify(value.value || {}, undefined, 2)
+  jsonEditing.value = true
+}
+
+/**
+ * Before hiding the JSON edit popup
+ */
+const beforeJsonHide = () => {
+  try {
+    value.value = JSON.parse(tempJson.value)
+  } catch (e) {
+    //
+  }
+  jsonEditing.value = false
+}
+
+/**
+ * When property value is changed while the JSON popup editor is visible
+ */
+watch(value, () => {
+  if (jsonEditing.value) {
+    tempJson.value = JSON.stringify(value.value || {}, undefined, 2)
+  }
+}, { deep: true })
+
+/**
+ * When the JSON string value from the code editor is changed while the JSON popup editor is visible
+ */
+watch(tempJson, () => {
+  if (jsonEditing.value) {
+    try {
+      value.value = JSON.parse(tempJson.value)
+    } catch (e) {
+      //
+    }
+  }
+})
 </script>
 
 <style scoped lang="sass">

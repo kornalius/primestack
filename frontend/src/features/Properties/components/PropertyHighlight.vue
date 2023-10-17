@@ -18,7 +18,7 @@
     <pre class="flex">
       <code
         class="hljs"
-        style="max-height: 250px"
+        style="max-height: 250px; width: 180px;"
         v-html="hljs.highlight(modelValue || '', { language }).value"
       />
     </pre>

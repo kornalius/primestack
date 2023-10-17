@@ -68,12 +68,13 @@
               style="width: 24px; margin-top: 4px;"
             />
 
-            <q-menu>
+            <q-menu separate-close-popup>
               <q-list dense>
                 <q-item
                   v-for="l in languages"
                   :key="l.code"
                   clickable
+                  v-close-popup
                   @click="app.setLocale(l.code)"
                 >
                   <q-item-section avatar>

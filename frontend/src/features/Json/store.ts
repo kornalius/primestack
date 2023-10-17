@@ -8,7 +8,6 @@ import cloneDeep from 'lodash/cloneDeep'
 import { defineStore } from 'pinia'
 import { useUndo } from '@/features/Undo/store'
 import { AnyData } from '@/shared/interfaces/commons'
-import compact from 'lodash/compact'
 
 export type JSON = AnyData | AnyData[]
 
@@ -52,6 +51,33 @@ export const useJsonEditor = defineStore('json-editor', () => {
   const focusedKey = computed(() => states.value.focusedKey)
 
   /**
+   * Build a path from arguments (array, strings and numbers)
+   *
+   * @param args Arguments {array|string|number}
+   *
+   * @returns {string}
+   */
+  const buildPath = (...args: unknown[]): string => {
+    const p = []
+    args.forEach((a) => {
+      if (a !== undefined && a !== null) {
+        if (Array.isArray(a)) {
+          a.forEach((v) => p.push(v))
+        } else if (typeof a === 'string') {
+          a.split('.').forEach((v) => {
+            if (v !== '') {
+              p.push(v)
+            }
+          })
+        } else {
+          p.push(a)
+        }
+      }
+    })
+    return p.join('.')
+  }
+
+  /**
    * Get the value of a path
    *
    * @param path Path to get
@@ -60,7 +86,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
    */
   const getPath = (path: string): AnyData | AnyData[] => {
     const json = states.value.jsonFn().value
-    return path === '' ? json : get(json, path)
+    return path === '' || path === undefined ? json : get(json, path)
   }
 
   /**
@@ -69,7 +95,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
    * @param path Path
    * @param value Value to set
    */
-  const setPath = (path: string, value: unknown) => {
+  const setPathValue = (path: string, value: unknown) => {
     const json = states.value.jsonFn()
     if (path === '' || path === undefined) {
       json.value = value
@@ -263,12 +289,20 @@ export const useJsonEditor = defineStore('json-editor', () => {
     }
   }
 
+  /**
+   * Expand all sub-paths in a path
+   *
+   * @param path Path
+   */
   const expandTo = (path: string) => {
+    expandPath('')
     const pp = []
-    path.split('.').forEach((p) => {
-      pp.push(p)
-      expandPath(pp.join('.'))
-    })
+    if (path) {
+      path.split('.').forEach((p) => {
+        pp.push(p)
+        expandPath(pp.join('.'))
+      })
+    }
   }
 
   /**
@@ -300,7 +334,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
       if (Array.isArray(parent)) {
         const idx = Number(key || -1)
         if (idx !== -1) {
-          const pathToFocus = compact([...ppath.split('.'), idx]).join('.')
+          const pathToFocus = buildPath(ppath, idx)
           setFocusedPath(pathToFocus)
           focusValueInputForPath(pathToFocus)
         }
@@ -308,7 +342,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
         const keys = Object.keys(parent)
         const idx = keys.indexOf(key)
         if (idx !== -1) {
-          const pathToFocus = compact([...ppath.split('.'), keys[idx - 1]]).join('.')
+          const pathToFocus = buildPath(ppath, keys[idx - 1])
           setFocusedPath(pathToFocus)
           focusValueInputForPath(pathToFocus)
         }
@@ -330,7 +364,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
       if (Array.isArray(parent)) {
         const idx = Number(key || -1)
         if (idx !== -1) {
-          const pathToFocus = compact([...ppath.split('.'), idx]).join('.')
+          const pathToFocus = buildPath(ppath, idx)
           setFocusedPath(pathToFocus)
           focusValueInputForPath(pathToFocus)
         }
@@ -338,7 +372,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
         const keys = Object.keys(parent)
         const idx = keys.indexOf(key)
         if (idx !== -1) {
-          const pathToFocus = compact([...ppath.split('.'), keys[idx]]).join('.')
+          const pathToFocus = buildPath(ppath, keys[idx])
           setFocusedPath(pathToFocus)
           focusValueInputForPath(pathToFocus)
         }
@@ -404,7 +438,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
    *
    * @returns {boolean} if the type change was successfull or not
    */
-  const changeType = (path: string, type: string): boolean => {
+  const changeItemType = (path: string, type: string): boolean => {
     if (typeof states.value.jsonFn !== 'function') {
       return false
     }
@@ -415,48 +449,56 @@ export const useJsonEditor = defineStore('json-editor', () => {
 
     if (type === 'string') {
       if (t === 'array') {
-        setPath(path, item.join(' '))
+        setPathValue(path, item.join(' '))
       } else if (t === 'object') {
-        setPath(path, '')
+        setPathValue(path, '')
       } else {
-        setPath(path, (item || '').toString())
+        setPathValue(path, (item || '').toString())
       }
       return true
     }
 
     if (type === 'number') {
-      setPath(path, Number(item) || 0)
+      setPathValue(path, Number(item) || 0)
       return true
     }
 
     if (type === 'boolean') {
       if (item === 'true') {
-        setPath(path, true)
+        setPathValue(path, true)
       } else if (item === 'false') {
-        setPath(path, true)
+        setPathValue(path, true)
       } else {
-        setPath(path, item === 1)
+        setPathValue(path, item === 1)
       }
       return true
     }
 
     if (type === 'array') {
-      setPath(path, [item])
+      if (item !== null) {
+        setPathValue(path, [item])
+      } else {
+        setPathValue(path, [])
+      }
       return true
     }
 
     if (type === 'object') {
-      setPath(path, { key: item })
+      if (item !== null) {
+        setPathValue(path, { key: item })
+      } else {
+        setPathValue(path, {})
+      }
       return true
     }
 
     if (type === 'null') {
-      setPath(path, null)
+      setPathValue(path, null)
       return true
     }
 
     if (type === 'undefined') {
-      setPath(path, undefined)
+      setPathValue(path, undefined)
       return true
     }
 
@@ -468,12 +510,22 @@ export const useJsonEditor = defineStore('json-editor', () => {
    *
    * @param path Parent path
    * @param k Key or index
+   * @param key Focus on the key field?
    */
-  const focusTo = (path: string, k: string | number): true => {
+  const focusTo = (path: string, k: string | number, key?: boolean): true => {
     expandTo(path)
-    const pathToFocus = compact([...path.split('.'), k]).join('.')
+    const pathToFocus = buildPath(path, k)
     setFocusedPath(pathToFocus)
-    focusValueInputForPath(pathToFocus)
+    if (key) {
+      setFocusedKey(pathToFocus)
+    }
+    setTimeout(() => {
+      if (key) {
+        focusKeyInputForPath(pathToFocus)
+      } else {
+        focusValueInputForPath(pathToFocus)
+      }
+    }, 100)
     return true
   }
 
@@ -504,6 +556,18 @@ export const useJsonEditor = defineStore('json-editor', () => {
     return false
   }
 
+  const defaultValueForType = (type: string): unknown => {
+    switch (type) {
+      case 'string': return ''
+      case 'number': return 0
+      case 'boolean': return false
+      case 'null': return null
+      case 'array': return []
+      case 'object': return {}
+      default: return undefined
+    }
+  }
+
   /**
    * Inserts an item or key before a path
    *
@@ -516,8 +580,9 @@ export const useJsonEditor = defineStore('json-editor', () => {
     if (Array.isArray(parent)) {
       const idx = Number(key || -1)
       if (idx !== -1) {
-        parent.splice(idx, 0, null)
-        return focusTo(ppath, Math.max(0, idx - 1))
+        const t = itemType(buildPath(ppath, idx))
+        parent.splice(idx, 0, defaultValueForType(t))
+        return focusTo(ppath, Math.max(0, idx))
       }
     }
     if (typeof parent === 'object') {
@@ -525,13 +590,14 @@ export const useJsonEditor = defineStore('json-editor', () => {
       const nk = newKey(ppath)
       const idx = keys.indexOf(key)
       if (idx !== -1) {
+        const t = itemType(buildPath(ppath, keys[idx]))
         const tempKeys = idx === 0
           ? [nk, ...keys]
           : [...keys.slice(0, idx), nk, ...keys.slice(idx)]
-        setPath(ppath, tempKeys.reduce((acc, k) => (
-          { ...acc, [k]: parent[k] || null }
+        setPathValue(ppath, tempKeys.reduce((acc, k) => (
+          { ...acc, [k]: k !== nk ? parent[k] : defaultValueForType(t) }
         ), {}))
-        return focusTo(ppath, nk)
+        return focusTo(ppath, nk, true)
       }
     }
     return false
@@ -549,7 +615,8 @@ export const useJsonEditor = defineStore('json-editor', () => {
     if (Array.isArray(parent)) {
       const idx = Number(key || -1)
       if (idx !== -1) {
-        parent.splice(idx + 1, 0, null)
+        const t = itemType(buildPath(ppath, idx))
+        parent.splice(idx + 1, 0, defaultValueForType(t))
         return focusTo(ppath, Math.min(parent.length - 1, idx + 1))
       }
     }
@@ -558,13 +625,14 @@ export const useJsonEditor = defineStore('json-editor', () => {
       const nk = newKey(ppath)
       const idx = keys.indexOf(key)
       if (idx !== -1) {
+        const t = itemType(buildPath(ppath, keys[idx]))
         const tempKeys = idx === keys.length - 1
           ? [...keys, nk]
           : [...keys.slice(0, idx + 1), nk, ...keys.slice(idx + 1)]
-        setPath(ppath, tempKeys.reduce((acc, k) => (
-          { ...acc, [k]: parent[k] || null }
+        setPathValue(ppath, tempKeys.reduce((acc, k) => (
+          { ...acc, [k]: k !== nk ? parent[k] : defaultValueForType(t) }
         ), {}))
-        return focusTo(ppath, nk)
+        return focusTo(ppath, nk, true)
       }
     }
     return false
@@ -574,14 +642,16 @@ export const useJsonEditor = defineStore('json-editor', () => {
    * Inserts a child item or key into a path
    *
    * @param path Path
+   * @param forceType Forced child type
    *
    * @returns {boolean} if the insert was successfull or not
    */
-  const insertChild = (path: string): boolean => {
+  const insertChild = (path?: string, forceType?: string): boolean => {
     const p = getPath(path)
     if (Array.isArray(p)) {
-      p.push(null)
-      return focusTo(path, p.length - 1)
+      const newValue = forceType ? defaultValueForType(forceType) : null
+      setPathValue(path, [...p, newValue])
+      return focusTo(path, p.length)
     }
     if (typeof p === 'object' && p !== null) {
       const keys = Object.keys(p)
@@ -590,10 +660,11 @@ export const useJsonEditor = defineStore('json-editor', () => {
       const tempKeys = idx === keys.length - 1
         ? [...keys, nk]
         : [...keys.slice(0, idx + 1), nk, ...keys.slice(idx + 1)]
-      setPath(path, tempKeys.reduce((acc, k) => (
-        { ...acc, [k]: p[k] || null }
+      const newValue = forceType ? defaultValueForType(forceType) : null
+      setPathValue(path, tempKeys.reduce((acc, k) => (
+        { ...acc, [k]: k !== nk ? p[k] : newValue }
       ), {}))
-      return focusTo(path, nk)
+      return focusTo(path, nk, true)
     }
     return false
   }
@@ -607,16 +678,16 @@ export const useJsonEditor = defineStore('json-editor', () => {
    * @returns {boolean} if the rename was successfull or not
    */
   const renameKey = (path: string, nKey: string): boolean => {
-    const { ppath, parent, key } = deconstructParentPath(path)
+    const { ppath, parent, key: oldKey } = deconstructParentPath(path)
     if (typeof parent === 'object') {
       const keys = Object.keys(parent)
-      const idx = keys.indexOf(key)
+      const idx = keys.indexOf(oldKey)
       if (idx !== -1) {
-        setPath(ppath, keys.reduce((acc, k, index) => {
+        setPathValue(ppath, keys.reduce((acc, k, index) => {
           const same = index === idx
           return {
             ...acc,
-            [same ? nKey : k]: parent[same ? key : k],
+            [same ? nKey : k]: parent[same ? oldKey : k],
           }
         }, {}))
         return true
@@ -634,24 +705,30 @@ export const useJsonEditor = defineStore('json-editor', () => {
     preventSystemUndoRedo(e)
 
     const path = focusedPath.value
+
+    if (e.key === 'Enter' && e.ctrlKey && !e.altKey) {
+      insertChild(path)
+      e.preventDefault()
+    }
+
     if (path && path.length > 0) {
       if (e.key === '$' && e.ctrlKey) {
-        changeType(path, 'string')
+        changeItemType(path, 'string')
         e.preventDefault()
       } else if (e.key === '!' && e.ctrlKey) {
-        changeType(path, 'boolean')
+        changeItemType(path, 'boolean')
         e.preventDefault()
       } else if (e.key === '#' && e.ctrlKey) {
-        changeType(path, 'number')
+        changeItemType(path, 'number')
         e.preventDefault()
       } else if (e.key === ')' && e.ctrlKey) {
-        changeType(path, 'null')
+        changeItemType(path, 'null')
         e.preventDefault()
       } else if (e.key === '[' && e.ctrlKey) {
-        changeType(path, 'array')
+        changeItemType(path, 'array')
         e.preventDefault()
       } else if (e.key === '{' && e.ctrlKey) {
-        changeType(path, 'object')
+        changeItemType(path, 'object')
         e.preventDefault()
       } else if (e.key === 'Delete' && e.ctrlKey) {
         remove(path)
@@ -661,9 +738,6 @@ export const useJsonEditor = defineStore('json-editor', () => {
         e.preventDefault()
       } else if (e.key === 'Enter' && e.altKey && !e.ctrlKey) {
         insertBefore(path)
-        e.preventDefault()
-      } else if (e.key === 'Enter' && e.ctrlKey) {
-        insertChild(path)
         e.preventDefault()
       }
     }
@@ -692,7 +766,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
     redo,
     preventSystemUndoRedo,
     itemType,
-    changeType,
+    changeItemType,
     remove,
     insertBefore,
     insertAfter,
@@ -703,5 +777,8 @@ export const useJsonEditor = defineStore('json-editor', () => {
     focusKeyInputForPath,
     valueInputForPath,
     focusValueInputForPath,
+    buildPath,
+    defaultValueForType,
+    setPathValue,
   }
 })

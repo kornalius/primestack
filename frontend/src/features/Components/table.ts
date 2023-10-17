@@ -41,7 +41,7 @@ export default {
       loadingLabel: Type.String(),
       expanded: Type.Array(Type.String()),
       filter: Type.String(),
-      rows: Type.Array(undefined, { json: true }),
+      rows: ExType.JSON({ rootType: 'object' }),
       rowKey: Type.String(),
       rowsPerPageLabel: Type.String(),
       pagination: Type.Object({

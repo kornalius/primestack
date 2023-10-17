@@ -54,6 +54,7 @@
               size="12px"
               align="left"
               dense
+              no-caps
               flat
               @click="editor.addFieldToForm(value)"
             >
@@ -63,6 +64,9 @@
                 color="red-9"
                 size="xs"
               />
+              <q-tooltip :delay="500">
+                {{ $t(componentLabel(value)) }}
+              </q-tooltip>
             </q-btn>
           </template>
         </draggable>

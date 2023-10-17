@@ -488,9 +488,12 @@
     "fr": "Français"
   },
   "json_editor": {
+    "visual": "Éditeur Json",
+    "code": "Éditeur code",
     "add": "Cliquer pour insérer après, Alt+Click pour insérer avant, Ctrl+Click pour insérer un enfant",
     "insertBefore": "Insérer avant",
     "insertAfter": "Insérer après",
+    "insertChild": "Insérer enfant",
     "remove": "Enlever",
     "expand": "Développer",
     "collapse": "Fermer",

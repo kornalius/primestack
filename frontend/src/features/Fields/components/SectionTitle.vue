@@ -11,6 +11,10 @@
     <q-item-label>
       {{ title }}
     </q-item-label>
+
+    <q-item-section side>
+      <slot />
+    </q-item-section>
   </q-item>
 </template>
 

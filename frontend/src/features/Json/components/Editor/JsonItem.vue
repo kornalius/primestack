@@ -52,41 +52,42 @@
               flat
               dense
             >
-              <q-menu>
+              <q-menu separate-close-popup>
                 <q-list dense>
                   <template
-                    v-for="k in Object.keys(types)"
-                    :key="k"
+                    v-for="m in menus"
+                    :key="m.name"
                   >
-                    <q-separator v-if="types[k].label === '-'" />
+                    <q-separator v-if="m.name === '-'" />
 
                     <q-item
                       v-else
                       clickable
                       v-ripple
                       v-close-popup
-                      @click="setItemType(k)"
+                      @click="doAction(m.name)"
                     >
                       <q-item-section avatar>
                         <q-icon
-                          :name="types[k].icon"
-                          :color="types[k].color"
-                          :size="types[k].size || 'sm'"
+                          :name="m.icon"
+                          :color="m.color"
+                          :size="m.size || 'sm'"
                         />
                       </q-item-section>
 
                       <q-item-section>
-                        <span :class="`text-${types[k].color}`">
-                          {{ types[k].label }}
+                        <span :class="`text-${m.color}`">
+                          {{ m.label }}
                         </span>
                       </q-item-section>
 
                       <q-item-section
-                        v-if="types[k].shortcut"
+                        v-if="m.shortcut"
+                        class="q-ml-md"
                         side
                       >
                         <span class="text-grey-8 text-caption text-weight-medium">
-                          {{ types[k].shortcut }}
+                          {{ m.shortcut }}
                         </span>
                       </q-item-section>
                     </q-item>
@@ -99,7 +100,7 @@
           <!-- Key or index # -->
 
           <key-item
-            :model-value="itemKey as string"
+            :model-value="itemKey"
             :parent="parent"
             :path="path"
             @change-key="(newKey, oldKey) => $emit('change-key', newKey, oldKey)"
@@ -127,7 +128,6 @@
 
           <div class="col-auto q-ml-sm">
             <q-btn
-              v-if="path.length > 0"
               :style="{ opacity: hover || focused ? 1 : 0 }"
               icon="mdi-plus"
               size="sm"
@@ -139,7 +139,12 @@
               @click.stop="add"
             >
               <q-tooltip :delay="500">
-                {{ $t('json_editor.add') }}
+                <span v-if="path.length > 0">
+                  {{ $t('json_editor.add') }}
+                </span>
+                <span v-else>
+                  {{ $t('json_editor.insertChild') }}
+                </span>
               </q-tooltip>
             </q-btn>
           </div>
@@ -199,11 +204,14 @@ const props = defineProps<{
   parent?: unknown
   itemKey?: string | number
   path?: (string | number)[]
+  allowChangeRoot?: boolean
+  rootChildType?: string
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'remove', key: string | number): void,
+  (e: 'insert-child'): void,
   (e: 'insert-before', key: string | number): void,
   (e: 'insert-after', key: string | number): void,
   (e: 'change-key', newValue: string, oldValue: string): void,
@@ -218,101 +226,6 @@ const { t } = useI18n()
 
 const hover = ref(false)
 
-const types = computed(() => {
-  const primary = {
-    string: {
-      label: t('json_editor.string'),
-      icon: 'mdi-code-string',
-      color: 'green',
-      shortcut: 'Ctrl+$',
-    },
-    number: {
-      label: t('json_editor.number'),
-      icon: 'mdi-numeric-1-box',
-      color: 'blue',
-      shortcut: 'Ctrl+#',
-    },
-    boolean: {
-      label: t('json_editor.boolean'),
-      icon: 'mdi-checkbox-marked',
-      color: 'orange',
-      shortcut: 'Ctrl+!',
-    },
-    null: {
-      label: t('json_editor.null'),
-      icon: 'mdi-close-box',
-      color: 'red',
-      shortcut: 'Ctrl+)',
-      disabled: () => props.path.length > 0,
-    },
-    undefined: {
-      label: t('json_editor.undefined'),
-      icon: 'mdi-help-box',
-      color: 'brown',
-      disabled: () => props.path.length > 0,
-    },
-  }
-
-  const object = {
-    array: {
-      label: t('json_editor.array'),
-      icon: 'mdi-code-array',
-      color: 'purple',
-      shortcut: 'Ctrl+[',
-    },
-    object: {
-      label: t('json_editor.object'),
-      icon: 'mdi-code-braces-box',
-      color: 'grey',
-      shortcut: 'Ctrl+{',
-    },
-  }
-
-  const insert = {
-    sep: {
-      label: '-',
-    },
-    insertBefore: {
-      label: t('json_editor.insertBefore'),
-      icon: 'mdi-arrow-collapse-up',
-      color: 'grey-8',
-      size: 'xs',
-      shortcut: 'Alt+Enter',
-    },
-    insertAfer: {
-      label: t('json_editor.insertAfter'),
-      icon: 'mdi-arrow-collapse-down',
-      color: 'grey-8',
-      size: 'xs',
-      shortcut: 'Enter',
-    },
-  }
-
-  const remove = {
-    sep: {
-      label: '-',
-    },
-    remove: {
-      label: t('json_editor.remove'),
-      icon: 'mdi-close',
-      color: 'grey-8',
-      size: 'xs',
-      shortcut: 'Delete',
-    },
-  }
-
-  if (props.path.length > 0) {
-    return {
-      ...primary,
-      ...object,
-      ...insert,
-      ...remove,
-    }
-  }
-
-  return object
-})
-
 const isArray = computed(() => Array.isArray(item.value))
 
 const isObject = computed(() => (
@@ -323,16 +236,200 @@ const pathString = computed(() => props.path.join('.'))
 
 const itemType = computed(() => jsonEditor.itemType(pathString.value))
 
-const setItemType = (type: string) => {
-  jsonEditor.changeType(pathString.value, type)
+interface MenuItem {
+  name: string
+  label: string
+  icon?: string
+  color?: string
+  size?: string
+  shortcut?: string
+  disabled?: () => boolean
+}
+
+const types = computed(() => ({
+  string: {
+    icon: 'mdi-code-string',
+    color: 'green',
+  },
+  number: {
+    icon: 'mdi-numeric-1-box',
+    color: 'blue',
+  },
+  boolean: {
+    icon: 'mdi-checkbox-marked',
+    color: 'orange',
+  },
+  null: {
+    icon: 'mdi-close-box',
+    color: 'red',
+  },
+  undefined: {
+    icon: 'mdi-help-box',
+    color: 'brown',
+  },
+  array: {
+    icon: 'mdi-code-array',
+    color: 'purple',
+  },
+  object: {
+    icon: 'mdi-code-braces-box',
+    color: 'grey-8',
+  },
+}))
+
+const menus = computed((): MenuItem[] => {
+  const primary = [
+    {
+      name: 'string',
+      label: t('json_editor.string'),
+      ...types.value.string,
+      shortcut: 'Ctrl+$',
+    },
+    {
+      name: 'number',
+      label: t('json_editor.number'),
+      ...types.value.number,
+      shortcut: 'Ctrl+#',
+    },
+    {
+      name: 'boolean',
+      label: t('json_editor.boolean'),
+      ...types.value.boolean,
+      shortcut: 'Ctrl+!',
+    },
+    {
+      name: 'null',
+      label: t('json_editor.null'),
+      ...types.value.null,
+      shortcut: 'Ctrl+)',
+      disabled: () => props.path.length > 0,
+    },
+    // {
+    //   name: 'undefined',
+    //   label: t('json_editor.undefined'),
+    //   ...types.value.undefined,
+    //   disabled: () => props.path.length > 0,
+    // },
+  ]
+
+  const object = [
+    {
+      name: 'array',
+      label: t('json_editor.array'),
+      ...types.value.array,
+      shortcut: 'Ctrl+[',
+    },
+    {
+      name: 'object',
+      label: t('json_editor.object'),
+      ...types.value.object,
+      shortcut: 'Ctrl+{',
+    },
+  ]
+
+  const separator = { name: '-' }
+
+  const insertChild = {
+    name: 'insertChild',
+    label: t('json_editor.insertChild'),
+    icon: 'mdi-arrow-down-right',
+    color: 'grey-9',
+    size: 'xs',
+    shortcut: 'Ctrl+Enter',
+  }
+
+  const insert = [
+    separator,
+    {
+      name: 'insertBefore',
+      label: t('json_editor.insertBefore'),
+      icon: 'mdi-arrow-collapse-up',
+      color: 'grey-9',
+      size: 'xs',
+      shortcut: 'Alt+Enter',
+    },
+    insertChild,
+    {
+      name: 'insertAfer',
+      label: t('json_editor.insertAfter'),
+      icon: 'mdi-arrow-collapse-down',
+      color: 'grey-9',
+      size: 'xs',
+      shortcut: 'Enter',
+    },
+  ]
+
+  const remove = [
+    separator,
+    {
+      name: 'remove',
+      label: t('json_editor.remove'),
+      icon: 'mdi-close',
+      color: 'grey-9',
+      size: 'xs',
+      shortcut: 'Delete',
+    },
+  ]
+
+  if (props.path.length > 0) {
+    return [
+      ...primary,
+      ...object,
+      ...insert,
+      ...remove,
+    ] as MenuItem[]
+  }
+
+  if (props.allowChangeRoot) {
+    return [
+      ...object,
+      { name: '-' },
+      insertChild,
+    ] as MenuItem[]
+  }
+
+  return [insertChild] as MenuItem[]
+})
+
+const doAction = (type: string) => {
+  switch (type) {
+    case 'insertBefore':
+      emit('insert-before', item.value)
+      break
+    case 'insertAfter':
+      emit('insert-after', item.value)
+      break
+    case 'insertChild':
+      if (itemType.value === 'array' || itemType.value === 'object') {
+        jsonEditor.insertChild(pathString.value, props.path.length === 0 ? props.rootChildType : undefined)
+        break
+      }
+      emit('insert-child')
+      break
+    case 'remove':
+      emit('remove', item.value)
+      break
+    default:
+      jsonEditor.changeItemType(pathString.value, type)
+  }
 }
 
 const add = (e: MouseEvent) => {
+  if (props.path.length === 0 || e.ctrlKey) {
+    if (itemType.value === 'array' || itemType.value === 'object') {
+      jsonEditor.insertChild(pathString.value, props.path.length === 0 ? props.rootChildType : undefined)
+      return
+    }
+    emit('insert-child')
+    return
+  }
+
   if (e.altKey) {
     emit('insert-before', props.itemKey)
-  } else {
-    emit('insert-after', props.itemKey)
+    return
   }
+
+  emit('insert-after', props.itemKey)
 }
 
 const isExpanded = computed(() => jsonEditor.isPathExpanded(pathString.value))

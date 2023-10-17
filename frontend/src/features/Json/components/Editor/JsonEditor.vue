@@ -1,12 +1,22 @@
 <template>
   <div class="json-editor">
-    <div class="text-caption" style="height: 20px; font-size: 14px;">
+    <div
+      v-if="showPath"
+      class="text-caption"
+      style="height: 20px; font-size: 14px;"
+    >
       > {{ jsonEditor.focusedPath }}
     </div>
-    <ul>
+
+    <ul class="container">
       <json-item
         v-model="item"
         :path="[]"
+        :root-child-type="rootChildType"
+        :allow-change-root="allowChangeRoot"
+        @insert-before="insertBefore"
+        @insert-after="insertAfter"
+        @insert-child="insertChild"
       />
     </ul>
   </div>
@@ -21,6 +31,9 @@ import JsonItem from '@/features/Json/components/Editor/JsonItem.vue'
 
 const props = defineProps<{
   modelValue: AnyData | AnyData[]
+  allowChangeRoot?: boolean
+  showPath?: boolean
+  rootChildType?: string
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -47,6 +60,22 @@ onMounted(() => {
 onUnmounted(() => {
   jsonEditor.endEdit()
 })
+
+const insertBefore = (key: string | number) => {
+  jsonEditor.insertBefore(key as string)
+}
+
+const insertAfter = (key: string | number) => {
+  jsonEditor.insertAfter(key as string)
+}
+
+const insertChild = () => {
+  jsonEditor.insertChild(undefined, props.rootChildType)
+}
+
+onMounted(() => {
+  jsonEditor.expandPath('')
+})
 </script>
 
 <style scoped lang="sass">
@@ -56,4 +85,7 @@ onUnmounted(() => {
 ul
   padding-left: 32px
   list-style-type: none
+
+.container
+  padding-left: 0
 </style>

@@ -5,7 +5,14 @@
     v-if="title && icon"
     :title="title"
     :icon="icon"
-  />
+  >
+    <q-input
+      v-model="value.name"
+      class="name q-ml-md"
+      dense
+      outlined
+    />
+  </section-title>
 
   <!-- Categories tabs -->
 
@@ -320,3 +327,8 @@ watch(() => props.categories, () => {
   }
 }, { immediate: true })
 </script>
+
+<style scoped lang="sass">
+:deep(.name.q-field--dense .q-field__control)
+  height: 32px
+</style>

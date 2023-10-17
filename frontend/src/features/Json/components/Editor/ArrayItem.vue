@@ -4,24 +4,26 @@
 
     <draggable
       class="array-item-container"
-      :list="items"
+      :list="keys"
       :group="{ name: 'array-item' }"
       :animation="150"
+      item-key="_id"
       easing="cubic-bezier(1, 0, 0, 1)"
-      :item-key="(item) => items.indexOf(item)"
       handle=".drag-handle"
       @start="jsonEditor.setDragging(true)"
       @end="jsonEditor.setDragging(false)"
+      @change="keysChanged"
     >
-      <template #item="{ index }">
+      <template #item="{ element: item }">
         <json-item
-          v-model="items[index]"
-          :item-key="index"
+          v-model="items[item.index]"
+          :item-key="item.index"
           :parent="items"
-          :path="[...path, index]"
+          :path="jsonEditor.buildPath(path, item.index).split('.')"
           @change-key="(newKey, oldKey) => $emit('change-key', newKey, oldKey)"
           @insert-before="insertBefore"
           @insert-after="insertAfter"
+          @insert-child="insertChild"
           @remove="remove"
         />
       </template>
@@ -30,7 +32,9 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watch } from 'vue'
 import draggable from 'vuedraggable'
+import hexObjectId from 'hex-object-id'
 import { useModelValue } from '@/composites/prop'
 import { useJsonEditor } from '@/features/Json/store'
 import JsonItem from '@/features/Json/components/Editor/JsonItem.vue'
@@ -59,9 +63,32 @@ const insertAfter = (idx: number) => {
   jsonEditor.insertAfter([...props.path, idx].join('.'))
 }
 
+const insertChild = () => {
+  jsonEditor.insertChild(props.path.join('.'))
+}
+
 const remove = (idx: number) => {
   jsonEditor.remove([...props.path, idx].join('.'))
 }
+
+const keys = ref([])
+
+const keysChanged = () => {
+  items.value = keys.value.reduce((acc, key) => ([...acc, items.value[key.index]]), [])
+}
+
+watch(items, () => {
+  keys.value = items.value.reduce((acc, item, index) => {
+    const oldKey = keys.value.find((k) => k.index === index)
+    return [
+      ...acc,
+      {
+        _id: oldKey?._id || hexObjectId(),
+        index,
+      },
+    ]
+  }, [])
+}, { immediate: true })
 </script>
 
 <style scoped lang="sass">

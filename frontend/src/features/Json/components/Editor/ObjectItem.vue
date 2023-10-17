@@ -3,15 +3,16 @@
     <div class="margin" />
 
     <json-item
-      v-for="key in keys"
-      :key="key"
+      v-for="(key, index) in keys"
+      :key="index"
       v-model="item[key]"
       :item-key="key"
       :parent="item"
-      :path="[...path, key]"
+      :path="jsonEditor.buildPath(path, key).split('.')"
       @change-key="changeKey"
       @insert-before="insertBefore"
       @insert-after="insertAfter"
+      @insert-child="insertChild"
       @remove="remove"
     />
   </ul>
@@ -54,6 +55,10 @@ const insertBefore = (key: string) => {
 
 const insertAfter = (key: string) => {
   jsonEditor.insertAfter([...props.path, key].join('.'))
+}
+
+const insertChild = () => {
+  jsonEditor.insertChild(props.path.join('.'))
 }
 
 const remove = (key: string) => {
