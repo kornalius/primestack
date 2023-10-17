@@ -118,10 +118,10 @@ ul
 
 .margin
   position: absolute
-  left: 8px
+  left: 11px
   top: 0
   height: calc(100% - 4px)
-  width: 8px
+  width: 2px
   background: $purple-2
 
 </style>
