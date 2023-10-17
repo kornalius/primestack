@@ -11,7 +11,7 @@ import { AnyData } from '@/shared/interfaces/commons'
 
 export type JSON = AnyData | AnyData[]
 
-let previousScope: string
+let previousHotkeysScope: string
 
 export const useJsonEditor = defineStore('json-editor', () => {
   const states = ref({
@@ -84,7 +84,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
    *
    * @return {AnyData|AnyData[]}
    */
-  const getPath = (path: string): AnyData | AnyData[] => {
+  const getPathValue = (path: string): unknown => {
     const json = states.value.jsonFn().value
     return path === '' || path === undefined ? json : get(json, path)
   }
@@ -142,7 +142,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
     key: string,
   } => {
     const ppath = parentPath(path)
-    const parent = getPath(ppath)
+    const parent = getPathValue(ppath)
     return { ppath, parent, key: lastPath(path) }
   }
 
@@ -154,7 +154,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
    * @return {string}
    */
   const newKey = (path: string): string => {
-    const keys = Object.keys(getPath(path))
+    const keys = Object.keys(getPathValue(path))
     let i = 1
     let k = `key${i}`
     while (keys.indexOf(k) !== -1) {
@@ -164,10 +164,24 @@ export const useJsonEditor = defineStore('json-editor', () => {
     return k
   }
 
+  /**
+   * Retrieve the value input element
+   *
+   * @param path Path
+   *
+   * @returns {HTMLInputElement}
+   */
   const valueInputForPath = (path: string): HTMLInputElement | undefined => (
     document.querySelector(`#json-value-${path.split('.').join('-')} input`)
   )
 
+  /**
+   * Focus on the value input element
+   *
+   * @param path Path
+   *
+   * @returns {boolean} if was able to focus or not
+   */
   const focusValueInputForPath = (path: string): boolean => {
     const el = valueInputForPath(path)
     if (el) {
@@ -176,10 +190,24 @@ export const useJsonEditor = defineStore('json-editor', () => {
     return el !== undefined
   }
 
-  const keyInputForPath = (path: string): HTMLInputElement | undefined => (
+  /**
+   * Retrieve the key div element
+   *
+   * @param path Path
+   *
+   * @returns {HTMLElement}
+   */
+  const keyInputForPath = (path: string): HTMLElement | undefined => (
     document.querySelector(`#json-key-${path.split('.').join('-')} input`)
   )
 
+  /**
+   * Focus on the key input element
+   *
+   * @param path Path
+   *
+   * @returns {boolean} if was able to focus or not
+   */
   const focusKeyInputForPath = (path: string): boolean => {
     const el = keyInputForPath(path)
     if (el) {
@@ -213,7 +241,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
   const startEdit = (jsonFn: (d?: JSON) => Ref<JSON> | undefined) => {
     states.value.active = true
     states.value.jsonFn = jsonFn
-    previousScope = hotkeys.getScope()
+    previousHotkeysScope = hotkeys.getScope()
     undoStore.startWatch(startWatch)
     undoStore.snap(snapshot)()
     hotkeys.setScope('json')
@@ -227,7 +255,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
     states.value.active = false
     states.value.jsonFn = undefined
     undoStore.clearUndoStack()
-    hotkeys.setScope(previousScope)
+    hotkeys.setScope(previousHotkeysScope)
   }
 
   /**
@@ -330,7 +358,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
     const { ppath, key } = deconstructParentPath(focusedPath.value)
     if (undoStore.undo()) {
       states.value.jsonFn(cloneDeep(undoStore.undoStack[undoStore.undoPtr]))
-      const parent = getPath(ppath)
+      const parent = getPathValue(ppath)
       if (Array.isArray(parent)) {
         const idx = Number(key || -1)
         if (idx !== -1) {
@@ -360,7 +388,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
     const { ppath, key } = deconstructParentPath(focusedPath.value)
     if (undoStore.redo()) {
       states.value.jsonFn(cloneDeep(undoStore.undoStack[undoStore.undoPtr]))
-      const parent = getPath(ppath)
+      const parent = getPathValue(ppath)
       if (Array.isArray(parent)) {
         const idx = Number(key || -1)
         if (idx !== -1) {
@@ -530,6 +558,25 @@ export const useJsonEditor = defineStore('json-editor', () => {
   }
 
   /**
+   * Returns a default value for the type provided
+   *
+   * @param type Type ('string', 'number', 'boolean', 'null', 'array', 'object')
+   *
+   * @returns {unknown}
+   */
+  const defaultValueForType = (type: string): unknown => {
+    switch (type) {
+      case 'string': return ''
+      case 'number': return 0
+      case 'boolean': return false
+      case 'null': return null
+      case 'array': return []
+      case 'object': return {}
+      default: return undefined
+    }
+  }
+
+  /**
    * Remove a key path from its parent
    *
    * @param path Path to remove
@@ -541,31 +588,29 @@ export const useJsonEditor = defineStore('json-editor', () => {
     if (Array.isArray(parent)) {
       const idx = Number(key || -1)
       if (idx !== -1) {
+        collapsePath(path)
         parent.splice(idx, 1)
+        const newPaths = [...states.value.expandedPaths]
+        for (let i = idx; i <= parent.length; i++) {
+          const epi = states.value.expandedPaths.indexOf(buildPath(ppath, i))
+          if (epi !== -1) {
+            newPaths.splice(epi, 1, buildPath(ppath, i - 1))
+          }
+        }
+        states.value.expandedPaths = newPaths
         return focusTo(ppath, Math.min(parent.length - 1, idx))
       }
     }
     if (typeof parent === 'object') {
       const idx = Object.keys(parent).indexOf(key)
       if (idx !== -1) {
+        collapsePath(path)
         delete parent[key]
         const newKeys = Object.keys(parent)
         return focusTo(ppath, newKeys[Math.min(newKeys.length - 1, idx)])
       }
     }
     return false
-  }
-
-  const defaultValueForType = (type: string): unknown => {
-    switch (type) {
-      case 'string': return ''
-      case 'number': return 0
-      case 'boolean': return false
-      case 'null': return null
-      case 'array': return []
-      case 'object': return {}
-      default: return undefined
-    }
   }
 
   /**
@@ -580,8 +625,8 @@ export const useJsonEditor = defineStore('json-editor', () => {
     if (Array.isArray(parent)) {
       const idx = Number(key || -1)
       if (idx !== -1) {
-        const t = itemType(buildPath(ppath, idx))
-        parent.splice(idx, 0, defaultValueForType(t))
+        const type = itemType(buildPath(ppath, idx))
+        parent.splice(idx, 0, defaultValueForType(type))
         return focusTo(ppath, Math.max(0, idx))
       }
     }
@@ -590,12 +635,12 @@ export const useJsonEditor = defineStore('json-editor', () => {
       const nk = newKey(ppath)
       const idx = keys.indexOf(key)
       if (idx !== -1) {
-        const t = itemType(buildPath(ppath, keys[idx]))
+        const type = itemType(buildPath(ppath, keys[idx]))
         const tempKeys = idx === 0
           ? [nk, ...keys]
           : [...keys.slice(0, idx), nk, ...keys.slice(idx)]
         setPathValue(ppath, tempKeys.reduce((acc, k) => (
-          { ...acc, [k]: k !== nk ? parent[k] : defaultValueForType(t) }
+          { ...acc, [k]: k !== nk ? parent[k] : defaultValueForType(type) }
         ), {}))
         return focusTo(ppath, nk, true)
       }
@@ -615,8 +660,8 @@ export const useJsonEditor = defineStore('json-editor', () => {
     if (Array.isArray(parent)) {
       const idx = Number(key || -1)
       if (idx !== -1) {
-        const t = itemType(buildPath(ppath, idx))
-        parent.splice(idx + 1, 0, defaultValueForType(t))
+        const type = itemType(buildPath(ppath, idx))
+        parent.splice(idx + 1, 0, defaultValueForType(type))
         return focusTo(ppath, Math.min(parent.length - 1, idx + 1))
       }
     }
@@ -625,12 +670,12 @@ export const useJsonEditor = defineStore('json-editor', () => {
       const nk = newKey(ppath)
       const idx = keys.indexOf(key)
       if (idx !== -1) {
-        const t = itemType(buildPath(ppath, keys[idx]))
+        const type = itemType(buildPath(ppath, keys[idx]))
         const tempKeys = idx === keys.length - 1
           ? [...keys, nk]
           : [...keys.slice(0, idx + 1), nk, ...keys.slice(idx + 1)]
         setPathValue(ppath, tempKeys.reduce((acc, k) => (
-          { ...acc, [k]: k !== nk ? parent[k] : defaultValueForType(t) }
+          { ...acc, [k]: k !== nk ? parent[k] : defaultValueForType(type) }
         ), {}))
         return focusTo(ppath, nk, true)
       }
@@ -647,7 +692,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
    * @returns {boolean} if the insert was successfull or not
    */
   const insertChild = (path?: string, forceType?: string): boolean => {
-    const p = getPath(path)
+    const p = getPathValue(path)
     if (Array.isArray(p)) {
       const newValue = forceType ? defaultValueForType(forceType) : null
       setPathValue(path, [...p, newValue])

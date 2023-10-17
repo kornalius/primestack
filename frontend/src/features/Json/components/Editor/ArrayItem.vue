@@ -32,11 +32,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import draggable from 'vuedraggable'
 import hexObjectId from 'hex-object-id'
 import { useModelValue } from '@/composites/prop'
 import { useJsonEditor } from '@/features/Json/store'
+import { AnyData } from '@/shared/interfaces/commons'
 import JsonItem from '@/features/Json/components/Editor/JsonItem.vue'
 
 const props = defineProps<{
@@ -54,6 +55,8 @@ const emit = defineEmits<{
 const items = useModelValue(props, emit)
 
 const jsonEditor = useJsonEditor()
+
+const pathString = computed(() => props.path.join('.'))
 
 const insertBefore = (idx: number) => {
   jsonEditor.insertBefore([...props.path, idx].join('.'))
@@ -73,7 +76,21 @@ const remove = (idx: number) => {
 
 const keys = ref([])
 
-const keysChanged = () => {
+const keysChanged = (evt: AnyData) => {
+  if (evt.moved) {
+    const path = jsonEditor.buildPath(pathString.value, evt.moved.oldIndex)
+    const newPath = jsonEditor.buildPath(pathString.value, evt.moved.newIndex)
+    const oldExpanded = jsonEditor.isPathExpanded(path)
+    const newExpanded = jsonEditor.isPathExpanded(newPath)
+    jsonEditor.collapsePath(path)
+    jsonEditor.collapsePath(newPath)
+    if (oldExpanded) {
+      jsonEditor.expandPath(newPath)
+    }
+    if (newExpanded) {
+      jsonEditor.expandPath(path)
+    }
+  }
   items.value = keys.value.reduce((acc, key) => ([...acc, items.value[key.index]]), [])
 }
 
