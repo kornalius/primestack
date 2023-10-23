@@ -7,12 +7,30 @@
     style="cursor: default;"
   >
     <div class="col overflow-hidden ellipsis" style="max-width: 230px;">
-      <property-highlight
-        :model-value="exprCode(value)"
-        :disabled="disabled"
-        :disabled-label="disabledLabel"
-        language="javascript"
-      />
+      <q-card style="background: transparent; cursor: pointer;" flat>
+        <property-highlight
+          :model-value="exprCode(value)"
+          :disabled="disabled"
+          :disabled-label="disabledLabel"
+          language="javascript"
+        />
+
+        <q-popup-edit
+          v-model="value"
+          :title="`${label} Expression...`"
+          auto-save
+          @before-show="loadExpr"
+          @before-hide="saveExpr"
+        >
+          <code-editor
+            v-model="tempCode"
+            style="width: 600px; height: 150px;"
+            lang-js
+            autofocus
+            @keydown="editor.preventSystemUndoRedo"
+          />
+        </q-popup-edit>
+      </q-card>
 
       <q-btn
         class="clear-btn"
@@ -779,7 +797,7 @@ const jsonEditing = ref(false)
 
 const editor = useAppEditor()
 
-const { isExpr, exprCode } = useExpression()
+const { isExpr, exprCode, stringToExpr } = useExpression()
 
 const { queryToString } = useQuery()
 
@@ -1155,6 +1173,22 @@ const checkboxLabel = computed(() => {
   }
   return undefined
 })
+
+const tempCode = ref()
+
+/**
+ * Convert the property value expression into the code editor
+ */
+const loadExpr = () => {
+  tempCode.value = exprCode(value.value) || ''
+}
+
+/**
+ * Convert the expression from the code editor back into the property value
+ */
+const saveExpr = () => {
+  value.value = stringToExpr(tempCode.value)
+}
 </script>
 
 <style scoped lang="sass">
