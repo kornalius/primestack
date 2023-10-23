@@ -4,10 +4,10 @@
   <div
     v-if="isExpr(value) || type === 'expr'"
     class="row items-center"
-    style="cursor: default;"
+    style="cursor: default; width: 100%; height: 20px;"
   >
-    <div class="col overflow-hidden ellipsis" style="max-width: 230px;">
-      <q-card style="background: transparent; cursor: pointer;" flat>
+    <div class="col overflow-hidden ellipsis" style="max-width: 230px; width: 100%; height: 100%;">
+      <q-card style="background: transparent; cursor: pointer; width: 100%; height: 100%;" flat>
         <property-highlight
           :model-value="exprCode(value)"
           :disabled="disabled"
@@ -24,7 +24,7 @@
         >
           <code-editor
             v-model="tempCode"
-            style="width: 600px; height: 150px;"
+            style="width: 800px; height: 450px;"
             lang-js
             autofocus
             @keydown="editor.preventSystemUndoRedo"

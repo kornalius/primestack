@@ -507,5 +507,16 @@
     "object": "Objet",
     "null": "Nul",
     "undefined": "Indéfinie"
+  },
+  "code_editor": {
+    "menus": {
+      "functions": "Fonctions",
+      "tables": "Tables",
+      "fields": "Champs",
+      "forms": "Formulaires",
+      "menus": "Menus",
+      "tabs": "Onglets",
+      "data": "Champs du formulaire"
+    }
   }
 }

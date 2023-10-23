@@ -515,5 +515,16 @@
     "object": "Object",
     "null": "Null",
     "undefined": "Undefined"
+  },
+  "code_editor": {
+    "menus": {
+      "functions": "Functions",
+      "tables": "Tables",
+      "fields": "Fields",
+      "forms": "Forms",
+      "menus": "Menus",
+      "tabs": "Tabs",
+      "data": "Form data fields"
+    }
   }
 }

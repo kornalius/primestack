@@ -1,17 +1,31 @@
 <template>
-  <codemirror
-    v-model="value"
-    v-bind="$attrs"
-    :tab-size="2"
-    :extensions="extensions"
-    @ready="handleReady"
-  />
+  <div class="row">
+    <div class="col-auto mainmenu">
+      <code-menu
+        :model-value="mainmenu"
+        @insert="insertIntoCode"
+      />
+    </div>
+
+    <div class="col">
+      <codemirror
+        v-model="value"
+        v-bind="$attrs"
+        style="width: 100%; height: 100%;"
+        :tab-size="2"
+        :extensions="extensions"
+        @ready="handleReady"
+      />
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { shallowRef } from 'vue'
+import { computed, shallowRef } from 'vue'
+import sortBy from 'lodash/sortBy'
 import { Static } from '@feathersjs/typebox'
 import { Codemirror } from 'vue-codemirror'
+import { useI18n } from 'vue-i18n'
 import { Marked } from 'marked'
 import { markedHighlight } from 'marked-highlight'
 import hljs from 'highlight.js'
@@ -29,6 +43,9 @@ import { useAppEditor } from '@/features/App/editor-store'
 import { useVariables } from '@/features/Variables/store'
 import { useTable } from '@/features/Tables/composites'
 import { useExpression } from '@/features/Expression/composites'
+import { useFeathersService } from '@/composites/feathers'
+import { Menu } from '../interfaces'
+import CodeMenu from './CodeMenu.vue'
 
 type ActionElement = Static<typeof actionElementSchema>
 
@@ -56,6 +73,8 @@ const { extraFields } = useTable()
 const { buildCtx } = useExpression()
 
 const ctx = buildCtx()
+
+const { t } = useI18n()
 
 const fcts = {
   $result: '`(path?: string): unknown | undefined`\n\n'
@@ -566,20 +585,21 @@ marked.use({
 })
 
 const style = `
-<style>
-  table {
-    border-collapse: collapse;
-    margin: .5em;
-  }
-  th {
-    background-color: #5781ab;
-    color: white;
-  }
-  th, td {
-    border: 1px solid #000;
-    padding: 5px;
-  }
-</style>`
+  <style>
+    table {
+      border-collapse: collapse;
+      margin: .5em;
+    }
+    th {
+      background-color: #5781ab;
+      color: white;
+    }
+    th, td {
+      border: 1px solid #000;
+      padding: 5px;
+    }
+  </style>
+`
 
 const toOptions = (opts: string[], type = 'keyword'): Completion[] => (
   opts.map((k) => ({
@@ -660,12 +680,12 @@ const myCompletions = (context: CompletionContext) => {
     }
   } else if (check(['table', 'ArgList', '(', 'String'])
     || check(['field', 'ArgList', '(', 'String'])) {
-    options = toOptions(editor.tables.map((t) => t.name))
+    options = toOptions(editor.tables.map((o) => o.name))
   } else if (check(['field', 'ArgList', '(', 'String', ',', 'String'])) {
     const tokens = tokensBefore(5)
     const tt = tokens[2]
     const n = context.state.doc.slice(tt.from + 1, tt.to - 1).toString()
-    const table = editor.tables.find((t) => t.name === n)
+    const table = editor.tables.find((o) => o.name === n)
     options = toOptions([
       ...(table.fields?.map((f) => f.name) || []),
       ...extraFields(table?.created, table?.updated, table?.softDelete).map((f) => f.name),
@@ -711,4 +731,141 @@ const view = shallowRef()
 const handleReady = (payload) => {
   view.value = payload.view
 }
+
+/**
+ * Main Menu
+ */
+
+const userTable = useFeathersService('tables')
+  .findOneInStore({ query: {} })
+
+const userForm = useFeathersService('forms')
+  .findOneInStore({ query: {} })
+
+const userMenu = useFeathersService('menus')
+  .findOneInStore({ query: {} })
+
+const functions = computed((): Menu[] => (
+  Object.keys(fcts).sort().map((k) => ({
+    icon: 'mdi-flash',
+    name: k,
+    label: k,
+    value: `${k}()`,
+    cursorAdj: -1,
+    tooltip: fcts[k],
+  }))
+))
+
+const tables = computed((): Menu[] => (
+  sortBy((userTable.value?.list || []).map((table) => ({
+    icon: 'mdi-table',
+    name: table._id,
+    label: table.name,
+    value: `table('${table.name}')`,
+  })), 'label')
+))
+
+const menus = computed((): Menu[] => (
+  sortBy((userMenu.value?.list || []).map((menu) => ({
+    icon: 'mdi-menu',
+    name: menu._id,
+    label: menu.label || menu.name,
+    value: `menu('${menu.name}')`,
+  })), 'label')
+))
+
+const tabs = computed((): Menu[] => (
+  sortBy((userMenu.value?.list || []).reduce((acc, menu) => ([
+    ...acc,
+    ...menu.tabs.map((tab) => ({
+      icon: 'mdi-tab',
+      name: tab._id,
+      label: `${menu.label || menu.name} > ${tab.label}`,
+      value: `tab('${menu.name}')`,
+    })),
+  ]), []), 'label')
+))
+
+const forms = computed((): Menu[] => (
+  sortBy((userForm.value?.list || []).map((form) => ({
+    icon: 'mdi-window-maximize',
+    name: form._id,
+    label: form.name,
+    value: `form('${form.name}')`,
+  })), 'label')
+))
+
+const fields = computed((): Menu[] => (
+  sortBy((userTable.value?.list || []).reduce((acc, table) => ([
+    ...acc,
+    ...table.fields.map((field) => ({
+      icon: 'mdi-form-textbox',
+      name: field._id,
+      label: `${table.name} > ${field.name}`,
+      value: `field('${table.name}', '${field.name}')`,
+    })),
+  ]), []), 'label')
+))
+
+const mainmenu = computed((): Menu[] => ([
+  {
+    icon: 'mdi-flash',
+    name: 'functions',
+    label: t('code_editor.menus.functions'),
+    children: functions.value,
+  },
+  {
+    icon: 'mdi-menu',
+    name: 'menus',
+    label: t('code_editor.menus.menus'),
+    children: menus.value,
+  },
+  {
+    icon: 'mdi-tab',
+    name: 'tabs',
+    label: t('code_editor.menus.tabs'),
+    children: tabs.value,
+  },
+  {
+    icon: 'mdi-window-maximize',
+    name: 'forms',
+    label: t('code_editor.menus.forms'),
+    children: forms.value,
+  },
+  {
+    icon: 'mdi-table',
+    name: 'tables',
+    label: t('code_editor.menus.tables'),
+    children: tables.value,
+  },
+  {
+    icon: 'mdi-form-textbox',
+    name: 'fields',
+    label: t('code_editor.menus.fields'),
+    children: fields.value,
+  },
+]))
+
+const insertIntoCode = (text: string, cursorAdj: number) => {
+  const { selection } = view.value.state
+  const { from, to } = selection.main
+  view.value.dispatch({
+    changes: {
+      from,
+      to,
+      insert: text,
+    },
+    selection: {
+      anchor: to + text.length + cursorAdj,
+    },
+  })
+  view.value.contentDOM.focus()
+}
 </script>
+
+<style scoped lang="sass">
+.mainmenu
+  width: 250px
+  height: 100%
+  overflow: auto
+</style>

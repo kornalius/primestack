@@ -64,7 +64,7 @@
           >
             <code-editor
               v-model="tempCode"
-              style="width: 600px; height: 150px;"
+              style="width: 600px; height: 450px;"
               lang-js
               autofocus
               @keydown="editor.preventSystemUndoRedo"
@@ -157,7 +157,7 @@
             >
               <code-editor
                 v-model="tempCode"
-                style="width: 600px; height: 150px;"
+                style="width: 600px; height: 450px;"
                 lang-js
                 autofocus
                 @keydown="editor.preventSystemUndoRedo"
