@@ -100,7 +100,7 @@ export const formSchema = Type.Object(
     hideFilter: Type.Optional(Type.Boolean({ skip: true })),
     grid: Type.Optional(Type.Boolean()),
     gridHeader: Type.Optional(Type.Boolean()),
-    visibleColumns: Type.Optional(Type.Array(Type.String())),
+    visibleColumns: Type.Optional(ExType.MultiField()),
     title: Type.Optional(Type.String()),
     hideHeader: Type.Optional(Type.Boolean()),
     hideBottom: Type.Optional(Type.Boolean()),
@@ -153,10 +153,16 @@ export const formSchema = Type.Object(
           'hidePagination',
           'separator',
           'wrapCells',
-          'noDataLabel',
-          'noResultsLabel',
-          'loadingLabel',
-          'rowsPerPageLabel',
+          {
+            label: 'Labels',
+            sectionColor: 'blue-1',
+            children: [
+              { name: 'noDataLabel', label: 'No data' },
+              { name: 'noResultsLabel', label: 'No results' },
+              { name: 'rowsPerPageLabel', label: 'Rows per page' },
+              { name: 'loadingLabel', label: 'Loading' },
+            ],
+          },
           'rowsPerPageOptions',
           'selection',
           'binaryStateSort',
@@ -189,6 +195,9 @@ export const formSchema = Type.Object(
       'binaryStateSort',
       'tableColspan',
     ],
+    defaultValues: {
+      rowsPerPageOptions: [10, 25, 50, 100],
+    },
   },
 )
 

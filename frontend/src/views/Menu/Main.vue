@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <q-page class="q-pa-sm">
     <!-- -->
-  </div>
+  </q-page>
 </template>
 
 <script setup lang="ts">

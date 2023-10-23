@@ -52,12 +52,16 @@ export default function (app: Application): void {
         const userShares = (await context.app.service('shares').find({
           query: {
             userId,
+            $limit: -1,
+            $skip: 0,
           },
         })).data as Share[]
 
         const userTables = (await context.app.service('tables').find({
           query: {
-            tableIds: { $in: [context.path] }
+            tableIds: { $in: [context.path] },
+            $limit: -1,
+            $skip: 0,
           },
         }, context.params)).data as TableSchema[]
 

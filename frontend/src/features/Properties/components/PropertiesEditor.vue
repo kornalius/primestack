@@ -174,7 +174,7 @@
               <div
                 v-for="c in serializeNames(n.children)"
                 :key="c.name"
-                class="row"
+                class="row items-center"
               >
                 <property-editor
                   v-model="value[c.name]"

@@ -1,11 +1,11 @@
 <template>
-  <div class="q-pa-md flex flex-center">
+  <q-page class="q-pa-md flex flex-center">
     <plan
       v-for="plan in plans"
       :key="plan._id"
       :model-value="plan"
     />
-  </div>
+  </q-page>
 </template>
 
 <script setup lang="ts">

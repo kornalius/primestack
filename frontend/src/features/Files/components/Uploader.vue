@@ -48,12 +48,12 @@
 import { computed, ref } from 'vue'
 import { useQuasar } from 'quasar'
 import { Static } from '@feathersjs/typebox'
+import { schema } from '@/shared/schemas/file'
+import { AnyData } from '@/shared/interfaces/commons'
 import { useI18n } from 'vue-i18n'
 import { useSnacks } from '@/features/Snacks/store'
 import { useFiles } from '@/features/Files/composites'
-import { schema } from '@/shared/schemas/file'
 import { useFeathersService } from '@/composites/feathers'
-import { AnyData } from '@/shared/interfaces/commons'
 import FilesList from './Files.vue'
 
 type StoreFile = Static<typeof schema>
@@ -109,7 +109,11 @@ const {
 } = useFiles(t)
 
 const params = computed(() => ({
-  query: props.query,
+  query: {
+    ...(props.query || {}),
+    $limit: -1,
+    $skip: 0,
+  },
   temps: true,
 }))
 

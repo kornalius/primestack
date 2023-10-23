@@ -1,5 +1,6 @@
 <template>
   <q-table
+    v-model:pagination="currentPagination"
     v-model:selected="currentSelected"
     v-bind="$attrs"
     :rows="filteredRows"
@@ -9,6 +10,7 @@
       ? $attrs.visibleColumns
       : undefined
     ) as unknown[]"
+    @request="(p) => $emit('request', p)"
   >
     <template #top>
       <div class="row q-gutter-sm full-width items-center">
@@ -69,12 +71,13 @@
           :props="p"
         >
           <property-schema-field
-            v-if="schemaRows && schemaSchema(col.field)"
+            v-if="editing[getId(p.row)] && fieldSchema(col.field)"
             v-model="p.row[col.field]"
             :parents="[p.row]"
-            :schema="schemaSchema(col.field)"
+            :schema="fieldSchema(col.field)"
             :prop-name="col.field"
             :label="col.label"
+            horizontal
           />
 
           <span v-else>
@@ -86,22 +89,73 @@
           </span>
         </q-td>
 
-        <q-btn
-          v-if="removeButton === 'end' && (!canRemove || canRemove(p.row))"
-          v-show="hover === p.row._id"
-          class="remove-button"
-          :disable="disable || removeDisable"
-          :icon="removeIcon || 'mdi-trash-can-outline'"
-          color="red-6"
-          size="sm"
-          round
-          flat
-          @click.stop="removeRow(p.row)"
-        >
-          <q-tooltip :delay="500">
-            {{ removeLabel || $t('buttons.delete') }}
-          </q-tooltip>
-        </q-btn>
+        <q-td>
+          <q-btn
+            v-if="editable && !showConfirmButtons(p.row)"
+            :class="{ 'edit-button': true, remove: showRemoveButton(p.row) }"
+            :style="{ opacity: hover === p.row._id ? 1 : 0 }"
+            :disable="disable"
+            :icon="editIcon || 'mdi-pencil'"
+            color="grey-8"
+            size="sm"
+            round
+            flat
+            @click.stop="editRow(p.row)"
+          >
+            <q-tooltip :delay="500">
+              {{ editLabel || $t('buttons.edit') }}
+            </q-tooltip>
+          </q-btn>
+
+          <q-btn
+            v-if="showConfirmButtons(p.row)"
+            class="save-button"
+            :disable="disable"
+            :icon="saveIcon || 'mdi-check'"
+            color="green-6"
+            size="sm"
+            round
+            flat
+            @click.stop="saveRow(p.row)"
+          >
+            <q-tooltip :delay="500">
+              {{ saveLabel || $t('buttons.save') }}
+            </q-tooltip>
+          </q-btn>
+
+          <q-btn
+            v-if="showConfirmButtons(p.row)"
+            class="cancel-button"
+            :disable="disable"
+            :icon="cancelIcon || 'mdi-close'"
+            color="red-6"
+            size="sm"
+            round
+            flat
+            @click.stop="cancelRow(p.row)"
+          >
+            <q-tooltip :delay="500">
+              {{ cancelLabel || $t('buttons.cancel') }}
+            </q-tooltip>
+          </q-btn>
+
+          <q-btn
+            v-if="showRemoveButton(p.row)"
+            class="remove-button"
+            :style="{ opacity: hover === p.row._id ? 1 : 0 }"
+            :disable="disable || removeDisable"
+            :icon="removeIcon || 'mdi-trash-can-outline'"
+            color="red-6"
+            size="sm"
+            round
+            flat
+            @click.stop="removeRow(p.row)"
+          >
+            <q-tooltip :delay="500">
+              {{ removeLabel || $t('buttons.delete') }}
+            </q-tooltip>
+          </q-btn>
+        </q-td>
       </q-tr>
     </template>
 
@@ -131,7 +185,8 @@ import { TSchema } from '@feathersjs/typebox'
 import { useSyncedProp } from '@/composites/prop'
 import { columnAlignmentFor, getTypeFor, schemaToField } from '@/shared/schema'
 import { filterToMongo } from '@/composites/filter'
-import { AddOption } from '@/features/Fields/interfaces'
+import { AddOption, Pagination } from '@/features/Fields/interfaces'
+import { AnyData } from '@/shared/interfaces/commons'
 import PropertySchemaField from '@/features/Properties/components/PropertySchemaField.vue'
 import AddButton from '@/features/Fields/components/AddButton.vue'
 import FilterEditor from '@/features/Tables/components/FilterEditor.vue'
@@ -141,6 +196,10 @@ const attrs = useAttrs()
 const props = defineProps<{
   // rows to display in table
   rows: unknown[]
+  // key for rows
+  rowKeys?: string[]
+  // pagination
+  pagination?: Pagination
   // schema to generate columns with
   schema?: TSchema
   // 2-ways binding for selected rows
@@ -151,8 +210,8 @@ const props = defineProps<{
   customFilter?: boolean
   // should we hide the filter
   hideFilter?: boolean
-  // Renders the rows using schema inputs
-  schemaRows?: boolean
+  // Can we edit the rows?
+  editable?: boolean
   // are table's interactions disabled?
   disable?: boolean
   // position of the add button
@@ -181,6 +240,20 @@ const props = defineProps<{
   removeDisable?: boolean
   // type of selection allowed
   selectionStyle?: 'single' | 'multiple' | 'none'
+  // returns true if the row is considered modified
+  isRowModified?: (row: AnyData) => boolean
+  // icon for the save button
+  saveIcon?: string
+  // label for the save button
+  saveLabel?: string
+  // icon for the cancel button
+  cancelIcon?: string
+  // label for the cancel button
+  cancelLabel?: string
+  // icon for the edit button
+  editIcon?: string
+  // label for the edit button
+  editLabel?: string
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -189,11 +262,18 @@ const emit = defineEmits<{
   (e: 'add', value: unknown): void,
   (e: 'add-option', value: string): void,
   (e: 'remove', value: unknown): void,
+  (e: 'edit', value: unknown): void,
+  (e: 'save', value: unknown): void,
+  (e: 'cancel', value: unknown): void,
+  (e: 'request', props: unknown): void,
   (e: 'update:filter', value: string | null | undefined): void,
   (e: 'update:selected', value: unknown[]): void,
+  (e: 'update:pagination', value: Pagination): void,
 }>()
 
 const currentSelected = useSyncedProp(props, 'selected', emit)
+
+const currentPagination = useSyncedProp(props, 'pagination', emit)
 
 const currentFilter = useSyncedProp(props, 'filter', emit)
 
@@ -203,7 +283,7 @@ const columns = computed(() => {
   }
 
   const cols = []
-  Object.keys(props.schema?.properties).forEach((k) => {
+  Object.keys(props.schema?.properties || {}).forEach((k) => {
     const p = props.schema?.properties[k]
     const c = {
       name: k,
@@ -220,7 +300,7 @@ const columns = computed(() => {
 const hover = ref()
 
 const fields = computed(() => (
-  Object.keys(props.schema?.properties || []).map((k) => (
+  Object.keys(props.schema?.properties || {}).map((k) => (
     schemaToField(k, props.schema?.properties[k])
   ))
 ))
@@ -233,7 +313,7 @@ watch(() => props.rows, () => {
   if (props.customFilter) {
     filteredRows.value = props.rows
   }
-})
+}, { immediate: true })
 
 watch([
   () => props.rows,
@@ -252,7 +332,28 @@ watch([
   }
 }, { immediate: true })
 
-const schemaSchema = (name: string) => props.schema?.properties[name]
+const fieldSchema = (name: string) => props.schema?.properties[name]
+
+const editing = ref({})
+
+const getId = (row: AnyData): string => {
+  const keys = props.rowKeys || [attrs['row-key']]
+  // eslint-disable-next-line no-restricted-syntax
+  for (const k of keys) {
+    if (row[k] !== undefined) {
+      return row[k] as string
+    }
+  }
+  return undefined
+}
+
+const editRow = (row: AnyData) => {
+  const id = editing.value[getId(row)]
+  if (!editing.value[id]) {
+    editing.value[getId(row)] = true
+    emit('edit', row)
+  }
+}
 
 const addRow = () => {
   const newValue = props.addFunction ? props.addFunction() : {}
@@ -261,13 +362,31 @@ const addRow = () => {
   }
 }
 
-const removeRow = (value: unknown) => {
-  if (!props.canRemove || props.canRemove(value)) {
+const removeRow = (row: AnyData) => {
+  if (!props.canRemove || props.canRemove(row)) {
     if (props.removeFunction) {
-      props.removeFunction(value)
+      props.removeFunction(row)
     }
-    emit('remove', value)
+    emit('remove', row)
   }
+}
+
+const showConfirmButtons = (row: AnyData): boolean => (
+  editing.value[getId(row)]
+)
+
+const showRemoveButton = (row: AnyData): boolean => (
+  !showConfirmButtons(row) && props.removeButton === 'end' && (!props.canRemove || props.canRemove(row))
+)
+
+const saveRow = (row: AnyData) => {
+  emit('save', row)
+  delete editing.value[getId(row)]
+}
+
+const cancelRow = (row: AnyData) => {
+  emit('cancel', row)
+  delete editing.value[getId(row)]
 }
 </script>
 
@@ -282,7 +401,30 @@ const removeRow = (value: unknown) => {
 
 .remove-button
   position: absolute
-  right: 0
+  top: 50%
+  transform: translateY(-50%)
+  right: 2px
+
+.edit-button
+  position: absolute
+  top: 50%
+  transform: translateY(-50%)
+  right: 2px
+
+  &.remove
+    right: 36px
+
+.save-button
+  position: absolute
+  top: 50%
+  transform: translateY(-50%)
+  right: 36px
+
+.cancel-button
+  position: absolute
+  top: 50%
+  transform: translateY(-50%)
+  right: 2px
 
 .add-button
   &.end

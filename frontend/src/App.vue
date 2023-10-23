@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh LpR lff">
+  <q-layout view="lHh LpR lFr">
     <q-header
       v-if="!hideUI"
       class="bg-dark text-white"
@@ -254,7 +254,7 @@
       </q-list>
     </q-drawer>
 
-    <app-properties v-if="!hideUI" />
+    <app-properties v-if="!hideUI && !editor.preview" />
 
     <q-page-container>
       <snacks-display class="q-pt-md" />
@@ -343,13 +343,6 @@ watch(() => editor.active, () => {
   }
   editor.unselectMenu()
 })
-
-// function refreshHealth() {
-//   useFeathersService('health').get(0).then((result) => {
-//     // eslint-disable-next-line no-console
-//     console.log(result)
-//   })
-// }
 
 const { menuUrl, tableUrl, formUrl } = useUrl()
 

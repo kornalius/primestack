@@ -12,6 +12,8 @@ export const checkMaxShares = async (context: HookContext): Promise<HookContext>
   const { count } = await context.app.service('shares').find({
     query: {
       createdBy: user._id,
+      $limit: -1,
+      $skip: 0,
     }
   })
   const m = context.params?.user?.rights?.maxes?.maxShares

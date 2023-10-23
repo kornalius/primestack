@@ -1,5 +1,5 @@
 <template>
-  <q-page class="q-pa-md">
+  <q-page class="q-pa-sm">
     <q-tabs
       v-model="tab"
       align="justify"
@@ -10,12 +10,13 @@
       <q-tab name="PropertiesEditor" label="Properties Editor" />
       <q-tab name="QueryEditor" label="Query Editor" />
       <q-tab name="SchemaEditor" label="Schema Editor" />
-      <q-tab name="Table" label="Table" />
+      <q-tab name="Table" label="ExTable" />
       <q-tab name="Columns" label="Columns Select" />
       <q-tab name="Tags" label="Tags Select" />
       <q-tab name="Stats" label="Stats" />
       <q-tab name="ValueBoxes" label="Value Boxes" />
       <q-tab name="JsonEditor" label="Json Editor" />
+      <q-tab name="Pagination" label="Pagination Test" />
     </q-tabs>
 
     <q-tab-panels v-model="tab" animated>
@@ -92,7 +93,7 @@
       <q-tab-panel name="Table">
         <div class="row">
           <div class="col">
-            <schema-table
+            <ex-table
               class="my-sticky-dynamic"
               :schema="schema"
               :rows="rows"
@@ -102,6 +103,7 @@
               :rows-per-page-options="[0]"
               row-key="_id"
               virtual-scroll
+              editable
               flat
               bordered
             />
@@ -261,6 +263,19 @@
           </div>
         </div>
       </q-tab-panel>
+
+      <q-tab-panel name="Pagination">
+        <q-btn label="Add Record" @click="addRecord" />
+
+        <q-table
+          v-model:pagination="currentPagination"
+          :rows="paginatedRows"
+          @request="paginationRequest"
+        />
+        <pre>{{ currentPagination }}</pre>
+        <pre>{{ pagination }}</pre>
+        <pre>{{ paginationFind }}</pre>
+      </q-tab-panel>
     </q-tab-panels>
   </q-page>
 </template>
@@ -275,15 +290,15 @@ import { Type } from '@feathersjs/typebox'
 import { useQuery } from '@/features/Query/composites'
 import { useFeathersService } from '@/composites/feathers'
 import { useExpression } from '@/features/Expression/composites'
+import { useStats } from '@/features/Stats/store'
 import { Query } from '@/shared/interfaces/query'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import QueryEditor from '@/features/Query/components/Editor/QueryEditor.vue'
-import SchemaTable from '@/features/Tables/components/SchemaTable.vue'
+import ExTable from '@/features/Fields/components/ExTable.vue'
 import SchemaEditor from '@/features/Forms/components/Editor/TableEditor.vue'
 import ColumnsSelect from '@/features/Fields/components/ColumnsSelect.vue'
 import TagsSelect from '@/features/Tables/components/TagsSelect.vue'
-import { useStats } from '@/features/Stats/store'
 import ValueBox from '@/features/Fields/components/ValueBox.vue'
 import StatBox from '@/features/Tables/components/StatBox.vue'
 import JsonEditor from '@/features/Json/components/Editor/JsonEditor.vue'
@@ -543,6 +558,79 @@ const jsonText = ref('{}')
 watch(json, () => {
   jsonText.value = JSON.stringify(json.value, undefined, 2)
 }, { immediate: true, deep: true })
+
+/**
+ * Pagination
+ */
+
+const service = computed(() => useFeathersService('64b806da03ac5093de3f3e78'))
+
+const paginationParams = computed(() => ({
+  query: {
+    $limit: 10,
+    $skip: 0,
+    $sort: { stringField: 1 },
+  },
+}))
+
+const pagination = {
+  limit: ref(10),
+  skip: ref(0),
+}
+
+const currentPagination = ref({
+  sortBy: null,
+  descending: false,
+  page: 1,
+  rowsPerPage: 10,
+  rowsNumber: 0,
+})
+
+let paginationFind
+
+const paginatedRows = ref([])
+
+watch(service, () => {
+  paginationFind = service.value.useFind(
+    paginationParams,
+    {
+      pagination,
+      paginateOn: 'hybrid',
+    },
+  )
+  paginationFind.find()
+
+  watch(paginationFind.total, () => {
+    currentPagination.value.rowsNumber = paginationFind.total.value
+  }, { immediate: true })
+
+  watch(paginationFind.data, () => {
+    paginatedRows.value = paginationFind.data.value
+  }, { immediate: true, deep: true })
+
+  // watch(paginationFind.currentQuery, () => {
+  //   console.log('paginationFind.currentQuery', paginationFind.currentQuery.value)
+  //   if (paginationFind.currentQuery.value) {
+  //     paginatedRows.value = paginationFind.allLocalData.value
+  //       .filter((r) => paginationFind.currentQuery.value.ids.includes(r._id))
+  //   }
+  // }, { immediate: true, deep: true })
+
+  watch(paginationFind.currentPage, () => {
+    currentPagination.value.page = paginationFind.currentPage.value as number
+  }, { immediate: true })
+}, { immediate: true })
+
+const paginationRequest = (r) => {
+  paginationFind.toPage(r.pagination.page)
+}
+
+const addRecord = () => {
+  const s = service.value.new({
+    stringField: hexObjectId(),
+  })
+  s.save()
+}
 </script>
 
 <style scoped lang="sass">

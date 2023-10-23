@@ -313,6 +313,12 @@ export const useFormElements = () => ({
       borderRadius: `${tl} ${tr} ${bl} ${br}`,
       color: field.color,
       backgroundColor: field.backgroundColor,
+      width: field.sizes?.width,
+      height: field.sizes?.height,
+      minWidth: field.sizes?.minWidth,
+      maxWidth: field.sizes?.maxWidth,
+      minHeight: field.sizes?.minHeight,
+      maxHeight: field.sizes?.maxHeight,
       ...(component.editStyles || {}),
     }
   },

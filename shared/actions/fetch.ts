@@ -21,7 +21,7 @@ export default {
     headers: Type.Array(Type.Object({
       key: Type.String(),
       value: Type.String(),
-    }, { horizontal: true })),
+    }, { horizontal: true, horizontalPopup: true })),
     body: ExType.JSON(),
     referer: Type.String(),
     refererPolicy: StringEnum([

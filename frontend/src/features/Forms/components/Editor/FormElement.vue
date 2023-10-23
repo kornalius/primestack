@@ -101,6 +101,7 @@
         v-model:visible-columns="field.visibleColumns"
         :model-value="displayValue"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
+        :add-button="undefined"
         :query="queryToMongo(field.query, fieldTable, ctx.$expr)"
         :style="{ ...style(field), ...(component?.styles || {}) }"
       />

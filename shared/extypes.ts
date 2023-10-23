@@ -29,6 +29,7 @@ interface SliderOptions {
 interface FieldOptions {
   tableProp?: string
   select?: boolean
+  multiple?: boolean
   [key: string]: unknown
 }
 
@@ -45,11 +46,13 @@ interface IdOptions {
 
 interface ColorOptions {
   quasarPalette?: boolean
+  [key: string]: unknown
 }
 
 interface JSONOptions {
   // for the visual json editor, the child type for the root array or object
   rootType?: 'array' | 'object' | 'string' | 'number' | 'boolean'
+  [key: string]: unknown
 }
 
 const Id = (options: IdOptions = {}) => Type.String({ objectid: true, ...options })
@@ -93,6 +96,11 @@ export default {
 
   Field: (options: FieldOptions = {}) => Type.String(
     { field: true, ...options },
+  ),
+
+  MultiField: (options: FieldOptions = {}) => Type.Array(
+    Type.String(),
+    { field: true, select: true, ...options },
   ),
 
   Slider: (options: SliderOptions = {}) => Type.Number({ slider: true, ...options }),

@@ -180,6 +180,10 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string | undefined 
   if (p.type === 'object' && p.border) {
     return 'border'
   }
+  // Sizes editor
+  if (p.type === 'object' && p.sizes) {
+    return 'sizes'
+  }
   // Object editor
   if (p.type === 'object') {
     return 'object'
@@ -478,15 +482,15 @@ export const fieldToSchema = (field: TableFieldSchema): TSchema => {
  * Converts multiple Table fields into a JSON Schema
  *
  * @param fields Table fields
- * @param id JSON Schema $id
+ * @param $id JSON Schema $id
  *
  * @returns {TSchema} New JSON Schema
  */
-export const fieldsToSchema = (fields: TableFieldSchema[], id: string): TSchema => (
+export const fieldsToSchema = (fields: TableFieldSchema[], $id: string): TSchema => (
   Type.Object((fields || []).reduce((acc, f) => ({
     ...acc,
     [f.name]: fieldToSchema(f),
-  }), {}), { $id: id })
+  }), {}), { $id })
 )
 
 /**

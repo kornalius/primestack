@@ -104,7 +104,10 @@
     "clear": "Clear",
     "remove": "Remove",
     "delete": "Delete",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit"
   },
   "table": {
     "dialog": {

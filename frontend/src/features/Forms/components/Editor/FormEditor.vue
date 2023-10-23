@@ -1,87 +1,76 @@
 <template>
-  <q-layout view="hHh lpr lFr">
-    <q-drawer
-      :model-value="true"
-      class="q-pa-sm"
-      :width="200"
-      side="left"
-      behavior="desktop"
-      show-if-above
-      bordered
-    >
-      <q-list class="Drawer" dense>
-        <draggable
-          :list="visibleComponents"
-          :item-key="(value) => visibleComponents.indexOf(value)"
-          :clone="cloneComponent"
-          :group="{
-            name: 'form-builder',
-            pull: 'clone',
-            put: false,
-          }"
-          filter=".overlay,[disabled]"
-          :sort="false"
-          @start="editor.setDragging(true)"
-          @end="editor.setDragging(false)"
-        >
-          <template #item="{ element: value }">
-            <div
-              v-if="value.type === '$separator'"
-              class="row q-pa-xs q-my-sm bg-grey-8 items-center"
-            >
-              <div class="col-auto">
+  <div @click="unselectAll">
+    <div class="row">
+      <div class="col-auto">
+        <q-list class="drawer" dense>
+          <draggable
+            :list="visibleComponents"
+            :item-key="(value) => visibleComponents.indexOf(value)"
+            :clone="cloneComponent"
+            :group="{
+              name: 'form-builder',
+              pull: 'clone',
+              put: false,
+            }"
+            filter=".overlay,[disabled]"
+            :sort="false"
+            @start="editor.setDragging(true)"
+            @end="editor.setDragging(false)"
+          >
+            <template #item="{ element: value }">
+              <div
+                v-if="value.type === '$separator'"
+                class="row q-pa-xs q-my-sm bg-grey-8 items-center"
+              >
+                <div class="col-auto">
+                  <q-icon
+                    :name="componentIcon(value)"
+                    :color="componentColor(value)"
+                    size="sm"
+                  />
+                </div>
+
+                <div class="col q-ml-sm">
+                  <span :class="`text-${componentColor(value)} text-bold`">
+                    {{ $t(componentLabel(value)) }}
+                  </span>
+                </div>
+              </div>
+
+              <q-btn
+                v-else-if="value.type !== ''"
+                class="form-component q-mx-sm"
+                :icon="componentIcon(value)"
+                :label="$t(componentLabel(value))"
+                :disabled="!isComponentAvailable(value.type, auth.user._plan.code)"
+                type="button"
+                size="12px"
+                align="left"
+                dense
+                no-caps
+                flat
+                @click="editor.addFieldToForm(value)"
+              >
                 <q-icon
-                  :name="componentIcon(value)"
-                  :color="componentColor(value)"
-                  size="sm"
+                  v-if="!isComponentAvailable(value.type, auth.user._plan.code)"
+                  name="mdi-currency-usd"
+                  color="red-9"
+                  size="xs"
                 />
-              </div>
-
-              <div class="col q-ml-sm">
-                <span :class="`text-${componentColor(value)} text-bold`">
+                <q-tooltip :delay="500">
                   {{ $t(componentLabel(value)) }}
-                </span>
-              </div>
-            </div>
+                </q-tooltip>
+              </q-btn>
+            </template>
+          </draggable>
+        </q-list>
+      </div>
 
-            <q-btn
-              v-else-if="value.type !== ''"
-              class="form-component q-mx-sm"
-              :icon="componentIcon(value)"
-              :label="$t(componentLabel(value))"
-              :disabled="!isComponentAvailable(value.type, auth.user._plan.code)"
-              type="button"
-              size="12px"
-              align="left"
-              dense
-              no-caps
-              flat
-              @click="editor.addFieldToForm(value)"
-            >
-              <q-icon
-                v-if="!isComponentAvailable(value.type, auth.user._plan.code)"
-                name="mdi-currency-usd"
-                color="red-9"
-                size="xs"
-              />
-              <q-tooltip :delay="500">
-                {{ $t(componentLabel(value)) }}
-              </q-tooltip>
-            </q-btn>
-          </template>
-        </draggable>
-      </q-list>
-    </q-drawer>
-
-    <q-page-container>
-      <q-page
-        class="q-pa-sm"
-        @click="unselectAll"
-      >
+      <div class="col container q-pa-sm">
         <fields-editor v-model="fields" />
-      </q-page>
-    </q-page-container>
-  </q-layout>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -107,7 +96,6 @@ type FormColumn = Static<typeof columnSchema>
 const props = defineProps<{
   modelValue: unknown[]
   form: Form
-  preview?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -126,6 +114,8 @@ const { t } = useI18n()
 
 const fields = useModelValue(props, emit)
 
+const editor = useAppEditor()
+
 const { autoGenerateForm, components } = useFormElements()
 
 const visibleComponents = computed(() => components.filter((c) => !c.hidden))
@@ -133,8 +123,6 @@ const visibleComponents = computed(() => components.filter((c) => !c.hidden))
 /**
  * Selection
  */
-
-const editor = useAppEditor()
 
 const cloneComponent = (component: TFormComponent): FormField | FormColumn | undefined => (
   editor.createFormField(component)
@@ -163,8 +151,12 @@ watch(() => props.form?.tableId, (newValue, oldValue) => {
 })
 
 const unselectAll = () => {
-  if (editor.active && !props.preview) {
+  if (editor.active && !editor.preview && !editor.actionId) {
     editor.unselectAll()
+  }
+  if (editor.active && editor.actionId) {
+    editor.unselectAll()
+    editor.unselectActionElement()
   }
 }
 
@@ -179,4 +171,14 @@ const componentLabel = (c: TFormComponent) => stringValue(c?.label)
 .form-component
   width: 90%
   height: 30px
+
+.drawer
+  overflow: auto
+  width: 200px
+  height: calc(100vh - 118px)
+
+.container
+  overflow: auto
+  width: 100%
+  height: calc(100vh - 118px)
 </style>

@@ -11,22 +11,22 @@
     <q-tooltip class="bg-grey-4" :delay="500">
       <code
         class="hljs"
-        v-html="hljs.highlight(modelValue || '', { language }).value"
+        v-html="html"
       />
     </q-tooltip>
 
     <pre class="flex">
       <code
         class="hljs"
-        style="max-height: 250px; width: 180px;"
-        v-html="hljs.highlight(modelValue || '', { language }).value"
+        style="max-height: 250px; min-width: 20px; max-width: 180px;"
+        v-html="html"
       />
     </pre>
   </div>
 </template>
 
 <script setup lang="ts">
-import { watch } from 'vue'
+import { computed, watch } from 'vue'
 import hljs from 'highlight.js'
 import javascript from 'highlight.js/lib/languages/javascript'
 import json from 'highlight.js/lib/languages/json'
@@ -55,4 +55,8 @@ watch(() => props.language, () => {
     hljs.registerLanguage('basic', basic)
   }
 }, { immediate: true })
+
+const html = computed(() => (
+  hljs.highlight(props.modelValue || '', { language: props.language as string }).value
+))
 </script>

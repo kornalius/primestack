@@ -36,7 +36,7 @@ defineEmits<{
 }>()
 
 const params = computed(() => ({
-  query: props.query,
+  query: props.query || {},
   temps: true,
 }))
 

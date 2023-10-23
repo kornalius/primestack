@@ -139,6 +139,5 @@ export const tableFields = (
 
 export const useTable = () => ({
   extraFields,
-
   tableFields,
 })

@@ -84,6 +84,12 @@ export const useAppEditor = defineStore('app-editor', () => {
     actions: [] as Action[],
     // Original snapshot at start of editing
     origSnapshot: {} as Snapshot,
+    // is the preview mode activated or not?
+    preview: false,
+    // data to preview
+    previewFormData: undefined,
+    // should we show the form data in preview mode?
+    showPreviewFormData: false,
   })
 
   const undoStore = useUndo('editor-undo')()
@@ -167,6 +173,12 @@ export const useAppEditor = defineStore('app-editor', () => {
    * Clone of the user's actions
    */
   const actions = computed(() => states.value.actions)
+
+  const preview = computed(() => states.value.preview)
+
+  const previewFormData = computed(() => states.value.previewFormData)
+
+  const showPreviewFormData = computed(() => states.value.showPreviewFormData)
 
   /**
    * Was there any modifications to the elements being edited?
@@ -1361,6 +1373,18 @@ export const useAppEditor = defineStore('app-editor', () => {
     return false
   }
 
+  const setPreview = (p: boolean) => {
+    states.value.preview = p
+  }
+
+  const setPreviewFormData = (data: AnyData | undefined) => {
+    states.value.previewFormData = data
+  }
+
+  const setShowPreviewFormData = (show: boolean) => {
+    states.value.showPreviewFormData = show
+  }
+
   return {
     states,
     active,
@@ -1450,5 +1474,11 @@ export const useAppEditor = defineStore('app-editor', () => {
     createActionElement,
     addActionElement,
     removeActionElement,
+    preview,
+    previewFormData,
+    showPreviewFormData,
+    setPreview,
+    setPreviewFormData,
+    setShowPreviewFormData,
   }
 })

@@ -167,6 +167,14 @@ export const commonProperties = {
       bottom: Type.String(),
       right: Type.String(),
     }, { style: true, margin: true }),
+    sizes: Type.Object({
+      width: Type.String(),
+      height: Type.String(),
+      minWidth: Type.String(),
+      maxWidth: Type.String(),
+      minHeight: Type.String(),
+      maxHeight: Type.String(),
+    }, { style: true, sizes: true }),
   }),
 
   size: Type.Object({
@@ -213,10 +221,18 @@ export const margin = {
   icon: 'mdi-arrow-all',
 }
 
+export const sizes = {
+  name: 'sizes',
+  label: 'Sizes',
+  color: 'red-7',
+  icon: 'mdi-move-resize',
+}
+
 export const styleNames = [
   border,
   padding,
   margin,
+  sizes,
 ]
 
 export const clickEvent = (e: MouseEvent) => ({

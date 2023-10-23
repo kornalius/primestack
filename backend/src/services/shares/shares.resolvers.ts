@@ -35,6 +35,8 @@ const tableIds = virtual(async (value: Share, context: HookContext) => {
   const formsLists = (await context.app.service('menus').find({
     query: {
       _id: { $in: formIds },
+      $limit: -1,
+      $skip: 0,
     },
   })).data as FormSchema[]
 

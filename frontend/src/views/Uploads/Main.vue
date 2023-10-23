@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md flex flex-center">
+  <q-page class="q-pa-sm flex flex-center">
     <uploader
       :label="$t('upload.message')"
       :accept="mimetypes"
@@ -7,7 +7,7 @@
       :max-files="10"
       :query="{}"
     />
-  </div>
+  </q-page>
 </template>
 
 <script setup lang="ts">

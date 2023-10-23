@@ -17,6 +17,39 @@ const mongoOperators = {
   '>=': '$ge',
 }
 
+/**
+ * Convert a string value into a compatible field value
+ *
+ * @param value Value
+ * @param type Field type
+ *
+ * @returns {unknown}
+ */
+export const valueForField = (value: unknown, type: string): unknown => {
+  switch (type) {
+    case 'string':
+      return String(value)
+
+    case 'number':
+      return Number(value)
+
+    case 'boolean':
+      if (typeof value === 'boolean') {
+        return value
+      }
+      if (typeof value === 'string') {
+        return ['true', 't', 'yes', 'y'].includes(value as string)
+      }
+      if (typeof value === 'number') {
+        return value !== 0
+      }
+      return false
+
+    default:
+      return value
+  }
+}
+
 const cleanupQuery = (q: AnyData): AnyData => {
   if (!q) {
     return q
@@ -62,12 +95,15 @@ export const queryToMongo = (q: Query, schema: TableSchema, ctx: AnyData): AnyDa
 
   const reduceCriteria = (c: QueryCriteria): AnyData | undefined => {
     if (c.fieldId && c.op && c.value !== null && c.value !== undefined) {
+      const field = schema?.fields
+        .find((f) => f._id === c.fieldId)
+
+      const n = field?.name
+      const t = field?.type
+
       const v = isExpr(c.value)
         ? runExpr(exprToString(c.value), ctx)
-        : c.value
-
-      const n = schema?.fields
-        .find((f) => f._id === c.fieldId)?.name
+        : valueForField(c.value, t)
 
       if (c.op === 'like' && typeof v === 'string') {
         return { [n]: new RegExp(v, 'i') }
@@ -183,6 +219,7 @@ export const queryToString = (query: Query, schema: TableSchema): string => {
 }
 
 export const useQuery = () => ({
+  valueForField,
   cleanupQuery,
   queryToMongo,
   queryToString,

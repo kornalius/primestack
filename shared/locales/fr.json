@@ -104,7 +104,10 @@
     "clear": "Effacer tout",
     "remove": "Effacer",
     "delete": "Effacer",
-    "dismiss": "Fermer"
+    "dismiss": "Fermer",
+    "save": "Sauvegarder",
+    "cancel": "Annuler",
+    "edit": "Modifier"
   },
   "table": {
     "dialog": {

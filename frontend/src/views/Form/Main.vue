@@ -1,26 +1,19 @@
 <template>
-  <q-page class="q-pa-md">
-    <q-layout
-      view="hHh lpr lFr"
-    >
-      <q-drawer
+  <q-page class="q-pa-sm">
+    <div class="row">
+      <div
         v-if="showDrawer"
-        :model-value="true"
-        class="q-pr-md"
-        :class="{ 'q-pa-sm': !formsViewMode }"
-        :width="400"
-        side="left"
-        behavior="desktop"
-        show-if-above
+        class="col-auto q-mr-sm"
       >
         <schema-table
           v-if="!formsViewMode"
           v-bind="tableBinds"
-          class="full-height"
+          class="SideTable"
           :schema="fieldsToSchema(table.fields, `Table-${table._id}`)"
           :table-id="table._id"
           :selected="selected"
           :hide-filter="form.hideFilter"
+          :pagination="{}"
           add-button="start"
           remove-button="end"
           selection-style="single"
@@ -36,7 +29,7 @@
 
         <ex-table
           v-else
-          class="full-height"
+          class="SideTable"
           :selected="selected"
           :schema="formSchemaForDisplay"
           :rows="editor.forms"
@@ -52,146 +45,143 @@
           @remove="removeForm"
           @row-click="toggleSelection"
         />
-      </q-drawer>
+      </div>
 
-      <q-page-container>
-        <q-page
-          v-if="form"
-          @click="unselectAll"
-        >
-          <div v-if="editor.active && !editor.actionId" class="row">
-            <div class="q-mb-sm full-width">
-              <div class="row bg-grey-8 items-center q-px-sm">
-                <div class="col">
-                  <span class="text-h6 text-white">
-                    {{ form.name }}
-                  </span>
-                </div>
+      <div
+        class="col"
+        @click="unselectAll"
+      >
+        <div v-if="editor.active && !editor.actionId" class="row">
+          <div class="q-mb-sm full-width">
+            <div class="row bg-grey-8 items-center q-px-sm">
+              <div class="col">
+                <span class="text-h6 text-white">
+                  {{ form.name }}
+                </span>
+              </div>
 
-                <div class="col-auto">
-                  <q-toggle
-                    v-model="preview"
-                    class="q-ml-sm text-white"
-                    :label="$t('editor.preview.title')"
-                    left-label
-                    dense
-                  >
-                    <q-tooltip :delay="500">
-                      {{ $t('editor.preview.tooltip') }}
-                    </q-tooltip>
-                  </q-toggle>
+              <div class="col-auto">
+                <q-toggle
+                  v-model="preview"
+                  class="q-ml-sm text-white"
+                  :label="$t('editor.preview.title')"
+                  left-label
+                  dense
+                >
+                  <q-tooltip :delay="500">
+                    {{ $t('editor.preview.tooltip') }}
+                  </q-tooltip>
+                </q-toggle>
 
-                  <q-toggle
-                    v-model="showPreviewFormData"
-                    class="q-ml-sm text-white"
-                    :disable="!preview"
-                    :label="$t('editor.data.title')"
-                    left-label
-                    dense
-                  >
-                    <q-tooltip :delay="500">
-                      {{ $t('editor.data.tooltip') }}
-                    </q-tooltip>
-                  </q-toggle>
-                </div>
+                <q-toggle
+                  v-model="showPreviewFormData"
+                  class="q-ml-sm text-white"
+                  :disable="!editor.preview"
+                  :label="$t('editor.data.title')"
+                  left-label
+                  dense
+                >
+                  <q-tooltip :delay="500">
+                    {{ $t('editor.data.tooltip') }}
+                  </q-tooltip>
+                </q-toggle>
               </div>
             </div>
           </div>
+        </div>
 
-          <q-form
-            v-if="!editor.active"
-            ref="qform"
-            @validation-success="validationSuccess"
-            @validation-error="validationError"
-          >
-            <form-display
-              v-model="currentData"
-              :fields="fields"
-            />
-
-            <!-- <pre>{{ currentData }}</pre>-->
-
-            <q-card-actions
-              v-if="hasChanges"
-              align="right"
-            >
-              <q-btn
-                :label="$t('editor.save.title')"
-                color="positive"
-                outline
-                @click="submit"
-              >
-                <q-tooltip :delay="500">
-                  {{ $t('editor.save.tooltip') }}
-                </q-tooltip>
-              </q-btn>
-
-              <q-btn
-                :label="$t('editor.cancel.title')"
-                color="negative"
-                flat
-                @click="resetForm"
-              >
-                <q-tooltip :delay="500">
-                  {{ $t('editor.save.tooltip') }}
-                </q-tooltip>
-              </q-btn>
-            </q-card-actions>
-
-            <q-expansion-item
-              v-if="showFilesSection"
-              :caption="t('form.files.title', { count: filesCount })"
-              icon="mdi-paperclip"
-              header-class="q-px-none"
-              dense
-            >
-              <div class="q-my-sm">
-                <uploader
-                  :label="t('uploader.message')"
-                  :query="filesFilter"
-                  :accept="mimetypes"
-                  :max-file-size="maxFileSize"
-                  :max-files="10"
-                />
-              </div>
-            </q-expansion-item>
-          </q-form>
-
-          <actions-editor
-            v-else-if="editor.actionId"
-            v-model="actionList"
-          />
-
+        <q-form
+          v-if="!editor.active"
+          ref="qform"
+          @validation-success="validationSuccess"
+          @validation-error="validationError"
+        >
           <form-display
-            v-else-if="preview"
-            v-model="previewFormData"
+            v-model="currentData"
             :fields="fields"
           />
 
-          <form-editor
-            v-else
-            v-model="fields"
-            :form="form"
-            :preview="preview"
-          />
+          <!-- <pre>{{ currentData }}</pre>-->
 
-          <div
-            v-if="editor.active && preview && showPreviewFormData"
-            class="q-mt-sm"
+          <q-card-actions
+            v-if="hasChanges"
+            align="right"
           >
-            <div class="bg-grey-8 q-pl-sm q-mb-sm">
-              <div class="row items-center">
-                <div class="col">
-                  <span class="text-h6 text-white">Data</span>
-                </div>
+            <q-btn
+              :label="$t('editor.save.title')"
+              color="positive"
+              outline
+              @click="submit"
+            >
+              <q-tooltip :delay="500">
+                {{ $t('editor.save.tooltip') }}
+              </q-tooltip>
+            </q-btn>
+
+            <q-btn
+              :label="$t('editor.cancel.title')"
+              color="negative"
+              flat
+              @click="resetForm"
+            >
+              <q-tooltip :delay="500">
+                {{ $t('editor.save.tooltip') }}
+              </q-tooltip>
+            </q-btn>
+          </q-card-actions>
+
+          <q-expansion-item
+            v-if="showFilesSection"
+            :caption="t('form.files.title', { count: filesCount })"
+            icon="mdi-paperclip"
+            header-class="q-px-none"
+            dense
+          >
+            <div class="q-my-sm">
+              <uploader
+                :label="t('uploader.message')"
+                :query="filesFilter"
+                :accept="mimetypes"
+                :max-file-size="maxFileSize"
+                :max-files="10"
+              />
+            </div>
+          </q-expansion-item>
+        </q-form>
+
+        <actions-editor
+          v-else-if="editor.actionId"
+          v-model="actionList"
+        />
+
+        <form-display
+          v-else-if="editor.preview"
+          v-model="editor.previewFormData"
+          :fields="fields"
+        />
+
+        <form-editor
+          v-else
+          v-model="fields"
+          :form="form"
+        />
+
+        <div
+          v-if="editor.active && editor.preview && editor.showPreviewFormData"
+          class="q-mt-sm"
+        >
+          <div class="bg-grey-8 q-pl-sm q-mb-sm">
+            <div class="row items-center">
+              <div class="col">
+                <span class="text-h6 text-white">Data</span>
               </div>
             </div>
-
-            <pre>{{ previewFormData }}</pre>
           </div>
-        </q-page>
-      </q-page-container>
-    </q-layout>
+
+          <pre>{{ editor.previewFormData }}</pre>
+        </div>
+      </div>
+    </div>
   </q-page>
 </template>
 
@@ -420,16 +410,28 @@ const formModelValues = computed(() => {
   return (fields.value || []).reduce((acc, f) => ({ ...acc, ...convertField(f) }), {})
 })
 
+/**
+ * Preview
+ */
+
 const preview = ref(false)
-const previewFormData = ref({})
 const showPreviewFormData = ref(false)
 
 watch(preview, () => {
-  previewFormData.value = {
-    ...defaultValues.value,
-    ...(form.value?.data || {}),
-    ...(formModelValues.value || {}),
+  editor.setPreview(preview.value)
+  if (preview.value) {
+    editor.setPreviewFormData({
+      ...defaultValues.value,
+      ...(form.value?.data || {}),
+      ...(formModelValues.value || {}),
+    })
+  } else {
+    editor.setPreviewFormData(undefined)
   }
+})
+
+watch(showPreviewFormData, () => {
+  editor.setShowPreviewFormData(showPreviewFormData.value)
 })
 
 onBeforeMount(() => {
@@ -638,7 +640,7 @@ const removeRecord = (value: AnyData) => {
   }).onOk(async () => {
     const r = await getRecord(getId(value))
     if (r) {
-      r.remove()
+      await r.remove()
       refresh()
     }
   })
@@ -732,11 +734,13 @@ const filesFilter = computed(() => ({
   docId: currentId.value,
 }))
 
+const filesParams = computed(() => ({
+  query: filesFilter.value,
+  temps: true,
+}))
+
 const { data: files, queryWhen } = useFeathersService('files')
-  .useFind(computed(() => ({
-    query: filesFilter,
-    temps: true,
-  })))
+  .useFind(filesParams)
 queryWhen(() => Object.keys(filesFilter.value).length === 2)
 
 const filesCount = computed(() => files.value?.length || 0)
@@ -767,3 +771,9 @@ watch(form, () => {
   }
 }, { immediate: true, deep: true })
 </script>
+
+<style scoped lang="sass">
+:deep(.SideTable)
+  width: 500px
+  height: calc(100vh - 78px)
+</style>

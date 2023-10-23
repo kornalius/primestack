@@ -232,6 +232,8 @@ export const createDynamicService = (app: Application, id: string, t: AnyData) =
               query: {
                 _id: { $in: record[f.name] },
                 $select: f.refFields?.length ? f.refFields : undefined,
+                $limit: -1,
+                $skip: 0,
               },
             })).data
           }

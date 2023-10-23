@@ -3,7 +3,7 @@
 
   <div
     v-if="isExpr(value) || type === 'expr'"
-    class="row"
+    class="row items-center"
     style="cursor: default;"
   >
     <div class="col overflow-hidden ellipsis" style="max-width: 230px;">
@@ -46,7 +46,6 @@
       <!-- Popup edit -->
 
       <q-btn
-        :style="{ opacity: hover ? 1 : 0 }"
         icon="mdi-pencil"
         size="sm"
         color="grey-7"
@@ -113,10 +112,14 @@
     v-else-if="type === 'boolean'"
     v-model="value"
     class="full-width"
-    :label="embedLabel ? label : undefined"
+    :label="checkboxLabel"
     :disable="disabled"
     dense
-  />
+  >
+    <q-tooltip :delay="500">
+      {{ label }}
+    </q-tooltip>
+  </q-checkbox>
 
   <!-- Numeric slider -->
 
@@ -476,6 +479,14 @@
     :disable="disabled"
   />
 
+  <!-- Sizes -->
+
+  <sizes-editor
+    v-else-if="type === 'sizes' && value"
+    v-model="value"
+    :disable="disabled"
+  />
+
   <!-- Object in complex UI -->
 
   <properties-editor
@@ -701,6 +712,7 @@ import VariableSelect from '@/features/Variables/components/VariableSelect.vue'
 import PropertyHighlight from '@/features/Properties/components/PropertyHighlight.vue'
 import BtnToggleMulti from '@/features/Fields/components/BtnToggleMulti.vue'
 import JsonEditor from '@/features/Json/components/Editor/JsonEditor.vue'
+import SizesEditor from '@/features/Properties/components/SizesEditor.vue'
 
 type Action = Static<typeof actionSchema>
 
@@ -729,6 +741,8 @@ const props = defineProps<{
   includeFormDataFields?: boolean
   // is the mouse hovering over this property
   hover?: boolean
+  // is the element is displayed in horizontal form?
+  horizontal?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -1127,6 +1141,19 @@ watch(tempJson, () => {
       //
     }
   }
+})
+
+/**
+ * Returns the checkbox label depending on the orientation and if the label is embedded or not
+ */
+const checkboxLabel = computed(() => {
+  if (type.value === 'boolean') {
+    if (props.horizontal) {
+      return props.embedLabel ? undefined : props.label
+    }
+    return props.embedLabel ? props.label : undefined
+  }
+  return undefined
 })
 </script>
 

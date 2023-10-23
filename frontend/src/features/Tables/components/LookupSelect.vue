@@ -37,20 +37,32 @@ const emit = defineEmits<{
 
 const value = useModelValue(props, emit)
 
-const options = ref([])
+const data = ref()
+
+const options = computed(() => (
+  (data.value || []).map((d: AnyData) => (
+    props.columns.reduce((acc, col) => ({
+      ...acc,
+      [col.field]: d[col.field],
+    }), {})
+  ))
+))
+
+const params = computed(() => ({
+  query: {
+    ...(props.query || {}),
+    $limit: -1,
+    $skip: 0,
+  },
+}))
 
 watch(() => props.tableId, () => {
   if (props.tableId) {
-    const { data, find } = useFeathersService(props.tableId)
-      .useFind(computed(() => ({ query: props.query || {} })))
-    find({ query: props.query })
-    watch(data, () => {
-      options.value = data.value.map((d: AnyData) => (
-        props.columns.reduce((acc, col) => ({
-          ...acc,
-          [col.field]: d[col.field],
-        }), {})
-      ))
+    const { data: rows, find } = useFeathersService(props.tableId)
+      .useFind(params)
+    find(params.value)
+    watch(rows, () => {
+      data.value = rows.value
     }, { immediate: true })
   }
 }, { immediate: true })

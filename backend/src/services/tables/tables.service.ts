@@ -34,7 +34,7 @@ export default function (app: Application): void {
   }).init(app, {})
 
   // initialize paths + collections
-  app.service('tables').find({ query: {} })
+  app.service('tables').find({ query: { $limit: -1, $skip: 0 } })
     .then(({ data }) => {
       data.forEach((d: AnyData) => {
         d.list.forEach((t: AnyData) => {

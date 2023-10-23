@@ -22,54 +22,57 @@
 
   <div
     v-if="horizontal"
-    class="col relative-position"
+    :class="{ col: type !== 'boolean', 'col-auto': type === 'boolean' }"
   >
-    <property-schema-field
-      v-model="value"
-      v-model:forced-types="currentForcedTypes"
-      :disable="disable"
-      :parents="parents"
-      :schema="schema"
-      :prop-name="propName"
-      :label="label"
-      :embed-label="embedLabel"
-      :include-form-data-fields="includeFormDataFields"
-      property
-    />
-  </div>
-
-  <div
-    v-if="horizontal"
-    class="col-auto"
-    style="width: 20px;"
-  >
-    <q-btn
-      v-if="showExpr"
-      class="q-mr-sm"
-      :style="{ opacity: isExpr(value) || hover ? 1 : 0 }"
-      :disable="disabled"
-      :color="isExpr(value) ? 'orange-8' : 'grey-5'"
-      icon="mdi-flash"
-      size="sm"
-      flat
-      dense
-    >
-      <q-popup-edit
-        v-model="value"
-        :title="`${label} Expression...`"
-        auto-save
-        @before-show="loadExpr"
-        @before-hide="saveExpr"
-      >
-        <code-editor
-          v-model="tempCode"
-          style="width: 600px; height: 150px;"
-          lang-js
-          autofocus
-          @keydown="editor.preventSystemUndoRedo"
+    <div class="row items-center">
+      <div class="col relative-position">
+        <property-schema-field
+          v-model="value"
+          v-model:forced-types="currentForcedTypes"
+          :disable="disable"
+          :parents="parents"
+          :schema="schema"
+          :prop-name="propName"
+          :label="label"
+          :embed-label="embedLabel"
+          :horizontal="horizontal"
+          :include-form-data-fields="includeFormDataFields"
+          property
         />
-      </q-popup-edit>
-    </q-btn>
+      </div>
+
+      <div
+        class="col-auto"
+        style="width: 20px;"
+      >
+        <q-btn
+          v-if="showExpr"
+          class="q-mr-sm"
+          :disable="disabled"
+          :color="isExpr(value) ? 'orange-8' : 'grey-5'"
+          icon="mdi-flash"
+          size="sm"
+          flat
+          dense
+        >
+          <q-popup-edit
+            v-model="value"
+            :title="`${label} Expression...`"
+            auto-save
+            @before-show="loadExpr"
+            @before-hide="saveExpr"
+          >
+            <code-editor
+              v-model="tempCode"
+              style="width: 600px; height: 150px;"
+              lang-js
+              autofocus
+              @keydown="editor.preventSystemUndoRedo"
+            />
+          </q-popup-edit>
+        </q-btn>
+      </div>
+    </div>
   </div>
 
   <!-- Non-expandable section -->
@@ -124,6 +127,7 @@
             :prop-name="propName"
             :label="label"
             :embed-label="embedLabel"
+            :horizontal="horizontal"
             :include-form-data-fields="includeFormDataFields"
             :hover="hover"
             property
@@ -312,6 +316,7 @@
             :prop-name="propName"
             :include-form-data-fields="includeFormDataFields"
             :label="label"
+            :horizontal="horizontal"
             embed-label
             property
           />

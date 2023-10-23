@@ -1,15 +1,7 @@
 <template>
-  <q-layout view="hHh lpr lFr">
-    <q-drawer
-      :model-value="true"
-      class="q-pa-sm"
-      :width="180"
-      side="left"
-      behavior="desktop"
-      show-if-above
-      bordered
-    >
-      <q-list class="Drawer" dense>
+  <div class="row">
+    <div class="col-auto">
+      <q-list class="drawer" dense>
         <draggable
           :list="visibleActions"
           :item-key="(value) => visibleActions.indexOf(value)"
@@ -74,37 +66,32 @@
           </template>
         </draggable>
       </q-list>
-    </q-drawer>
+    </div>
 
-    <q-page-container>
-      <q-page
-        class="q-pa-sm"
-        @click="unselectAll"
-      >
-        <div class="row title items-center q-pa-xs q-mb-sm">
-          <div class="col-auto">
-            <span class="text-caption text-weight-medium" style="font-size: 20px;">
-              {{ title }}
-            </span>
-          </div>
-
-          <q-space />
-
-          <div class="col-auto">
-            <q-btn
-              icon="mdi-close"
-              size="sm"
-              color="white text-black"
-              round
-              @click="close"
-            />
-          </div>
+    <div class="col container q-pa-sm" @click="unselectAll">
+      <div class="row title items-center q-pa-xs q-mb-sm">
+        <div class="col-auto">
+          <span class="text-caption text-weight-medium" style="font-size: 20px;">
+            {{ title }}
+          </span>
         </div>
 
-        <actions-list-editor v-model="actionList" />
-      </q-page>
-    </q-page-container>
-  </q-layout>
+        <q-space />
+
+        <div class="col-auto">
+          <q-btn
+            icon="mdi-close"
+            size="sm"
+            color="white text-black"
+            round
+            @click="close"
+          />
+        </div>
+      </div>
+
+      <actions-list-editor v-model="actionList" />
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -196,12 +183,20 @@ onMounted(() => {
 </script>
 
 <style scoped lang="sass">
-@import 'quasar/src/css/variables'
-
 .action-button
   width: 90%
   height: 30px
 
 .title
   background: repeating-linear-gradient(-55deg, rgba(255, 221, 93, .25), rgba(255, 255, 95, .25) 10px, #D5D3C5 10px, #D5D3C5 20px)
+
+.drawer
+  overflow: auto
+  width: 200px
+  height: calc(100vh - 118px)
+
+.container
+  overflow: auto
+  width: 100%
+  height: calc(100vh - 118px)
 </style>

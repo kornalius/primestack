@@ -68,10 +68,17 @@ const reservedTableNames = ['tables', 'menus', 'forms', 'tabs', 'actions']
 
 const value = useModelValue(props, emit)
 
-const userTable = useFeathersService('tables').findOneInStore({ query: {} })
-const userForm = useFeathersService('forms').findOneInStore({ query: {} })
-const userMenu = useFeathersService('menus').findOneInStore({ query: {} })
-const userAction = useFeathersService('actions').findOneInStore({ query: {} })
+const userTable = useFeathersService('tables')
+  .findOneInStore({ query: {} })
+
+const userForm = useFeathersService('forms')
+  .findOneInStore({ query: {} })
+
+const userMenu = useFeathersService('menus')
+  .findOneInStore({ query: {} })
+
+const userAction = useFeathersService('actions')
+  .findOneInStore({ query: {} })
 
 const data = ref()
 
@@ -106,21 +113,29 @@ const entities = computed(() => {
         })),
       ]), [])
     default:
-      return data?.value
+      return data.value?.value
   }
 })
 
+const params = computed(() => ({
+  query: {
+    ...(props.query || {}),
+    $limit: -1,
+    $skip: 0,
+  },
+}))
+
 watch([() => props.service, () => props.tableId], () => {
   if (props.service && !reservedTableNames.includes(props.service)) {
-    const { data: c, find: findEntities } = useFeathersService(props.service)
-      .useFind(computed(() => ({ query: props.query || {} })))
-    findEntities()
+    const { data: c, find } = useFeathersService(props.service)
+      .useFind(params)
+    find()
     watch(c, () => {
       data.value = c.value
     }, { immediate: true })
   } else if (props.tableId) {
     const { data: c, find } = useFeathersService(props.tableId)
-      .useFind(computed(() => ({ query: props.query || {} })))
+      .useFind(params)
     find()
     watch(c, () => {
       data.value = c.value

@@ -3,6 +3,7 @@
     v-model="value"
     v-bind="$attrs"
     :options="options"
+    :loading="isPending"
     new-value-mode="add-unique"
     autocomplete="label"
     emit-value
@@ -37,27 +38,44 @@ const emit = defineEmits<{
 
 const value = useModelValue(props, emit)
 
-const options = ref([])
+const data = ref()
+
+const isPending = ref(false)
+
+const options = computed(() => (
+  (data.value || []).reduce((acc, d: AnyData) => {
+    const v = d[props.field]
+    if (Array.isArray(v)) {
+      return [
+        ...acc,
+        ...v.map((i) => ({ label: i, value: i })),
+      ]
+    }
+    return [
+      ...acc,
+      { label: v, value: v },
+    ]
+  }, [])
+))
+
+const params = computed(() => ({
+  query: {
+    ...(props.query || {}),
+    $limit: -1,
+    $skip: 0,
+  },
+}))
 
 watch([() => props.tableId, () => props.field], () => {
   if (props.tableId && props.field) {
-    const { data, find } = useFeathersService(props.tableId)
-      .useFind(computed(() => ({ query: props.query || {} })))
-    find({ query: props.query })
-    watch(data, () => {
-      options.value = data.value.reduce((acc, d: AnyData) => {
-        const v = d[props.field]
-        if (Array.isArray(v)) {
-          return [
-            ...acc,
-            ...v.map((i) => ({ label: i, value: i })),
-          ]
-        }
-        return [
-          ...acc,
-          { label: v, value: v },
-        ]
-      }, [])
+    const { data: rows, pending, find } = useFeathersService(props.tableId)
+      .useFind(params)
+    find(params.value)
+    watch(rows, () => {
+      data.value = rows.value
+    }, { immediate: true })
+    watch(pending, () => {
+      isPending.value = pending.value
     }, { immediate: true })
   }
 }, { immediate: true })

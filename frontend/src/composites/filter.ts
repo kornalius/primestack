@@ -43,6 +43,8 @@ export const filterToMongo = (filter: string, fields: TableField[]): AnyData => 
     switch (field.type) {
       case 'number':
         return Number(v)
+      case 'boolean':
+        return ['true', 't', 'yes', 'y'].includes(v)
       default:
         return { $regex: negative ? `^((?!${v}).)*$` : v, $options: 'i' }
     }
