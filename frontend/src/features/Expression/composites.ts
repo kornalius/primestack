@@ -184,6 +184,20 @@ export const buildCtx = (extra?: AnyData) => {
       },
 
       /**
+       * Returns a url that points to the menuId, tabId, formId specified
+       *
+       * @param menuId
+       * @param tabId
+       * @param formId
+       * @param create Should we create a new document?
+       *
+       * @returns {string}
+       */
+      link: (menuId: string, tabId?: string, formId?: string, create?: boolean): string => (
+        url.menuUrl(menuId, tabId, formId, create)
+      ),
+
+      /**
        * Get a variable's value
        *
        * @param name Name of the variable

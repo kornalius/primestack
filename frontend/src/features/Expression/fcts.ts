@@ -2,6 +2,9 @@ export const fcts = {
   $result: '`(path?: string): unknown | undefined`\n\n'
     + 'Get the previous action result value',
 
+  link: '`(menuId: string, tabId?: string, formId?: string, create?: boolean): string`\n\n'
+    + 'Returns a url that points to the menuId, tabId, formId specified',
+
   str: '`(format: string, data: object): string`\n\n'
     + 'Formats a string with format specifiers (subsequences beginning with %), \n'
     + 'the additional arguments following format are formatted and inserted in \n'

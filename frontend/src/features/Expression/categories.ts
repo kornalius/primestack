@@ -100,6 +100,7 @@ export const categories = [
     children: [
       'route',
       'param',
+      'link',
       'menuId',
       'tabId',
       'formId',
