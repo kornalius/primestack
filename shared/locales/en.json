@@ -291,6 +291,8 @@
     "no_results": "No Results"
   },
   "expressions": {
+    "edit": "Edit expression...",
+    "title": "Expression for '{label}'"
   },
   "filter": {
     "expression": "Filter expression (ex: field:value)"
@@ -524,7 +526,15 @@
       "forms": "Forms",
       "menus": "Menus",
       "tabs": "Tabs",
-      "data": "Form data fields"
+      "data": "Form data fields",
+      "variables": "Variables",
+      "result": "Result",
+      "doc": "Selected document",
+      "quickies": "Shortcuts",
+      "menuId": "Active menu ID",
+      "tabId": "Active tab ID",
+      "formId": "Active form ID",
+      "tableId": "Active table ID"
     }
   }
 }

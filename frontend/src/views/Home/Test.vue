@@ -287,6 +287,7 @@ import {
 import sample from 'lodash/sample'
 import hexObjectId from 'hex-object-id'
 import { Type } from '@feathersjs/typebox'
+import { useI18n } from 'vue-i18n'
 import { useQuery } from '@/features/Query/composites'
 import { useFeathersService } from '@/composites/feathers'
 import { useExpression } from '@/features/Expression/composites'
@@ -330,7 +331,9 @@ const testProperties = ref({
 
 const forcedTypes = ref({})
 
-const { buildCtx } = useExpression()
+const { t } = useI18n()
+
+const { buildCtx } = useExpression(t)
 
 const ctx = buildCtx()
 

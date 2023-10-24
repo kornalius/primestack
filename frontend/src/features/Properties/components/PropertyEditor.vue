@@ -148,21 +148,38 @@
             flat
             dense
           >
-            <q-popup-edit
-              v-model="value"
-              :title="`${label} Expression...`"
-              auto-save
-              @before-show="loadExpr"
-              @before-hide="saveExpr"
-            >
-              <code-editor
-                v-model="tempCode"
-                style="width: 600px; height: 450px;"
-                lang-js
-                autofocus
-                @keydown="editor.preventSystemUndoRedo"
-              />
-            </q-popup-edit>
+            <q-menu v-model="showMenu" fit>
+              <q-list dense>
+                <q-item clickable>
+                  <q-item-section>
+                    {{ $t('expressions.edit') }}
+                  </q-item-section>
+
+                  <q-popup-edit
+                    v-model="value"
+                    :title="t('expressions.title', { label })"
+                    auto-save
+                    @before-show="loadExpr"
+                    @before-hide="saveExpr"
+                  >
+                    <code-editor
+                      v-model="tempCode"
+                      style="width: 800px; height: 450px;"
+                      lang-js
+                      autofocus
+                      @keydown="editor.preventSystemUndoRedo"
+                    />
+                  </q-popup-edit>
+                </q-item>
+
+                <q-separator />
+
+                <code-dropdown
+                  :model-value="expr.dropmenu.value"
+                  @insert="setFromDropMenu"
+                />
+              </q-list>
+            </q-menu>
           </q-btn>
         </div>
       </div>
@@ -342,6 +359,7 @@ import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.
 import PropertyLabel from '@/features/Properties/components/PropertyLabel.vue'
 import PropertySchemaField from '@/features/Properties/components/PropertySchemaField.vue'
 import CodeEditor from '@/features/Expression/components/CodeEditor.vue'
+import CodeDropdown from '@/features/Expression/components/CodeDropdown.vue'
 
 const props = defineProps<{
   // property value
@@ -384,15 +402,17 @@ const value = useModelValue(props, emit)
 
 const editor = useAppEditor()
 
+const { t } = useI18n()
+
+const expr = useExpression(t)
+
 const {
   isExpr,
   exprCode,
   stringToExpr,
-} = useExpression()
+} = expr
 
 const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
-
-const { t } = useI18n()
 
 const { getPaletteColor } = colors
 
@@ -522,5 +542,19 @@ const loadExpr = () => {
  */
 const saveExpr = () => {
   value.value = stringToExpr(tempCode.value)
+}
+
+const showMenu = ref(false)
+
+/**
+ * Set the value of the property as an expression from the expression dropdown menu
+ *
+ * @param text
+ */
+const setFromDropMenu = (text: string) => {
+  if (text) {
+    value.value = stringToExpr(text)
+    showMenu.value = false
+  }
 }
 </script>

@@ -120,12 +120,13 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { Static, TSchema } from '@feathersjs/typebox'
+import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
+import { useAppEditor } from '@/features/App/editor-store'
+import { useExpression } from '@/features/Expression/composites'
 import { tableFieldSchema } from '@/shared/schemas/table'
 import { defaultValueForSchema, validForExpr } from '@/shared/schema'
 import { QueryCriteria } from '@/shared/interfaces/query'
-import { useAppEditor } from '@/features/App/editor-store'
-import { useExpression } from '@/features/Expression/composites'
 import TableFieldSelect from '@/features/Tables/components/TableFieldSelect.vue'
 import CodeEditor from '@/features/Expression/components/CodeEditor.vue'
 import PropertyHighlight from '@/features/Properties/components/PropertyHighlight.vue'
@@ -150,7 +151,9 @@ const editor = useAppEditor()
 
 const hover = ref(false)
 
-const { isExpr, exprCode, stringToExpr } = useExpression()
+const { t } = useI18n()
+
+const { isExpr, exprCode, stringToExpr } = useExpression(t)
 
 const selectedField = computed(() => (
   props.fields.find((f) => f._id === field.value.fieldId)

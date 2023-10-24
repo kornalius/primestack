@@ -37,6 +37,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
+import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
 import { useExpression } from '@/features/Expression/composites'
 import { columnSchema, fieldSchema } from '@/shared/schemas/form'
@@ -61,7 +62,9 @@ const value = useModelValue(props, emit)
 
 const { fieldBinds, style, schemaForField } = useFormElements()
 
-const { buildCtx } = useExpression()
+const { t } = useI18n()
+
+const { buildCtx } = useExpression(t)
 
 const ctx = buildCtx()
 

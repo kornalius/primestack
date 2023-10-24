@@ -14,12 +14,12 @@
       animated
     >
       <q-tab-panel
-        v-for="t in field._columns"
-        :key="t._id"
-        :name="t._id"
+        v-for="c in field._columns"
+        :key="c._id"
+        :name="c._id"
         @click.stop="$emit('click')"
       >
-        <fields-editor v-model="t._fields" />
+        <fields-editor v-model="c._fields" />
       </q-tab-panel>
     </q-tab-panels>
   </div>
@@ -28,6 +28,7 @@
 <script setup lang="ts">
 import { Ref, ref, watch } from 'vue'
 import { Static } from '@feathersjs/typebox'
+import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
 // eslint-disable-next-line import/no-cycle
 import { fieldSchema } from '@/shared/schemas/form'
@@ -56,7 +57,9 @@ const {
   schemaForField,
 } = useFormElements()
 
-const { buildCtx } = useExpression()
+const { t } = useI18n()
+
+const { buildCtx } = useExpression(t)
 
 const ctx = buildCtx()
 

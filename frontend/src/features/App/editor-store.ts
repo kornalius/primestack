@@ -92,6 +92,15 @@ export const useAppEditor = defineStore('app-editor', () => {
     showPreviewFormData: false,
   })
 
+  /**
+   * Returns true if a popup editor or a menu is visible on the screen
+   *
+   * @return {boolean}
+   */
+  const menuOrPopupPresent = (): boolean => (
+    !!document.querySelector('.q-popup-edit, .q-menu')
+  )
+
   const undoStore = useUndo('editor-undo')()
 
   /**
@@ -271,7 +280,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @param id Id of the element
    */
   const select = (id: string): void => {
-    if (!document.querySelector('.q-popup-edit')) {
+    if (!menuOrPopupPresent()) {
       states.value.selected = id
       states.value.selectedFormTableColumn = undefined
     }
@@ -283,7 +292,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @param id Id of the element
    */
   const unselect = (id: string): void => {
-    if (!document.querySelector('.q-popup-edit')) {
+    if (!menuOrPopupPresent()) {
       if (states.value.selected === id) {
         states.value.selected = undefined
         states.value.selectedFormTableColumn = undefined
@@ -295,7 +304,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    * Unselects all form elements
    */
   const unselectAll = (): void => {
-    if (!document.querySelector('.q-popup-edit')) {
+    if (!menuOrPopupPresent()) {
       states.value.selected = undefined
       states.value.selectedFormTableColumn = undefined
     }
@@ -318,7 +327,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @param id Id of the table column
    */
   const selectFormTableColumn = (id: string): void => {
-    if (!document.querySelector('.q-popup-edit')) {
+    if (!menuOrPopupPresent()) {
       const fc = formInstanceForTableColumn(id)
       if (fc) {
         select(fc._id)
@@ -331,7 +340,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    * Unselects currently selected form's table component column
    */
   const unselectFormTableColumn = (): void => {
-    if (!document.querySelector('.q-popup-edit')) {
+    if (!menuOrPopupPresent()) {
       states.value.selectedFormTableColumn = undefined
     }
   }
@@ -410,7 +419,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    * Unselects currently selected tab
    */
   const unselectTab = (): void => {
-    if (!document.querySelector('.q-popup-edit')) {
+    if (!menuOrPopupPresent()) {
       states.value.selectedTab = undefined
     }
   }
@@ -421,7 +430,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @param id Id of the menu
    */
   const selectMenu = (id: string): void => {
-    if (!document.querySelector('.q-popup-edit')) {
+    if (!menuOrPopupPresent()) {
       select(undefined)
       states.value.selectedMenu = id
     }
@@ -444,7 +453,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @param id Id of the tab
    */
   const selectTab = (id: string): void => {
-    if (!document.querySelector('.q-popup-edit')) {
+    if (!menuOrPopupPresent()) {
       select(undefined)
       states.value.selectedTab = id
     }
@@ -465,7 +474,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    * Unselects currently selected menu
    */
   const unselectMenu = (): void => {
-    if (!document.querySelector('.q-popup-edit')) {
+    if (!menuOrPopupPresent()) {
       states.value.selectedMenu = undefined
       unselectTab()
     }
@@ -477,7 +486,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @param id Id of the table
    */
   const selectTable = (id: string): void => {
-    if (!document.querySelector('.q-popup-edit')) {
+    if (!menuOrPopupPresent()) {
       states.value.selectedTable = id
     }
   }
@@ -486,7 +495,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    * Unselects currently selected table
    */
   const unselectTable = (): void => {
-    if (!document.querySelector('.q-popup-edit')) {
+    if (!menuOrPopupPresent()) {
       states.value.selectedTable = undefined
     }
   }
@@ -508,7 +517,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @param id Id of the table field
    */
   const selectTableField = (id: string): void => {
-    if (!document.querySelector('.q-popup-edit')) {
+    if (!menuOrPopupPresent()) {
       states.value.selectedTableField = id
     }
   }
@@ -517,7 +526,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    * Unselects currently selected table field
    */
   const unselectTableField = (): void => {
-    if (!document.querySelector('.q-popup-edit')) {
+    if (!menuOrPopupPresent()) {
       states.value.selectedTableField = undefined
     }
   }

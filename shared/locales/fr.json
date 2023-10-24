@@ -283,9 +283,11 @@
     "no_results": "Aucun résultat"
   },
   "expressions": {
+    "edit": "Modifier l'expression..."
   },
   "filter": {
-    "expression": "Expression de filtre (ex: field:value)"
+    "expression": "Expression de filtre (ex: field:value)",
+    "title": "Expression pour '{label}'"
   },
   "components": {
     "button": {
@@ -516,7 +518,15 @@
       "forms": "Formulaires",
       "menus": "Menus",
       "tabs": "Onglets",
-      "data": "Champs du formulaire"
+      "data": "Champs du formulaire",
+      "variables": "Variables",
+      "result": "Résultat",
+      "doc": "Document sélectionné",
+      "quickies": "Raccourcis",
+      "menuId": "ID du menu actif",
+      "tabId": "ID de l'onglet actif",
+      "formId": "ID du formulaire actif",
+      "tableId": "ID de la table active"
     }
   }
 }

@@ -1,5 +1,8 @@
+import { computed } from 'vue'
+import { Static } from '@feathersjs/typebox'
 import { LRUCache } from 'lru-cache'
 import dayjs from 'dayjs'
+import sortBy from 'lodash/sortBy'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
 import dayOfYear from 'dayjs/plugin/dayOfYear'
 import quarterOfYear from 'dayjs/plugin/quarterOfYear'
@@ -55,9 +58,22 @@ import { useVariables } from '@/features/Variables/store'
 import { useAppEditor } from '@/features/App/editor-store'
 import { useApp } from '@/features/App/store'
 import { useUrl } from '@/composites/url'
-import { AnyData } from '@/shared/interfaces/commons'
+import { AnyData, T18N } from '@/shared/interfaces/commons'
 // eslint-disable-next-line import/no-cycle
 import { exec } from '@/features/Actions/composites'
+import { Menu } from '@/features/Expression/interfaces'
+import { categories } from '@/features/Expression/categories'
+import { fcts } from '@/features/Expression/fcts'
+import { iconForType } from '@/shared/schema'
+import { menuSchema, tabSchema } from '@/shared/schemas/menu'
+import { formSchema } from '@/shared/schemas/form'
+import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
+
+type MenuSchema = Static<typeof menuSchema>
+type TabSchema = Static<typeof tabSchema>
+type FormSchema = Static<typeof formSchema>
+type TableSchema = Static<typeof tableSchema>
+type FieldSchema = Static<typeof tableFieldSchema>
 
 dayjs.extend(weekOfYear)
 dayjs.extend(dayOfYear)
@@ -220,6 +236,15 @@ export const buildCtx = (extra?: AnyData) => {
       ),
 
       /**
+       * Get the currently selected whole document
+       *
+       * @returns {unknown} Value of the document
+       */
+      doc: (): unknown | undefined => (
+        app.doc
+      ),
+
+      /**
        * Returns the current menu id
        *
        * @returns {string}
@@ -331,15 +356,35 @@ export const buildCtx = (extra?: AnyData) => {
        */
       now: (): number => Date.now(),
 
+      /**
+       * Log a message to the browser's console
+       *
+       * @param args
+       */
       // eslint-disable-next-line no-console
       log: (...args: unknown[]) => console.log(...args),
 
+      /**
+       * Log a message as an error to the browser's console
+       *
+       * @param args
+       */
       // eslint-disable-next-line no-console
       error: (...args: unknown[]) => console.error(...args),
 
+      /**
+       * Log a message as an info to the browser's console
+       *
+       * @param args
+       */
       // eslint-disable-next-line no-console
       info: (...args: unknown[]) => console.info(...args),
 
+      /**
+       * Log a message as a warning to the browser's console
+       *
+       * @param args
+       */
       // eslint-disable-next-line no-console
       warn: (...args: unknown[]) => console.warn(...args),
 
@@ -719,6 +764,547 @@ export const buildCtx = (extra?: AnyData) => {
         dayjs(d).isLeapYear()
       ),
 
+      /**
+       * Returns true if o is considered an Array
+       *
+       * @param o Object to check
+       *
+       * @returns {boolean}
+       */
+      isArray: (o: unknown): boolean => (
+        Array.isArray(o)
+      ),
+
+      /**
+       * Concat two arrays together
+       *
+       * @param a Array 1
+       * @param b Array 2
+       *
+       * @returns {unknown[]}
+       */
+      concat: (a: unknown[], b: unknown[]): unknown[] => ([
+        ...a,
+        ...b,
+      ]),
+
+      /**
+       * Flattens an array
+       *
+       * @param a Array
+       *
+       * @returns {unknown[]}
+       */
+      flat: (a: unknown[]): unknown[] => (
+        a.flat()
+      ),
+
+      /**
+       * Finds the index of an item in an array
+       *
+       * @param a Array
+       * @param item Item to search for
+       *
+       * @returns {number}
+       */
+      indexOf: (a: unknown[], item: unknown): number => (
+        a.indexOf(item)
+      ),
+
+      /**
+       * Reverses items in an array
+       *
+       * @param a Array
+       *
+       * @returns {unknown[]}
+       */
+      reverse: (a: unknown[]): unknown[] => (
+        a.reverse()
+      ),
+
+      /**
+       * Pushes a value at the end of the array
+       *
+       * @param a Array
+       * @param item New value to append
+       *
+       * @returns {unknown[]}
+       */
+      push: (a: unknown[], item: unknown): unknown[] => ([
+        ...a,
+        item,
+      ]),
+
+      /**
+       * Insert a value at the start of the array
+       *
+       * @param a Array
+       * @param item New value to append
+       *
+       * @returns {unknown[]}
+       */
+      shift: (a: unknown[], item: unknown): unknown[] => ([
+        item,
+        ...a,
+      ]),
+
+      /**
+       * Removes the last entry from an array
+       *
+       * @param a Array
+       *
+       * @returns {unknown[]}
+       */
+      pop: (a: unknown[]): unknown[] => (
+        a.slice(0, -1)
+      ),
+
+      /**
+       * Removes the first entry from an array
+       *
+       * @param a Array
+       *
+       * @returns {unknown[]}
+       */
+      unshift: (a: unknown[]): unknown[] => (
+        a.slice(0, 1)
+      ),
+
+      /**
+       * Slices an array
+       *
+       * @param a Array
+       * @param start Start index
+       * @param end End index
+       *
+       * @returns {unknown[]}
+       */
+      slice: (a: unknown[], start?: number, end?: number): unknown[] => (
+        a.slice(start, end)
+      ),
+
+      /**
+       * Changes the content of an array by removing or replacing existing items
+       *
+       * @param a Array
+       * @param start Start index
+       * @param deleteCount Items to delete
+       * @param items New items to insert at start
+       *
+       * @returns {unknown[]}
+       */
+      splice: (a: unknown[], start: number, deleteCount?: number, ...items: unknown[]): unknown[] => ([
+        ...a.splice(start, deleteCount, ...items),
+      ]),
+
+      /**
+       * Checks if a value is considered Not-A-Number
+       *
+       * @param value Value to check
+       *
+       * @returns {boolean}
+       */
+      isNaN: (value: unknown): boolean => (
+        Number.isNaN(value)
+      ),
+
+      /**
+       * Checks if a value is considered an integer value
+       *
+       * @param value Value to check
+       *
+       * @returns {boolean}
+       */
+      isInteger: (value: unknown): boolean => (
+        Number.isInteger(value)
+      ),
+
+      /**
+       * Checks if a value is considered a finite value
+       *
+       * @param value Value to check
+       *
+       * @returns {boolean}
+       */
+      isFinite: (value: unknown): boolean => (
+        Number.isFinite(value)
+      ),
+
+      /**
+       * Returns the largest representable number
+       *
+       * @returns {number}
+       */
+      MAX_FLOAT: (): number => (
+        Number.MAX_VALUE
+      ),
+
+      /**
+       * Returns the largest safe integer number
+       *
+       * @returns {number}
+       */
+      MAX_INT: (): number => (
+        Number.MAX_SAFE_INTEGER
+      ),
+
+      /**
+       * Returns an integer value by parsing a string
+       *
+       * @param value Value to parse
+       *
+       * @returns {number}
+       */
+      parseInt: (value: string): number => (
+        Number.parseInt(value, 10)
+      ),
+
+      /**
+       * Returns an float value by parsing a string
+       *
+       * @param value Value to parse
+       *
+       * @returns {number}
+       */
+      parseFloat: (value: string): number => (
+        Number.parseFloat(value)
+      ),
+
+      /**
+       * PI
+       *
+       * @returns {number}
+       */
+      PI: (): number => (
+        Math.PI
+      ),
+
+      /**
+       * Returns a string representing the given number using fixed-point notation
+       *
+       * @param value
+       * @param digits precision
+       *
+       * @returns {string}
+       */
+      toFixed: (value: number, digits?: number): string => (
+        Number(value).toFixed(digits)
+      ),
+
+      /**
+       * Returns a string with a language-sensitive representation of this number
+       *
+       * @param value
+       * @param locale
+       * @param opt
+       *
+       * @returns {string}
+       */
+      toLocale: (value: number, locale?: string, opt?: Intl.NumberFormatOptions): string => (
+        Number(value).toLocaleString(locale, opt)
+      ),
+
+      /**
+       * Returns a string representing the given value
+       *
+       * @param value
+       *
+       * @returns {string}
+       */
+      toString: (value: unknown): string => (
+        value.toString()
+      ),
+
+      /**
+       * Returns the absolute value of a number
+       *
+       * @param value
+       *
+       * @returns {number}
+       */
+      abs: (value: number): number => (
+        Math.abs(value)
+      ),
+
+      /**
+       * Returns the arccosine value of a number
+       *
+       * @param value
+       *
+       * @returns {number}
+       */
+      acos: (value: number): number => (
+        Math.acos(value)
+      ),
+
+      /**
+       * Returns the cosine value of a number
+       *
+       * @param value
+       *
+       * @returns {number}
+       */
+      cos: (value: number): number => (
+        Math.cos(value)
+      ),
+
+      /**
+       * Returns the arcsine value of a number
+       *
+       * @param value
+       *
+       * @returns {number}
+       */
+      asin: (value: number): number => (
+        Math.asin(value)
+      ),
+
+      /**
+       * Returns the sine value of a number
+       *
+       * @param value
+       *
+       * @returns {number}
+       */
+      sin: (value: number): number => (
+        Math.sin(value)
+      ),
+
+      /**
+       * Returns the arctangent value of a number
+       *
+       * @param value
+       *
+       * @returns {number}
+       */
+      atan: (value: number): number => (
+        Math.atan(value)
+      ),
+
+      /**
+       * Returns the tangent value of a number
+       *
+       * @param value
+       *
+       * @returns {number}
+       */
+      tan: (value: number): number => (
+        Math.tan(value)
+      ),
+
+      /**
+       * Returns the base x to the exponent power y (that is, xy)
+       *
+       * @param x
+       * @param y
+       *
+       * @returns {number}
+       */
+      pow: (x: number, y: number): number => (
+        x ** y
+      ),
+
+      /**
+       * Returns the sign of the x, indicating whether x is positive, negative, or zero
+       *
+       * @param value
+       *
+       * @returns {number}
+       */
+      sign: (value: number): number => (
+        Math.sign(value)
+      ),
+
+      /**
+       * Returns the positive square root of value
+       *
+       * @param value
+       *
+       * @returns {number}
+       */
+      sqrt: (value: number): number => (
+        Math.sqrt(value)
+      ),
+
+      /**
+       * Returns the integer portion of value, removing any fractional digits
+       *
+       * @param value
+       *
+       * @returns {number}
+       */
+      trunc: (value: number): number => (
+        Math.trunc(value)
+      ),
+
+      /**
+       * Returns the logarithm value of a number
+       *
+       * @param value
+       *
+       * @returns {number}
+       */
+      logarithm: (value: number): number => (
+        Math.log(value)
+      ),
+
+      /**
+       * Returns an array containing all of the [key, value] pairs of a given
+       * object's own enumerable string
+       *
+       * @param value
+       *
+       * @returns {[string, unknown][]}
+       */
+      entries: (value: AnyData): [string, unknown][] => (
+        Object.entries(value)
+      ),
+
+      /**
+       * Returns an array of all object enumerable keys
+       *
+       * @param value
+       *
+       * @returns {string[]}
+       */
+      keys: (value: AnyData): string[] => (
+        Object.keys(value)
+      ),
+
+      /**
+       * Returns an array of all object values
+       *
+       * @param value
+       *
+       * @returns {unknown[]}
+       */
+      values: (value: AnyData): unknown[] => (
+        Object.values(value)
+      ),
+
+      /**
+       * Returns true if the specified object has the indicated key
+       *
+       * @param value
+       * @param key
+       *
+       * @returns {boolean}
+       */
+      has: (value: AnyData, key: string): boolean => (
+        Object.hasOwn(value, key)
+      ),
+
+      /**
+       * Returns a string from a char code
+       *
+       * @param value String value
+       *
+       * @returns {string}
+       */
+      chr: (value: number): string => (
+        String.fromCharCode(value)
+      ),
+
+      /**
+       * Returns length of a string
+       *
+       * @param value String value
+       *
+       * @returns {number}
+       */
+      length: (value: string): number => (
+        value.length
+      ),
+
+      /**
+       * Returns a char code from a string at the given index
+       *
+       * @param value String value
+       * @param index Char index
+       *
+       * @returns {number}
+       */
+      at: (value: string, index: number): number => (
+        value.charCodeAt(index)
+      ),
+
+      /**
+       * Returns value appended with another value
+       *
+       * @param value String value
+       * @param append String to append
+       *
+       * @returns {string}
+       */
+      append: (value: string, append: string): string => (
+        value.concat(append)
+      ),
+
+      /**
+       * Returns the index of the first occurence of a search value
+       *
+       * @param value String value
+       * @param search Search string
+       *
+       * @returns {number}
+       */
+      index: (value: string, search: string): number => (
+        value.indexOf(search)
+      ),
+
+      /**
+       * Returns the index of the last occurence of a search value
+       *
+       * @param value String value
+       * @param search Search string
+       *
+       * @returns {number}
+       */
+      indexLast: (value: string, search: string): number => (
+        value.lastIndexOf(search)
+      ),
+
+      /**
+       * Returns a number indicating whether the reference string
+       * str comes before, after, or is equivalent to
+       * the given string in sort order
+       *
+       * @param v String value
+       * @param str Search string
+       * @param locale Locale name
+       * @param opt Locale options
+       *
+       * @returns {number}
+       */
+      compare: (v: string, str: string, locale?: string, opt?: Intl.CollatorOptions): number => (
+        v.localeCompare(str, locale, opt)
+      ),
+
+      /**
+       * Returns the Unicode Normalization Form of this string
+       *
+       * @param value String value
+       *
+       * @returns {string}
+       */
+      normalize: (value: string): string => (
+        value.normalize()
+      ),
+
+      /**
+       * Returns a new string containing characters of the calling string from
+       * (or between) the specified index (or indices)
+       *
+       * @param value String value
+       * @param start Start index
+       * @param end End index
+       *
+       * @returns {string}
+       */
+      substring: (value: string, start: number, end?: number): string => (
+        value.substring(start, end)
+      ),
+
       uppercase,
       lowercase,
       camelcase,
@@ -756,12 +1342,244 @@ export const buildCtx = (extra?: AnyData) => {
   }
 }
 
-export const useExpression = () => ({
-  isExpr,
-  exprCode,
-  exprToString,
-  stringToExpr,
-  runExpr,
-  getProp,
-  buildCtx,
-})
+export const useExpression = (t: T18N) => {
+  const variables = useVariables()
+
+  const userTable = useFeathersService('tables')
+    .findOneInStore({ query: {} })
+
+  const userForm = useFeathersService('forms')
+    .findOneInStore({ query: {} })
+
+  const userMenu = useFeathersService('menus')
+    .findOneInStore({ query: {} })
+
+  const functions = computed((): Menu[] => (
+    sortBy(categories.map((category) => ({
+      icon: category.icon,
+      name: category.name,
+      label: category.label,
+      children: sortBy(category.children.map((k) => ({
+        icon: 'mdi-flash',
+        name: k,
+        label: k,
+        value: `${k}()`,
+        cursorAdj: -1,
+        tooltip: fcts[k],
+      })), 'label'),
+    })), 'label')
+  ))
+
+  const tables = computed((): Menu[] => (
+    sortBy((userTable.value?.list || []).map((table: TableSchema) => ({
+      icon: 'mdi-table',
+      name: table._id,
+      label: table.name,
+      value: `table('${table.name}')`,
+    })), 'label')
+  ))
+
+  const fields = computed((): Menu[] => (
+    sortBy(
+      (userTable.value?.list || [])
+        .filter((table: TableSchema) => table.fields.length > 0)
+        .map((table: TableSchema) => ({
+          icon: 'mdi-table',
+          name: table._id,
+          label: table.name,
+          children: sortBy(table.fields.map((field: FieldSchema) => ({
+            icon: iconForType(field.type),
+            name: field._id,
+            label: field.name,
+            value: `field('${table.name}', '${field.name}')`,
+          })), 'label'),
+        })),
+      'label',
+    )
+  ))
+
+  const menus = computed((): Menu[] => (
+    sortBy((userMenu.value?.list || []).map((menu: MenuSchema) => ({
+      icon: 'mdi-menu',
+      name: menu._id,
+      label: menu.label,
+      value: `menu('${menu.label}')`,
+    })), 'label')
+  ))
+
+  const tabs = computed((): Menu[] => (
+    sortBy(
+      (userMenu.value?.list || [])
+        .filter((menu: MenuSchema) => menu.tabs.length > 0)
+        .map((menu: MenuSchema) => ({
+          icon: 'mdi-menu',
+          name: menu._id,
+          label: menu.label,
+          children: sortBy(menu.tabs.map((tab: TabSchema) => ({
+            icon: 'mdi-tab',
+            name: tab._id,
+            label: tab.label,
+            value: `tab('${menu.label}', '${tab.label}')`,
+          })), 'label'),
+        })),
+      'label',
+    )
+  ))
+
+  const forms = computed((): Menu[] => (
+    sortBy((userForm.value?.list || []).map((form: FormSchema) => ({
+      icon: 'mdi-window-maximize',
+      name: form._id,
+      label: form.name,
+      value: `form('${form.name}')`,
+    })), 'label')
+  ))
+
+  const vars = computed((): Menu[] => (
+    sortBy(variables.names.map((v) => ({
+      icon: 'mdi-variable',
+      name: v,
+      label: v,
+      value: `var('${v}')`,
+    })), 'label')
+  ))
+
+  const mainmenu = computed((): Menu[] => ([
+    {
+      icon: 'mdi-flash',
+      name: 'functions',
+      label: t('code_editor.menus.functions'),
+      children: functions.value,
+    },
+    {
+      icon: 'mdi-variable',
+      name: 'variables',
+      label: t('code_editor.menus.variables'),
+      children: vars.value,
+    },
+    {
+      icon: 'mdi-menu',
+      name: 'menus',
+      label: t('code_editor.menus.menus'),
+      children: menus.value,
+    },
+    {
+      icon: 'mdi-tab',
+      name: 'tabs',
+      label: t('code_editor.menus.tabs'),
+      children: tabs.value,
+    },
+    {
+      icon: 'mdi-window-maximize',
+      name: 'forms',
+      label: t('code_editor.menus.forms'),
+      children: forms.value,
+    },
+    {
+      icon: 'mdi-table',
+      name: 'tables',
+      label: t('code_editor.menus.tables'),
+      children: tables.value,
+    },
+    {
+      icon: 'mdi-form-textbox',
+      name: 'fields',
+      label: t('code_editor.menus.fields'),
+      children: fields.value,
+    },
+  ]))
+
+  const dropmenu = computed((): Menu[] => ([
+    {
+      icon: 'mdi-flash-triangle',
+      name: 'quickies',
+      label: t('code_editor.menus.quickies'),
+      children: [
+        {
+          icon: 'mdi-variable-box',
+          name: 'result',
+          label: t('code_editor.menus.result'),
+          value: '$result()',
+        },
+        {
+          icon: 'mdi-code-json',
+          name: 'doc',
+          label: t('code_editor.menus.doc'),
+          value: 'doc()',
+        },
+        {
+          icon: 'mdi-menu',
+          name: 'menuId',
+          label: t('code_editor.menus.menuId'),
+          value: 'menuId()',
+        },
+        {
+          icon: 'mdi-tab',
+          name: 'tabId',
+          label: t('code_editor.menus.tabId'),
+          value: 'tabId()',
+        },
+        {
+          icon: 'mdi-window-maximize',
+          name: 'formId',
+          label: t('code_editor.menus.formId'),
+          value: 'formId()',
+        },
+        {
+          icon: 'mdi-table',
+          name: 'tableId',
+          label: t('code_editor.menus.tableId'),
+          value: 'tableId()',
+        },
+      ],
+    },
+    {
+      icon: 'mdi-variable',
+      name: 'variables',
+      label: t('code_editor.menus.variables'),
+      children: vars.value,
+    },
+    {
+      icon: 'mdi-menu',
+      name: 'menus',
+      label: t('code_editor.menus.menus'),
+      children: menus.value,
+    },
+    {
+      icon: 'mdi-tab',
+      name: 'tabs',
+      label: t('code_editor.menus.tabs'),
+      children: tabs.value,
+    },
+    {
+      icon: 'mdi-window-maximize',
+      name: 'forms',
+      label: t('code_editor.menus.forms'),
+      children: forms.value,
+    },
+    {
+      icon: 'mdi-table',
+      name: 'tables',
+      label: t('code_editor.menus.tables'),
+      children: tables.value,
+    },
+    {
+      icon: 'mdi-form-textbox',
+      name: 'fields',
+      label: t('code_editor.menus.fields'),
+      children: fields.value,
+    },
+  ]))
+
+  return {
+    isExpr,
+    exprCode,
+    exprToString,
+    stringToExpr,
+    runExpr,
+    getProp,
+    buildCtx,
+    mainmenu,
+    dropmenu,
+  }
+}

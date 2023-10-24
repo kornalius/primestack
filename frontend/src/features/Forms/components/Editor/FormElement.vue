@@ -134,6 +134,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { Static } from '@feathersjs/typebox'
+import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
 import { useAppEditor } from '@/features/App/editor-store'
 import { useQuery } from '@/features/Query/composites'
@@ -178,7 +179,9 @@ const field = useModelValue(props, emit)
 
 const element = ref()
 
-const { buildCtx, getProp } = useExpression()
+const { t } = useI18n()
+
+const { buildCtx, getProp } = useExpression(t)
 
 const ctx = buildCtx()
 
@@ -193,7 +196,7 @@ const component = computed(() => (
 
 const fieldTable = computed(() => (
   field.value.tableId
-    ? editor.tables.find((t) => t._id === field.value.tableId)
+    ? editor.tables.find((tbl) => tbl._id === field.value.tableId)
     : undefined
 ))
 

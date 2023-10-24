@@ -271,12 +271,12 @@ import {
 import { Static } from '@feathersjs/typebox'
 import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useApp } from '@/features/App/store'
 import { useAppEditor } from '@/features/App/editor-store'
 import { useAuth } from '@/features/Auth/store'
 import { useUrl } from '@/composites/url'
 import { useFeathersService } from '@/composites/feathers'
-import { useI18n } from 'vue-i18n'
 import { useExpression } from '@/features/Expression/composites'
 import { useStats } from '@/features/Stats/store'
 import { tabSchema } from '@/shared/schemas/menu'
@@ -442,7 +442,7 @@ const cancel = () => {
  * Tab badges
  */
 
-const { buildCtx } = useExpression()
+const { buildCtx } = useExpression(t)
 
 const ctx = buildCtx()
 

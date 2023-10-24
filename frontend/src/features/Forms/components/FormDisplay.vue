@@ -142,7 +142,7 @@ const {
   serializeRules,
 } = useFormElements()
 
-const { buildCtx } = useExpression()
+const { buildCtx } = useExpression(t)
 
 const value = useModelValue(props, emit)
 

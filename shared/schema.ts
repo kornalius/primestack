@@ -318,7 +318,7 @@ export const omitFields = (schema: TSchema, fields: string[]): TSchema => ({
  */
 export const iconForType = (type: string): string => {
   switch (type) {
-    case 'string': return 'mdi-format-quote-close'
+    case 'string': return 'mdi-format-text'
     case 'number': return 'mdi-pound'
     case 'boolean': return 'mdi-check'
     case 'color': return 'mdi-eyedropper-variant'

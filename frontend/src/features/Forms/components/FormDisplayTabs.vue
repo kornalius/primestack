@@ -4,30 +4,30 @@
     v-bind="fieldBinds(field, schemaForField(field), ctx)"
   >
     <q-tab
-      v-for="t in tabs"
-      :key="t._id"
-      :name="t._id"
-      :content-class="`text-${t.color}`"
+      v-for="tab in tabs"
+      :key="tab._id"
+      :name="tab._id"
+      :content-class="`text-${tab.color}`"
     >
       <q-icon
-        v-if="t.icon"
+        v-if="tab.icon"
         class="q-mr-sm"
-        :name="t.icon"
+        :name="tab.icon"
         size="sm"
       />
 
       <span class="text-subtitle2">
-        {{ t.label }}
+        {{ tab.label }}
       </span>
 
       <q-badge
-        v-if="t.badgeValue"
+        v-if="tab.badgeValue"
         style="right: -28px;"
-        :color="t.badgeColor"
+        :color="tab.badgeColor"
         floating
         rounded
       >
-        {{ t.badgeValue }}
+        {{ tab.badgeValue }}
       </q-badge>
     </q-tab>
   </q-tabs>
@@ -39,13 +39,13 @@
       animated
     >
       <q-tab-panel
-        v-for="t in tabs"
-        :key="t._id"
-        :name="t._id"
+        v-for="tab in tabs"
+        :key="tab._id"
+        :name="tab._id"
       >
         <form-display
           v-model="value"
-          :fields="t._fields as FormField[]"
+          :fields="tab._fields as FormField[]"
         />
       </q-tab-panel>
     </q-tab-panels>
@@ -55,6 +55,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { Static } from '@feathersjs/typebox'
+import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
 import { useExpression } from '@/features/Expression/composites'
 import { fieldSchema, tabSchema } from '@/shared/schemas/form'
@@ -80,7 +81,9 @@ const value = useModelValue(props, emit)
 
 const { fieldBinds, schemaForField } = useFormElements()
 
-const { buildCtx } = useExpression()
+const { t } = useI18n()
+
+const { buildCtx } = useExpression(t)
 
 const ctx = buildCtx()
 

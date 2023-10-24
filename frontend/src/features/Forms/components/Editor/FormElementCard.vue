@@ -117,6 +117,7 @@
 import { computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import hexObjectId from 'hex-object-id'
+import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
 // eslint-disable-next-line import/no-cycle
 import { useAppEditor } from '@/features/App/editor-store'
@@ -154,7 +155,9 @@ const {
   componentsByType,
 } = useFormElements()
 
-const { buildCtx } = useExpression()
+const { t } = useI18n()
+
+const { buildCtx } = useExpression(t)
 
 const ctx = buildCtx()
 

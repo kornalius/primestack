@@ -191,11 +191,11 @@ import {
 } from 'vue'
 import { Static, TObject } from '@feathersjs/typebox'
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from 'vue-router'
-import { useQuasar } from 'quasar'
-import { useI18n } from 'vue-i18n'
 import pick from 'lodash/pick'
 import cloneDeep from 'lodash/cloneDeep'
 import isEqual from 'lodash/isEqual'
+import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 import { useAppEditor } from '@/features/App/editor-store'
 import { useApp } from '@/features/App/store'
 import { useFormElements } from '@/features/Forms/composites'
@@ -315,7 +315,7 @@ const currentId = ref()
 const prevData = ref({})
 const currentData = ref({})
 
-const { buildCtx, getProp } = useExpression()
+const { buildCtx, getProp } = useExpression(t)
 
 const ctx = buildCtx()
 

@@ -17,7 +17,7 @@
 
         <q-popup-edit
           v-model="value"
-          :title="`${label} Expression...`"
+          :title="t('expressions.title', { label })"
           auto-save
           @before-show="loadExpr"
           @before-hide="saveExpr"
@@ -797,13 +797,13 @@ const jsonEditing = ref(false)
 
 const editor = useAppEditor()
 
-const { isExpr, exprCode, stringToExpr } = useExpression()
+const { t } = useI18n()
+
+const { isExpr, exprCode, stringToExpr } = useExpression(t)
 
 const { queryToString } = useQuery()
 
 const { tableFields } = useTable()
-
-const { t } = useI18n()
 
 const isNameField = computed(() => props.schema.name === true)
 

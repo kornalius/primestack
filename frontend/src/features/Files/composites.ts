@@ -1,8 +1,7 @@
 import axios, { AxiosResponse, AxiosProgressEvent } from 'axios'
-import VueI18n from 'vue-i18n'
 import { Static } from '@feathersjs/typebox'
 import { schema } from '@/shared/schemas/file'
-import { AnyData } from '@/shared/interfaces/commons'
+import { AnyData, T18N } from '@/shared/interfaces/commons'
 import { formatSize } from '@/shared/files/utils'
 
 const UPLOAD_URL = import.meta.env.VITE_API_URL
@@ -168,7 +167,7 @@ const arrayBufferToBase64 = (buffer: ArrayBuffer): Base64 => {
   return window.btoa(binary)
 }
 
-export const useFiles = (t: ((key: VueI18n.Path, values?: VueI18n.PathValue[]) => string)) => ({
+export const useFiles = (t: T18N) => ({
   supportedTypes,
 
   genericFileIcon,

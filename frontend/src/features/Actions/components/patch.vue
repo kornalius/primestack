@@ -48,12 +48,13 @@
 import { computed } from 'vue'
 import hljs from 'highlight.js'
 import json from 'highlight.js/lib/languages/json'
-import { AnyData } from '@/shared/interfaces/commons'
+import { useI18n } from 'vue-i18n'
 // eslint-disable-next-line import/no-cycle
 import { useActions } from '@/features/Actions/composites'
 import { useFeathersService } from '@/composites/feathers'
 import { useExpression } from '@/features/Expression/composites'
 import { useQuery } from '@/features/Query/composites'
+import { AnyData } from '@/shared/interfaces/commons'
 import PropertyHighlight from '@/features/Properties/components/PropertyHighlight.vue'
 
 hljs.registerLanguage('json', json)
@@ -66,23 +67,25 @@ const { fieldsArrayToObject } = useActions()
 
 const { data: tables } = useFeathersService('tables').useFind(computed(() => ({ query: {} })))
 
-const userTable = computed(() => tables.value?.[0])
+const { t } = useI18n()
 
-const tableName = computed(() => (
-  userTable.value.list.find((t) => t._id === props.modelValue.tableId)?.name
-))
-
-const { buildCtx } = useExpression()
+const { buildCtx } = useExpression(t)
 
 const ctx = buildCtx()
 
 const { queryToString } = useQuery()
 
+const userTable = computed(() => tables.value?.[0])
+
+const tableName = computed(() => (
+  userTable.value.list.find((tbl) => tbl._id === props.modelValue.tableId)?.name
+))
+
 /**
  * Computes the user's table instance
  */
 const table = computed(() => (
-  userTable.value.list.find((t) => t._id === props.modelValue.tableId)
+  userTable.value.list.find((tbl) => tbl._id === props.modelValue.tableId)
 ))
 
 /**

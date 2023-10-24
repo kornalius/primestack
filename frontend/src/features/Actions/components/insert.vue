@@ -27,11 +27,12 @@
 import { computed } from 'vue'
 import hljs from 'highlight.js'
 import json from 'highlight.js/lib/languages/json'
-import { AnyData } from '@/shared/interfaces/commons'
+import { useI18n } from 'vue-i18n'
 // eslint-disable-next-line import/no-cycle
 import { useActions } from '@/features/Actions/composites'
 import { useFeathersService } from '@/composites/feathers'
 import { useExpression } from '@/features/Expression/composites'
+import { AnyData } from '@/shared/interfaces/commons'
 import PropertyHighlight from '@/features/Properties/components/PropertyHighlight.vue'
 
 hljs.registerLanguage('json', json)
@@ -42,18 +43,20 @@ const props = defineProps<{
 
 const { fieldsArrayToObject } = useActions()
 
+const { t } = useI18n()
+
+const { buildCtx } = useExpression(t)
+
+const ctx = buildCtx()
+
 const { data: tables } = useFeathersService('tables')
   .useFind(computed(() => ({ query: {} })))
 
 const userTable = computed(() => tables.value?.[0])
 
 const tableName = computed(() => (
-  userTable.value.list.find((t) => t._id === props.modelValue.tableId)?.name
+  userTable.value.list.find((tbl) => tbl._id === props.modelValue.tableId)?.name
 ))
-
-const { buildCtx } = useExpression()
-
-const ctx = buildCtx()
 
 /**
  * Computes the fields to insert
