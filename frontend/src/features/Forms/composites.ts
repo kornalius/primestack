@@ -1,7 +1,7 @@
 import { Static, TSchema } from '@feathersjs/typebox'
 import startCase from 'lodash/startCase'
 import omit from 'lodash/omit'
-import { EventArgs, EventArgsFn } from '@/shared/interfaces/forms'
+import { EventArgs, EventArgsFn, TFormComponent } from '@/shared/interfaces/forms'
 import { AnyData, T18N } from '@/shared/interfaces/commons'
 import {
   components,
@@ -17,9 +17,10 @@ import { getProp } from '@/features/Expression/composites'
 import { useAppEditor } from '@/features/App/editor-store'
 import { actionSchema } from '@/shared/schemas/actions'
 import { tableFieldSchema } from '@/shared/schemas/table'
-import { columnSchema, fieldSchema } from '@/shared/schemas/form'
+import { columnSchema, fieldSchema, formSchema } from '@/shared/schemas/form'
 
 type TableField = Static<typeof tableFieldSchema>
+type FormSchema = Static<typeof formSchema>
 type FormField = Static<typeof fieldSchema>
 type FormColumn = Static<typeof columnSchema>
 
@@ -51,6 +52,136 @@ const argNames = (f: FormField | FormColumn, name: string): string[] => {
   return []
 }
 
+/**
+ * Returns true if field is a row
+ *
+ * @param field Field
+ *
+ * @returns {boolean}
+ */
+export const isRow = (field: FormField | TFormComponent): boolean => (
+  // eslint-disable-next-line no-underscore-dangle
+  (field as FormField)._type === 'row'
+    || (field as TFormComponent).type === 'row'
+)
+
+/**
+   * Returns true if field is tabs
+   *
+   * @param field Field
+   *
+   * @returns {boolean}
+   */
+export const isTabs = (field: FormField | TFormComponent): boolean => (
+  // eslint-disable-next-line no-underscore-dangle
+  (field as FormField)._type === 'tabs'
+    || (field as TFormComponent).type === 'tabs'
+)
+
+/**
+   * Returns true if field is a card
+   *
+   * @param field Field
+   *
+   * @returns {boolean}
+   */
+export const isCard = (field: FormField | TFormComponent): boolean => (
+  // eslint-disable-next-line no-underscore-dangle
+  (field as FormField)._type === 'card'
+    || (field as TFormComponent).type === 'card'
+)
+
+/**
+ * Returns true if field is a card-section
+ *
+ * @param field Field
+ *
+ * @returns {boolean}
+ */
+export const isCardSection = (field: FormField | TFormComponent): boolean => (
+  // eslint-disable-next-line no-underscore-dangle
+  (field as FormField)._type === 'card-section'
+    || (field as TFormComponent).type === 'card-section'
+)
+
+/**
+ * Returns true if field is a card-actions
+ *
+ * @param field Field
+ *
+ * @returns {boolean}
+ */
+export const isCardActions = (field: FormField | TFormComponent): boolean => (
+  // eslint-disable-next-line no-underscore-dangle
+  (field as FormField)._type === 'card-actions'
+    || (field as TFormComponent).type === 'card-actions'
+)
+
+/**
+   * Returns true if field is an embedded form
+   *
+   * @param field Field
+   *
+   * @returns {boolean}
+   */
+export const isEmbeddedForm = (field: FormField | TFormComponent): boolean => (
+  // eslint-disable-next-line no-underscore-dangle
+  (field as FormField)._type === 'form-embedded'
+    || (field as TFormComponent).type === 'form-embedded'
+)
+
+/**
+   * Returns true if field is an icon
+   *
+   * @param field Field
+   *
+   * @returns {boolean}
+   */
+export const isIcon = (field: FormField | TFormComponent): boolean => (
+  // eslint-disable-next-line no-underscore-dangle
+  (field as FormField)._type === 'icon'
+    || (field as TFormComponent).type === 'icon'
+)
+
+/**
+   * Returns true if field is a table
+   *
+   * @param field Field
+   *
+   * @returns {boolean}
+   */
+export const isTable = (field: FormField | TFormComponent): boolean => (
+  // eslint-disable-next-line no-underscore-dangle
+  (field as FormField)._type === 'table'
+    || (field as TFormComponent).type === 'table'
+)
+
+/**
+   * Returns true if field is a paragraph
+   *
+   * @param field Field
+   *
+   * @returns {boolean}
+   */
+export const isParagraph = (field: FormField | TFormComponent): boolean => (
+  // eslint-disable-next-line no-underscore-dangle
+  (field as FormField)._type === 'paragraph'
+    || (field as TFormComponent).type === 'paragraph'
+)
+
+/**
+   * Returns true if field is a label
+   *
+   * @param field Field
+   *
+   * @returns {boolean}
+   */
+export const isLabel = (field: FormField | TFormComponent): boolean => (
+  // eslint-disable-next-line no-underscore-dangle
+  (field as FormField)._type === 'label'
+    || (field as TFormComponent).type === 'label'
+)
+
 export const useFormElements = () => ({
   componentForField,
 
@@ -70,10 +201,11 @@ export const useFormElements = () => ({
    * @param field Field to bind
    * @param schema Schema for field
    * @param ctx Context
+   * @param pick Only bind those fields
    *
    * @returns {AnyData}
    */
-  fieldBinds: (field: FormField | FormColumn, schema: TSchema, ctx: AnyData): AnyData => {
+  fieldBinds: (field: FormField | FormColumn, schema: TSchema, ctx: AnyData, pick?: string[]): AnyData => {
     const fieldsToOmit = [
       '_id',
       'name',
@@ -90,7 +222,12 @@ export const useFormElements = () => ({
      */
     const scanSchema = (s: TSchema): void => {
       Object.keys(s.properties).forEach((k) => {
+        // if a style field
         if (s.properties[k].style) {
+          fieldsToOmit.push(k)
+        }
+        // if has picked fields and it's not one of them
+        if (pick && !pick.includes(k)) {
           fieldsToOmit.push(k)
         }
       })
@@ -114,7 +251,7 @@ export const useFormElements = () => ({
           // eslint-disable-next-line no-underscore-dangle
           await ctx.exec(act._actions, {
             ...ctx,
-            $scoped: eventArgsFn(...args),
+            $scoped: eventArgsFn && eventArgsFn(...args),
           })
         }
       }
@@ -154,84 +291,38 @@ export const useFormElements = () => ({
    *
    * @returns {TSchema|undefined}
    */
-  schemaForField: (f: FormField | FormColumn): TSchema | undefined => (
+  schemaForField: (f: FormSchema | FormField | FormColumn): TSchema | undefined => {
     // eslint-disable-next-line no-underscore-dangle
-    componentsByType[f._type]?.schema
-  ),
+    if ((f as FormSchema)?._fields) {
+      return formSchema
+    }
+    // eslint-disable-next-line no-underscore-dangle
+    return componentsByType[(f as FormField | FormColumn)._type]?.schema
+  },
+
+  isRow,
+
+  isTabs,
+
+  isCard,
+
+  isCardSection,
+
+  isCardActions,
+
+  isEmbeddedForm,
+
+  isIcon,
+
+  isTable,
+
+  isParagraph,
+
+  isLabel,
 
   eventArgsForField,
 
   argNames,
-
-  /**
-   * Returns true if field is a row
-   *
-   * @param field Field
-   *
-   * @returns {boolean}
-   */
-  // eslint-disable-next-line no-underscore-dangle
-  isRow: (field: FormField): boolean => field._type === 'row',
-
-  /**
-   * Returns true if field is tabs
-   *
-   * @param field Field
-   *
-   * @returns {boolean}
-   */
-  // eslint-disable-next-line no-underscore-dangle
-  isTabs: (field: FormField): boolean => field._type === 'tabs',
-
-  /**
-   * Returns true if field is a card
-   *
-   * @param field Field
-   *
-   * @returns {boolean}
-   */
-  // eslint-disable-next-line no-underscore-dangle
-  isCard: (field: FormField): boolean => field._type === 'card',
-
-  /**
-   * Returns true if field is an icon
-   *
-   * @param field Field
-   *
-   * @returns {boolean}
-   */
-  // eslint-disable-next-line no-underscore-dangle
-  isIcon: (field: FormField): boolean => field._type === 'icon',
-
-  /**
-   * Returns true if field is a table
-   *
-   * @param field Field
-   *
-   * @returns {boolean}
-   */
-  // eslint-disable-next-line no-underscore-dangle
-  isTable: (field: FormField): boolean => field._type === 'table',
-
-  /**
-   * Returns true if field is a paragraph
-   *
-   * @param field Field
-   *
-   * @returns {boolean}
-   */
-  // eslint-disable-next-line no-underscore-dangle
-  isParagraph: (field: FormField): boolean => field._type === 'paragraph',
-
-  /**
-   * Returns true if field is a label
-   *
-   * @param field Field
-   *
-   * @returns {boolean}
-   */
-  // eslint-disable-next-line no-underscore-dangle
-  isLabel: (field: FormField): boolean => field._type === 'label',
 
   /**
    * Serialize field's rules to bind to Quasar Inputs

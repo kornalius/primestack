@@ -23,3 +23,12 @@ export const flattenActions = (actions: ActionElement[]): ActionElement[] => {
 
   return flattended
 }
+
+export const keyboardEvent = (e: KeyboardEvent) => ({
+  key: e.key,
+  code: e.code,
+  shift: e.shiftKey,
+  ctrl: e.ctrlKey,
+  alt: e.altKey,
+  meta: e.metaKey,
+})

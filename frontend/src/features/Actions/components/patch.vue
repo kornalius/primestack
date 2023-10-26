@@ -65,7 +65,8 @@ const props = defineProps<{
 
 const { fieldsArrayToObject } = useActions()
 
-const { data: tables } = useFeathersService('tables').useFind(computed(() => ({ query: {} })))
+const userTable = useFeathersService('tables')
+  .findOneInStore({ query: {} })
 
 const { t } = useI18n()
 
@@ -75,18 +76,14 @@ const ctx = buildCtx()
 
 const { queryToString } = useQuery()
 
-const userTable = computed(() => tables.value?.[0])
-
-const tableName = computed(() => (
-  userTable.value.list.find((tbl) => tbl._id === props.modelValue.tableId)?.name
-))
-
 /**
  * Computes the user's table instance
  */
 const table = computed(() => (
-  userTable.value.list.find((tbl) => tbl._id === props.modelValue.tableId)
+  userTable.value?.list.find((tbl) => tbl._id === props.modelValue.tableId)
 ))
+
+const tableName = computed(() => table.value?.name)
 
 /**
  * Computes the query value as a string

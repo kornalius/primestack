@@ -50,6 +50,7 @@ import { TSchema } from '@feathersjs/typebox'
 import { useSyncedProp } from '@/composites/prop'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useFeathersService } from '@/composites/feathers'
+// eslint-disable-next-line import/no-cycle
 import { useQuery } from '@/features/Query/composites'
 import { useTable } from '@/features/Tables/composites'
 import { filterToMongo } from '@/composites/filter'
@@ -150,12 +151,13 @@ const data = ref()
 
 const isPending = ref()
 
-const { data: userTables } = useFeathersService('tables').useFind(computed(() => ({ query: {} })))
+const userTable = useFeathersService('tables')
+  .findOneInStore({ query: {} })
 
 const ctx = buildCtx()
 
 const table = computed(() => (
-  userTables.value?.[0]?.list.find((tt) => tt._id === props.tableId)
+  userTable.value?.list.find((tt) => tt._id === props.tableId)
 ))
 
 const fields = computed(() => (

@@ -10,6 +10,8 @@
     @focus.stop="editor.hover(field._id)"
     @blur="editor.unhover()"
   >
+    <!-- Component Icon -->
+
     <div
       v-if="!editor.isDragging && editor.isHovered(field._id)"
       class="action-button bg-grey-9 rounded-borders no-pointer-events"
@@ -21,6 +23,8 @@
         size="xs"
       />
     </div>
+
+    <!-- Add column button -->
 
     <q-btn
       v-if="(isRow(field) || isCard(field)) && !editor.isDragging && editor.isHovered(field._id)"
@@ -37,6 +41,8 @@
       </q-tooltip>
     </q-btn>
 
+    <!-- Interact button -->
+
     <q-btn
       v-else-if="interactable && !editor.isDragging && editor.isHovered(field._id)"
       class="action-button"
@@ -51,6 +57,8 @@
         {{ activeInteractable ? 'Drag' : 'Edit' }}
       </q-tooltip>
     </q-btn>
+
+    <!-- Remove button -->
 
     <q-btn
       v-if="!editor.isDragging && editor.isHovered(field._id)"
@@ -67,10 +75,14 @@
       </q-tooltip>
     </q-btn>
 
+    <!-- Component -->
+
     <div
       ref="element"
       class="element"
     >
+      <!-- Row -->
+
       <form-element-row
         v-if="isRow(field)"
         v-model="field"
@@ -79,12 +91,16 @@
         @click="onColumnClick"
       />
 
+      <!-- Tabs -->
+
       <form-element-tabs
         v-else-if="isTabs(field)"
         v-model="field"
         :style="component?.styles"
         @click="onClick"
       />
+
+      <!-- Card -->
 
       <form-element-card
         v-else-if="isCard(field)"
@@ -94,6 +110,18 @@
         @remove="(col) => editor.removeColumnFromField(col, field)"
         @click="onColumnClick"
       />
+
+      <!-- Embedded Form -->
+
+      <form-element-embedded-form
+        v-else-if="isEmbeddedForm(field)"
+        v-model="field"
+        class="form"
+        :style="component?.styles"
+        @click="onClick"
+      />
+
+      <!-- Table -->
 
       <table-editor
         v-else-if="isTable(field)"
@@ -106,12 +134,16 @@
         :style="{ ...style(field), ...(component?.styles || {}) }"
       />
 
+      <!-- Icon -->
+
       <q-icon
         v-else-if="isIcon(field)"
         :name="displayValue as string"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
         :style="{ ...style(field), ...(component?.styles || {}) }"
       />
+
+      <!-- Regular component -->
 
       <component
         :is="componentForField(field)"
@@ -120,6 +152,8 @@
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
         :style="{ ...style(field), ...(component?.styles || {}) }"
       />
+
+      <!-- Overlay -->
 
       <div
         v-if="!editor.isDragging && !activeInteractable"
@@ -146,6 +180,7 @@ import { useFormElements } from '../../composites'
 import FormElementRow from './FormElementRow.vue'
 import FormElementCard from './FormElementCard.vue'
 import FormElementTabs from './FormElementTabs.vue'
+import FormElementEmbeddedForm from './FormElementEmbeddedForm.vue'
 
 type FormField = Static<typeof fieldSchema>
 type FormColumn = Static<typeof columnSchema>
@@ -170,6 +205,7 @@ const {
   isRow,
   isTabs,
   isCard,
+  isEmbeddedForm,
   isIcon,
   isTable,
   schemaForField,
@@ -234,12 +270,12 @@ const overlayTop = ref('')
 watch([() => props.modelValue, component], () => {
   setTimeout(() => {
     overlayTop.value = undefined
-    if (component.value.type === 'table') {
+    if (isTable(component.value)) {
       const el = element.value?.querySelector('thead')
       const er = element.value?.getBoundingClientRect() || { top: 0 }
       const r = el?.getBoundingClientRect() || { top: 0, height: 0 }
       overlayTop.value = `${r.top - er.top + r.height}px`
-    } else if (component.value.type === 'tabs') {
+    } else if (isTabs(component.value)) {
       const el = element.value?.querySelector('.q-tabs')
       overlayTop.value = `${el?.getBoundingClientRect().height || 0}px`
     }

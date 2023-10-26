@@ -1,5 +1,5 @@
 import { Type, StringEnum } from '@feathersjs/typebox'
-import { contentIcon } from '../icons'
+import { actionIcon, contentIcon } from '../icons'
 import ExType from '../extypes'
 
 export const targetValues = ['_blank', '_self', '_parent', '_top']
@@ -29,6 +29,7 @@ export const tabSchema = Type.Object(
     badgeField: Type.Optional(ExType.Field({ tableProp: 'badgeTableId' })),
     badgeGroupFields: Type.Optional(Type.Array(ExType.Field({ tableProp: '../badgeTableId' }))),
     badgeStat: Type.Optional(StringEnum(badgetStats)),
+    click: Type.Optional(ExType.Action()),
   },
   {
     $id: 'Tab',
@@ -48,6 +49,15 @@ export const tabSchema = Type.Object(
           'badgeGroupFields',
         ],
       },
+      action: {
+        icon: actionIcon,
+        names: [
+          'click',
+        ],
+      },
+    },
+    eventArgs: {
+      click: () => ({}),
     },
   },
 )
@@ -62,6 +72,7 @@ export const menuSchema = Type.Object(
     href: Type.Optional(Type.String()),
     target: Type.Optional(StringEnum(targetValues)),
     tabs: Type.Array(tabSchema),
+    click: Type.Optional(ExType.Action()),
   },
   {
     $id: 'Menu',
@@ -77,6 +88,15 @@ export const menuSchema = Type.Object(
           'target',
         ],
       },
+      action: {
+        icon: actionIcon,
+        names: [
+          'click',
+        ],
+      },
+    },
+    eventArgs: {
+      click: () => ({}),
     },
   },
 )

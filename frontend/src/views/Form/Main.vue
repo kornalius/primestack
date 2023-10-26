@@ -91,7 +91,7 @@
         </div>
 
         <q-form
-          v-if="!editor.active"
+          v-if="!editor.active && form"
           ref="qform"
           @validation-success="validationSuccess"
           @validation-error="validationError"
@@ -99,6 +99,7 @@
           <form-display
             v-model="currentData"
             :fields="fields"
+            v-bind="formBindings"
           />
 
           <!-- <pre>{{ currentData }}</pre>-->
@@ -247,13 +248,13 @@ const formsViewMode = computed(() => props.menuId === undefined)
  * Menu
  */
 
-const { data: userMenus } = useFeathersService('menus')
-  .useFind(computed(() => ({ query: {} })))
+const userMenu = useFeathersService('menus')
+  .findOneInStore({ query: {} })
 
 const menu = computed(() => (
   editor.active
     ? editor.menuInstance(props.menuId)
-    : userMenus.value?.[0]?.list.find((m) => m._id === props.menuId)
+    : userMenu.value?.list.find((m) => m._id === props.menuId)
 ))
 
 const tab = computed(() => (
@@ -275,19 +276,19 @@ const actionList = computed(() => (
  * Form
  */
 
-const { data: userForms } = useFeathersService('forms')
-  .useFind(computed(() => ({ query: {} })))
+const userForm = useFeathersService('forms')
+  .findOneInStore({ query: {} })
 
 const form = computed(() => {
   if (formsViewMode.value) {
     return editor.active
       ? editor.formInstance(props.formId)
-      : userForms.value?.[0]?.list.find((f) => f._id === props.formId)
+      : userForm.value?.list.find((f) => f._id === props.formId)
   }
 
   return editor.active
     ? editor.formInstance(tab.value?.formId)
-    : userForms.value?.[0]?.list.find((f) => f._id === tab.value?.formId)
+    : userForm.value?.list.find((f) => f._id === tab.value?.formId)
 })
 
 const fields = ref([])
@@ -302,14 +303,19 @@ watch(selected, () => {
   app.setSelection(selected.value)
 })
 
-const { data: userTables } = useFeathersService('tables')
-  .useFind(computed(() => ({ query: {} })))
+const userTable = useFeathersService('tables')
+  .findOneInStore({ query: {} })
 
 const table = computed(() => (
-  userTables.value?.[0]?.list.find((tt) => tt._id === form.value?.tableId)
+  userTable.value?.list.find((tt) => tt._id === form.value?.tableId)
 ))
 
-const { flattenFields, componentsByType } = useFormElements()
+const {
+  flattenFields,
+  componentsByType,
+  fieldBinds,
+  schemaForField,
+} = useFormElements()
 
 const currentId = ref()
 const prevData = ref({})
@@ -770,6 +776,13 @@ watch(form, () => {
     editor.setFormId(form.value._id)
   }
 }, { immediate: true, deep: true })
+
+const formBindings = computed(() => form.value && fieldBinds(
+  form.value,
+  schemaForField(form.value),
+  ctx,
+  ['mounted', 'update', 'unmounted', 'keydown', 'keyup'],
+))
 </script>
 
 <style scoped lang="sass">

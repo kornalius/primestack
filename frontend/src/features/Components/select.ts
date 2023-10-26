@@ -159,7 +159,6 @@ export default {
         'focus',
         'blur',
         'keydown',
-        'keypress',
         'keyup',
       ],
     },

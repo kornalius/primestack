@@ -91,7 +91,7 @@ const entities = computed(() => {
       }))
     case 'forms':
       return userForm.value?.list.map((f) => ({
-        label: f._id,
+        label: f.name,
         value: f._id,
       }))
     case 'actions':

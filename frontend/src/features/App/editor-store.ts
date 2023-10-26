@@ -23,6 +23,8 @@ import { defaultValueForSchema, defaultValues } from '@/shared/schema'
 import { newNameForField, flattenFields } from '@/shared/form'
 import { TAction } from '@/shared/interfaces/actions'
 import { useUndo } from '@/features/Undo/store'
+// eslint-disable-next-line import/no-cycle
+import { isTable } from '@/features/Forms/composites'
 
 type Menu = Static<typeof menuSchema>
 type Tab = Static<typeof tabSchema>
@@ -245,7 +247,7 @@ export const useAppEditor = defineStore('app-editor', () => {
     const fc = flatFields()
     for (let i = 0; i < fc.length; i++) {
       // eslint-disable-next-line no-underscore-dangle
-      if (fc[i]._type === 'table') {
+      if (isTable(fc[i])) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const col = (fc[i] as any)?.columns.find((c: FormTableColumn) => c._id === id)
         if (col) {

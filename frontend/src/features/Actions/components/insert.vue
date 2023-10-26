@@ -49,13 +49,11 @@ const { buildCtx } = useExpression(t)
 
 const ctx = buildCtx()
 
-const { data: tables } = useFeathersService('tables')
-  .useFind(computed(() => ({ query: {} })))
-
-const userTable = computed(() => tables.value?.[0])
+const userTable = useFeathersService('tables')
+  .findOneInStore({ query: {} })
 
 const tableName = computed(() => (
-  userTable.value.list.find((tbl) => tbl._id === props.modelValue.tableId)?.name
+  userTable.value?.list.find((tbl) => tbl._id === props.modelValue.tableId)?.name
 ))
 
 /**

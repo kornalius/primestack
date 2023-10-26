@@ -153,6 +153,8 @@ const {
   style,
   schemaForField,
   componentsByType,
+  isCardActions,
+  isCardSection,
 } = useFormElements()
 
 const { t } = useI18n()
@@ -171,12 +173,12 @@ const actionIcon = computed(() => (
 
 const sections = computed((): FormColumn[] => (
   // eslint-disable-next-line no-underscore-dangle
-  field.value._columns.filter((c) => c._type === 'card-section')
+  field.value._columns.filter((f) => isCardSection(f))
 ))
 
 const actions = computed((): FormColumn[] => (
   // eslint-disable-next-line no-underscore-dangle
-  field.value._columns.filter((c) => c._type === 'card-actions')
+  field.value._columns.filter((f) => isCardActions(f))
 ))
 
 /**

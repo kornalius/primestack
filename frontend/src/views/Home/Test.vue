@@ -85,7 +85,7 @@
       <q-tab-panel name="SchemaEditor">
         <div class="row">
           <div class="col">
-            <schema-editor v-model="userTable.list[0]" />
+            <schema-editor v-model="userTable?.list[0]" />
           </div>
         </div>
       </q-tab-panel>
@@ -427,10 +427,8 @@ const selection = ref([])
  * Schema
  */
 
-const { data: tables } = useFeathersService('tables')
-  .useFind(computed(() => ({ query: {} })))
-
-const userTable = computed(() => tables.value?.[0])
+const userTable = useFeathersService('tables')
+  .findOneInStore({ query: {} })
 
 /**
  * Query

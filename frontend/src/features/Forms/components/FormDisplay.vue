@@ -3,8 +3,12 @@
     v-for="field in fields"
     :key="field._id"
     class="q-mb-sm"
+    @keydown="(e) => $emit('keydown', e)"
+    @keyup="(e) => $emit('keyup', e)"
   >
     <div>
+      <!-- Row -->
+
       <form-display-row
         v-if="isRow(field)"
         v-model="value"
@@ -12,12 +16,16 @@
         :columns="field._columns"
       />
 
+      <!-- Tabs -->
+
       <form-display-tabs
         v-else-if="isTabs(field)"
         v-model="value"
         :field="field"
         :tabs="field._columns"
       />
+
+      <!-- Card -->
 
       <form-display-card
         v-else-if="isCard(field)"
@@ -27,6 +35,16 @@
         :columns="field._columns"
       />
 
+      <!-- Form -->
+
+      <form-embedded
+        v-else-if="isEmbeddedForm(field)"
+        v-model="value"
+        v-bind="fieldBinds(field, schemaForField(field), ctx)"
+      />
+
+      <!-- Paragraph -->
+
       <div
         v-else-if="isParagraph(field)"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
@@ -34,12 +52,16 @@
         v-html="displayValue(field)"
       />
 
+      <!-- Label -->
+
       <label-field
         v-else-if="isLabel(field)"
         :model-value="displayValue(field) as string"
         :style="style(field)"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
       />
+
+      <!-- Icon -->
 
       <q-icon
         v-else-if="isIcon(field)"
@@ -100,18 +122,21 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, onUnmounted, onUpdated } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
 import { getProp, useExpression } from '@/features/Expression/composites'
-import LabelField from '@/features/Fields/components/LabelField.vue'
 import { fieldSchema } from '@/shared/schemas/form'
+import LabelField from '@/features/Fields/components/LabelField.vue'
 import { AnyData } from '@/shared/interfaces/commons'
+// eslint-disable-next-line import/no-cycle
 import { componentsByType } from '@/features/Components'
 import { useFormElements } from '../composites'
 import FormDisplayRow from './FormDisplayRow.vue'
 import FormDisplayCard from './FormDisplayCard.vue'
 import FormDisplayTabs from './FormDisplayTabs.vue'
+import FormEmbedded from './FormEmbedded.vue'
 
 type FormField = Static<typeof fieldSchema>
 
@@ -122,6 +147,11 @@ const props = defineProps<{
 
 // eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
+  (e: 'mounted'): void,
+  (e: 'updated'): void,
+  (e: 'unmounted'): void,
+  (e: 'keydown', value: KeyboardEvent): void,
+  (e: 'keyup', value: KeyboardEvent): void,
   (e: 'update:model-value', value: Record<string, unknown>): void,
 }>()
 
@@ -136,6 +166,7 @@ const {
   isRow,
   isTabs,
   isCard,
+  isEmbeddedForm,
   isIcon,
   isParagraph,
   isLabel,
@@ -157,4 +188,18 @@ const displayValue = (field: FormField) => {
   const f = field as AnyData
   return getProp(f.field ? value.value[f.field] : f[modelValueForField(field)], ctx)
 }
+
+onMounted(() => {
+  setTimeout(() => {
+    emit('mounted')
+  }, 100)
+})
+
+onUpdated(() => {
+  emit('updated')
+})
+
+onUnmounted(() => {
+  emit('unmounted')
+})
 </script>

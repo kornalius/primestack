@@ -21,10 +21,8 @@ const router = useRouter()
 
 const { menuUrl } = useUrl()
 
-const { data: menus } = useFeathersService('menus')
-  .useFind(computed(() => ({ query: {} })))
-
-const userMenu = computed(() => menus.value?.[0])
+const userMenu = useFeathersService('menus')
+  .findOneInStore({ query: {} })
 
 const menu = computed(() => userMenu.value?.list.find((m) => m._id === props.menuId))
 

@@ -1,6 +1,7 @@
 import { StringEnum, Type } from '@feathersjs/typebox'
-import { contentIcon, tableIcon } from '../icons'
+import { actionIcon, contentIcon, tableIcon } from '../icons'
 import ExType from '../extypes'
+import { keyboardEvent } from '../action'
 
 export const tabSchema = Type.Object(
   {
@@ -95,6 +96,7 @@ export const formTableColumnSchema = Type.Object({
 export const formSchema = Type.Object(
   {
     _id: ExType.Id(),
+    _fields: Type.Array(fieldSchema),
     name: Type.String(),
     data: Type.Optional(ExType.JSON()),
     hideFilter: Type.Optional(Type.Boolean({ skip: true })),
@@ -121,7 +123,11 @@ export const formSchema = Type.Object(
     tableId: Type.Optional(ExType.Table()),
     hideTable: Type.Optional(Type.Boolean()),
     query: Type.Optional(ExType.Query()),
-    _fields: Type.Array(fieldSchema),
+    mounted: Type.Optional(ExType.Action()),
+    updated: Type.Optional(ExType.Action()),
+    unmounted: Type.Optional(ExType.Action()),
+    keydown: Type.Optional(ExType.Action()),
+    keyup: Type.Optional(ExType.Action()),
   },
   {
     $id: 'Form',
@@ -169,6 +175,16 @@ export const formSchema = Type.Object(
           'tableColspan',
         ],
       },
+      action: {
+        icon: actionIcon,
+        names: [
+          'mounted',
+          'updated',
+          'unmounted',
+          'keydown',
+          'keyup',
+        ],
+      },
     },
     tableFields: [
       'tableId',
@@ -197,6 +213,13 @@ export const formSchema = Type.Object(
     ],
     defaultValues: {
       rowsPerPageOptions: [10, 25, 50, 100],
+    },
+    eventArgs: {
+      mounted: () => ({}),
+      updated: () => ({}),
+      unmounted: () => ({}),
+      keydown: keyboardEvent,
+      keyup: keyboardEvent,
     },
   },
 )

@@ -60,7 +60,13 @@ const emit = defineEmits<{
 
 const value = useModelValue(props, emit)
 
-const { fieldBinds, style, schemaForField } = useFormElements()
+const {
+  fieldBinds,
+  style,
+  schemaForField,
+  isCardActions,
+  isCardSection,
+} = useFormElements()
 
 const { t } = useI18n()
 
@@ -70,11 +76,11 @@ const ctx = buildCtx()
 
 const cardSections = computed(() => (
   // eslint-disable-next-line no-underscore-dangle
-  props.columns.filter((c) => c._type === 'card-section')
+  props.columns.filter((f) => isCardSection(f))
 ))
 
 const cardActions = computed(() => (
   // eslint-disable-next-line no-underscore-dangle
-  props.columns.filter((c) => c._type === 'card-actions')
+  props.columns.filter((f) => isCardActions(f))
 ))
 </script>

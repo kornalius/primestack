@@ -5,6 +5,7 @@ import compact from 'lodash/compact'
 import { postalCodes } from '@/features/Validation/helpers'
 import { sizeString as gSizeString } from '@/shared/interfaces/commons'
 import ExType from '@/shared/extypes'
+import { keyboardEvent } from '@/shared/action'
 
 export interface RuleType {
   name: string
@@ -195,7 +196,6 @@ export const commonProperties = {
     focus: ExType.Action(),
     blur: ExType.Action(),
     keydown: ExType.Action(),
-    keypress: ExType.Action(),
     keyup: ExType.Action(),
   }),
 }
@@ -248,21 +248,11 @@ export const focusEvent = (e: FocusEvent) => ({ relatedTarget: e.relatedTarget }
 
 export const updateEvent = (value: unknown) => ({ value })
 
-export const keyboardEvent = (e: KeyboardEvent) => ({
-  key: e.key,
-  code: e.code,
-  shift: e.shiftKey,
-  ctrl: e.ctrlKey,
-  alt: e.altKey,
-  meta: e.metaKey,
-})
-
 export const commonEventArgs = {
   update: updateEvent,
   focus: focusEvent,
   blur: focusEvent,
   keydown: keyboardEvent,
-  keypress: keyboardEvent,
   keyup: keyboardEvent,
 }
 

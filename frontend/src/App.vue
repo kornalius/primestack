@@ -23,6 +23,7 @@
             <q-route-tab
               v-for="r in routeTabs"
               :key="r._id"
+              v-bind="fieldBinds(r, tabSchema, ctx, ['click'])"
               :name="r._id"
               :content-class="`text-${r.color}`"
               :to="menuUrl(routeMenu._id, r._id)"
@@ -215,6 +216,7 @@
             <q-item
               v-for="m in userMenu.list"
               :key="m._id"
+              v-bind="fieldBinds(m, menuSchema, ctx, ['click'])"
               class="Drawer__item"
               :class="{ leftDrawerExpanded }"
               :name="m._id"
@@ -279,7 +281,8 @@ import { useUrl } from '@/composites/url'
 import { useFeathersService } from '@/composites/feathers'
 import { useExpression } from '@/features/Expression/composites'
 import { useStats } from '@/features/Stats/store'
-import { tabSchema } from '@/shared/schemas/menu'
+import { useFormElements } from '@/features/Forms/composites'
+import { menuSchema, tabSchema } from '@/shared/schemas/menu'
 import { queryToMongo } from '@/features/Query/composites'
 import { AnyData } from '@/shared/interfaces/commons'
 import { Query } from '@/shared/interfaces/query'
@@ -306,6 +309,8 @@ const editor = useAppEditor()
 const route = useRoute()
 
 const router = useRouter()
+
+const { fieldBinds } = useFormElements()
 
 /**
  * End editor editing, if the current route needs the editor to be active, exit out of it
@@ -457,19 +462,21 @@ watch(routeTabs, () => {
     } = r as Tab
 
     if (badgeTableId) {
-      const { data: userTables } = useFeathersService('tables')
-        .useFind(computed(() => ({ query: {} })))
-      const table = userTables.value?.[0]?.list.find((tt) => tt._id === badgeTableId)
+      const userTable = useFeathersService('tables')
+        .findOneInStore({ query: {} })
+      const table = userTable.value?.list.find((tt) => tt._id === badgeTableId)
 
-      const q = badgeFilter ? queryToMongo(badgeFilter as Query, table, ctx.$expr) : {}
+      if (table) {
+        const q = badgeFilter ? queryToMongo(badgeFilter as Query, table, ctx.$expr) : {}
 
-      badgeValues.value[r._id] = stats.newStat({
-        tableId: badgeTableId,
-        query: q,
-        type: badgeStat as string,
-        field: badgeField,
-        groupFields: badgeGroupFields,
-      })
+        badgeValues.value[r._id] = stats.newStat({
+          tableId: badgeTableId,
+          query: q,
+          type: badgeStat as string,
+          field: badgeField,
+          groupFields: badgeGroupFields,
+        })
+      }
     }
   })
 }, { immediate: true })
