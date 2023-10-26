@@ -100,7 +100,9 @@ const emit = defineEmits<{
 }>()
 
 const selected = useSyncedProp(props, 'selected', emit)
+
 const cols = useSyncedProp(props, 'columns', emit)
+
 const visCols = useSyncedProp(props, 'visibleColumns', emit)
 
 const editor = useAppEditor()

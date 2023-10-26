@@ -51,7 +51,7 @@
         class="col"
         @click="unselectAll"
       >
-        <div v-if="editor.active && !editor.actionId" class="row">
+        <div v-if="editor.active && !editor.actionId && form" class="row">
           <div class="q-mb-sm full-width">
             <div class="row bg-grey-8 items-center q-px-sm">
               <div class="col">

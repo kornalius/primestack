@@ -6,7 +6,7 @@
     :rows="filteredRows"
     :columns="columns as any"
     :selection="selectionStyle"
-    :visible-columns="($attrs.visibleColumns?.length
+    :visible-columns="($attrs.visibleColumns?.length > 0
       ? $attrs.visibleColumns
       : undefined
     ) as unknown[]"

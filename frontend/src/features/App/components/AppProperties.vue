@@ -224,6 +224,13 @@ const selectedFormTableColumn = computed(() => (
 ))
 
 /**
+ * Should we show the form's table column properties?
+ */
+const showFormTableColumnProperties = computed(() => (
+  !!selectedField.value && !!selectedFormTableColumn.value
+))
+
+/**
  * Computes the selected form field component
  */
 const selectedComponent = computed(() => (
@@ -241,13 +248,6 @@ const showFormProperties = computed(() => !!form.value)
  */
 const showFieldProperties = computed(() => (
   !!selectedComponent.value && !!selectedField.value
-))
-
-/**
- * Should we show the form's table column properties?
- */
-const showFormTableColumnProperties = computed(() => (
-  !!selectedField.value && !!selectedFormTableColumn.value
 ))
 
 /**

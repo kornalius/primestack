@@ -129,6 +129,8 @@ export const tableIndexSchema = Type.Object(
   },
   {
     $id: 'TableIndex',
+    horizontal: true,
+    horizontalPopup: true,
     additionalProperties: false,
     categories: {
       content: {

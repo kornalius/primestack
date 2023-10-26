@@ -270,8 +270,8 @@ const paginationRequest = (r) => {
  */
 watch([() => props.rows, query], () => {
   if (props.rows) {
-    const s = sift(query)
-    dataRows.value = props.rows?.filter(s) || []
+    const s = sift(query.value)
+    dataRows.value = props.rows.filter(s) || []
   }
 }, { immediate: true })
 

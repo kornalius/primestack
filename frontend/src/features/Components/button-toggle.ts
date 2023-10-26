@@ -28,7 +28,7 @@ export default {
         label: Type.String(),
         value: Type.String(),
         icon: ExType.Icon(),
-      }, { horizontalPopup: true })),
+      }, { horizontal: true, horizontalPopup: true })),
       clear: ExType.Action(),
     }),
   ]),

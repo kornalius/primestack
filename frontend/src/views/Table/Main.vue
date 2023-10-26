@@ -2,7 +2,7 @@
   <q-page class="q-pa-sm">
     <div class="row">
       <div class="col">
-        <schema-table
+        <ex-table
           v-model:selected="selectedTable"
           style="height: 300px"
           :rows="editor.tables"
@@ -28,7 +28,7 @@
 
     <div class="row q-mt-sm">
       <div v-if="selectedTable.length > 0" class="col">
-        <schema-table
+        <ex-table
           v-model:selected="selectedTableField"
           style="height: 600px"
           :rows="tableFields"
@@ -66,12 +66,12 @@ import { useAppEditor } from '@/features/Editor/store'
 import { useUrl } from '@/composites/url'
 import { useAuth } from '@/features/Auth/store'
 import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
-import SchemaTable from '@/features/Tables/components/SchemaTable.vue'
 import { eventTable } from '@/shared/schemas/event'
 import { fileTable } from '@/shared/schemas/file'
 import { AddOption } from '@/features/Fields/interfaces'
 import { isServiceAvailable } from '@/shared/plan'
 import { useI18n } from 'vue-i18n'
+import ExTable from '@/features/Fields/components/ExTable.vue'
 
 type Table = Static<typeof tableSchema>
 type TableField = Static<typeof tableFieldSchema>
@@ -278,7 +278,7 @@ const schemaColumns = ref([
     label: '#Fields',
     align: 'left',
     field: 'fields',
-    format: (val) => val?.length,
+    format: (val, row) => (!row ? val : val?.length),
   },
 ])
 

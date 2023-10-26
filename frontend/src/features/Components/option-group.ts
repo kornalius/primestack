@@ -27,7 +27,7 @@ export default {
         label: Type.String(),
         value: Type.String(),
         disable: Type.Boolean(),
-      }, { horizontalPopup: true })),
+      }, { horizontal: true, horizontalPopup: true })),
     }),
   ]),
   modelValueField: 'value',

@@ -44,7 +44,7 @@ export default {
       options: Type.Array(Type.Object({
         label: Type.String(),
         value: Type.String(),
-      }, { horizontalPopup: true })),
+      }, { horizontal: true, horizontalPopup: true })),
       optionLabel: Type.String(),
       optionValue: Type.String(),
       optionDisable: Type.String(),
