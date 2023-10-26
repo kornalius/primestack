@@ -132,7 +132,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { useAppEditor } from '@/features/Editor/editor-store'
+import { useAppEditor } from '@/features/Editor/store'
 import { useFormElements } from '@/features/Forms/composites'
 import { useActions } from '@/features/Actions/composites'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'

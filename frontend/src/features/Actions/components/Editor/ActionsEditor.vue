@@ -98,7 +98,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import draggable from 'vuedraggable'
-import { useAppEditor } from '@/features/Editor/editor-store'
+import { useAppEditor } from '@/features/Editor/store'
 import { useAuth } from '@/features/Auth/store'
 import { useActions } from '@/features/Actions/composites'
 import { useModelValue } from '@/composites/prop'

@@ -49,7 +49,7 @@ import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
 import { iconForType, fieldClass } from '@/shared/schema'
 import { tableFieldSchema } from '@/shared/schemas/table'
-import { useAppEditor } from '@/features/Editor/editor-store'
+import { useAppEditor } from '@/features/Editor/store'
 import { useTable } from '@/features/Tables/composites'
 import { AnyData } from '@/shared/interfaces/commons'
 

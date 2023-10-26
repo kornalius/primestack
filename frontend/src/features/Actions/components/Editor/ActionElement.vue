@@ -97,7 +97,7 @@
 import { computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
-import { useAppEditor } from '@/features/Editor/editor-store'
+import { useAppEditor } from '@/features/Editor/store'
 import { useActions } from '@/features/Actions/composites'
 import { actionElementSchema } from '@/shared/schemas/actions'
 import { booleanValue, stringValue } from '@/composites/utilities'

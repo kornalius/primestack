@@ -28,7 +28,7 @@ import { Static } from '@feathersjs/typebox'
 import draggable from 'vuedraggable'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useModelValue } from '@/composites/prop'
-import { useAppEditor } from '@/features/Editor/editor-store'
+import { useAppEditor } from '@/features/Editor/store'
 import { fieldSchema } from '@/shared/schemas/form'
 import FormElement from './FormElement.vue'
 

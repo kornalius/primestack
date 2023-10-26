@@ -81,7 +81,7 @@
 import { computed, ref, watch } from 'vue'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { Query, QueryGroup, queryOperators } from '@/shared/interfaces/query'
-import { useAppEditor } from '@/features/Editor/editor-store'
+import { useAppEditor } from '@/features/Editor/store'
 import { useTable } from '@/features/Tables/composites'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import QueryGroupEditor from '@/features/Query/components/Editor/QueryGroup.vue'

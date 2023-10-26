@@ -56,7 +56,7 @@ import { Static } from '@feathersjs/typebox'
 import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
 // eslint-disable-next-line import/no-cycle
-import { useAppEditor } from '@/features/Editor/editor-store'
+import { useAppEditor } from '@/features/Editor/store'
 import { useExpression } from '@/features/Expression/composites'
 import { stringValue } from '@/composites/utilities'
 import { columnSchema, fieldSchema } from '@/shared/schemas/form'

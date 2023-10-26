@@ -74,7 +74,7 @@ import draggable from 'vuedraggable'
 import hexObjectId from 'hex-object-id'
 import startCase from 'lodash/startCase'
 import { useSyncedProp } from '@/composites/prop'
-import { useAppEditor } from '@/features/Editor/editor-store'
+import { useAppEditor } from '@/features/Editor/store'
 import SchemaTable from '@/features/Tables/components/SchemaTable.vue'
 
 const props = defineProps<{

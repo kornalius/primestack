@@ -120,7 +120,7 @@ import hexObjectId from 'hex-object-id'
 import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
 // eslint-disable-next-line import/no-cycle
-import { useAppEditor } from '@/features/Editor/editor-store'
+import { useAppEditor } from '@/features/Editor/store'
 // eslint-disable-next-line import/no-cycle
 import { defaultValueForSchema, defaultValues } from '@/shared/schema'
 import { useExpression } from '@/features/Expression/composites'
