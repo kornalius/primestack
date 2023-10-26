@@ -55,7 +55,7 @@ import { useFeathers, useFeathersService } from '@/composites/feathers'
 import { useSnacks } from '@/features/Snacks/store'
 import { useVariables } from '@/features/Variables/store'
 // eslint-disable-next-line import/no-cycle
-import { useAppEditor } from '@/features/App/editor-store'
+import { useAppEditor } from '@/features/Editor/editor-store'
 import { useApp } from '@/features/App/store'
 import { useUrl } from '@/composites/url'
 import { AnyData, T18N } from '@/shared/interfaces/commons'

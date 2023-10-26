@@ -32,7 +32,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useModelValue } from '@/composites/prop'
-import { useAppEditor } from '@/features/App/editor-store'
+import { useAppEditor } from '@/features/Editor/editor-store'
 
 const props = defineProps<{
   modelValue: unknown

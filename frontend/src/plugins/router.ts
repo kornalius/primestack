@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { getEnv } from '@/utils/variables'
 import routes from '@/routes'
 import { useAuth } from '@/features/Auth/store'
-import { useAppEditor } from '@/features/App/editor-store'
+import { useAppEditor } from '@/features/Editor/editor-store'
 
 const router = createRouter({
   scrollBehavior: () => ({ left: 0, top: 0 }),

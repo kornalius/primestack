@@ -14,7 +14,7 @@ import { getTypeFor } from '@/shared/schema'
 import { flattenFields, newNameForField } from '@/shared/form'
 // eslint-disable-next-line import/no-cycle
 import { getProp } from '@/features/Expression/composites'
-import { useAppEditor } from '@/features/App/editor-store'
+import { useAppEditor } from '@/features/Editor/editor-store'
 import { actionSchema } from '@/shared/schemas/actions'
 import { tableFieldSchema } from '@/shared/schemas/table'
 import { columnSchema, fieldSchema, formSchema } from '@/shared/schemas/form'

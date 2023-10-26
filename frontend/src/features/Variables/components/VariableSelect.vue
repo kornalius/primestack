@@ -16,7 +16,7 @@
 import { computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
-import { useAppEditor } from '@/features/App/editor-store'
+import { useAppEditor } from '@/features/Editor/editor-store'
 import { useVariables } from '@/features/Variables/store'
 import { actionElementSchema } from '@/shared/schemas/actions'
 import { AnyData } from '@/shared/interfaces/commons'

@@ -37,7 +37,7 @@ import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
 import { menuSchema } from '@/shared/schemas/menu'
 import { useUrl } from '@/composites/url'
-import { useAppEditor } from '@/features/App/editor-store'
+import { useAppEditor } from '@/features/Editor/editor-store'
 import { useApp } from '@/features/App/store'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 

@@ -111,7 +111,7 @@
 import { computed } from 'vue'
 import { useModelValue } from '@/composites/prop'
 import { AnyData } from '@/shared/interfaces/commons'
-import { useAppEditor } from '@/features/App/editor-store'
+import { useAppEditor } from '@/features/Editor/editor-store'
 import ColorField from '@/features/Fields/components/ColorField.vue'
 import BtnToggleMulti from '@/features/Fields/components/BtnToggleMulti.vue'
 

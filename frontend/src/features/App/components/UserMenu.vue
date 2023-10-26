@@ -175,7 +175,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '@/features/Auth/store'
-import { useAppEditor } from '@/features/App/editor-store'
+import { useAppEditor } from '@/features/Editor/editor-store'
 import { useApp } from '@/features/App/store'
 import { AnyData } from '@/shared/interfaces/commons'
 import FrenchFlag from '../flags/FR.svg?component'

@@ -707,7 +707,7 @@ import {
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { useQuery } from '@/features/Query/composites'
 import { actionSchema } from '@/shared/schemas/actions'
-import { useAppEditor } from '@/features/App/editor-store'
+import { useAppEditor } from '@/features/Editor/editor-store'
 import { useTable } from '@/features/Tables/composites'
 import { useExpression } from '@/features/Expression/composites'
 import { useProperties } from '@/features/Properties/composites'

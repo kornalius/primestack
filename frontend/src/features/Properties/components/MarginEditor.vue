@@ -61,7 +61,7 @@
 <script setup lang="ts">
 import { useModelValue } from '@/composites/prop'
 import { AnyData } from '@/shared/interfaces/commons'
-import { useAppEditor } from '@/features/App/editor-store'
+import { useAppEditor } from '@/features/Editor/editor-store'
 
 const props = defineProps<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
