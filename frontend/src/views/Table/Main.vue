@@ -101,6 +101,8 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   editor.unselectAll()
+  editor.unselectTableField()
+  editor.unselectTable()
 })
 
 const selectedTable = ref([])

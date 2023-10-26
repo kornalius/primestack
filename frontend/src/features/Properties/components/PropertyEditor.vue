@@ -450,7 +450,7 @@ const type = computed((): string | undefined => {
  * Computes the types allowed for a property in the schema
  */
 const multipleTypes = computed((): string[] | undefined => (
-  types(props.schema)
+  type.value !== 'action' ? types(props.schema) : undefined
 ))
 
 /**

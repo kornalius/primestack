@@ -188,7 +188,7 @@
 
 <script setup lang="ts">
 import {
-  computed, onBeforeMount, onBeforeUnmount, ref, watch,
+  computed, onBeforeUnmount, ref, watch,
 } from 'vue'
 import { Static, TObject } from '@feathersjs/typebox'
 import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from 'vue-router'
@@ -440,13 +440,20 @@ watch(showPreviewFormData, () => {
   editor.setShowPreviewFormData(showPreviewFormData.value)
 })
 
-onBeforeMount(() => {
-  editor.unselectAll()
-})
+const unselectAll = () => {
+  if (editor.active && !preview.value && !editor.actionId) {
+    editor.unselectAll()
+  }
+  if (editor.active && editor.actionId) {
+    editor.unselectAll()
+    editor.unselectActionElement()
+  }
+}
 
 onBeforeUnmount(() => {
   editor.setFormsEditor(false)
   editor.setFormId(undefined)
+  unselectAll()
 })
 
 watch(() => props.menuId, () => {
@@ -715,16 +722,6 @@ onBeforeRouteLeave((): boolean => {
   }
   return true
 })
-
-const unselectAll = () => {
-  if (editor.active && !preview.value && !editor.actionId) {
-    editor.unselectAll()
-  }
-  if (editor.active && editor.actionId) {
-    editor.unselectAll()
-    editor.unselectActionElement()
-  }
-}
 
 /**
  * Files

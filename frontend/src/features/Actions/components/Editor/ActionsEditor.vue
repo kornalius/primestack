@@ -68,7 +68,10 @@
       </q-list>
     </div>
 
-    <div class="col container q-pa-sm" @click="unselectAll">
+    <div
+      class="col container q-pa-sm"
+      @click="() => editor.unselectActionElement()"
+    >
       <div class="row title items-center q-pa-xs q-mb-sm">
         <div class="col-auto">
           <span class="text-caption text-weight-medium" style="font-size: 20px;">
@@ -84,7 +87,7 @@
             size="sm"
             color="white text-black"
             round
-            @click="close"
+            @click.stop="close"
           />
         </div>
       </div>
@@ -95,7 +98,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import {
+  computed, onMounted, onBeforeUnmount, ref,
+} from 'vue'
 import { Static } from '@feathersjs/typebox'
 import draggable from 'vuedraggable'
 import { useAppEditor } from '@/features/Editor/store'
@@ -155,12 +160,6 @@ const title = computed(() => (
   `${selectedActionEvent.value} (${eventArgs.value.map((s) => `$${s}`).join(', ')})`
 ))
 
-const unselectAll = () => {
-  if (editor.active) {
-    editor.unselectAll()
-  }
-}
-
 const actionColor = (action: TFrontAction) => stringValue(action?.color, action)
 
 const actionIconColor = (action: TFrontAction) => stringValue(action?.iconColor, action) || 'grey-9'
@@ -179,7 +178,15 @@ const close = () => {
 onMounted(() => {
   selectedField.value = editor.formFieldInstance(editor.selected)
   selectedActionEvent.value = editor.actionEvent
+  editor.unselectAll()
 })
+
+onBeforeUnmount(() => {
+  editor.unselectAll()
+  editor.unselectActionElement()
+  editor.select(selectedField.value?._id)
+})
+
 </script>
 
 <style scoped lang="sass">
