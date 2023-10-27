@@ -7,15 +7,13 @@ import { defineStore } from 'pinia'
 import hotkeys from 'hotkeys-js'
 import { useFeathersService } from '@/composites/feathers'
 import cloneDeep from 'lodash/cloneDeep'
-import { useSnacks } from '@/features/Snacks/store'
 import { AnyData } from '@/shared/interfaces/commons'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
-import {
-  columnSchema, fieldSchema, formSchema,
-} from '@/shared/schemas/form'
+import { columnSchema, fieldSchema, formSchema } from '@/shared/schemas/form'
 import { tableSchema } from '@/shared/schemas/table'
 import { actionSchema } from '@/shared/schemas/actions'
 import { TFormComponent } from '@/shared/interfaces/forms'
+import { useSnacks } from '@/features/Snacks/store'
 import { useUndo } from '@/features/Undo/store'
 // eslint-disable-next-line import/no-cycle
 import { useMenuEditor } from '@/features/Menus/store'
@@ -27,6 +25,7 @@ import { useFormEditor } from '@/features/Forms/store'
 import { useActionEditor } from '@/features/Actions/store'
 // eslint-disable-next-line import/no-cycle
 import { useTableEditor } from '@/features/Tables/store'
+import { usePropertiesEditor } from '@/features/Properties/store'
 
 type Menu = Static<typeof menuSchema>
 type Tab = Static<typeof tabSchema>
@@ -66,12 +65,6 @@ export const useAppEditor = defineStore('app-editor', () => {
     dragging: false,
     // Original snapshot at start of editing
     origSnapshot: {} as Snapshot,
-    // is the preview mode activated or not?
-    preview: false,
-    // data to preview
-    previewFormData: undefined,
-    // should we show the form data in preview mode?
-    showPreviewFormData: false,
   })
 
   const undoStore = useUndo('editor-undo')()
@@ -86,6 +79,8 @@ export const useAppEditor = defineStore('app-editor', () => {
 
   const tableEditor = useTableEditor()
 
+  const propertiesEditor = usePropertiesEditor()
+
   /**
    * Is the editor active?
    */
@@ -95,12 +90,6 @@ export const useAppEditor = defineStore('app-editor', () => {
    * Currently selected form element id
    */
   const selected = computed(() => states.value.selected)
-
-  const preview = computed(() => states.value.preview)
-
-  const previewFormData = computed(() => states.value.previewFormData)
-
-  const showPreviewFormData = computed(() => states.value.showPreviewFormData)
 
   /**
    * Was there any modifications to the elements being edited?
@@ -521,18 +510,6 @@ export const useAppEditor = defineStore('app-editor', () => {
     return undefined
   }
 
-  const setPreview = (p: boolean) => {
-    states.value.preview = p
-  }
-
-  const setPreviewFormData = (data: AnyData | undefined) => {
-    states.value.previewFormData = data
-  }
-
-  const setShowPreviewFormData = (show: boolean) => {
-    states.value.showPreviewFormData = show
-  }
-
   return {
     states,
     active,
@@ -623,11 +600,22 @@ export const useAppEditor = defineStore('app-editor', () => {
     createActionElement: actionEditor.createActionElement,
     addActionElement: actionEditor.addActionElement,
     removeActionElement: actionEditor.removeActionElement,
-    preview,
-    previewFormData,
-    showPreviewFormData,
-    setPreview,
-    setPreviewFormData,
-    setShowPreviewFormData,
+    preview: computed(() => formEditor.preview),
+    previewFormData: computed(() => formEditor.previewFormData),
+    showPreviewFormData: computed(() => formEditor.showPreviewFormData),
+    setPreview: formEditor.setPreview,
+    setPreviewFormData: formEditor.setPreviewFormData,
+    setShowPreviewFormData: formEditor.setShowPreviewFormData,
+    sections: computed(() => propertiesEditor.sections),
+    scrollTops: computed(() => propertiesEditor.scrollTops),
+    expanded: computed(() => propertiesEditor.expanded),
+    setSection: propertiesEditor.setSection,
+    section: propertiesEditor.section,
+    setScrollTop: propertiesEditor.setScrollTop,
+    scrollTop: propertiesEditor.scrollTop,
+    setExpanded: propertiesEditor.setExpanded,
+    isExpanded: propertiesEditor.isExpanded,
+    expandedForId: propertiesEditor.expandedForId,
+
   }
 })

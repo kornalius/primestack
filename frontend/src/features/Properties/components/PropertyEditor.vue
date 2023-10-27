@@ -190,6 +190,7 @@
 
   <q-expansion-item
     v-else
+    v-model="expanded"
     header-class="q-pa-none"
     expand-separator
   >
@@ -400,6 +401,8 @@ const emit = defineEmits<{
 
 const value = useModelValue(props, emit)
 
+const expanded = ref(false)
+
 const editor = useAppEditor()
 
 const { t } = useI18n()
@@ -557,4 +560,18 @@ const setFromDropMenu = (text: string) => {
     showMenu.value = false
   }
 }
+
+/**
+ * When expanded changes, update the store
+ */
+watch(expanded, () => {
+  editor.setExpanded(value.value._id, props.propName, expanded.value)
+})
+
+/**
+ * When the propName or value changes, update expanded
+ */
+watch([value, () => props.propName], () => {
+  expanded.value = editor.isExpanded(value.value?._id, props.propName)
+}, { immediate: true })
 </script>

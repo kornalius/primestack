@@ -1,5 +1,6 @@
 <template>
   <q-drawer
+    ref="drawer"
     :model-value="editor.active"
     style="background-color: whitesmoke;"
     :width="400"
@@ -131,7 +132,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import {
+  computed, onBeforeUnmount, ref, watch,
+} from 'vue'
 import { useAppEditor } from '@/features/Editor/store'
 import { useFormElements } from '@/features/Forms/composites'
 import { useActions } from '@/features/Actions/composites'
@@ -367,4 +370,97 @@ const selectedAction = computed(() => (
 const showActionElementProperties = computed(() => (
   !!selectedActionElement.value && !!selectedAction.value
 ))
+
+/**
+ * Drawer scrolling
+ */
+
+const drawer = ref()
+
+const scrollTop = ref()
+
+/**
+ * Returns the current values being displayed in the properties
+ */
+const editValues = computed((): unknown[] => {
+  if (showActionElementProperties.value) {
+    return [selectedActionElement.value]
+  }
+  if (showFormTableColumnProperties.value) {
+    return [selectedFormTableColumn.value]
+  }
+  if (showFieldProperties.value) {
+    return [selectedField.value]
+  }
+  if (showTableProperties.value) {
+    return [selectedTable.value]
+  }
+  if (showTableFieldProperties.value) {
+    return [selectedTableField.value]
+  }
+
+  const values = []
+  if (showMenuProperties.value) {
+    values.push(selectedMenu.value)
+  }
+  if (showTabProperties.value) {
+    values.push(selectedMenu.value.tabs[selectedTabIndex.value])
+  }
+  if (showFormProperties.value) {
+    values.push(form.value)
+  }
+  return values
+})
+
+/**
+ * When the displayed values change, update the scroll top position from the store
+ */
+watch(editValues, () => {
+  const ids = editValues.value.map((v) => v._id).join('-')
+  scrollTop.value = editor.scrollTop(ids)
+}, { immediate: true })
+
+let scrollTimeout: number
+
+/**
+ * When scroll happens, update the store
+ *
+ * @param e
+ */
+const scroll = (e: MouseEvent) => {
+  clearTimeout(scrollTimeout)
+  scrollTimeout = setTimeout(() => {
+    const ids = editValues.value.map((v) => v._id).join('-')
+    editor.setScrollTop(ids, (e.target as HTMLElement)?.scrollTop)
+  }, 100)
+}
+
+/**
+ * When the drawer or the scrollTop value changes,
+ * set a scroll listener and scroll top position to the scrollTop value
+ */
+watch([drawer, scrollTop], () => {
+  const el = drawer.value?.$el
+  const content = el?.querySelector('.q-drawer__content') as HTMLElement
+  if (content) {
+    content.removeEventListener('scroll', scroll)
+    if (scrollTop.value) {
+      setTimeout(() => {
+        content.scrollTo({ top: scrollTop.value })
+      }, 100)
+    }
+    content.addEventListener('scroll', scroll)
+  }
+})
+
+/**
+ * Before we unmount the component, lets get rid of the scroll event listener
+ */
+onBeforeUnmount(() => {
+  const el = drawer.value?.$el
+  const content = el?.querySelector('.q-drawer__content')
+  if (content) {
+    content.removeEventListener('scroll', scroll)
+  }
+})
 </script>

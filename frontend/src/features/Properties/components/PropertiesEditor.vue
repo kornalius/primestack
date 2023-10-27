@@ -93,6 +93,7 @@
 
       <q-expansion-item
         v-else-if="n.children?.length > 0"
+        v-model="expanded[n.name]"
         header-class="q-pa-none"
         expand-separator
       >
@@ -210,6 +211,7 @@ import { AnyData } from '@/shared/interfaces/commons'
 import { TFormFieldCategory, PropName } from '@/shared/interfaces/forms'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { useProperties } from '@/features/Properties/composites'
+import { useAppEditor } from '@/features/Editor/store'
 import PropertyEditor from '@/features/Properties/components/PropertyEditor.vue'
 import SectionTitle from '@/features/Fields/components/SectionTitle.vue'
 import PropertyLabel from '@/features/Properties/components/PropertyLabel.vue'
@@ -253,6 +255,8 @@ const emit = defineEmits<{
 
 const value = useModelValue(props, emit)
 
+const editor = useAppEditor()
+
 const { t } = useI18n()
 
 const { getPaletteColor } = colors
@@ -263,9 +267,6 @@ const currentForcedTypes = props.forcedTypes
   ? useSyncedProp(props, 'forcedTypes', emit)
   : ref({})
 
-// Selected category name
-const category = ref()
-
 /**
  * Create a user-friendly label from a property name
  *
@@ -274,6 +275,13 @@ const category = ref()
  * @returns {string}
  */
 const label = (name: string): string => startCase(name)
+
+/**
+ * Categories
+ */
+
+// Selected category name
+const category = ref()
 
 const serializeNames = (names: (string | PropName)[]): PropName[] => (
   names.map((n: PropName | string) => {
@@ -318,13 +326,47 @@ const displayableCategories = computed((): boolean => {
 })
 
 /**
- * When the properties change, select the first one
+ * When the properties or main value change, select the last selected
+ * from the store or the first one
  */
-watch(() => props.categories, () => {
-  if (Object.keys(props.categories || {}).length) {
+watch([value, () => props.categories], () => {
+  if (Object.keys(props.categories || {}).length > 0) {
+    const section = editor.section(value.value?._id)
     // eslint-disable-next-line prefer-destructuring
-    category.value = Object.keys(props.categories)[0]
+    category.value = section || Object.keys(props.categories)[0]
   }
+}, { immediate: true })
+
+/**
+ * When category changes, update the store
+ */
+watch(category, () => {
+  editor.setSection(value.value._id, category.value)
+})
+
+/**
+ * Expanded
+ */
+
+const expanded = ref({})
+
+/**
+ * When expanded changes, update the store
+ */
+watch(expanded, () => {
+  Object.keys(expanded.value).forEach((k) => {
+    editor.setExpanded(value.value?._id, k, expanded.value[k])
+  })
+}, { deep: true })
+
+/**
+ * When the main value changes, update the expanded ref
+ */
+watch(value, () => {
+  const e = editor.expandedForId(value.value?._id)
+  Object.keys(e).forEach((k) => {
+    expanded.value[k] = e[k]
+  })
 }, { immediate: true })
 </script>
 

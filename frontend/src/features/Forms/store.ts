@@ -28,6 +28,12 @@ export const useFormEditor = defineStore('form-editor', () => {
     selectedTableColumn: undefined,
     // forms being edited
     forms: [] as Form[],
+    // is the preview mode activated or not?
+    preview: false,
+    // data to preview
+    previewFormData: undefined,
+    // should we show the form data in preview mode?
+    showPreviewFormData: false,
   })
 
   /**
@@ -57,6 +63,12 @@ export const useFormEditor = defineStore('form-editor', () => {
   const selectedTableColumn = computed(() => (
     states.value.selectedTableColumn
   ))
+
+  const preview = computed(() => states.value.preview)
+
+  const previewFormData = computed(() => states.value.previewFormData)
+
+  const showPreviewFormData = computed(() => states.value.showPreviewFormData)
 
   /**
    * Sets the cloned forms
@@ -343,6 +355,18 @@ export const useFormEditor = defineStore('form-editor', () => {
     return false
   }
 
+  const setPreview = (p: boolean) => {
+    states.value.preview = p
+  }
+
+  const setPreviewFormData = (data: AnyData | undefined) => {
+    states.value.previewFormData = data
+  }
+
+  const setShowPreviewFormData = (show: boolean) => {
+    states.value.showPreviewFormData = show
+  }
+
   return {
     states,
     formsEditor,
@@ -365,5 +389,11 @@ export const useFormEditor = defineStore('form-editor', () => {
     addField,
     addColumnToField,
     removeColumnFromField,
+    preview,
+    previewFormData,
+    showPreviewFormData,
+    setPreview,
+    setPreviewFormData,
+    setShowPreviewFormData,
   }
 })
