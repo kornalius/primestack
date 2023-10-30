@@ -69,7 +69,6 @@ export default {
     content: {
       icon: contentIcon,
       names: [
-        'name',
         'icon',
         'label',
         {

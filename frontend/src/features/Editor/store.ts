@@ -364,25 +364,9 @@ export const useAppEditor = defineStore('app-editor', () => {
    *
    * @returns {boolean} Returns true if the form can be saved
    */
-  const canSave = computed((): boolean => {
-    if (!isModified.value) {
-      return false
-    }
-
-    const nameExists = (field: FormField): boolean => {
-      if (!field.name) {
-        return false
-      }
-      // eslint-disable-next-line no-underscore-dangle
-      return !!formEditor.flatFields()
-        .find((f: FormField) => f.name
-          && f._id !== field._id
-          && f.name.toLowerCase() === field.name.toLowerCase())
-    }
-
-    // eslint-disable-next-line no-underscore-dangle
-    return !formEditor.flatFields().find((f) => nameExists(f))
-  })
+  const canSave = computed((): boolean => (
+    isModified.value
+  ))
 
   /**
    * Save the editing session into the store

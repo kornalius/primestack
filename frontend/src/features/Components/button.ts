@@ -60,7 +60,6 @@ export default {
     content: {
       icon: contentIcon,
       names: [
-        'name',
         'disable',
         'readonly',
         'label',

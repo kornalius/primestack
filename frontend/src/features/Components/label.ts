@@ -72,7 +72,6 @@ export default {
     content: {
       icon: contentIcon,
       names: [
-        'name',
         'label',
         'field',
       ],

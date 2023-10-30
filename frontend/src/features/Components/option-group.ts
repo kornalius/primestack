@@ -42,7 +42,6 @@ export default {
     content: {
       icon: contentIcon,
       names: [
-        'name',
         'value',
         'field',
         'type',

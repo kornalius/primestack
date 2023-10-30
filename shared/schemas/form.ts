@@ -80,7 +80,6 @@ export const formTableColumnSchema = Type.Object({
     content: {
       icon: contentIcon,
       names: [
-        'name',
         'field',
         'label',
         'align',
@@ -133,12 +132,6 @@ export const formSchema = Type.Object(
     $id: 'Form',
     additionalProperties: true,
     categories: {
-      content: {
-        icon: contentIcon,
-        names: [
-          'name',
-        ],
-      },
       table: {
         icon: tableIcon,
         names: [

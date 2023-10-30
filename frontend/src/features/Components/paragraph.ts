@@ -58,7 +58,6 @@ export default {
     content: {
       icon: contentIcon,
       names: [
-        'name',
         'text',
         'field',
         'noRouteFullscreenExit',

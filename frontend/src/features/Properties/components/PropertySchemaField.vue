@@ -54,8 +54,6 @@
     :label="embedLabel ? label : undefined"
     :outlined="property"
     :disable="disabled"
-    :rules="[isNameField ? checkDuplicateName : undefined]"
-    :hide-bottom-space="!isNameField"
     :clearable="hover"
     dense
     @keydown="editor.preventSystemUndoRedo"
@@ -696,7 +694,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import omit from 'lodash/omit'
-import last from 'lodash/last'
 import hexObjectId from 'hex-object-id'
 import { Static, TSchema } from '@feathersjs/typebox'
 import { AnyData } from '@/shared/interfaces/commons'
@@ -805,20 +802,9 @@ const { queryToString } = useQuery()
 
 const { tableFields } = useTable()
 
-const isNameField = computed(() => props.schema.name === true)
-
 const {
-  nameExists, dynamicArraySchema, getParentProp, subPropName,
+  dynamicArraySchema, getParentProp, subPropName,
 } = useProperties(t)
-
-const checkDuplicateName = (v: string): true | string => (
-  nameExists(
-    editor.formInstance(editor.formId),
-    props.schema,
-    last(props.parents)?._id,
-    v,
-  )
-)
 
 const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
 
@@ -1017,21 +1003,14 @@ const queryValue = computed((): string => (
     : '()'
 ))
 
-/**
- * Computes the json value as a string
- */
-const jsonValue = computed((): string => {
-  if (type.value === 'object' && !props.property) {
-    return JSON.stringify(value.value || {})
-  }
-  if (type.value === 'array' && !props.property) {
-    return JSON.stringify(value.value || [])
-  }
-  if (type.value === 'json') {
-    return JSON.stringify(value.value) || '▪'
-  }
-  return ''
-})
+const fields = computed(() => (
+  tableFields(
+    table.value?.fields || [],
+    table.value?.created,
+    table.value?.updated,
+    table.value?.softDelete,
+  )
+))
 
 /**
  * Is editing disabled?
@@ -1056,6 +1035,19 @@ const disabledLabel = computed((): string | undefined => (
 ))
 
 /**
+ * Returns the checkbox label depending on the orientation and if the label is embedded or not
+ */
+const checkboxLabel = computed(() => {
+  if (type.value === 'boolean') {
+    if (props.horizontal) {
+      return props.embedLabel ? undefined : props.label
+    }
+    return props.embedLabel ? props.label : undefined
+  }
+  return undefined
+})
+
+/**
  * Computes the fields from the form's data property
  */
 const extraFields = computed(() => (
@@ -1067,6 +1059,17 @@ const extraFields = computed(() => (
     }))
     : []
 ))
+
+/**
+ * Clear the current property value
+ */
+const cleanValue = () => {
+  value.value = undefined
+}
+
+/**
+ * Actions
+ */
 
 /**
  * Creates a new user's action
@@ -1090,15 +1093,6 @@ const createAction = (): Action => {
   return a
 }
 
-const fields = computed(() => (
-  tableFields(
-    table.value?.fields || [],
-    table.value?.created,
-    table.value?.updated,
-    table.value?.softDelete,
-  )
-))
-
 /**
  * Clear an action (remove it from the list of actions too)
  */
@@ -1113,11 +1107,24 @@ const clearAction = () => {
 }
 
 /**
- * Clear the current property value
+ * JSON
  */
-const cleanValue = () => {
-  value.value = undefined
-}
+
+/**
+ * Computes the json value as a string
+ */
+const jsonValue = computed((): string => {
+  if (type.value === 'object' && !props.property) {
+    return JSON.stringify(value.value || {})
+  }
+  if (type.value === 'array' && !props.property) {
+    return JSON.stringify(value.value || [])
+  }
+  if (type.value === 'json') {
+    return JSON.stringify(value.value) || '▪'
+  }
+  return ''
+})
 
 /**
  * Before popup editing JSON property
@@ -1159,19 +1166,6 @@ watch(tempJson, () => {
       //
     }
   }
-})
-
-/**
- * Returns the checkbox label depending on the orientation and if the label is embedded or not
- */
-const checkboxLabel = computed(() => {
-  if (type.value === 'boolean') {
-    if (props.horizontal) {
-      return props.embedLabel ? undefined : props.label
-    }
-    return props.embedLabel ? props.label : undefined
-  }
-  return undefined
 })
 
 const tempCode = ref()

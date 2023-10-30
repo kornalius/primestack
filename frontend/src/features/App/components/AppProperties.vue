@@ -39,7 +39,6 @@
       :schema="selectedFormColumnSchema"
       :categories="selectedFormColumnSchema.categories"
       :disabled-properties="disabledFormTableColumnProperties"
-      :title="$t('components.table-column.label')"
       icon="mdi-table-column"
     />
 
@@ -53,7 +52,6 @@
       :prop-name="''"
       :schema="selectedComponent.schema"
       :categories="selectedComponent.categories"
-      :title="$t(selectedComponent.label as string)"
       :icon="selectedComponent.icon as string"
       include-form-data-fields
     />
@@ -69,7 +67,6 @@
       :schema="selectedTableSchema"
       :categories="selectedTableSchema.categories"
       :disabled-properties="disabledTableProperties"
-      :title="$t('components.table.label')"
       icon="mdi-table"
     />
 
@@ -84,7 +81,6 @@
       :schema="selectedSchemaFieldSchema"
       :categories="selectedSchemaFieldSchema.categories"
       :disabled-properties="disabledTableFieldProperties"
-      :title="$t('components.table-field.label')"
       icon="mdi-table"
     />
 
@@ -124,7 +120,6 @@
         :prop-name="''"
         :schema="selectedFormSchema"
         :categories="selectedFormSchema.categories"
-        :title="$t('components.form.label')"
         icon="mdi-window-maximize"
       />
     </template>

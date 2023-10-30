@@ -84,7 +84,6 @@ export default {
     model: {
       icon: modelIcon,
       names: [
-        'name',
         'value',
         'tableId',
         'field',

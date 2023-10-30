@@ -128,7 +128,6 @@ export default {
     content: {
       icon: contentIcon,
       names: [
-        'name',
         'title',
         'selectionStyle',
         'filter',

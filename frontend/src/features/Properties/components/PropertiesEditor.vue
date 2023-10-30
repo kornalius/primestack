@@ -2,16 +2,29 @@
   <!-- Section Title & Icon -->
 
   <section-title
-    v-if="title && icon"
-    :title="title"
+    v-if="title || value?.name || icon"
     :icon="icon"
+    @mouseover.stop="hoverName = true"
+    @mouseleave="hoverName = false"
+    @focus.stop="hoverName = true"
+    @blur="hoverName = false"
   >
-    <q-input
-      v-model="value.name"
-      class="name q-ml-md"
-      dense
-      outlined
-    />
+    <template #title>
+      <div class="row items-center" style="height: 30px;">
+        <div class="col-auto">
+          <q-btn
+            class="name"
+            :label="title || value?.name"
+            :icon-right="hoverName && value?.name ? 'mdi-pencil' : undefined"
+            :disable="!hoverName || !value?.name"
+            no-caps
+            dense
+            flat
+            @click="rename"
+          />
+        </div>
+      </div>
+    </template>
   </section-title>
 
   <!-- Categories tabs -->
@@ -199,6 +212,51 @@
       </q-expansion-item>
     </template>
   </q-list>
+
+  <q-dialog
+    v-model="renameDialog"
+    persistent
+  >
+    <q-card style="min-width: 350px">
+      <q-card-section>
+        <div class="text-h6">
+          {{ $t('properties.rename.title') }}
+        </div>
+      </q-card-section>
+
+      <q-card-section class="q-pt-none">
+        <q-input
+          v-model="newName"
+          ref="newNameInput"
+          :label="$t('properties.rename.input')"
+          :error="!validName"
+          :error-message="errorName"
+          autofocus
+          outlined
+          dense
+          @keyup.esc="renameDialog = false"
+          @keyup.enter="changeName"
+        />
+      </q-card-section>
+
+      <q-card-actions class="text-primary" align="right">
+        <q-btn
+          :label="$t('properties.rename.cancel')"
+          color="negative"
+          outline
+          v-close-popup
+        />
+
+        <q-btn
+          :label="$t('properties.rename.ok')"
+          :disable="!validName"
+          color="primary"
+          outline
+          @click="changeName"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup lang="ts">
@@ -255,9 +313,13 @@ const emit = defineEmits<{
 
 const value = useModelValue(props, emit)
 
+const hoverName = ref(false)
+
 const editor = useAppEditor()
 
 const { t } = useI18n()
+
+const { validateFormName, validateTableName, validateTableFieldName } = useProperties(t)
 
 const { getPaletteColor } = colors
 
@@ -368,9 +430,81 @@ watch(value, () => {
     expanded.value[k] = e[k]
   })
 }, { immediate: true })
+
+/**
+ * Rename
+ */
+
+const renameDialog = ref(false)
+
+const newName = ref()
+
+const newNameInput = ref()
+
+const validName = ref(true)
+
+const errorName = ref()
+
+const rename = () => {
+  newName.value = value.value.name
+  renameDialog.value = true
+}
+
+const changeName = () => {
+  if (validName.value) {
+    value.value.name = newName.value
+    renameDialog.value = false
+  }
+}
+
+/**
+ * When newName is changed, validate it
+ */
+watch(newName, () => {
+  let v: true | string
+
+  const table = editor.tableInstance(editor.selectedTable)
+  const tableField = editor.tableFieldInstance(editor.selectedTableField)
+
+  if (tableField) {
+    v = validateTableFieldName(
+      table,
+      tableField._id,
+      newName.value,
+    )
+  } else if (table) {
+    v = validateTableName(
+      editor.tables,
+      table._id,
+      newName.value,
+    )
+  } else {
+    v = validateFormName(
+      editor.formInstance(editor.formId),
+      value.value._id,
+      newName.value,
+    )
+  }
+
+  validName.value = v === true
+  errorName.value = typeof v === 'string' ? v : undefined
+})
+
+watch(newNameInput, () => {
+  const el = newNameInput.value?.$el.querySelector('input')
+  if (el) {
+    el.select()
+  }
+})
 </script>
 
 <style scoped lang="sass">
+.name
+  font-size: small
+  color: #333 !important
+  opacity: 1 !important
+  min-width: 50px
+
 :deep(.name.q-field--dense .q-field__control)
   height: 32px
 </style>

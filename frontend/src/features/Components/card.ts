@@ -1,6 +1,6 @@
 import hexObjectId from 'hex-object-id'
 import { Type } from '@feathersjs/typebox'
-import { contentIcon, styleIcon } from '@/shared/icons'
+import { styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import FormElementCard from '@/features/Forms/components/Editor/FormElementCard.vue'
 import ExType from '@/shared/extypes'
@@ -45,12 +45,6 @@ export default {
     ]),
   },
   categories: {
-    content: {
-      icon: contentIcon,
-      names: [
-        'name',
-      ],
-    },
     style: {
       icon: styleIcon,
       names: [

@@ -41,7 +41,6 @@ export default {
     content: {
       icon: contentIcon,
       names: [
-        'name',
         'visible',
         'field',
         'disable',

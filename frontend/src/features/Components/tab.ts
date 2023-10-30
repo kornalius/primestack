@@ -37,7 +37,6 @@ export default {
     content: {
       icon: contentIcon,
       names: [
-        'name',
         'disable',
         'label',
         'icon',

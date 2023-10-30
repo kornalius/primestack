@@ -1,5 +1,4 @@
 import { QSpace } from 'quasar'
-import { contentIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { properties } from './common'
 
@@ -11,13 +10,5 @@ export default {
   nokey: true,
   schema: properties([], false),
   defaultValues: {
-  },
-  categories: {
-    content: {
-      icon: contentIcon,
-      names: [
-        'name',
-      ],
-    },
   },
 } as TFormComponent

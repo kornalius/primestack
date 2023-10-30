@@ -1,6 +1,6 @@
 import { QSeparator } from 'quasar'
 import { Type } from '@feathersjs/typebox'
-import { contentIcon, styleIcon } from '@/shared/icons'
+import { styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import ExType from '@/shared/extypes'
 import {
@@ -29,12 +29,6 @@ export default {
     ...defaultStyleValues,
   },
   categories: {
-    content: {
-      icon: contentIcon,
-      names: [
-        'name',
-      ],
-    },
     style: {
       icon: styleIcon,
       names: [

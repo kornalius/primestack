@@ -439,7 +439,13 @@
     "title": "Éditeur de propriétés",
     "menu": "Menu",
     "tab": "Onglet",
-    "form": "Formulaire"
+    "form": "Formulaire",
+    "rename": {
+      "title": "Renommer",
+      "input": "Nouveau nom",
+      "ok": "Renommer",
+      "cancel": "Annuler"
+    }
   },
   "login": {
     "email": "Courriel",

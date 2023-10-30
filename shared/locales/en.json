@@ -447,7 +447,13 @@
     "title": "Property Editor",
     "menu": "Menu",
     "tab": "Tab",
-    "form": "Form"
+    "form": "Form",
+    "rename": {
+      "title": "Rename",
+      "input": "New name",
+      "ok": "Rename",
+      "cancel": "Cancel"
+    }
   },
   "login": {
     "email": "Email",

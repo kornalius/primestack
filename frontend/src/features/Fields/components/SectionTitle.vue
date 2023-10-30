@@ -9,7 +9,11 @@
     </q-item-section>
 
     <q-item-label>
-      {{ title }}
+      <slot name="title-before" />
+      <slot name="title">
+        {{ title }}
+      </slot>
+      <slot name="title-after" />
     </q-item-label>
 
     <q-item-section side>
@@ -20,7 +24,7 @@
 
 <script setup lang="ts">
 defineProps<{
-  title: string
+  title?: string
   icon?: string
   color?: string
 }>()

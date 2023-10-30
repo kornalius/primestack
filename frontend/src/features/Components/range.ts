@@ -77,7 +77,6 @@ export default {
     model: {
       icon: modelIcon,
       names: [
-        'name',
         'value',
         'field',
         'min',

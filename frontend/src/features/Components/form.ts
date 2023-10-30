@@ -31,12 +31,6 @@ export default {
       icon: contentIcon,
       names: [
         'formId',
-      ],
-    },
-    model: {
-      icon: modelIcon,
-      names: [
-        'name',
         'data',
       ],
     },

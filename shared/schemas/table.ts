@@ -87,7 +87,6 @@ export const tableFieldSchema = Type.Object(
       content: {
         icon: contentIcon,
         names: [
-          'name',
           'type',
           { name: 'refTableId', label: 'Reference Table' },
           { name: 'refFields', label: 'Reference Fields' },
@@ -135,7 +134,6 @@ export const tableIndexSchema = Type.Object(
     categories: {
       content: {
         names: [
-          'name',
           'order',
           'unique',
           'sparse',
@@ -166,7 +164,6 @@ export const tableSchema = Type.Object(
       content: {
         icon: contentIcon,
         names: [
-          'name',
           'methods',
           'softDelete',
           'indexes',
