@@ -17,6 +17,7 @@
       <q-tab name="ValueBoxes" label="Value Boxes" />
       <q-tab name="JsonEditor" label="Json Editor" />
       <q-tab name="Pagination" label="Pagination Test" />
+      <q-tab name="Units" label="Units Input" />
     </q-tabs>
 
     <q-tab-panels v-model="tab" animated>
@@ -85,7 +86,10 @@
       <q-tab-panel name="SchemaEditor">
         <div class="row">
           <div class="col">
-            <schema-editor v-model="userTable?.list[0]" />
+            <schema-editor
+              v-if="userTable"
+              v-model="userTable.list[0]"
+            />
           </div>
         </div>
       </q-tab-panel>
@@ -276,6 +280,26 @@
         <pre>{{ pagination }}</pre>
         <pre>{{ paginationFind }}</pre>
       </q-tab-panel>
+
+      <q-tab-panel name="Units">
+        <div class="row q-gutter-sm">
+          <div class="col-1">
+            <unit-input
+              v-model="unitValue1"
+              :units="units"
+              default-unit="px"
+            />
+          </div>
+
+          <div class="col-1">
+            <unit-input
+              v-model="unitValue2"
+              :units="units"
+              default-unit="%"
+            />
+          </div>
+        </div>
+      </q-tab-panel>
     </q-tab-panels>
   </q-page>
 </template>
@@ -304,6 +328,7 @@ import ValueBox from '@/features/Fields/components/ValueBox.vue'
 import StatBox from '@/features/Tables/components/StatBox.vue'
 import JsonEditor from '@/features/Json/components/Editor/JsonEditor.vue'
 import CodeEditor from '@/features/Expression/components/CodeEditor.vue'
+import UnitInput from '@/features/Fields/components/UnitInput.vue'
 
 /**
  * Properties
@@ -632,6 +657,24 @@ const addRecord = () => {
   })
   s.save()
 }
+
+/**
+ * Units Input
+ */
+
+const unitValue1 = ref('16px')
+const unitValue2 = ref('100%')
+
+const units = [
+  { label: 'px', value: 'px' },
+  {
+    label: '%',
+    value: '%',
+    min: 0,
+    max: 100,
+  },
+  { label: 'em', value: 'em' },
+]
 </script>
 
 <style scoped lang="sass">

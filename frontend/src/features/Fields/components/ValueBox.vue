@@ -86,7 +86,7 @@ import { computed } from 'vue'
 import { AnyData } from '@/shared/interfaces/commons'
 import {
   validCurrencyCodes, ValueBoxFormatStyle, ValueBoxSize, ValueBoxTextStyle,
-} from '@/features/Fields/interfaces'
+} from '@/features/Fields/constants'
 
 const props = defineProps<{
   modelValue: number | undefined

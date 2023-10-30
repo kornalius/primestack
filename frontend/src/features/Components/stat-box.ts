@@ -4,7 +4,7 @@ import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import {
   validCurrencyCodes, ValueBoxFormatStyle, ValueBoxTextStyle,
-} from '@/features/Fields/interfaces'
+} from '@/features/Fields/constants'
 import StatBox from '@/features/Tables/components/StatBox.vue'
 import {
   properties, commonProperties, defaultStyleValues, styleNames, sizeString,
