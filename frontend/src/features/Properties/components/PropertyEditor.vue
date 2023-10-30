@@ -55,21 +55,38 @@
           flat
           dense
         >
-          <q-popup-edit
-            v-model="value"
-            :title="`${label} Expression...`"
-            auto-save
-            @before-show="loadExpr"
-            @before-hide="saveExpr"
-          >
-            <code-editor
-              v-model="tempCode"
-              style="width: 600px; height: 450px;"
-              lang-js
-              autofocus
-              @keydown="editor.preventSystemUndoRedo"
-            />
-          </q-popup-edit>
+          <q-menu v-model="showMenu" fit>
+            <q-list dense>
+              <q-item clickable>
+                <q-item-section>
+                  {{ $t('expressions.edit') }}
+                </q-item-section>
+
+                <q-popup-edit
+                  v-model="value"
+                  :title="t('expressions.title', { label })"
+                  auto-save
+                  @before-show="loadExpr"
+                  @before-hide="saveExpr"
+                >
+                  <code-editor
+                    v-model="tempCode"
+                    style="width: 800px; height: 450px;"
+                    lang-js
+                    autofocus
+                    @keydown="editor.preventSystemUndoRedo"
+                  />
+                </q-popup-edit>
+              </q-item>
+
+              <q-separator />
+
+              <code-dropdown
+                :model-value="expr.dropmenu.value"
+                @insert="setFromDropMenu"
+              />
+            </q-list>
+          </q-menu>
         </q-btn>
       </div>
     </div>
@@ -258,6 +275,8 @@
                     :schema="dynamicArraySchema(schema, scope.value[index])"
                     :horizontal="arrayIsHorizontalPopup"
                     :include-form-data-fields="includeFormDataFields"
+                    :show-name="dynamicArraySchema(schema, scope.value[index]).showName"
+                    :renameable="dynamicArraySchema(schema, scope.value[index]).renameable"
                     embed-label
                     flat
                   />
@@ -347,6 +366,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { TSchema } from '@feathersjs/typebox'
+import last from 'lodash/last'
 import { colors } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
@@ -498,7 +518,10 @@ const arraySchemaIsObject = computed(() => (
  * @returns {unknown | undefined} The newly added item
  */
 const addItem = (arr: unknown[]): unknown | undefined => {
-  const newValue = defaultValueForSchema(arraySchema.value)
+  let newValue = defaultValueForSchema(arraySchema.value)
+  if (typeof arraySchema.value.newValue === 'function') {
+    newValue = arraySchema.value.newValue(arr)
+  }
   arr.push(newValue)
   return newValue
 }
@@ -513,6 +536,11 @@ const addItem = (arr: unknown[]): unknown | undefined => {
  */
 const removeItem = (arr: unknown[], index: number): boolean => {
   arr.splice(index, 1)
+  if (typeof props.schema.remove === 'function') {
+    if (!props.schema.remove(arr)) {
+      return false
+    }
+  }
   return true
 }
 
@@ -565,13 +593,19 @@ const setFromDropMenu = (text: string) => {
  * When expanded changes, update the store
  */
 watch(expanded, () => {
-  editor.setExpanded(value.value._id, props.propName, expanded.value)
+  const id = value.value?._id || last(props.parents)?._id
+  if (id) {
+    editor.setExpanded(id, props.propName, expanded.value)
+  }
 })
 
 /**
  * When the propName or value changes, update expanded
  */
-watch([value, () => props.propName], () => {
-  expanded.value = editor.isExpanded(value.value?._id, props.propName)
+watch([value, () => props.propName, () => props.parents], () => {
+  const id = value.value?._id || last(props.parents)?._id
+  if (id) {
+    expanded.value = editor.isExpanded(id, props.propName)
+  }
 }, { immediate: true })
 </script>

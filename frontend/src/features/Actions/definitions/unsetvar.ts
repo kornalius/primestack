@@ -10,6 +10,6 @@ export default {
   description: 'actions.unsetvar.description',
   childrenMessage: 'actions.unsetvar.childrenMessage',
   exec: async (args) => {
-    args.variables.unsetVariable(args.name as string)
+    args.variables.unset(args.name as string)
   },
 } as TFrontAction

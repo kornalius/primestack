@@ -199,7 +199,7 @@ import AddButton from '@/features/Fields/components/AddButton.vue'
 
 const props = defineProps<{
   // Array to be edited
-  modelValue: unknown[]
+  modelValue: unknown[] | undefined
   // synched value for validifity of the array
   valid?: boolean
   // disable the clear button
@@ -281,7 +281,7 @@ const emit = defineEmits<{
  * Draggable
  */
 
-const values = useModelValue(props, emit)
+const values = useModelValue(props, emit, [])
 
 /**
  * Occurs when items order is changed

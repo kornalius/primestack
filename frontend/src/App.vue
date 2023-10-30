@@ -282,6 +282,7 @@ import { useFeathersService } from '@/composites/feathers'
 import { useExpression } from '@/features/Expression/composites'
 import { useStats } from '@/features/Stats/store'
 import { useFormElements } from '@/features/Forms/composites'
+import { useMenus } from '@/features/Menus/composites'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
 import { queryToMongo } from '@/features/Query/composites'
 import { AnyData } from '@/shared/interfaces/commons'
@@ -293,6 +294,7 @@ import AppProperties from '@/features/App/components/AppProperties.vue'
 import UserMenu from '@/features/App/components/UserMenu.vue'
 
 type Tab = Static<typeof tabSchema>
+type Menu = Static<typeof menuSchema>
 
 const quasar = useQuasar()
 
@@ -305,6 +307,12 @@ const leftDrawerExpanded = ref(true)
 const app = useApp()
 
 const editor = useAppEditor()
+
+const { setVariables } = useMenus()
+
+const { buildCtx } = useExpression(t)
+
+const ctx = buildCtx()
 
 const route = useRoute()
 
@@ -380,6 +388,12 @@ const loadUserData = async () => {
   await useFeathersService('actions').find({ query: {} })
 }
 
+watch(() => userMenu.value?.list, () => {
+  (userMenu.value?.list || []).forEach((m: Menu) => {
+    setVariables(m, ctx)
+  })
+}, { deep: true })
+
 /**
  * When mounted, tries to re-authenticate and reload user's data
  */
@@ -446,10 +460,6 @@ const cancel = () => {
 /**
  * Tab badges
  */
-
-const { buildCtx } = useExpression(t)
-
-const ctx = buildCtx()
 
 const stats = useStats()
 

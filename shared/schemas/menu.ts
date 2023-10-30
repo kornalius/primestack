@@ -1,6 +1,8 @@
 import { Type, StringEnum } from '@feathersjs/typebox'
 import { actionIcon, contentIcon } from '../icons'
 import ExType from '../extypes'
+import { hexObjectId } from '../schema'
+import { newNameForVariable } from '../menu'
 
 export const targetValues = ['_blank', '_self', '_parent', '_top']
 
@@ -62,6 +64,30 @@ export const tabSchema = Type.Object(
   },
 )
 
+export const variableSchema = Type.Object(
+  {
+    _id: ExType.Id(),
+    name: Type.String(),
+    value: Type.Optional(Type.Union([Type.String(), Type.Number(), Type.Boolean()])),
+  },
+  {
+    $id: 'Variable',
+    additionalProperties: false,
+    horizontal: true,
+    horizontalPopup: true,
+    newValue: (arr: any[]) => ({
+      _id: hexObjectId(),
+      name: newNameForVariable(arr),
+      value: undefined,
+    }),
+    showName: true,
+    renameable: true,
+    names: [
+      'value',
+    ]
+  },
+)
+
 export const menuSchema = Type.Object(
   {
     _id: ExType.Id(),
@@ -72,6 +98,7 @@ export const menuSchema = Type.Object(
     href: Type.Optional(Type.String()),
     target: Type.Optional(StringEnum(targetValues)),
     tabs: Type.Array(tabSchema),
+    variables: Type.Array(variableSchema),
     click: Type.Optional(ExType.Action()),
   },
   {
@@ -86,6 +113,7 @@ export const menuSchema = Type.Object(
           'icon',
           'href',
           'target',
+          'variables',
         ],
       },
       action: {

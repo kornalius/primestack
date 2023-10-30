@@ -1,6 +1,9 @@
 import { Static, TSchema, Type } from '@feathersjs/typebox'
+import omit from 'lodash/omit'
+import pick from 'lodash/pick'
 import { fieldSchema, formSchema } from '@/shared/schemas/form'
 import { tableSchema } from '@/shared/schemas/table'
+import { menuSchema, variableSchema } from '@/shared/schemas/menu'
 import { flattenFields } from '@/shared/form'
 import { AnyData, T18N } from '@/shared/interfaces/commons'
 import { ruleTypes } from '@/features/Components/common'
@@ -9,6 +12,8 @@ import { getParentProp, types } from '@/shared/properties'
 type Form = Static<typeof formSchema>
 type FormField = Static<typeof fieldSchema>
 type Table = Static<typeof tableSchema>
+type Menu = Static<typeof menuSchema>
+type Variable = Static<typeof variableSchema>
 
 export const useProperties = (t: T18N) => ({
   labelWidth: '125px',
@@ -100,16 +105,50 @@ export const useProperties = (t: T18N) => ({
    * @returns {TSchema}
    */
   dynamicArraySchema: (schema: TSchema, val: AnyData): TSchema => {
+    let properties = omit(schema.items.properties, ['_id'])
+    if (Array.isArray(schema.items.names)) {
+      properties = pick(properties, schema.items.names)
+    }
     if (schema.rules) {
       const rt = ruleTypes.find((r) => r.name === val.type)
       if (rt?.options) {
         return Type.Intersect([
-          schema.items,
+          {
+            ...schema.items,
+            properties,
+          },
           rt.options,
         ])
       }
     }
-    return schema.items
+    return {
+      ...schema.items,
+      properties,
+    }
+  },
+
+  /**
+   * Check if a form element already has the same name
+   *
+   * @param menu Editor menu
+   * @param id Current element Id
+   * @param name New name
+   *
+   * @returns {true | string}
+   */
+  validateVariableName: (menu: Menu, id: string, name: string): true | string => {
+    if (name && menu) {
+      const n = name.toLowerCase()
+      // eslint-disable-next-line no-underscore-dangle
+      const found = menu.variables
+        .find((v: Variable) => v.name
+          && v._id !== id
+          && v.name.toLowerCase() === n)
+      if (found) {
+        return t('field_errors.name')
+      }
+    }
+    return true
   },
 
   /**

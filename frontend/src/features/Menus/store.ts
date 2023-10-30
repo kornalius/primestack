@@ -120,6 +120,7 @@ export const useMenuEditor = defineStore('menu-editor', () => {
       href: undefined,
       target: '_self',
       tabs: [],
+      variables: [],
     }
     states.value.menus = [...states.value.menus, m]
     if (selectIt) {

@@ -253,7 +253,7 @@ export const useAppEditor = defineStore('app-editor', () => {
   })
 
   /**
-   * Save a snapshot to the store and sets the current editing elements to this snapshot
+   * Save a snapshot to the stores and sets the current editing elements to this snapshot
    *
    * @param snapshot Snapshot to save
    */
@@ -600,6 +600,5 @@ export const useAppEditor = defineStore('app-editor', () => {
     setExpanded: propertiesEditor.setExpanded,
     isExpanded: propertiesEditor.isExpanded,
     expandedForId: propertiesEditor.expandedForId,
-
   }
 })

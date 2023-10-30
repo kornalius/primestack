@@ -10,7 +10,7 @@ type TableIndexSchema = Static<typeof tableIndexSchema>
 let COUNTER: number | null = null
 let PROCESS_UNIQUE: string | null = null
 
-const hexObjectId = (): string => {
+export const hexObjectId = (): string => {
   if (COUNTER == null) {
     COUNTER = Math.floor(Math.random() * 0xffffff)
   }

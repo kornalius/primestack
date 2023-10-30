@@ -515,6 +515,8 @@
     :horizontal="objectIsHorizontal"
     :disable="disabled"
     :include-form-data-fields="includeFormDataFields"
+    :show-name="objectSchema.showName"
+    :renameable="objectSchema.renameable"
     embed-label
     flat
   />
@@ -549,6 +551,8 @@
         :schema="objectSchema"
         :horizontal="objectIsHorizontalPopup"
         :include-form-data-fields="includeFormDataFields"
+        :show-name="objectSchema.showName"
+        :renameable="objectSchema.renameable"
         embed-label
         flat
       />
@@ -578,6 +582,8 @@
         :categories="dynamicArraySchema(schema, value[index]).categories"
         :horizontal="arrayIsHorizontal"
         :include-form-data-fields="includeFormDataFields"
+        :show-name="dynamicArraySchema(schema, value[index]).showName"
+        :renameable="dynamicArraySchema(schema, value[index]).renameable"
         embed-label
         flat
       />
@@ -638,6 +644,8 @@
             :categories="dynamicArraySchema(schema, scope.value[index]).categories"
             :horizontal="arrayIsHorizontalPopup"
             :include-form-data-fields="includeFormDataFields"
+            :show-name="dynamicArraySchema(schema, scope.value[index]).showName"
+            :renameable="dynamicArraySchema(schema, scope.value[index]).renameable"
             embed-label
             flat
           />
@@ -950,7 +958,10 @@ const objectIsHorizontalPopup = computed(() => objectSchema.value?.horizontalPop
  * @returns {unknown|undefined} The new item added
  */
 const addItem = (): unknown | undefined => {
-  const newValue = defaultValueForSchema(arraySchema.value)
+  let newValue = defaultValueForSchema(arraySchema.value)
+  if (typeof arraySchema.value.newValue === 'function') {
+    newValue = arraySchema.value.newValue(value.value)
+  }
   value.value = [...value.value, newValue]
   return newValue
 }

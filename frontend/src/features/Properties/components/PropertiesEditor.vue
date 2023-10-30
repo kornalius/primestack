@@ -2,7 +2,7 @@
   <!-- Section Title & Icon -->
 
   <section-title
-    v-if="title || value?.name || icon"
+    v-if="title || (value?.name && showName) || icon"
     :icon="icon"
     @mouseover.stop="hoverName = true"
     @mouseleave="hoverName = false"
@@ -16,7 +16,7 @@
             class="name"
             :label="title || value?.name"
             :icon-right="hoverName && value?.name ? 'mdi-pencil' : undefined"
-            :disable="!hoverName || !value?.name"
+            :disable="!renameable || !hoverName || !value?.name"
             no-caps
             dense
             flat
@@ -226,8 +226,8 @@
 
       <q-card-section class="q-pt-none">
         <q-input
-          v-model="newName"
           ref="newNameInput"
+          v-model="newName"
           :label="$t('properties.rename.input')"
           :error="!validName"
           :error-message="errorName"
@@ -263,6 +263,7 @@
 import { computed, ref, watch } from 'vue'
 import { colors } from 'quasar'
 import startCase from 'lodash/startCase'
+import last from 'lodash/last'
 import { TSchema } from '@feathersjs/typebox'
 import { useI18n } from 'vue-i18n'
 import { AnyData } from '@/shared/interfaces/commons'
@@ -303,6 +304,10 @@ const props = defineProps<{
   disabledProperties?: string[]
   // include extra form data fields in Field selector
   includeFormDataFields?: boolean
+  // show name in title
+  showName?: boolean
+  // can we rename?
+  renameable?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -319,7 +324,12 @@ const editor = useAppEditor()
 
 const { t } = useI18n()
 
-const { validateFormName, validateTableName, validateTableFieldName } = useProperties(t)
+const {
+  validateFormName,
+  validateTableName,
+  validateTableFieldName,
+  validateVariableName,
+} = useProperties(t)
 
 const { getPaletteColor } = colors
 
@@ -416,16 +426,20 @@ const expanded = ref({})
  * When expanded changes, update the store
  */
 watch(expanded, () => {
-  Object.keys(expanded.value).forEach((k) => {
-    editor.setExpanded(value.value?._id, k, expanded.value[k])
-  })
+  const id = value.value?._id || last(props.parents)?._id
+  if (id) {
+    Object.keys(expanded.value).forEach((k) => {
+      editor.setExpanded(id, k, expanded.value[k])
+    })
+  }
 }, { deep: true })
 
 /**
  * When the main value changes, update the expanded ref
  */
 watch(value, () => {
-  const e = editor.expandedForId(value.value?._id)
+  const id = value.value?._id || last(props.parents)?._id
+  const e = editor.expandedForId(id)
   Object.keys(e).forEach((k) => {
     expanded.value[k] = e[k]
   })
@@ -463,10 +477,17 @@ const changeName = () => {
 watch(newName, () => {
   let v: true | string
 
+  const menu = editor.menuInstance(editor.selectedMenu)
   const table = editor.tableInstance(editor.selectedTable)
   const tableField = editor.tableFieldInstance(editor.selectedTableField)
 
-  if (tableField) {
+  if (menu && props.propName === 'variables') {
+    v = validateVariableName(
+      menu,
+      value.value._id,
+      newName.value,
+    )
+  } else if (tableField) {
     v = validateTableFieldName(
       table,
       tableField._id,

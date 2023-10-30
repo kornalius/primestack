@@ -40,6 +40,8 @@
       :categories="selectedFormColumnSchema.categories"
       :disabled-properties="disabledFormTableColumnProperties"
       icon="mdi-table-column"
+      show-name
+      renameable
     />
 
     <!-- Form Field properties -->
@@ -54,6 +56,8 @@
       :categories="selectedComponent.categories"
       :icon="selectedComponent.icon as string"
       include-form-data-fields
+      show-name
+      renameable
     />
 
     <!-- Table editor properties -->
@@ -68,6 +72,8 @@
       :categories="selectedTableSchema.categories"
       :disabled-properties="disabledTableProperties"
       icon="mdi-table"
+      show-name
+      renameable
     />
 
     <!-- Table editor Field properties -->
@@ -82,6 +88,8 @@
       :categories="selectedSchemaFieldSchema.categories"
       :disabled-properties="disabledTableFieldProperties"
       icon="mdi-table"
+      show-name
+      renameable
     />
 
     <template v-else-if="!editor.actionId">
@@ -121,6 +129,8 @@
         :schema="selectedFormSchema"
         :categories="selectedFormSchema.categories"
         icon="mdi-window-maximize"
+        show-name
+        renameable
       />
     </template>
   </q-drawer>

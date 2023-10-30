@@ -283,7 +283,8 @@
     "no_results": "Aucun résultat"
   },
   "expressions": {
-    "edit": "Modifier l'expression..."
+    "edit": "Modifier...",
+    "title": "Expression pour '{label}'"
   },
   "filter": {
     "expression": "Expression de filtre (ex: field:value)",
