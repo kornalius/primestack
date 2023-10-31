@@ -1,6 +1,7 @@
 import { computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { LRUCache } from 'lru-cache'
+import hexObjectId from 'hex-object-id'
 import dayjs from 'dayjs'
 import sortBy from 'lodash/sortBy'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
@@ -58,6 +59,7 @@ import { useVariables } from '@/features/Variables/store'
 import { useAppEditor } from '@/features/Editor/store'
 import { useApp } from '@/features/App/store'
 import { useUrl } from '@/composites/url'
+import { useAuth } from '@/features/Auth/store'
 import { AnyData, T18N } from '@/shared/interfaces/commons'
 // eslint-disable-next-line import/no-cycle
 import { exec } from '@/features/Actions/composites'
@@ -152,6 +154,7 @@ export const buildCtx = (extra?: AnyData) => {
   const app = useApp()
   const url = useUrl()
   const variables = useVariables()
+  const auth = useAuth()
 
   return {
     quasar,
@@ -1318,6 +1321,64 @@ export const buildCtx = (extra?: AnyData) => {
       substring: (value: string, start: number, end?: number): string => (
         value.substring(start, end)
       ),
+
+      /**
+       * Returns currently logged user's information
+       *
+       * @param name 'email' | 'firstname' | 'lastname' | 'locale'
+       *
+       * @returns {string|undefined}
+       */
+      user: (name: string): string | undefined => {
+        if (['email', 'firstname', 'lastname', 'locale'].includes(name)) {
+          return auth.user[name]
+        }
+        return undefined
+      },
+
+      /**
+       * Returns a unique id
+       *
+       * @returns {string}
+       */
+      uniqueId: (): string => (
+        hexObjectId()
+      ),
+
+      /**
+       * Returns a new array of objects by extracting specific keys from values
+       *
+       * @param array Array of objects
+       * @param keys Array of keys or a single a key
+       *
+       * @returns {AnyData[]}
+       */
+      map: (array: AnyData[], keys: string[] | string): unknown[] => {
+        if (typeof keys === 'string') {
+          return array.map((val) => val[keys])
+        }
+        return array.map((val) => pick(val, keys))
+      },
+
+      /**
+       * Returns the domain part of a Url or Email string
+       *
+       * @param urlOrEmail Url or email
+       *
+       * @return {string|undefined}
+       */
+      domain: (urlOrEmail: string): string | undefined => {
+        // email
+        const e = urlOrEmail
+          .match(/(?<=@)[^.]+(?=\.).*/gm)
+        if (e.length === 1) {
+          return e[0]
+        }
+        // url
+        const a = document.createElement('a')
+        a.setAttribute('href', urlOrEmail)
+        return a.hostname
+      },
 
       uppercase,
       lowercase,

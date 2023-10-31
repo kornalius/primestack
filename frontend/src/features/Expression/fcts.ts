@@ -646,4 +646,17 @@ export const fcts = {
   substring: '`(value: string): string`\n\n'
     + 'Returns a new string containing characters of the string from (or between) the specified '
     + 'index (or indices)',
+
+  user: '`(name: string): string | undefined`\n\n'
+    + 'Returns currently logged user\'s information\n\n'
+    + 'Possible name values: email, firstname, lastname, locale',
+
+  uniqueId: '`(): string`\n\n'
+    + 'Returns a unique id',
+
+  map: '`(array: AnyData[], keys: string[] | string): unknown[]`\n\n'
+    + 'Returns a new array of objects by extracting specific keys from values',
+
+  domain: '`(urlOrEmail: string): string | undefined`\n\n'
+    + 'Returns the domain part of a Url or Email string',
 }

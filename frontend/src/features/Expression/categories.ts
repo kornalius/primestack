@@ -53,6 +53,7 @@ export const categories = [
       'slice',
       'splice',
       'join',
+      'map',
     ],
   },
   {
@@ -105,6 +106,7 @@ export const categories = [
       'tabId',
       'formId',
       'tableId',
+      'domain',
     ],
   },
   {
@@ -209,6 +211,15 @@ export const categories = [
       'keys',
       'values',
       'has',
+    ],
+  },
+  {
+    name: 'system',
+    label: 'System',
+    icon: 'mdi-domain',
+    children: [
+      'user',
+      'uniqueId',
     ],
   },
 ]
