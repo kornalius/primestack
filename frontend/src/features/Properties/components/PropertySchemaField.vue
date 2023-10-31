@@ -33,6 +33,7 @@
       </q-card>
 
       <q-btn
+        v-if="value && value.length > 0"
         class="clear-btn"
         :style="{ opacity: isExpr(value) || hover ? 1 : 0 }"
         icon="mdi-close-circle"

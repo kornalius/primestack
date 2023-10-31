@@ -349,6 +349,9 @@
     "label": {
       "label": "Label"
     },
+    "list": {
+      "label": "List"
+    },
     "lookup-select": {
       "label": "Lookup Selector"
     },

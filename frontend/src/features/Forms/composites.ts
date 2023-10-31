@@ -66,6 +66,19 @@ export const isRow = (field: FormField | TFormComponent): boolean => (
 )
 
 /**
+ * Returns true if field is a list
+ *
+ * @param field Field
+ *
+ * @returns {boolean}
+ */
+export const isList = (field: FormField | TFormComponent): boolean => (
+  // eslint-disable-next-line no-underscore-dangle
+  (field as FormField)._type === 'list'
+    || (field as TFormComponent).type === 'list'
+)
+
+/**
    * Returns true if field is tabs
    *
    * @param field Field
@@ -301,6 +314,8 @@ export const useFormElements = () => ({
   },
 
   isRow,
+
+  isList,
 
   isTabs,
 

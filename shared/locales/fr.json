@@ -342,6 +342,9 @@
     "label": {
       "label": "Libelé"
     },
+    "list": {
+      "label": "Liste"
+    },
     "lookup-select": {
       "label": "Sélecteur de jointures"
     },

@@ -91,6 +91,15 @@
         @click="onColumnClick"
       />
 
+      <!-- List -->
+
+      <form-element-list
+        v-else-if="isList(field)"
+        v-model="field"
+        :style="component?.styles"
+        @click="onClick"
+      />
+
       <!-- Tabs -->
 
       <form-element-tabs
@@ -181,6 +190,7 @@ import FormElementRow from './FormElementRow.vue'
 import FormElementCard from './FormElementCard.vue'
 import FormElementTabs from './FormElementTabs.vue'
 import FormElementEmbeddedForm from './FormElementEmbeddedForm.vue'
+import FormElementList from './FormElementList.vue'
 
 type FormField = Static<typeof fieldSchema>
 type FormColumn = Static<typeof columnSchema>
@@ -203,6 +213,7 @@ const {
   fieldBinds,
   style,
   isRow,
+  isList,
   isTabs,
   isCard,
   isEmbeddedForm,
@@ -237,7 +248,7 @@ const fieldTable = computed(() => (
 ))
 
 const onClick = () => {
-  emit('click', props.modelValue._id)
+  emit('click', field.value._id)
 }
 
 const onColumnClick = (column: FormColumn) => {
@@ -245,7 +256,7 @@ const onColumnClick = (column: FormColumn) => {
 }
 
 const onRemoveClick = () => {
-  emit('remove', props.modelValue)
+  emit('remove', field.value)
 }
 
 const modelValueForField = computed(() => (
@@ -320,7 +331,7 @@ watch([() => props.modelValue, component], () => {
   top: 0
   right: 0
   bottom: 0
-  min-height: 32px
+  min-height: 16px
 
 .q-skeleton--anim-wave
   z-index: 0 !important

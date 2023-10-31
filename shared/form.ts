@@ -36,12 +36,12 @@ export const flattenFields = (fields: FormField[] | FormColumn[]): FormField[] =
 export const newNameForField = (type: string, fields: AnyData[]): string => {
   let index = 1
   let newName = `${startCase(type)}${index}`.toLowerCase()
-  let field = fields.find((f) => f.name.toLowerCase() === newName)
+  let field = fields.find((f) => f.name?.toLowerCase() === newName)
   while (field) {
     index += 1
     newName = `${startCase(type)}${index}`.toLowerCase()
     // eslint-disable-next-line @typescript-eslint/no-loop-func,no-loop-func
-    field = fields.find((f) => f.name.toLowerCase() === newName)
+    field = fields.find((f) => f.name?.toLowerCase() === newName)
   }
   return `${startCase(type)}${index}`
 }

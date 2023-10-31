@@ -16,6 +16,16 @@
         :columns="field._columns"
       />
 
+      <!-- List -->
+
+      <form-display-list
+        v-else-if="isList(field)"
+        v-model="value"
+        :field="field"
+        :columns="field._columns"
+        :horizontal="(field as any).horizontal"
+      />
+
       <!-- Tabs -->
 
       <form-display-tabs
@@ -137,6 +147,7 @@ import FormDisplayRow from './FormDisplayRow.vue'
 import FormDisplayCard from './FormDisplayCard.vue'
 import FormDisplayTabs from './FormDisplayTabs.vue'
 import FormEmbedded from './FormEmbedded.vue'
+import FormDisplayList from './FormDisplayList.vue'
 
 type FormField = Static<typeof fieldSchema>
 
@@ -164,6 +175,7 @@ const {
   isNumericInput,
   schemaForField,
   isRow,
+  isList,
   isTabs,
   isCard,
   isEmbeddedForm,
