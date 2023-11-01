@@ -1,16 +1,26 @@
 <template>
   <q-card
-    class="card"
+    :class="{
+      card: true,
+      ...(component?.editClasses || {}),
+      ...classBinds(field),
+    }"
+    :style="{
+      ...(component?.editStyles || {}),
+      ...styleBinds(field),
+    }"
     v-bind="fieldBinds(field, schemaForField(field), ctx)"
-    :style="{ ...style(field), ...($attrs.style || {}) }"
   >
     <q-card-section
       v-for="section in sections"
       :key="section._id"
-      v-bind="fieldBinds(section, schemaForField(section), ctx)"
       :class="cclass(section)"
-      style="z-index: 1;"
-      :style="style(section)"
+      :style="{
+        'z-index': 1,
+        ...(componentsByType['card-section']?.editStyles || {}),
+        ...styleBinds(section),
+      }"
+      v-bind="fieldBinds(section, schemaForField(section), ctx)"
       @mouseover.stop="editor.hover(section._id)"
       @mouseleave="editor.unhover()"
       @focus.stop="editor.hover(section._id)"
@@ -24,8 +34,7 @@
 
       <div
         v-if="!editor.isDragging && editor.isHovered(section._id)"
-        class="action-button bg-grey-9 rounded-borders no-pointer-events"
-        style="left: -9px; top: -9px; width: 18px;"
+        class="action-button component-icon bg-grey-9 rounded-borders no-pointer-events"
       >
         <q-icon :name="sectionIcon" color="white" size="xs" />
       </div>
@@ -53,10 +62,13 @@
     <q-card-actions
       v-for="action in actions"
       :key="action._id"
-      v-bind="fieldBinds(action, schemaForField(action), ctx)"
       :class="cclass(action, true)"
-      style="z-index: 1;"
-      :style="style(action)"
+      :style="{
+        'z-index': 1,
+        ...(componentsByType['card-action']?.editStyles || {}),
+        ...styleBinds(action),
+      }"
+      v-bind="fieldBinds(action, schemaForField(action), ctx)"
       @mouseover.stop="editor.hover(action._id)"
       @mouseleave="editor.unhover()"
       @focus.stop="editor.hover(action._id)"
@@ -70,8 +82,7 @@
 
       <div
         v-if="!editor.isDragging && editor.isHovered(action._id)"
-        class="action-button bg-grey-9 rounded-borders no-pointer-events"
-        style="left: -9px; top: -9px; width: 18px;"
+        class="action-button component-icon bg-grey-9 rounded-borders no-pointer-events"
       >
         <q-icon :name="actionIcon" color="white" size="xs" />
       </div>
@@ -150,7 +161,8 @@ const field = useModelValue(props, emit)
 
 const {
   fieldBinds,
-  style,
+  classBinds,
+  styleBinds,
   schemaForField,
   componentsByType,
   isCardActions,
@@ -181,6 +193,11 @@ const actions = computed((): FormColumn[] => (
   field.value._columns.filter((f) => isCardActions(f))
 ))
 
+const component = computed(() => (
+  // eslint-disable-next-line no-underscore-dangle
+  componentsByType[field.value._type]
+))
+
 /**
  * Selection
  */
@@ -192,6 +209,8 @@ const cclass = (section: FormColumn, action = false) => ({
   'card-action': action,
   selected: editor.isSelected(section._id),
   hovered: editor.isHovered(section._id),
+  ...(componentsByType[action ? 'card-action' : 'card-section']?.editClasses || {}),
+  ...classBinds(field),
 })
 
 const onAddActionClick = (cardActions: FormColumn) => {
@@ -268,6 +287,14 @@ const onRemoveClick = (column: FormColumn) => {
 
   &.hovered
     outline: 1px dashed $blue-grey-5
+
+.component-icon
+  position: absolute
+  left: 0
+  top: 0
+  width: 18px
+  height: 22px
+  transform: translate(-50%, -50%)
 
 .action-button
   position: absolute

@@ -3,14 +3,11 @@
     v-model.number="editValue"
     v-bind="$attrs"
     type="number"
-    hide-bottom-space
-    outlined
-    dense
   >
     <template #append>
       <q-btn dense flat no-caps>
         {{ unit }}
-        <q-menu>
+        <q-menu separate-close-popup fit>
           <q-list>
             <q-item
               v-for="u in units"
@@ -63,7 +60,7 @@ const realValue = (v: number): number => {
 
 const parse = (val: string): { value: number, unit: string } => {
   const units = `(${props.units.map((u) => u.value).join('|')})`
-  const r = val.trim().match(new RegExp(`^(-?\\d+)${units}$`))
+  const r = val?.trim().match(new RegExp(`^(-?\\d+)${units}$`))
   return { value: realValue(Number(r?.[1]) || 0), unit: r?.[2] || props.defaultUnit }
 }
 

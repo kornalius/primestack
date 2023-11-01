@@ -1,7 +1,14 @@
 <template>
   <q-toolbar
+    :class="{
+      ...(component?.classes || {}),
+      ...classBinds(field),
+    }"
+    :style="{
+      ...(component?.styles || {}),
+      ...styleBinds(field),
+    }"
     v-bind="fieldBinds(field, schemaForField(field), ctx)"
-    :style="style(field)"
   >
     <form-display
       :model-value="modelValue"
@@ -39,10 +46,21 @@ defineEmits<{
   (e: 'update:model-value', value: Record<string, unknown>): void,
 }>()
 
-const { fieldBinds, style, schemaForField } = useFormElements()
+const {
+  componentsByType,
+  fieldBinds,
+  classBinds,
+  styleBinds,
+  schemaForField,
+} = useFormElements()
 
 const fields = computed((): FormField[] => (
   // eslint-disable-next-line no-underscore-dangle
   props.columns[0]._fields as FormField[]
+))
+
+const component = computed(() => (
+  // eslint-disable-next-line no-underscore-dangle
+  componentsByType[props.field._type]
 ))
 </script>

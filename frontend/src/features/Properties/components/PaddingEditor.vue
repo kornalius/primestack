@@ -2,57 +2,25 @@
   <div class="padding">
     <div class="row justify-center">
       <div class="col-auto">
-        <q-input
-          v-model="value.top"
-          class="field"
-          label="top"
-          hide-bottom-space
-          outlined
-          dense
-          @keydown="editor.preventSystemUndoRedo"
-        />
+        <unit-button v-model="value.top" label="top" />
       </div>
     </div>
 
     <div class="row">
       <div class="col-auto">
-        <q-input
-          v-model="value.left"
-          class="field"
-          label="left"
-          hide-bottom-space
-          outlined
-          dense
-          @keydown="editor.preventSystemUndoRedo"
-        />
+        <unit-button v-model="value.left" label="left" />
       </div>
 
       <div class="col middle" />
 
       <div class="col-auto">
-        <q-input
-          v-model="value.right"
-          class="field"
-          label="right"
-          hide-bottom-space
-          outlined
-          dense
-          @keydown="editor.preventSystemUndoRedo"
-        />
+        <unit-button v-model="value.right" label="right" />
       </div>
     </div>
 
     <div class="row justify-center">
       <div class="col-auto align-center">
-        <q-input
-          v-model="value.bottom"
-          class="field"
-          label="bottom"
-          hide-bottom-space
-          outlined
-          dense
-          @keydown="editor.preventSystemUndoRedo"
-        />
+        <unit-button v-model="value.bottom" label="bottom" />
       </div>
     </div>
   </div>
@@ -61,10 +29,9 @@
 <script setup lang="ts">
 import { useModelValue } from '@/composites/prop'
 import { AnyData } from '@/shared/interfaces/commons'
-import { useAppEditor } from '@/features/Editor/store'
+import UnitButton from '@/features/Properties/components/UnitButton.vue'
 
 const props = defineProps<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   modelValue: AnyData
 }>()
 
@@ -75,8 +42,6 @@ const emit = defineEmits<{
 }>()
 
 const value = useModelValue(props, emit)
-
-const editor = useAppEditor()
 </script>
 
 <style scoped lang="sass">

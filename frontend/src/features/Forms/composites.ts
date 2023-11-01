@@ -28,6 +28,8 @@ type Action = Static<typeof actionSchema>
 
 const validators = useValidators()
 
+export const classSizes = ['xs', 'sm', 'md', 'lg', 'xl']
+
 /**
  * Returns the event arguments for a field action
  *
@@ -85,7 +87,7 @@ export const isList = (field: FormField | TFormComponent): boolean => (
  *
  * @returns {boolean}
  */
-export const isToolbar = (field: FormField | TFormComponent): boolean => (
+export const isToolbar = (field: FormField | FormColumn | TFormComponent): boolean => (
   // eslint-disable-next-line no-underscore-dangle
   (field as FormField)._type === 'toolbar'
     || (field as TFormComponent).type === 'toolbar'
@@ -98,7 +100,7 @@ export const isToolbar = (field: FormField | TFormComponent): boolean => (
    *
    * @returns {boolean}
    */
-export const isTabs = (field: FormField | TFormComponent): boolean => (
+export const isTabs = (field: FormField | FormColumn | TFormComponent): boolean => (
   // eslint-disable-next-line no-underscore-dangle
   (field as FormField)._type === 'tabs'
     || (field as TFormComponent).type === 'tabs'
@@ -111,7 +113,7 @@ export const isTabs = (field: FormField | TFormComponent): boolean => (
    *
    * @returns {boolean}
    */
-export const isCard = (field: FormField | TFormComponent): boolean => (
+export const isCard = (field: FormField | FormColumn | TFormComponent): boolean => (
   // eslint-disable-next-line no-underscore-dangle
   (field as FormField)._type === 'card'
     || (field as TFormComponent).type === 'card'
@@ -124,7 +126,7 @@ export const isCard = (field: FormField | TFormComponent): boolean => (
  *
  * @returns {boolean}
  */
-export const isCardSection = (field: FormField | TFormComponent): boolean => (
+export const isCardSection = (field: FormField | FormColumn | TFormComponent): boolean => (
   // eslint-disable-next-line no-underscore-dangle
   (field as FormField)._type === 'card-section'
     || (field as TFormComponent).type === 'card-section'
@@ -137,7 +139,7 @@ export const isCardSection = (field: FormField | TFormComponent): boolean => (
  *
  * @returns {boolean}
  */
-export const isCardActions = (field: FormField | TFormComponent): boolean => (
+export const isCardActions = (field: FormField | FormColumn | TFormComponent): boolean => (
   // eslint-disable-next-line no-underscore-dangle
   (field as FormField)._type === 'card-actions'
     || (field as TFormComponent).type === 'card-actions'
@@ -150,7 +152,7 @@ export const isCardActions = (field: FormField | TFormComponent): boolean => (
    *
    * @returns {boolean}
    */
-export const isEmbeddedForm = (field: FormField | TFormComponent): boolean => (
+export const isEmbeddedForm = (field: FormField | FormColumn | TFormComponent): boolean => (
   // eslint-disable-next-line no-underscore-dangle
   (field as FormField)._type === 'form-embedded'
     || (field as TFormComponent).type === 'form-embedded'
@@ -163,7 +165,7 @@ export const isEmbeddedForm = (field: FormField | TFormComponent): boolean => (
    *
    * @returns {boolean}
    */
-export const isIcon = (field: FormField | TFormComponent): boolean => (
+export const isIcon = (field: FormField | FormColumn | TFormComponent): boolean => (
   // eslint-disable-next-line no-underscore-dangle
   (field as FormField)._type === 'icon'
     || (field as TFormComponent).type === 'icon'
@@ -176,7 +178,7 @@ export const isIcon = (field: FormField | TFormComponent): boolean => (
    *
    * @returns {boolean}
    */
-export const isTable = (field: FormField | TFormComponent): boolean => (
+export const isTable = (field: FormField | FormColumn | TFormComponent): boolean => (
   // eslint-disable-next-line no-underscore-dangle
   (field as FormField)._type === 'table'
     || (field as TFormComponent).type === 'table'
@@ -189,7 +191,7 @@ export const isTable = (field: FormField | TFormComponent): boolean => (
    *
    * @returns {boolean}
    */
-export const isParagraph = (field: FormField | TFormComponent): boolean => (
+export const isParagraph = (field: FormField | FormColumn | TFormComponent): boolean => (
   // eslint-disable-next-line no-underscore-dangle
   (field as FormField)._type === 'paragraph'
     || (field as TFormComponent).type === 'paragraph'
@@ -202,7 +204,7 @@ export const isParagraph = (field: FormField | TFormComponent): boolean => (
    *
    * @returns {boolean}
    */
-export const isLabel = (field: FormField | TFormComponent): boolean => (
+export const isLabel = (field: FormField | FormColumn | TFormComponent): boolean => (
   // eslint-disable-next-line no-underscore-dangle
   (field as FormField)._type === 'label'
     || (field as TFormComponent).type === 'label'
@@ -393,6 +395,59 @@ export const useFormElements = () => ({
     return false
   },
 
+  classSizes,
+
+  /**
+   * Returns a Vue Component Class bindable object
+   *
+   * @param field Field
+   *
+   * @returns {AnyData}
+   */
+  classBinds: (field: AnyData): AnyData => {
+    const c: AnyData = {}
+
+    // paddings
+
+    if (classSizes.includes(field.padding?.top)) {
+      c[`q-pt-${field.padding.top}`] = true
+    }
+    if (classSizes.includes(field.padding?.bottom)) {
+      c[`q-pb-${field.padding.bottom}`] = true
+    }
+    if (classSizes.includes(field.padding?.left)) {
+      c[`q-pl-${field.padding.left}`] = true
+    }
+    if (classSizes.includes(field.padding?.right)) {
+      c[`q-pr-${field.padding.right}`] = true
+    }
+
+    // margins
+
+    if (classSizes.includes(field.margin?.top)) {
+      c[`q-mt-${field.margin.top}`] = true
+    }
+    if (classSizes.includes(field.margin?.bottom)) {
+      c[`q-mb-${field.margin.bottom}`] = true
+    }
+    if (classSizes.includes(field.margin?.left)) {
+      c[`q-ml-${field.margin.left}`] = true
+    }
+    if (classSizes.includes(field.margin?.right)) {
+      c[`q-mr-${field.margin.right}`] = true
+    }
+
+    // shadows
+
+    if (Number(field.shadow) >= 1 && Number(field.shadow) <= 24) {
+      c[`shadow-${field.shadow}`] = true
+    }
+
+    return {
+      ...c,
+    }
+  },
+
   /**
    * Returns a Vue Component bindable style object
    * for all the field's stylable properties
@@ -401,10 +456,7 @@ export const useFormElements = () => ({
    *
    * @returns {AnyData}
    */
-  style: (field: AnyData): AnyData => {
-    // eslint-disable-next-line no-underscore-dangle
-    const component = componentsByType[field._type]
-
+  styleBinds: (field: AnyData): AnyData => {
     const b = field.border
 
     let border = ''
@@ -440,7 +492,6 @@ export const useFormElements = () => ({
       maxWidth: field.sizes?.maxWidth,
       minHeight: field.sizes?.minHeight,
       maxHeight: field.sizes?.maxHeight,
-      ...(component.editStyles || {}),
     }
   },
 

@@ -1,8 +1,16 @@
 <template>
   <schema-table
     v-model:selected="selected"
-    class="table-editor"
-    v-bind="$attrs"
+    :class="{
+      'table-editor': true,
+      ...(component?.editClasses || {}),
+      ...classBinds(field),
+    }"
+    :style="{
+      ...(component?.editStyles || {}),
+      ...styleBinds(field),
+    }"
+    v-bind="{ ...fieldBinds(field, schemaForField(field), ctx), ...$attrs }"
     :columns="cols"
     hide-filter
   >
@@ -69,15 +77,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { Static } from '@feathersjs/typebox'
 import draggable from 'vuedraggable'
 import hexObjectId from 'hex-object-id'
 import startCase from 'lodash/startCase'
-import { useSyncedProp } from '@/composites/prop'
+import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { useAppEditor } from '@/features/Editor/store'
+import { useFormElements } from '@/features/Forms/composites'
+import { fieldSchema } from '@/shared/schemas/form'
 import SchemaTable from '@/features/Tables/components/SchemaTable.vue'
+import { useI18n } from 'vue-i18n'
+import { useExpression } from '@/features/Expression/composites'
+
+type FormField = Static<typeof fieldSchema>
 
 const props = defineProps<{
+  modelValue: FormField
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   selected?: any[]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -99,6 +115,8 @@ const emit = defineEmits<{
   (e: 'update:selected', value: any[]): void,
 }>()
 
+const field = useModelValue(props, emit)
+
 const selected = useSyncedProp(props, 'selected', emit)
 
 const cols = useSyncedProp(props, 'columns', emit)
@@ -107,17 +125,31 @@ const visCols = useSyncedProp(props, 'visibleColumns', emit)
 
 const editor = useAppEditor()
 
+const {
+  componentsByType,
+  fieldBinds,
+  classBinds,
+  styleBinds,
+  schemaForField,
+} = useFormElements()
+
+const { t } = useI18n()
+
+const { buildCtx } = useExpression(t)
+
+const ctx = buildCtx()
+
 const hover = ref(-1)
 
 const addColumn = (): void => {
   let index = 1
   let newName = `col${index}`
-  let field = cols.value.find((f) => f.name === newName)
-  while (field) {
+  let fld = cols.value.find((f) => f.name === newName)
+  while (fld) {
     index += 1
     newName = `col${index}`
     // eslint-disable-next-line @typescript-eslint/no-loop-func
-    field = cols.value.find((f) => f.name === newName)
+    fld = cols.value.find((f) => f.name === newName)
   }
 
   cols.value.push({
@@ -144,6 +176,11 @@ const removeColumn = (index: number): void => {
     cols.value.splice(index, 1)
   }
 }
+
+const component = computed(() => (
+  // eslint-disable-next-line no-underscore-dangle
+  componentsByType[field.value._type]
+))
 </script>
 
 <style scoped lang="sass">
@@ -168,6 +205,8 @@ const removeColumn = (index: number): void => {
 </style>
 
 <style lang="sass">
+@import 'quasar/src/css/variables'
+
 .table-editor
   thead tr th
     .label

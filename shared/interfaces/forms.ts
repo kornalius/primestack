@@ -35,6 +35,8 @@ export interface TFormComponent {
   color?: string | ((value?: AnyData) => string)
   // component to use
   component?: unknown
+  // component classes to apply while editing
+  classes?: AnyData
   // component styles to apply while editing
   styles?: AnyData
   // apply some styling to the overlay while editing
@@ -49,6 +51,8 @@ export interface TFormComponent {
   schema?: TSchema
   // default values for properties
   defaultValues?: AnyData
+  // edit mode classes to add to component
+  editClasses?: AnyData
   // edit mode styles to add to component
   editStyles?: AnyData
   // overrides from field names (key) to display label values (value)

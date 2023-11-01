@@ -2,8 +2,15 @@
   <div v-if="value">
     <q-virtual-scroll
       v-if="(field as any).virtualScroll"
+      :class="{
+        ...(component?.classes || {}),
+        ...classBinds(field),
+      }"
+      :style="{
+        ...(component?.styles || {}),
+        ...styleBinds(field),
+      }"
       v-bind="fieldBinds(field, schemaForField(field), ctx)"
-      :style="style(field)"
       :items="list"
       :virtual-scroll-horizontal="horizontal"
       v-slot="{ item, index }"
@@ -21,9 +28,16 @@
 
     <div
       v-else
+      :class="{
+        ...(component?.classes || {}),
+        ...classBinds(field),
+      }"
+      :style="{
+        overflow: 'auto',
+        ...(component?.styles || {}),
+        ...styleBinds(field),
+      }"
       v-bind="fieldBinds(field, schemaForField(field), ctx)"
-      :style="style(field)"
-      style="overflow: auto;"
     >
       <q-linear-progress
         v-if="isLoading"
@@ -77,7 +91,13 @@ const emit = defineEmits<{
 
 const value = useModelValue(props, emit)
 
-const { fieldBinds, style, schemaForField } = useFormElements()
+const {
+  componentsByType,
+  fieldBinds,
+  classBinds,
+  styleBinds,
+  schemaForField,
+} = useFormElements()
 
 const { t } = useI18n()
 
@@ -93,6 +113,11 @@ const ctx = buildCtx()
 const fields = computed((): FormField[] => (
   // eslint-disable-next-line no-underscore-dangle
   props.columns[0]._fields as FormField[]
+))
+
+const component = computed(() => (
+  // eslint-disable-next-line no-underscore-dangle
+  componentsByType[props.field._type]
 ))
 
 const list = ref([])

@@ -1,7 +1,15 @@
 <template>
   <div
-    class="row form-row"
-    :style="{ ...style(field), ...($attrs.style || {}) }"
+    :class="{
+      row: true,
+      'form-row': true,
+      ...(component?.editClasses || {}),
+      ...classBinds(field),
+    }"
+    :style="{
+      ...(component?.editStyles || {}),
+      ...styleBinds(field),
+    }"
   >
     <div
       v-for="column in field._columns"
@@ -11,10 +19,15 @@
         'form-column': true,
         selected: editor.isSelected(column._id),
         hovered: editor.isHovered(column._id),
+        ...(componentsByType.col?.editClasses || {}),
+        ...classBinds(column),
+      }"
+      :style="{
+        'z-index': 1,
+        ...(componentsByType.col?.editStyles || {}),
+        ...styleBinds(column),
       }"
       v-bind="fieldBinds(column, schemaForField(column), ctx)"
-      style="z-index: 1;"
-      :style="style(column)"
       @mouseover.stop="editor.hover(column._id)"
       @mouseleave="editor.unhover()"
       @focus.stop="editor.hover(column._id)"
@@ -83,7 +96,8 @@ const field = useModelValue(props, emit)
 
 const {
   fieldBinds,
-  style,
+  classBinds,
+  styleBinds,
   schemaForField,
   componentsByType,
 } = useFormElements()
@@ -103,6 +117,11 @@ const colName = (column: FormColumn): string => {
   }
   return `col-${c.col}`
 }
+
+const component = computed(() => (
+  // eslint-disable-next-line no-underscore-dangle
+  componentsByType[field.value._type]
+))
 
 /**
  * Selection

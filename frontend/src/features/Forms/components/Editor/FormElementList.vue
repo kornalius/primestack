@@ -1,7 +1,14 @@
 <template>
   <div
-    class="list"
-    :style="{ ...style(field), ...($attrs.style || {}) }"
+    :class="{
+      list: true,
+      ...(component?.editClasses || {}),
+      ...classBinds(field),
+    }"
+    :style="{
+      ...(component?.editStyles || {}),
+      ...styleBinds(field),
+    }"
     @click.stop="$emit('click')"
   >
     <div class="list-column">
@@ -33,11 +40,20 @@ const emit = defineEmits<{
 
 const field = useModelValue(props, emit)
 
-const { style } = useFormElements()
+const {
+  componentsByType,
+  classBinds,
+  styleBinds,
+} = useFormElements()
 
 const fields = computed((): FormField[] => (
   // eslint-disable-next-line no-underscore-dangle
   field.value._columns[0]._fields
+))
+
+const component = computed(() => (
+  // eslint-disable-next-line no-underscore-dangle
+  componentsByType[field.value._type]
 ))
 </script>
 

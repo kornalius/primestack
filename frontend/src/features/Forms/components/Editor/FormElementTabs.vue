@@ -2,6 +2,15 @@
   <tabs-editor
     v-model="field._columns"
     v-model:tab="active"
+    :class="{
+      toolbar: true,
+      ...(component?.editClasses || {}),
+      ...classBinds(field),
+    }"
+    :style="{
+      ...(component?.editStyles || {}),
+      ...styleBinds(field),
+    }"
     v-bind="{ ...fieldBinds(field, schemaForField(field), ctx), ...$attrs }"
     @click-tab="(tab) => editor.select(tab._id)"
   />
@@ -26,7 +35,9 @@
 </template>
 
 <script setup lang="ts">
-import { Ref, ref, watch } from 'vue'
+import {
+  computed, Ref, ref, watch,
+} from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
@@ -53,7 +64,10 @@ const emit = defineEmits<{
 const field = useModelValue(props, emit)
 
 const {
+  componentsByType,
   fieldBinds,
+  classBinds,
+  styleBinds,
   schemaForField,
 } = useFormElements()
 
@@ -62,6 +76,11 @@ const { t } = useI18n()
 const { buildCtx } = useExpression(t)
 
 const ctx = buildCtx()
+
+const component = computed(() => (
+  // eslint-disable-next-line no-underscore-dangle
+  componentsByType[field.value._type]
+))
 
 /**
  * Active tab

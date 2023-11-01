@@ -2,10 +2,12 @@
   <div>
     <div class="sizes row items-center justify-center q-mb-xs">
       <div class="col-auto">
-        <q-input
+        <unit-input
           v-model="value.width"
           class="field"
+          :units="units"
           label="width"
+          default-unit="px"
           hide-bottom-space
           outlined
           dense
@@ -18,10 +20,12 @@
       </div>
 
       <div class="col-auto">
-        <q-input
+        <unit-input
           v-model="value.height"
           class="field"
+          :units="units"
           label="height"
+          default-unit="px"
           hide-bottom-space
           outlined
           dense
@@ -32,10 +36,12 @@
 
     <div class="row items-center justify-center q-mb-xs">
       <div class="col-auto">
-        <q-input
+        <unit-input
           v-model="value.minWidth"
           class="field"
+          :units="units"
           label="min width"
+          default-unit="px"
           hide-bottom-space
           outlined
           dense
@@ -48,10 +54,12 @@
       </div>
 
       <div class="col-auto">
-        <q-input
+        <unit-input
           v-model="value.maxWidth"
           class="field"
+          :units="units"
           label="max width"
+          default-unit="px"
           hide-bottom-space
           outlined
           dense
@@ -62,10 +70,12 @@
 
     <div class="row items-center justify-center">
       <div class="col-auto">
-        <q-input
+        <unit-input
           v-model="value.minHeight"
           class="field"
+          :units="units"
           label="min height"
+          default-unit="px"
           hide-bottom-space
           outlined
           dense
@@ -78,10 +88,12 @@
       </div>
 
       <div class="col-auto">
-        <q-input
+        <unit-input
           v-model="value.maxHeight"
           class="field"
+          :units="units"
           label="max height"
+          default-unit="px"
           hide-bottom-space
           outlined
           dense
@@ -96,6 +108,7 @@
 import { useModelValue } from '@/composites/prop'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useAppEditor } from '@/features/Editor/store'
+import UnitInput from '@/features/Fields/components/UnitInput.vue'
 
 const props = defineProps<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -111,6 +124,12 @@ const emit = defineEmits<{
 const value = useModelValue(props, emit)
 
 const editor = useAppEditor()
+
+const units = [
+  { label: 'px', value: 'px' },
+  { label: '%', value: '%' },
+  { label: 'rem', value: 'rem' },
+]
 </script>
 
 <style scoped lang="sass">
@@ -123,5 +142,5 @@ const editor = useAppEditor()
   padding: 4px
 
 .field
-  width: 78px
+  width: 96px
 </style>

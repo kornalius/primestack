@@ -1,15 +1,30 @@
 <template>
   <div
-    class="row q-gutter-sm"
+    :class="{
+      row: true,
+      'q-gutter-sm': true,
+      ...(component?.classes || {}),
+      ...classBinds(field),
+    }"
+    :style="{
+      ...(component?.styles || {}),
+      ...styleBinds(field),
+    }"
     v-bind="fieldBinds(field, schemaForField(field), ctx)"
-    :style="style(field)"
   >
     <div
       v-for="column in columns"
       :key="column._id"
-      :class="{ [colName(column)]: true }"
+      :class="{
+        [colName(column)]: true,
+        ...(componentsByType.col?.classes || {}),
+        ...classBinds(column),
+      }"
+      :style="{
+        ...(componentsByType.col?.styles || {}),
+        ...styleBinds(column),
+      }"
       v-bind="fieldBinds(column, schemaForField(column), ctx)"
-      :style="style(column)"
     >
       <form-display
         v-model="value"
@@ -20,6 +35,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
@@ -45,13 +61,24 @@ const emit = defineEmits<{
 
 const value = useModelValue(props, emit)
 
-const { fieldBinds, style, schemaForField } = useFormElements()
+const {
+  componentsByType,
+  fieldBinds,
+  classBinds,
+  styleBinds,
+  schemaForField,
+} = useFormElements()
 
 const { t } = useI18n()
 
 const { buildCtx } = useExpression(t)
 
 const ctx = buildCtx()
+
+const component = computed(() => (
+  // eslint-disable-next-line no-underscore-dangle
+  componentsByType[props.field._type]
+))
 
 const colName = (column: FormColumn): string => {
   const c = column as AnyData

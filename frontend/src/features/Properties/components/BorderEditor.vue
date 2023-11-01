@@ -62,10 +62,6 @@
     </div>
 
     <div class="row q-my-xs">
-      <div class="col-auto q-mr-md">
-        Preview:
-      </div>
-
       <div class="col">
         <div class="previewBox">
           <div
@@ -74,32 +70,48 @@
             :style="style"
           />
 
-          <q-input
+          <unit-input
             v-model="value.radius.topLeft"
-            style="position: absolute; top: 8px; left: 8px; width: 66px;"
-            dense
+            class="field"
+            style="position: absolute; top: 8px; left: 8px;"
+            :units="units"
+            default-unit="px"
             outlined
+            dense
+            @keydown="editor.preventSystemUndoRedo"
           />
 
-          <q-input
+          <unit-input
             v-model="value.radius.topRight"
-            style="position: absolute; top: 8px; right: 8px; width: 66px;"
-            dense
+            class="field"
+            style="position: absolute; top: 8px; right: 8px;"
+            :units="units"
+            default-unit="px"
             outlined
+            dense
+            @keydown="editor.preventSystemUndoRedo"
           />
 
-          <q-input
+          <unit-input
             v-model="value.radius.bottomLeft"
-            style="position: absolute; bottom: 8px; left: 8px; width: 66px;"
-            dense
+            class="field"
+            style="position: absolute; bottom: 8px; left: 8px;"
+            :units="units"
+            default-unit="px"
             outlined
+            dense
+            @keydown="editor.preventSystemUndoRedo"
           />
 
-          <q-input
+          <unit-input
             v-model="value.radius.bottomRight"
-            style="position: absolute; bottom: 8px; right: 8px; width: 66px;"
-            dense
+            class="field"
+            style="position: absolute; bottom: 8px; right: 8px;"
+            :units="units"
+            default-unit="px"
             outlined
+            dense
+            @keydown="editor.preventSystemUndoRedo"
           />
         </div>
       </div>
@@ -114,6 +126,7 @@ import { AnyData } from '@/shared/interfaces/commons'
 import { useAppEditor } from '@/features/Editor/store'
 import ColorField from '@/features/Fields/components/ColorField.vue'
 import BtnToggleMulti from '@/features/Fields/components/BtnToggleMulti.vue'
+import UnitInput from '@/features/Fields/components/UnitInput.vue'
 
 const props = defineProps<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -131,7 +144,14 @@ const value = useModelValue(props, emit)
 
 const editor = useAppEditor()
 
+const units = [
+  { label: 'px', value: 'px' },
+  { label: '%', value: '%' },
+  { label: 'rem', value: 'rem' },
+]
+
 const styleOptions = computed(() => [
+  { label: 'none', value: 'none' },
   { label: 'solid', value: 'solid' },
   { label: 'dashed', value: 'dashed' },
   { label: 'dotted', value: 'dotted' },
@@ -140,7 +160,6 @@ const styleOptions = computed(() => [
   { label: 'ridge', value: 'ridge' },
   { label: 'inset', value: 'inset' },
   { label: 'outset', value: 'outset' },
-  { label: 'none', value: 'none' },
 ])
 
 const sidesOptions = computed(() => [
@@ -174,7 +193,10 @@ const style = computed(() => {
 
 <style scoped lang="sass">
 .previewBox
-  width: 150px
+  width: 224px
   height: 100px
   position: relative
+
+.field
+  width: 100px
 </style>

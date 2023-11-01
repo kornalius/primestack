@@ -90,7 +90,6 @@
       <form-element-row
         v-if="isRow(field)"
         v-model="field"
-        :style="component?.styles"
         @remove="(col) => editor.removeColumnFromField(col, field)"
         @click="onColumnClick"
       />
@@ -100,7 +99,6 @@
       <form-element-list
         v-else-if="isList(field)"
         v-model="field"
-        :style="component?.styles"
         @click="onClick"
       />
 
@@ -109,7 +107,6 @@
       <form-element-toolbar
         v-else-if="isToolbar(field)"
         v-model="field"
-        :style="component?.styles"
         @click="onClick"
       />
 
@@ -118,7 +115,6 @@
       <form-element-tabs
         v-else-if="isTabs(field)"
         v-model="field"
-        :style="component?.styles"
         @click="onClick"
       />
 
@@ -128,7 +124,6 @@
         v-else-if="isCard(field)"
         v-model="field"
         class="card"
-        :style="component?.styles"
         @remove="(col) => editor.removeColumnFromField(col, field)"
         @click="onColumnClick"
       />
@@ -139,7 +134,6 @@
         v-else-if="isEmbeddedForm(field)"
         v-model="field"
         class="form"
-        :style="component?.styles"
         @click="onClick"
       />
 
@@ -149,11 +143,18 @@
         v-else-if="isTable(field)"
         v-model:columns="field.columns"
         v-model:visible-columns="field.visibleColumns"
-        :model-value="displayValue"
+        :class="{
+          ...(component?.classes || {}),
+          ...classBinds(field),
+        }"
+        :style="{
+          ...(component?.styles || {}),
+          ...styleBinds(field),
+        }"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
+        :model-value="field"
         :add-button="undefined"
         :query="queryToMongo(field.query, fieldTable, ctx.$expr)"
-        :style="{ ...style(field), ...(component?.styles || {}) }"
       />
 
       <!-- Icon -->
@@ -161,8 +162,15 @@
       <q-icon
         v-else-if="isIcon(field)"
         :name="displayValue as string"
+        :class="{
+          ...(component?.classes || {}),
+          ...classBinds(field),
+        }"
+        :style="{
+          ...(component?.styles || {}),
+          ...styleBinds(field),
+        }"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
-        :style="{ ...style(field), ...(component?.styles || {}) }"
       />
 
       <!-- Regular component -->
@@ -171,8 +179,15 @@
         :is="componentForField(field)"
         v-else
         :model-value="displayValue"
+        :class="{
+          ...(component?.classes || {}),
+          ...classBinds(field),
+        }"
+        :style="{
+          ...(component?.styles || {}),
+          ...styleBinds(field),
+        }"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
-        :style="{ ...style(field), ...(component?.styles || {}) }"
       />
 
       <!-- Overlay -->
@@ -226,7 +241,8 @@ const {
   componentsByType,
   componentForField,
   fieldBinds,
-  style,
+  classBinds,
+  styleBinds,
   isRow,
   isList,
   isToolbar,

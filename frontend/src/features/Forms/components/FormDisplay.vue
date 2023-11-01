@@ -66,8 +66,15 @@
 
       <div
         v-else-if="isParagraph(field)"
+        :class="{
+          ...(componentsByType[field._type]?.classes || {}),
+          ...classBinds(field),
+        }"
+        :style="{
+          ...(componentsByType[field._type]?.styles || {}),
+          ...styleBinds(field),
+        }"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
-        :style="style(field)"
         v-html="displayValue(field)"
       />
 
@@ -76,7 +83,14 @@
       <label-field
         v-else-if="isLabel(field)"
         :model-value="displayValue(field) as string"
-        :style="style(field)"
+        :class="{
+          ...(componentsByType[field._type]?.classes || {}),
+          ...classBinds(field),
+        }"
+        :style="{
+          ...(componentsByType[field._type]?.styles || {}),
+          ...styleBinds(field),
+        }"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
       />
 
@@ -85,8 +99,15 @@
       <q-icon
         v-else-if="isIcon(field)"
         :name="displayValue(field) as string"
+        :class="{
+          ...(componentsByType[field._type]?.classes || {}),
+          ...classBinds(field),
+        }"
+        :style="{
+          ...(componentsByType[field._type]?.styles || {}),
+          ...styleBinds(field),
+        }"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
-        :style="style(field)"
       />
 
       <!-- Numeric with field -->
@@ -95,8 +116,15 @@
         :is="componentForField(field)"
         v-else-if="isNumericInput(field) && (field as any).field"
         v-model.number="value[(field as any).field]"
+        :class="{
+          ...(componentsByType[field._type]?.classes || {}),
+          ...classBinds(field),
+        }"
+        :style="{
+          ...(componentsByType[field._type]?.styles || {}),
+          ...styleBinds(field),
+        }"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
-        :style="style(field)"
         :rules="serializeRules(t, field)"
         lazy-rules
       />
@@ -106,9 +134,16 @@
       <component
         :is="componentForField(field)"
         v-else-if="isNumericInput(field)"
-        v-bind="fieldBinds(field, schemaForField(field), ctx)"
         :model-value="field[modelValueForField(field)]"
-        :style="style(field)"
+        :class="{
+          ...(componentsByType[field._type]?.classes || {}),
+          ...classBinds(field),
+        }"
+        :style="{
+          ...(componentsByType[field._type]?.styles || {}),
+          ...styleBinds(field),
+        }"
+        v-bind="fieldBinds(field, schemaForField(field), ctx)"
         :rules="serializeRules(t, field)"
         lazy-rules
       />
@@ -119,8 +154,15 @@
         :is="componentForField(field)"
         v-else-if="(field as any).field"
         v-model="value[(field as any).field]"
+        :class="{
+          ...(componentsByType[field._type]?.classes || {}),
+          ...classBinds(field),
+        }"
+        :style="{
+          ...(componentsByType[field._type]?.styles || {}),
+          ...styleBinds(field),
+        }"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
-        :style="style(field)"
         :rules="serializeRules(t, field)"
         lazy-rules
       />
@@ -131,8 +173,15 @@
         :is="componentForField(field)"
         v-else
         :model-value="field[modelValueForField(field)]"
+        :class="{
+          ...(componentsByType[field._type]?.classes || {}),
+          ...classBinds(field),
+        }"
+        :style="{
+          ...(componentsByType[field._type]?.styles || {}),
+          ...styleBinds(field),
+        }"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
-        :style="style(field)"
         :rules="serializeRules(t, field)"
         lazy-rules
       />
@@ -182,7 +231,8 @@ const { t } = useI18n()
 const {
   componentForField,
   fieldBinds,
-  style,
+  classBinds,
+  styleBinds,
   isNumericInput,
   schemaForField,
   isRow,

@@ -28,6 +28,9 @@ export default {
       },
     ],
   },
+  editStyles: {
+    minHeight: '50px',
+  },
   categories: {
     style: {
       icon: styleIcon,

@@ -1,14 +1,28 @@
 <template>
   <q-card
-    class="q-gutter-sm"
+    :class="{
+      'q-gutter-sm': true,
+      ...(component?.classes || {}),
+      ...classBinds(field),
+    }"
+    :style="{
+      ...(component?.styles || {}),
+      ...styleBinds(field),
+    }"
     v-bind="fieldBinds(field, schemaForField(field), ctx)"
-    :style="style(field)"
   >
     <q-card-section
       v-for="cardSection in cardSections"
       :key="cardSection._id"
+      :class="{
+        ...(componentsByType['card-section']?.classes || {}),
+        ...classBinds(cardSection),
+      }"
+      :style="{
+        ...(componentsByType['card-section']?.styles || {}),
+        ...styleBinds(cardSection),
+      }"
       v-bind="fieldBinds(cardSection, schemaForField(cardSection), ctx)"
-      :style="style(cardSection)"
     >
       <form-display
         v-model="value"
@@ -21,10 +35,15 @@
       :key="cardAction._id"
       :class="{
         'card-cardAction': true,
+        ...(componentsByType['card-action']?.classes || {}),
+        ...classBinds(cardAction),
+      }"
+      :style="{
+        'z-index': 1,
+        ...(componentsByType['card-action']?.styles || {}),
+        ...styleBinds(cardAction),
       }"
       v-bind="fieldBinds(cardAction, schemaForField(cardAction), ctx)"
-      style="z-index: 1;"
-      :style="style(cardAction)"
     >
       <form-display
         v-model="value"
@@ -61,8 +80,10 @@ const emit = defineEmits<{
 const value = useModelValue(props, emit)
 
 const {
+  componentsByType,
   fieldBinds,
-  style,
+  classBinds,
+  styleBinds,
   schemaForField,
   isCardActions,
   isCardSection,
@@ -82,5 +103,10 @@ const cardSections = computed(() => (
 const cardActions = computed(() => (
   // eslint-disable-next-line no-underscore-dangle
   props.columns.filter((f) => isCardActions(f))
+))
+
+const component = computed(() => (
+  // eslint-disable-next-line no-underscore-dangle
+  componentsByType[props.field._type]
 ))
 </script>

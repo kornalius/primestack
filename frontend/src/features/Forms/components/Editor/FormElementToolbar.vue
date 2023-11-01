@@ -1,8 +1,15 @@
 <template>
   <q-toolbar
-    class="toolbar"
+    :class="{
+      toolbar: true,
+      ...(component?.editClasses || {}),
+      ...classBinds(field),
+    }"
+    :style="{
+      ...(component?.editStyles || {}),
+      ...styleBinds(field),
+    }"
     v-bind="fieldBinds(field, schemaForField(field), ctx)"
-    :style="{ ...style(field), ...($attrs.style || {}) }"
   >
     <div class="toolbar-column">
       <fields-editor
@@ -37,8 +44,10 @@ const emit = defineEmits<{
 const field = useModelValue(props, emit)
 
 const {
+  componentsByType,
   fieldBinds,
-  style,
+  classBinds,
+  styleBinds,
   schemaForField,
 } = useFormElements()
 
@@ -51,6 +60,11 @@ const ctx = buildCtx()
 const fields = computed((): FormField[] => (
   // eslint-disable-next-line no-underscore-dangle
   field.value._columns[0]._fields as FormField[]
+))
+
+const component = computed(() => (
+  // eslint-disable-next-line no-underscore-dangle
+  componentsByType[field.value._type]
 ))
 </script>
 
