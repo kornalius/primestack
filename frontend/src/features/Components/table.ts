@@ -165,7 +165,7 @@ export default {
     model: {
       icon: modelIcon,
       names: [
-        'tableId',
+        { name: 'tableId', label: 'Table' },
         'query',
         { name: 'temps', label: 'Show Temps' },
         'rows',

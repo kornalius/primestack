@@ -105,7 +105,12 @@ watch(() => props.field, () => {
   // expression
   const expr = field.loopExpr
   if (expr && isExpr(expr)) {
-    list.value = runExpr(exprCode(expr), ctx) as unknown[]
+    const v = runExpr(exprCode(expr), ctx) as unknown[]
+    if (typeof v === 'number') {
+      list.value = new Array(v).fill(undefined)
+    } else {
+      list.value = v
+    }
   } else if (field.tableId) {
     // tableId with optional query
     const userTable = useFeathersService('tables').findOneInStore({ query: {} })

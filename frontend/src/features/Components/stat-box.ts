@@ -88,7 +88,7 @@ export default {
           label: 'Table',
           sectionColor: 'pink-1',
           children: [
-            'tableId',
+            { name: 'tableId', label: 'Table' },
             'field',
             'groupFields',
             'filter',

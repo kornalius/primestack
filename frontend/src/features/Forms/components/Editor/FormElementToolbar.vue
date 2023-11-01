@@ -1,21 +1,25 @@
 <template>
-  <div
-    class="list"
+  <q-toolbar
+    class="toolbar"
+    v-bind="fieldBinds(field, schemaForField(field), ctx)"
     :style="{ ...style(field), ...($attrs.style || {}) }"
-    @click.stop="$emit('click')"
   >
-    <div class="list-column">
-      <fields-editor v-model="fields" />
+    <div class="toolbar-column">
+      <fields-editor
+        v-model="fields"
+        horizontal
+      />
     </div>
-  </div>
+  </q-toolbar>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
+import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
 import { fieldSchema } from '@/shared/schemas/form'
-// eslint-disable-next-line import/no-cycle
+import { useExpression } from '@/features/Expression/composites'
 import { useFormElements } from '../../composites'
 import FieldsEditor from './FieldsEditor.vue'
 
@@ -27,32 +31,41 @@ const props = defineProps<{
 
 // eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
-  (e: 'click'): void,
   (e: 'update:model-value', value: FormField): void,
 }>()
 
 const field = useModelValue(props, emit)
 
-const { style } = useFormElements()
+const {
+  fieldBinds,
+  style,
+  schemaForField,
+} = useFormElements()
+
+const { t } = useI18n()
+
+const { buildCtx } = useExpression(t)
+
+const ctx = buildCtx()
 
 const fields = computed((): FormField[] => (
   // eslint-disable-next-line no-underscore-dangle
-  field.value._columns[0]._fields
+  field.value._columns[0]._fields as FormField[]
 ))
 </script>
 
 <style scoped lang="sass">
 @import 'quasar/src/css/variables'
 
-.list
+.toolbar
   position: relative
   min-height: 40px
   outline: 1px dashed $blue-grey-2
   border-radius: 4px
 
-.list-column
+.toolbar-column
   position: relative
   margin: 8px 4px
-  padding: 8px 4px 4px 4px
+  width: 100%
   z-index: 1
 </style>

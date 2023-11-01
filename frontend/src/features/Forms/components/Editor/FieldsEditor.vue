@@ -1,10 +1,11 @@
 <template>
   <div>
     <draggable
-      :list="fields"
       class="form-builder-container"
+      :list="fields"
       :group="{ name: 'form-builder' }"
       :animation="150"
+      :direction="horizontal ? 'horizontal' : undefined"
       easing="cubic-bezier(1, 0, 0, 1)"
       item-key="_id"
       @start="editor.setDragging(true)"
@@ -15,6 +16,7 @@
         <form-element
           v-model="fields[index]"
           :selected="editor.isSelected(fields[index]._id)"
+          :horizontal="horizontal"
           @click="editor.select"
           @remove="remove"
         />
@@ -36,6 +38,7 @@ type FormField = Static<typeof fieldSchema>
 
 const props = defineProps<{
   modelValue: unknown[]
+  horizontal?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits

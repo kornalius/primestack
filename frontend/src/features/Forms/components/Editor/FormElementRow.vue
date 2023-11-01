@@ -28,8 +28,7 @@
 
       <div
         v-if="!editor.isDragging && editor.isHovered(column._id)"
-        class="action-button bg-grey-9 rounded-borders no-pointer-events"
-        style="left: -9px; top: -9px; width: 18px;"
+        class="action-button component-icon bg-grey-9 rounded-borders no-pointer-events"
       >
         <q-icon :name="columnIcon" color="white" size="xs" />
       </div>
@@ -42,7 +41,7 @@
         color="red-4"
         size="xs"
         round
-        @click="onRemoveClick(column)"
+        @click.stop="onRemoveClick(column)"
       />
 
       <fields-editor v-model="column._fields" />
@@ -149,7 +148,18 @@ const onRemoveClick = (column: FormColumn) => {
 .action-button
   position: absolute
   top: 0
+  width: 24px
+  height: 24px
+  transform: translate(50%, -50%)
   z-index: 5
+
+.component-icon
+  position: absolute
+  left: 0
+  top: 0
+  width: 18px
+  height: 22px
+  transform: translate(-50%, -50%)
 
 .overlay
   position: absolute

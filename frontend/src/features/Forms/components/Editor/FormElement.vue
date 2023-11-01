@@ -5,6 +5,10 @@
       selected,
       hovered: editor.isHovered(field._id),
     }"
+    :style="{
+      display: horizontal ? 'inline-block' : undefined,
+      width: !horizontal ? '100%' : undefined,
+    }"
     @mouseover.stop="editor.hover(field._id)"
     @mouseleave="editor.unhover()"
     @focus.stop="editor.hover(field._id)"
@@ -14,8 +18,7 @@
 
     <div
       v-if="!editor.isDragging && editor.isHovered(field._id)"
-      class="action-button bg-grey-9 rounded-borders no-pointer-events"
-      style="left: -9px; top: -9px; width: 18px;"
+      class="action-button component-icon bg-grey-9 rounded-borders no-pointer-events"
     >
       <q-icon
         :name="stringValue(component?.icon)"
@@ -27,7 +30,7 @@
     <!-- Add column button -->
 
     <q-btn
-      v-if="(isRow(field) || isCard(field)) && !editor.isDragging && editor.isHovered(field._id)"
+      v-if="showAddButton && !editor.isDragging && editor.isHovered(field._id)"
       class="action-button"
       style="right: 26px;"
       icon="mdi-plus"
@@ -80,6 +83,7 @@
     <div
       ref="element"
       class="element"
+      :style="{ display: horizontal ? 'inline-block' : undefined }"
     >
       <!-- Row -->
 
@@ -95,6 +99,15 @@
 
       <form-element-list
         v-else-if="isList(field)"
+        v-model="field"
+        :style="component?.styles"
+        @click="onClick"
+      />
+
+      <!-- Toolbar -->
+
+      <form-element-toolbar
+        v-else-if="isToolbar(field)"
         v-model="field"
         :style="component?.styles"
         @click="onClick"
@@ -191,6 +204,7 @@ import FormElementCard from './FormElementCard.vue'
 import FormElementTabs from './FormElementTabs.vue'
 import FormElementEmbeddedForm from './FormElementEmbeddedForm.vue'
 import FormElementList from './FormElementList.vue'
+import FormElementToolbar from './FormElementToolbar.vue'
 
 type FormField = Static<typeof fieldSchema>
 type FormColumn = Static<typeof columnSchema>
@@ -198,6 +212,7 @@ type FormColumn = Static<typeof columnSchema>
 const props = defineProps<{
   modelValue: FormField
   selected?: boolean
+  horizontal?: boolean
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits
@@ -214,6 +229,7 @@ const {
   style,
   isRow,
   isList,
+  isToolbar,
   isTabs,
   isCard,
   isEmbeddedForm,
@@ -276,6 +292,10 @@ const toggleInteractable = () => {
   activeInteractable.value = !activeInteractable.value
 }
 
+const showAddButton = computed(() => (
+  isRow(field.value) || isCard(field.value)
+))
+
 const overlayTop = ref('')
 
 watch([() => props.modelValue, component], () => {
@@ -300,7 +320,6 @@ watch([() => props.modelValue, component], () => {
 .form-element
   position: relative
   margin: 8px 0
-  width: 100%
   border-radius: 4px
 
   &:first-child
@@ -317,8 +336,20 @@ watch([() => props.modelValue, component], () => {
 
 .action-button
   position: absolute
+  right: 0
   top: 0
+  width: 24px
+  height: 24px
+  transform: translate(50%, -50%)
   z-index: 5
+
+.component-icon
+  position: absolute
+  left: 0
+  top: 0
+  width: 18px
+  height: 22px
+  transform: translate(-50%, -50%)
 
 .element
   position: relative

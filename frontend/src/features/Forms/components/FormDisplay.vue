@@ -26,13 +26,22 @@
         :horizontal="(field as any).horizontal"
       />
 
+      <!-- Toolbar -->
+
+      <form-display-toolbar
+        v-else-if="isToolbar(field)"
+        v-model="value"
+        :field="field"
+        :columns="field._columns"
+      />
+
       <!-- Tabs -->
 
       <form-display-tabs
         v-else-if="isTabs(field)"
         v-model="value"
         :field="field"
-        :tabs="field._columns"
+        :tabs="field._columns as FormTab[]"
       />
 
       <!-- Card -->
@@ -137,7 +146,7 @@ import { Static } from '@feathersjs/typebox'
 import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
 import { getProp, useExpression } from '@/features/Expression/composites'
-import { fieldSchema } from '@/shared/schemas/form'
+import { fieldSchema, tabSchema } from '@/shared/schemas/form'
 import LabelField from '@/features/Fields/components/LabelField.vue'
 import { AnyData } from '@/shared/interfaces/commons'
 // eslint-disable-next-line import/no-cycle
@@ -148,8 +157,10 @@ import FormDisplayCard from './FormDisplayCard.vue'
 import FormDisplayTabs from './FormDisplayTabs.vue'
 import FormEmbedded from './FormEmbedded.vue'
 import FormDisplayList from './FormDisplayList.vue'
+import FormDisplayToolbar from './FormDisplayToolbar.vue'
 
 type FormField = Static<typeof fieldSchema>
+type FormTab = Static<typeof tabSchema>
 
 const props = defineProps<{
   modelValue: Record<string, unknown>
@@ -176,6 +187,7 @@ const {
   schemaForField,
   isRow,
   isList,
+  isToolbar,
   isTabs,
   isCard,
   isEmbeddedForm,

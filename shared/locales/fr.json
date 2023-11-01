@@ -411,6 +411,9 @@
     "toggle": {
       "label": "Basculateur"
     },
+    "toolbar": {
+      "label": "Barre d'outils"
+    },
     "value-box": {
       "label": "Boîte Valeur"
     },

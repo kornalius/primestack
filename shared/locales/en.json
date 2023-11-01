@@ -418,6 +418,9 @@
     "toggle": {
       "label": "Toggle"
     },
+    "toolbar": {
+      "label": "Toolbar"
+    },
     "video": {
       "label": "Video"
     },

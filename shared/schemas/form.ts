@@ -24,7 +24,6 @@ export const tabSchema = Type.Object(
 export const columnSchema = Type.Recursive((self) => Type.Object(
   {
     _id: ExType.Id(),
-    name: Type.String(),
     _type: Type.String(),
     size: Type.Optional(Type.Number()),
     _fields: Type.Array(Type.Object(
@@ -135,7 +134,7 @@ export const formSchema = Type.Object(
       table: {
         icon: tableIcon,
         names: [
-          'tableId',
+          { name: 'tableId', label: 'Table' },
           'hideTable',
           'query',
           'data',

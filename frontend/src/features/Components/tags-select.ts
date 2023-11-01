@@ -85,7 +85,7 @@ export default {
       icon: modelIcon,
       names: [
         'value',
-        'tableId',
+        { name: 'tableId', label: 'Table' },
         'field',
         'multiple',
         'displayValue',

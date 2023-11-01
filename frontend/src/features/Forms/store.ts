@@ -322,8 +322,6 @@ export const useFormEditor = defineStore('form-editor', () => {
           { ...acc, [k]: defaultValueForSchema(colComponent.schema.properties[k]) }
         ), {}),
       ...(defaultValues(colComponent.defaultValues) || {}),
-      // eslint-disable-next-line no-underscore-dangle
-      name: newNameForField(type, flatFields()),
     } as FormColumn
     // eslint-disable-next-line no-underscore-dangle
     field._columns.push(col)

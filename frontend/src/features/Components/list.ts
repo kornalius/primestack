@@ -38,7 +38,7 @@ export default {
         _id: hexObjectId(),
         _type: 'col',
         _fields: [],
-        name: 'listcol',
+        virtualScrollItemSize: 24,
       },
     ],
   },

@@ -67,7 +67,7 @@
       </div>
 
       <div class="col container q-pa-sm">
-        <fields-editor v-model="fields" />
+        <fields-editor v-model="fields" class="q-pa-sm" />
       </div>
     </div>
   </div>

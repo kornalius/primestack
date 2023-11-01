@@ -101,7 +101,7 @@ export default {
       names: [
         'value',
         'field',
-        'tableId',
+        { name: 'tableId', label: 'Table' },
         'options',
         'optionLabel',
         'optionValue',

@@ -96,7 +96,7 @@ export default {
       names: [
         'value',
         'field',
-        'tableId',
+        { name: 'tableId', label: 'Table' },
         'valueField',
         'labelField',
         'columns',
