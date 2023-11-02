@@ -113,6 +113,12 @@
           'items-center': true,
         }"
       >
+        <!-- Prepend -->
+
+        <div class="col-auto">
+          <slot name="prepend" v-bind="{ propName, hover }" />
+        </div>
+
         <!-- Label column -->
 
         <div
@@ -198,6 +204,12 @@
               </q-list>
             </q-menu>
           </q-btn>
+        </div>
+
+        <!-- Append -->
+
+        <div class="col-auto">
+          <slot name="append" v-bind="{ propName, hover }" />
         </div>
       </div>
     </q-item-section>
@@ -332,6 +344,12 @@
           }"
         />
 
+        <!-- Prepend -->
+
+        <div class="col-auto">
+          <slot name="prepend" v-bind="{ propName, hover }" />
+        </div>
+
         <!-- Label column -->
 
         <div
@@ -357,6 +375,12 @@
             embed-label
             property
           />
+        </div>
+
+        <!-- Append -->
+
+        <div class="col-auto">
+          <slot name="append" v-bind="{ propName, hover }" />
         </div>
       </div>
     </template>

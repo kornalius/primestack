@@ -23,6 +23,10 @@
             @click="rename"
           />
         </div>
+
+        <div class="col">
+          <slot name="title-append" v-bind="{ hover: hoverName }" />
+        </div>
       </div>
     </template>
   </section-title>
@@ -72,7 +76,17 @@
       :embed-label="embedLabel"
       :include-form-data-fields="includeFormDataFields"
       horizontal
-    />
+    >
+      <template #prepend="attrs">
+        prepend
+        <slot name="prepend" v-bind="attrs" />
+      </template>
+
+      <template #append="attrs">
+        append
+        <slot name="append" v-bind="attrs" />
+      </template>
+    </property-editor>
   </div>
 
   <!-- Vertical layout -->
@@ -102,7 +116,15 @@
         :section-color="n.sectionColor"
         :embed-label="embedLabel"
         :include-form-data-fields="includeFormDataFields"
-      />
+      >
+        <template #prepend="attrs">
+          <slot name="prepend" v-bind="attrs" />
+        </template>
+
+        <template #append="attrs">
+          <slot name="append" v-bind="attrs" />
+        </template>
+      </property-editor>
 
       <q-expansion-item
         v-else-if="n.children?.length > 0"
@@ -204,7 +226,15 @@
                   :section-color="n.sectionColor"
                   :include-form-data-fields="includeFormDataFields"
                   embed-label
-                />
+                >
+                  <template #prepend="attrs">
+                    <slot name="prepend" v-bind="attrs" />
+                  </template>
+
+                  <template #append="attrs">
+                    <slot name="append" v-bind="attrs" />
+                  </template>
+                </property-editor>
               </div>
             </div>
           </div>
