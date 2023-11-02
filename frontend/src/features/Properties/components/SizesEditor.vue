@@ -111,13 +111,10 @@ import { useAppEditor } from '@/features/Editor/store'
 import UnitInput from '@/features/Fields/components/UnitInput.vue'
 
 const props = defineProps<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   modelValue: AnyData
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (e: 'update:model-value', value: AnyData): void,
 }>()
 

@@ -256,7 +256,6 @@ const props = defineProps<{
   editLabel?: string
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'row-click', value: unknown): void,
   (e: 'add', value: unknown): void,

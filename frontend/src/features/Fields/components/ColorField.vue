@@ -45,7 +45,6 @@ const props = defineProps<{
   quasarPalette?: boolean
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'update:model-value', value: string | null | undefined): void,
 }>()

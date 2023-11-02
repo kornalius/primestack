@@ -58,7 +58,16 @@
       include-form-data-fields
       show-name
       renameable
-    />
+    >
+      <template #title-append="{ hover }">
+        <blueprint-select
+          class="q-ml-sm"
+          :style="{ opacity: hover ? 1 : 0 }"
+          :field="selectedField"
+          :component="selectedComponent"
+        />
+      </template>
+    </properties-editor>
 
     <!-- Table editor properties -->
 
@@ -149,6 +158,7 @@ import { tableSchema, tableFieldSchema } from '@/shared/schemas/table'
 import { omitFields } from '@/shared/schema'
 import SectionTitle from '@/features/Fields/components/SectionTitle.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
+import BlueprintSelect from '@/features/Blueprints/components/BlueprintSelect.vue'
 
 const forcedTypes = ref({})
 

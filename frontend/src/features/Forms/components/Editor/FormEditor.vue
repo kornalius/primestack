@@ -98,7 +98,6 @@ const props = defineProps<{
   form: Form
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'add', value: unknown): void,
   (e: 'remove', index: number, value: unknown): void,

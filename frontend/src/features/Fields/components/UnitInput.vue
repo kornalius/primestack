@@ -37,9 +37,7 @@ const props = defineProps<{
   defaultUnit: string
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (e: 'update:model-value', value: string | null | undefined): void,
 }>()
 

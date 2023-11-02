@@ -55,7 +55,6 @@ const props = defineProps<{
   modelValue: FormField
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'update:model-value', value: FormField): void,
   (e: 'click'): void,

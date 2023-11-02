@@ -121,7 +121,6 @@ const props = defineProps<{
   modelValue: ActionElement[]
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'add', value: unknown): void,
   (e: 'remove', index: number, value: unknown): void,

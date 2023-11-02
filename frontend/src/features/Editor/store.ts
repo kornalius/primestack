@@ -12,6 +12,7 @@ import { menuSchema, tabSchema } from '@/shared/schemas/menu'
 import { columnSchema, fieldSchema, formSchema } from '@/shared/schemas/form'
 import { tableSchema } from '@/shared/schemas/table'
 import { actionSchema } from '@/shared/schemas/actions'
+import { blueprintSchema } from '@/shared/schemas/blueprints'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { useSnacks } from '@/features/Snacks/store'
 import { useUndo } from '@/features/Undo/store'
@@ -26,6 +27,7 @@ import { useActionEditor } from '@/features/Actions/store'
 // eslint-disable-next-line import/no-cycle
 import { useTableEditor } from '@/features/Tables/store'
 import { usePropertiesEditor } from '@/features/Properties/store'
+import { useBlueprintEditor } from '@/features/Blueprints/store'
 
 type Menu = Static<typeof menuSchema>
 type Tab = Static<typeof tabSchema>
@@ -34,12 +36,14 @@ type FormField = Static<typeof fieldSchema>
 type FormColumn = Static<typeof columnSchema>
 type Table = Static<typeof tableSchema>
 type Action = Static<typeof actionSchema>
+type Blueprint = Static<typeof blueprintSchema>
 
 interface Snapshot {
   menus: Menu[]
   forms: Form[]
   tables: Table[]
   actions: Action[]
+  blueprints: Blueprint[]
 }
 
 let previousScope: string
@@ -81,6 +85,8 @@ export const useAppEditor = defineStore('app-editor', () => {
 
   const propertiesEditor = usePropertiesEditor()
 
+  const blueprintEditor = useBlueprintEditor()
+
   /**
    * Is the editor active?
    */
@@ -99,7 +105,8 @@ export const useAppEditor = defineStore('app-editor', () => {
     const t = isEqual(states.value.origSnapshot.tables, tableEditor.tables)
     const m = isEqual(states.value.origSnapshot.menus, menuEditor.menus)
     const a = isEqual(states.value.origSnapshot.actions, actionEditor.actions)
-    return states.value.active && (!f || !t || !m || !a)
+    const b = isEqual(states.value.origSnapshot.blueprints, blueprintEditor.blueprints)
+    return states.value.active && (!f || !t || !m || !a || !b)
   })
 
   /**
@@ -250,6 +257,7 @@ export const useAppEditor = defineStore('app-editor', () => {
     userForms: useFeathersService('forms').findOneInStore({ query: {} }),
     userTables: useFeathersService('tables').findOneInStore({ query: {} }),
     userActions: useFeathersService('actions').findOneInStore({ query: {} }),
+    userBlueprints: useFeathersService('blueprints').findOneInStore({ query: {} }),
   })
 
   /**
@@ -263,6 +271,7 @@ export const useAppEditor = defineStore('app-editor', () => {
       userForms,
       userTables,
       userActions,
+      userBlueprints,
     } = loadFromStore()
 
     if (snapshot.menus && userMenus.value) {
@@ -277,11 +286,15 @@ export const useAppEditor = defineStore('app-editor', () => {
     if (snapshot.actions && userActions.value) {
       userActions.value.list = snapshot.actions
     }
+    if (snapshot.blueprints && userBlueprints.value) {
+      userBlueprints.value.list = snapshot.blueprints
+    }
 
     menuEditor.setMenus(snapshot.menus)
     formEditor.setForms(snapshot.forms)
     tableEditor.setTables(snapshot.tables)
     actionEditor.setActions(snapshot.actions)
+    blueprintEditor.setBlueprints(snapshot.blueprints)
   }
 
   /**
@@ -292,6 +305,7 @@ export const useAppEditor = defineStore('app-editor', () => {
     forms: cloneDeep(formEditor.forms),
     tables: cloneDeep(tableEditor.tables),
     actions: cloneDeep(actionEditor.actions),
+    blueprints: cloneDeep(blueprintEditor.blueprints),
   })
 
   /**
@@ -303,6 +317,7 @@ export const useAppEditor = defineStore('app-editor', () => {
     () => formEditor.forms,
     () => tableEditor.tables,
     () => actionEditor.actions,
+    () => blueprintEditor.blueprints,
   ], undoStore.snap(snapshot), { deep: true })
 
   /**
@@ -316,12 +331,14 @@ export const useAppEditor = defineStore('app-editor', () => {
       userForms,
       userTables,
       userActions,
+      userBlueprints,
     } = loadFromStore()
 
     menuEditor.setMenus(cloneDeep(userMenus.value?.list))
     formEditor.setForms(cloneDeep(userForms.value?.list))
     tableEditor.setTables(cloneDeep(userTables.value?.list))
     actionEditor.setActions(cloneDeep(userActions.value?.list))
+    blueprintEditor.setBlueprints(cloneDeep(userBlueprints.value?.list))
 
     undoStore.startWatch(startWatch)
     undoStore.snap(snapshot)()
@@ -377,6 +394,7 @@ export const useAppEditor = defineStore('app-editor', () => {
       userForms,
       userTables,
       userActions,
+      userBlueprints,
     } = loadFromStore()
 
     menuEditor.setMenus(cloneDeep(
@@ -404,6 +422,13 @@ export const useAppEditor = defineStore('app-editor', () => {
       (await useFeathersService('actions').patch(userActions.value._id, {
         ...userActions.value,
         list: actionEditor.actions,
+      }) as AnyData).list,
+    ))
+
+    blueprintEditor.setBlueprints(cloneDeep(
+      (await useFeathersService('blueprints').patch(userBlueprints.value._id, {
+        ...userBlueprints.value,
+        list: blueprintEditor.blueprints,
       }) as AnyData).list,
     ))
 
@@ -497,81 +522,83 @@ export const useAppEditor = defineStore('app-editor', () => {
   return {
     states,
     active,
-    formsEditor: computed(() => formEditor.formsEditor),
-    selectedMenu: computed(() => menuEditor.selected),
-    selectedTab: computed(() => tabEditor.selected),
-    selected,
-    selectedTable: computed(() => tableEditor.selected),
-    selectedTableField: computed(() => tableEditor.selectedField),
-    selectedFormTableColumn: computed(() => formEditor.selectedTableColumn),
-    selectedActionElement: computed(() => actionEditor.selectedActionElement),
-    formId: computed(() => formEditor.formId),
-    actionId: computed(() => actionEditor.actionId),
-    actionEvent: computed(() => actionEditor.actionEvent),
-    menus: computed(() => menuEditor.menus),
-    forms: computed(() => formEditor.forms),
-    tables: computed(() => tableEditor.tables),
-    actions: computed(() => actionEditor.actions),
-    select,
-    unselect,
-    unselectAll,
-    isSelected,
-    selectFormTableColumn,
-    unselectFormTableColumn: formEditor.unselectTableColumn,
-    isFormTableColumnSelected: formEditor.isTableColumnSelected,
     hovered,
     hover,
     unhover,
     isHovered,
     isDragging,
     setDragging,
-    selectMenu,
-    unselectMenu,
-    isMenuSelected: menuEditor.isSelected,
-    selectTab,
-    unselectTab: tabEditor.unselect,
-    isTabSelected: tabEditor.selected,
-    setFormsEditor: formEditor.setFormsEditor,
     startEdit,
     endEdit,
-    setFormId: formEditor.setFormId,
-    selectTable: tableEditor.select,
-    unselectTable: tableEditor.unselect,
-    isTableSelected: tableEditor.isSelected,
-    selectTableField: tableEditor.selectField,
-    unselectTableField: tableEditor.unselectField,
-    isTableFieldSelected: tableEditor.isFieldSelected,
     canSave,
     save,
     reset,
+    isModified,
+
+    /**
+     * UndoStore
+     */
+
     snap: undoStore.snap,
     canUndo: undoStore.canUndo,
     undo,
     canRedo: undoStore.canRedo,
     redo,
     preventSystemUndoRedo,
-    formInstance: formEditor.instance,
-    formFieldInstance: formEditor.fieldInstance,
-    formTableColumnInstance: formEditor.tableColumnInstance,
+
+    /**
+     * MenuEditor
+     */
+
+    menus: computed(() => menuEditor.menus),
+    selectedMenu: computed(() => menuEditor.selected),
     menuInstance: menuEditor.instance,
     tabInstance: menuEditor.tabInstance,
-    tableInstance: tableEditor.instance,
-    tableFieldInstance: tableEditor.fieldInstance,
-    isModified,
-    addForm: formEditor.add,
-    removeForm: formEditor.remove,
+    selectMenu,
+    unselectMenu,
+    isMenuSelected: menuEditor.isSelected,
     addMenu: menuEditor.add,
     removeMenu: menuEditor.remove,
     addTab,
     removeTab,
-    createFormField: formEditor.createField,
-    addFieldToForm,
-    addColumnToField: formEditor.addColumnToField,
-    removeColumnFromField: formEditor.removeColumnFromField,
+
+    /**
+     * TabEditor
+     */
+
+    selectedTab: computed(() => tabEditor.selected),
+    selectTab,
+    unselectTab: tabEditor.unselect,
+    isTabSelected: tabEditor.selected,
+
+    /**
+     * TableEditor
+     */
+
+    tables: computed(() => tableEditor.tables),
+    selectedTable: computed(() => tableEditor.selected),
+    selectedTableField: computed(() => tableEditor.selectedField),
+    tableInstance: tableEditor.instance,
+    tableFieldInstance: tableEditor.fieldInstance,
+    selectTable: tableEditor.select,
+    unselectTable: tableEditor.unselect,
+    isTableSelected: tableEditor.isSelected,
+    selectTableField: tableEditor.selectField,
+    unselectTableField: tableEditor.unselectField,
+    isTableFieldSelected: tableEditor.isFieldSelected,
     addTable: tableEditor.add,
     removeTable: tableEditor.remove,
     addFieldToTable: tableEditor.addField,
     removeFieldFromTable: tableEditor.removeField,
+
+    /**
+     * ActionEditor
+     */
+
+    actions: computed(() => actionEditor.actions),
+    selectedActionElement: computed(() => actionEditor.selectedActionElement),
+    actionId: computed(() => actionEditor.actionId),
+    actionEvent: computed(() => actionEditor.actionEvent),
     setActionId: actionEditor.setActionId,
     setActionEvent: actionEditor.setActionEvent,
     selectActionElement: actionEditor.selectActionElement,
@@ -584,12 +611,45 @@ export const useAppEditor = defineStore('app-editor', () => {
     createActionElement: actionEditor.createActionElement,
     addActionElement: actionEditor.addActionElement,
     removeActionElement: actionEditor.removeActionElement,
+
+    /**
+     * FormEditor
+     */
+
+    forms: computed(() => formEditor.forms),
+    formsEditor: computed(() => formEditor.formsEditor),
+    selected,
+    selectedFormTableColumn: computed(() => formEditor.selectedTableColumn),
+    formId: computed(() => formEditor.formId),
+    select,
+    unselect,
+    unselectAll,
+    isSelected,
+    selectFormTableColumn,
+    unselectFormTableColumn: formEditor.unselectTableColumn,
+    isFormTableColumnSelected: formEditor.isTableColumnSelected,
+    formInstance: formEditor.instance,
+    formFieldInstance: formEditor.fieldInstance,
+    formTableColumnInstance: formEditor.tableColumnInstance,
+    setFormsEditor: formEditor.setFormsEditor,
+    setFormId: formEditor.setFormId,
+    addForm: formEditor.add,
+    removeForm: formEditor.remove,
+    createFormField: formEditor.createField,
+    addFieldToForm,
+    addColumnToField: formEditor.addColumnToField,
+    removeColumnFromField: formEditor.removeColumnFromField,
     preview: computed(() => formEditor.preview),
     previewFormData: computed(() => formEditor.previewFormData),
     showPreviewFormData: computed(() => formEditor.showPreviewFormData),
     setPreview: formEditor.setPreview,
     setPreviewFormData: formEditor.setPreviewFormData,
     setShowPreviewFormData: formEditor.setShowPreviewFormData,
+
+    /**
+     * PropertiesEditor
+     */
+
     sections: computed(() => propertiesEditor.sections),
     scrollTops: computed(() => propertiesEditor.scrollTops),
     expanded: computed(() => propertiesEditor.expanded),
@@ -600,5 +660,22 @@ export const useAppEditor = defineStore('app-editor', () => {
     setExpanded: propertiesEditor.setExpanded,
     isExpanded: propertiesEditor.isExpanded,
     expandedForId: propertiesEditor.expandedForId,
+
+    /**
+     * BlueprintEditor
+     */
+
+    blueprints: computed(() => blueprintEditor.blueprints),
+    blueprintId: computed(() => blueprintEditor.blueprintId),
+    localBlueprints: blueprintEditor.locals,
+    globalBlueprints: blueprintEditor.globals,
+    blueprintInstance: blueprintEditor.instance,
+    addBlueprint: blueprintEditor.add,
+    removeBlueprint: blueprintEditor.remove,
+    isBlueprintApplied: blueprintEditor.isApplied,
+    applyBlueprint: blueprintEditor.apply,
+    unapplyBlueprint: blueprintEditor.unapply,
+    isBlueprintEditing: blueprintEditor.isEditing,
+    editBlueprint: blueprintEditor.edit,
   }
 })

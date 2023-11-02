@@ -99,7 +99,6 @@ const props = defineProps<{
   showLimits?: boolean
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'update:tableId', value: string): void,
   (e: 'update:model-value', value: Query): void,

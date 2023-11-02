@@ -47,7 +47,6 @@ const props = defineProps<{
   emptyMessage?: string
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'remove', index: number, value: unknown): void,
   (e: 'clear'): void,

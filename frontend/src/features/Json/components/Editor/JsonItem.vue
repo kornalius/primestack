@@ -208,7 +208,6 @@ const props = defineProps<{
   rootChildType?: string
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'remove', key: string | number): void,
   (e: 'insert-child'): void,

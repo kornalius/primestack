@@ -1,0 +1,47 @@
+// Login
+POST http://localhost:3030/authentication
+Content-Type: application/json
+
+{
+  "strategy": "local",
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+> {% client.global.set("token", response.body.accessToken); %}
+###
+
+// List blueprints
+GET http://localhost:3030/blueprints
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+###
+
+// Create blueprint
+POST http://localhost:3030/blueprints
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "list": []
+}
+
+> {%
+  // client.log(response.body._id)
+  client.global.set("actionId", response.body._id);
+%}
+###
+
+// Patch blueprint
+PATCH http://localhost:3030/blueprints/{{actionId}}
+Accept: application/json
+Content-Type: application/json
+Authorization: {{token}}
+
+{
+  "_id": "{{actionId}}"
+}
+###

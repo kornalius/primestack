@@ -46,7 +46,6 @@ const props = defineProps<{
   path?: (string | number)[]
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'change-key', newValue: string, oldValue: string): void,
   (e: 'update:model-value', value: unknown[]): void,

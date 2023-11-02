@@ -114,7 +114,6 @@ const props = defineProps<{
   temps?: boolean
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'row-click', value: unknown): void,
   (e: 'add', value: unknown): void,

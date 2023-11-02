@@ -53,7 +53,6 @@ const props = defineProps<{
   suffix?: string
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'update:model-value', value: string | undefined): void,
   (e: 'open'): void,

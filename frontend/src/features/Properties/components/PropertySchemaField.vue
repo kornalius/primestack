@@ -769,7 +769,6 @@ const props = defineProps<{
   horizontal?: boolean
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'create-new'): void,
   (e: 'update:forcedTypes', value: Record<string, string>): void,

@@ -82,7 +82,6 @@ defineProps<{
   options?: AddOption[]
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 defineEmits<{
   (e: 'click'): void,
   (e: 'click-option', value: string): void,

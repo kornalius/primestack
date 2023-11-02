@@ -30,7 +30,7 @@ export const flattenFields = (fields: FormField[] | FormColumn[]): FormField[] =
 
   flatten(fields)
 
-  return flattended
+  return flattended as FormField[]
 }
 
 export const newNameForField = (type: string, fields: AnyData[]): string => {

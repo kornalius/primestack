@@ -28,7 +28,6 @@ const props = defineProps<{
   modelValue: unknown
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'update:model-value', value: unknown): void,
 }>()

@@ -386,6 +386,7 @@ const loadUserData = async () => {
   await useFeathersService('tables').find({ query: {} })
   await useFeathersService('forms').find({ query: {} })
   await useFeathersService('actions').find({ query: {} })
+  await useFeathersService('blueprints').find({ query: {} })
 }
 
 watch(() => userMenu.value?.list, () => {

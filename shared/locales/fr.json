@@ -541,5 +541,24 @@
       "formId": "ID du formulaire actif",
       "tableId": "ID de la table active"
     }
+  },
+  "blueprints": {
+    "tooltip": "Plans",
+    "new": "Nouveau...",
+    "globals": "Globales",
+    "editor": {
+      "title": "Modifier le plan...",
+      "name": "Nom",
+      "description": "Description",
+      "global": "Globale",
+      "properties": "Propriétées",
+      "ok": "Sauvegarder",
+      "cancel": "Annuler",
+      "delete": "Supprimer",
+      "remove": {
+        "title": "Supprimer le plan",
+        "message": "Êtes-vous certain de vouloir supprimer ce plan?"
+      }
+    }
   }
 }

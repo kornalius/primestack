@@ -41,7 +41,6 @@ const { buildCtx } = useExpression(t)
 
 const ctx = buildCtx()
 
-// eslint-disable-next-line vue/valid-define-emits
 defineEmits<{
   (e: 'update:model-value', value: Record<string, unknown>): void,
 }>()

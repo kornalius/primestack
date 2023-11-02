@@ -230,7 +230,6 @@ const props = defineProps<{
   horizontal?: boolean
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'click', value: string): void,
   (e: 'remove', value: FormField): void,

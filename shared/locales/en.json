@@ -548,5 +548,24 @@
       "formId": "Active form ID",
       "tableId": "Active table ID"
     }
+  },
+  "blueprints": {
+    "tooltip": "Blueprints",
+    "new": "New...",
+    "globals": "Globals",
+    "editor": {
+      "title": "Edit blueprint...",
+      "name": "Name",
+      "description": "Description",
+      "global": "Global",
+      "properties": "Properties",
+      "ok": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "remove": {
+        "title": "Delete blueprint",
+        "message": "Are you sure you want to delete this blueprint?"
+      }
+    }
   }
 }

@@ -68,7 +68,6 @@ const props = defineProps<{
   disabled?: boolean
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'remove'): void,
 }>()

@@ -13,6 +13,7 @@ import forms from './forms/forms.service'
 import actions from './actions/actions.service'
 import files from './files/files.service'
 import uploads from './uploads/uploads.service'
+import blueprints from './blueprints/blueprints.service'
 
 export default function (app: Application): void {
   info('    - Health Check')
@@ -47,6 +48,9 @@ export default function (app: Application): void {
 
   info('    - Actions')
   app.configure(actions)
+
+  info('    - Blueprints')
+  app.configure(blueprints)
 
   info('    - Uploads')
   app.configure(uploads)

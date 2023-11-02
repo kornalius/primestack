@@ -61,7 +61,6 @@ const props = defineProps<{
   tab?: string
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'update:model-value', value: Tab[]): void,
   (e: 'update:tab', value: string): void,

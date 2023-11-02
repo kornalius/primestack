@@ -58,7 +58,6 @@ const props = defineProps<{
   createLabel?: string
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'update:model-value', value: unknown): void,
   (e: 'create'): void,

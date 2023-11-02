@@ -51,7 +51,6 @@ const props = defineProps<{
   disable?: boolean
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'update:model-value', value: Record<string, string>): void,
 }>()

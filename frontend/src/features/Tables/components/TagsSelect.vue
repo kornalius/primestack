@@ -30,7 +30,6 @@ const props = defineProps<{
   query?: AnyData
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'update:model-value', value: string | undefined | string[]): void,
   (e: 'new-value', value: string): void,

@@ -191,7 +191,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import draggable from 'vuedraggable'
-import hexObjectId from 'hex-object-id'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { AnyData } from '@/shared/interfaces/commons'
 import { AddOption } from '@/features/Fields/interfaces'
@@ -264,7 +263,6 @@ const props = defineProps<{
   horizontal?: boolean
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'add', value: unknown): void,
   (e: 'add-option', value: string): void,

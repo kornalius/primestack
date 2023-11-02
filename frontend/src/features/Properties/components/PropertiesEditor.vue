@@ -338,9 +338,10 @@ const props = defineProps<{
   showName?: boolean
   // can we rename?
   renameable?: boolean
+  // limit list to exisiting properties?
+  limitToExisting?: boolean
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'update:forcedTypes', value: Record<string, string>): void,
   (e: 'update:model-value', value: Record<string, unknown>): void,
@@ -411,7 +412,10 @@ const names = computed((): PropName[] => {
 
   return serializeNames(
     Object.keys(props.schema.properties)
-      .filter((p) => props.schema.properties[p].hidden !== true),
+      .filter((p) => (
+        props.schema.properties[p].hidden !== true
+          && (!props.limitToExisting || value.value[p] !== undefined)
+      )),
   )
 })
 

@@ -69,7 +69,6 @@ const props = defineProps<{
   operators: string[]
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'update:model-value', value: QueryGroup): void,
 }>()

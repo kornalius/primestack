@@ -216,7 +216,6 @@ const props = defineProps<{
   fields: FormField[]
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'mounted'): void,
   (e: 'updated'): void,

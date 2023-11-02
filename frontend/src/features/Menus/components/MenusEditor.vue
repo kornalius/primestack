@@ -47,7 +47,6 @@ const props = defineProps<{
   modelValue: Menu[]
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'update:model-value', value: Menu[]): void,
 }>()

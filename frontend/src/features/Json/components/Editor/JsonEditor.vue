@@ -36,7 +36,6 @@ const props = defineProps<{
   rootChildType?: string
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'update:model-value', value: AnyData | AnyData[]): void,
 }>()

@@ -46,7 +46,6 @@ const props = defineProps<{
   optionItemClass?: string | string[] | AnyData
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'select', value: string): void,
   (e: 'update:model-value', value: string | null | undefined): void,

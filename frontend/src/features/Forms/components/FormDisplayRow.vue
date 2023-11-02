@@ -54,7 +54,6 @@ const props = defineProps<{
   columns: FormColumn[]
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'update:model-value', value: Record<string, unknown>): void,
 }>()

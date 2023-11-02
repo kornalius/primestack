@@ -69,7 +69,6 @@ const props = defineProps<{
   columns: Column[]
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'update:model-value', value: string | null | undefined): void,
 }>()

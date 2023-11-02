@@ -437,7 +437,6 @@ const props = defineProps<{
   includeFormDataFields?: boolean
 }>()
 
-// eslint-disable-next-line vue/valid-define-emits
 const emit = defineEmits<{
   (e: 'update:forcedTypes', value: Record<string, string>): void,
   (e: 'update:model-value', value: unknown): void,

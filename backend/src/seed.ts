@@ -6,6 +6,7 @@ import groups from './services/groups/groups.seeds'
 import tables from './services/tables/tables.seeds'
 import actions from './services/actions/actions.seeds'
 import forms from './services/forms/forms.seeds'
+import blueprints from './services/blueprints/blueprints.seeds'
 import menus from './services/menus/menus.seeds'
 
 export default async (app: Application) => {
@@ -26,5 +27,6 @@ export default async (app: Application) => {
   await tables(app, data)
   await actions(app, data)
   await forms(app, data)
+  await blueprints(app, data)
   await menus(app, data)
 }
