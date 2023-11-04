@@ -190,6 +190,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import hexObjectId from 'hex-object-id'
 import draggable from 'vuedraggable'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { AnyData } from '@/shared/interfaces/commons'

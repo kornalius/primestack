@@ -252,4 +252,26 @@ export const anyToString = (o: unknown): string => {
   return JSON.stringify(o, undefined, 2)
 }
 
+/**
+ * Extract all unique keys and types from an array or object
+ *
+ * @param arr Array of objects
+ *
+ * @return {Record<string, string>}
+ */
+export const extractKeyTypesFromArray = (arr: AnyData[]): Record<string, string> => {
+  const keys = {}
+  arr.forEach((a) => {
+    // if element is a pure object
+    if (typeof a === 'object' && !Array.isArray(a)) {
+      Object.keys(a || {}).forEach((k) => {
+        if (!keys[k]) {
+          keys[k] = typeof a[k]
+        }
+      })
+    }
+  })
+  return keys
+}
+
 export default {}

@@ -1,4 +1,5 @@
 import { Static } from '@feathersjs/typebox'
+import compact from 'lodash/compact'
 import hexObjectId from 'hex-object-id'
 import { tableFieldSchema } from '@/shared/schemas/table'
 import { refFieldname } from '@/shared/schema'
@@ -109,33 +110,61 @@ export const tableFields = (
   updated: boolean,
   softDelete: boolean,
   userFields?: TableFieldSchema[],
-): TableFieldSchema[] => ([
-  {
+): TableFieldSchema[] => {
+  const separator = () => ({
     _id: hexObjectId(),
-    name: '_id',
-    type: 'objectid',
+    name: '-',
+    type: '',
     readonly: true,
-    queryable: true,
+    queryable: false,
     array: false,
     optional: false,
     hidden: true,
-  },
-  ...fields,
-  ...fields
-    .filter((field) => field.refTableId)
-    .map((field) => ({
+  })
+
+  return compact([
+    // _id
+    fields.length ? {
       _id: hexObjectId(),
-      name: refFieldname(field.name),
-      type: 'object',
+      name: '_id',
+      type: 'objectid',
       readonly: true,
       queryable: true,
       array: false,
       optional: false,
       hidden: true,
-    })),
-  ...extraFields(created, updated, softDelete),
-  ...(userFields || []),
-])
+    } : undefined,
+
+    // fields
+    ...fields,
+
+    fields.length ? separator() : undefined,
+
+    // Reference fields
+    ...fields
+      .filter((field) => field.refTableId)
+      .map((field) => ({
+        _id: hexObjectId(),
+        name: refFieldname(field.name),
+        type: 'object',
+        readonly: true,
+        queryable: true,
+        array: false,
+        optional: false,
+        hidden: true,
+      })),
+
+    fields.length ? separator() : undefined,
+
+    // created, updated and softDelete fields
+    ...extraFields(created, updated, softDelete),
+
+    fields.length ? separator() : undefined,
+
+    // user fields
+    ...(userFields || []),
+  ])
+}
 
 export const useTable = () => ({
   extraFields,

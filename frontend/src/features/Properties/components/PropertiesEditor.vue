@@ -64,6 +64,7 @@
       :key="n.name"
       v-model="value[n.name]"
       v-model:forced-types="currentForcedTypes"
+      :root="value"
       :parents="parents"
       :disable="disable || disabledProperties?.includes(n.name)"
       :prop-name="subPropName(propName, n.name)"
@@ -105,6 +106,7 @@
         v-if="n.name"
         v-model="value[n.name]"
         v-model:forced-types="currentForcedTypes"
+        :root="value"
         :parents="parents"
         :disable="disable || disabledProperties?.includes(n.name)"
         :prop-name="subPropName(propName, n.name)"
@@ -215,6 +217,7 @@
                 <property-editor
                   v-model="value[c.name]"
                   v-model:forced-types="currentForcedTypes"
+                  :root="value"
                   :parents="parents"
                   :disable="disable || disabledProperties?.includes(c.name)"
                   :prop-name="subPropName(propName, c.name)"
@@ -308,6 +311,8 @@ import PropertyLabel from '@/features/Properties/components/PropertyLabel.vue'
 const props = defineProps<{
   // object's value
   modelValue: Record<string, unknown>
+  // root selected item
+  root?: unknown
   // section title
   title?: string
   // section icon

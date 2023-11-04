@@ -178,6 +178,7 @@ export const formSchema = Type.Object(
         ],
       },
     },
+    // fields to bind to schema-table in form
     tableFields: [
       'tableId',
       'query',

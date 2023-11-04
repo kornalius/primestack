@@ -4,7 +4,6 @@ import { defineStore } from 'pinia'
 import hexObjectId from 'hex-object-id'
 import { blueprintSchema } from '@/shared/schemas/blueprints'
 import { fieldSchema } from '@/shared/schemas/form'
-// eslint-disable-next-line import/no-cycle
 import { AnyData } from '@/shared/interfaces/commons'
 import { newNameForBlueprint } from '@/shared/blueprint'
 

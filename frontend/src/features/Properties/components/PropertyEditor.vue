@@ -30,6 +30,7 @@
           v-model="value"
           v-model:forced-types="currentForcedTypes"
           :disable="disable"
+          :root="root"
           :parents="parents"
           :schema="schema"
           :prop-name="propName"
@@ -145,6 +146,7 @@
             v-model="value"
             v-model:forced-types="currentForcedTypes"
             :disable="disable"
+            :root="root"
             :parents="parents"
             :schema="schema"
             :prop-name="propName"
@@ -281,6 +283,7 @@
                     v-if="arraySchemaIsObject"
                     v-model="scope.value[index]"
                     v-model:forced-types="currentForcedTypes"
+                    :root="root"
                     :parents="[...parents, scope.value]"
                     :disable="disable"
                     :prop-name="subPropName(propName, index)"
@@ -297,6 +300,7 @@
                     v-else
                     v-model="scope.value[index]"
                     v-model:forced-types="currentForcedTypes"
+                    :root="root"
                     :parents="[...parents, scope.value]"
                     :disable="disable"
                     :prop-name="subPropName(propName, index)"
@@ -365,6 +369,7 @@
           <property-schema-field
             v-model="value"
             v-model:forced-types="currentForcedTypes"
+            :root="root"
             :disable="disable"
             :parents="parents"
             :schema="schema"
@@ -409,6 +414,8 @@ import CodeDropdown from '@/features/Expression/components/CodeDropdown.vue'
 const props = defineProps<{
   // property value
   modelValue: unknown
+  // root value (selected item)
+  root: unknown
   // is the property disabled?
   disable?: boolean
   // parent component values

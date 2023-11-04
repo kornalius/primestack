@@ -153,12 +153,20 @@ watch(() => props.field, () => {
 }, { immediate: true, deep: true })
 
 const objectItem = (item: unknown, index: number): Record<string, unknown> => {
+  // if it's an object, expand it
   if (typeof item === 'object' && !Array.isArray(item)) {
     return {
+      _index: index,
+      ...value.value,
       ...item as Record<string, unknown>,
-      index,
     }
   }
-  return { value: item, index }
+
+  // if considered primitive, return as _value
+  return {
+    _value: item,
+    _index: index,
+    ...value.value,
+  }
 }
 </script>

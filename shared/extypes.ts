@@ -100,7 +100,7 @@ export default {
 
   MultiField: (options: FieldOptions = {}) => Type.Array(
     Type.String(),
-    { field: true, select: true, ...options },
+    { objectid: true, field: true, select: true, ...options },
   ),
 
   Slider: (options: SliderOptions = {}) => Type.Number({ slider: true, ...options }),

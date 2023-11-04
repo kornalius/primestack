@@ -1,7 +1,7 @@
 <template>
   <div class="row items-center q-gutter-sm">
     <div class="col-4">
-      <table-field-select
+      <field-select
         v-model="field.fieldId"
         :disable="disable"
         :fields="fields"
@@ -127,7 +127,7 @@ import { useExpression } from '@/features/Expression/composites'
 import { tableFieldSchema } from '@/shared/schemas/table'
 import { defaultValueForSchema, validForExpr } from '@/shared/schema'
 import { QueryCriteria } from '@/shared/interfaces/query'
-import TableFieldSelect from '@/features/Tables/components/TableFieldSelect.vue'
+import FieldSelect from '@/features/Tables/components/FieldSelect.vue'
 import CodeEditor from '@/features/Expression/components/CodeEditor.vue'
 import PropertyHighlight from '@/features/Properties/components/PropertyHighlight.vue'
 

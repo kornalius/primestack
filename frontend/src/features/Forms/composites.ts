@@ -210,6 +210,67 @@ export const isLabel = (field: FormField | FormColumn | TFormComponent): boolean
     || (field as TFormComponent).type === 'label'
 )
 
+/**
+ * Returns the path of elements from a form leading to an element
+ *
+ * @param form Form instance
+ * @param field Field instance to look for
+ *
+ * @returns {FormField[]|undefined}
+ */
+export const pathTo = (form: FormSchema, field: FormField): FormField[] | undefined => {
+  const scanColumn = (columns: FormColumn[], path: FormField[]): FormField[] | undefined => {
+    // eslint-disable-next-line no-underscore-dangle
+    for (let i = 0; i < columns.length; i++) {
+      const c = columns[i]
+
+      // eslint-disable-next-line no-underscore-dangle
+      const fields = c._fields
+
+      for (let y = 0; y < fields.length; y++) {
+        const f = fields[y]
+
+        if (f._id === field._id) {
+          return [...path, field]
+        }
+
+        // eslint-disable-next-line no-underscore-dangle
+        const cols = f._columns
+        if (cols) {
+          const pp = scanColumn(cols, [...path, f])
+          if (pp) {
+            return pp
+          }
+        }
+      }
+    }
+    return undefined
+  }
+
+  // eslint-disable-next-line no-underscore-dangle
+  for (let i = 0; i < form?._fields.length || 0; i++) {
+    // eslint-disable-next-line no-underscore-dangle
+    const fields = form._fields
+
+    const f = fields[i]
+
+    if (f._id === field._id) {
+      return [field]
+    }
+
+    // eslint-disable-next-line no-underscore-dangle
+    const cols = f._columns
+    if (cols) {
+      const pp = scanColumn(cols, [f])
+      if (pp) {
+        return pp
+      }
+    }
+  }
+
+  return undefined
+}
+
 export const useFormElements = () => ({
   componentForField,
 
@@ -572,4 +633,6 @@ export const useFormElements = () => ({
         })
     }
   },
+
+  pathTo,
 })

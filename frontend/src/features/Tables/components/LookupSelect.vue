@@ -25,8 +25,8 @@ const props = defineProps<{
   modelValue: string | null | undefined
   tableId: string
   query?: AnyData
-  valueField: string
-  labelField: string
+  valueField?: string
+  labelField?: string
   columns: Column[]
 }>()
 
@@ -40,7 +40,7 @@ const data = ref()
 
 const options = computed(() => (
   (data.value || []).map((d: AnyData) => (
-    props.columns.reduce((acc, col) => ({
+    (props.columns || []).reduce((acc, col) => ({
       ...acc,
       [col.field]: d[col.field],
     }), {})

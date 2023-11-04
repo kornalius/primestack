@@ -86,7 +86,7 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string | undefined 
     return 'json-keys'
   }
   // Field id selector dropdown, (optional properties: tableProp)
-  if (p.type === 'string' && p.objectid === true && p.field === true) {
+  if (p.type === 'string' && p.field === true) {
     return 'field'
   }
   // Table id selector
@@ -152,7 +152,7 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string | undefined 
     return 'select'
   }
   // Multiselect fields dropdown (optional properties: tableProp)
-  if (p.type === 'array' && p.items?.type === 'string' && p.field && p.select) {
+  if (p.type === 'array' && p.items?.type === 'string' && p.objectid === true && p.field && p.select) {
     return 'select-field'
   }
   // Array editor

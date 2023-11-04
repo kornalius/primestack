@@ -64,7 +64,7 @@ import { Column } from '@/features/Fields/interfaces'
 const props = defineProps<{
   modelValue: string | null | undefined
   options: AnyData[]
-  valueField: string
+  valueField?: string
   labelField?: string
   columns: Column[]
 }>()
@@ -93,11 +93,11 @@ const colClass = (col: Column, title = false): string | string[] | AnyData => {
 }
 
 const primaryField = computed(() => (
-  props.valueField || props.columns[0]?.field
+  props.valueField || props.columns?.[0]?.field
 ))
 
 const primaryLabel = computed(() => (
-  props.labelField || props.columns[0]?.field || primaryField.value
+  props.labelField || props.columns?.[0]?.field || primaryField.value
 ))
 
 const filteredOptions = ref([])
@@ -115,7 +115,7 @@ const filter = (
     if (!val || val === '') {
       filteredOptions.value = props.options
     } else {
-      const cols = props.columns.filter((col) => col.filterable)
+      const cols = (props.columns || []).filter((col) => col.filterable)
       filteredOptions.value = props.options.filter((row) => (
         !!cols.find((col) => row[col.field]?.toString().toLowerCase().indexOf(val) !== -1)
       ))

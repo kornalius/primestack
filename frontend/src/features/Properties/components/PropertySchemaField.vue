@@ -348,17 +348,44 @@
     map-options
     options-dense
     @keydown="editor.preventSystemUndoRedo"
-  />
+  >
+    <template #option="{ opt, itemProps, selected }">
+      <q-separator v-if="(opt as any).name === '-'" />
+
+      <q-item
+        v-else
+        class="items-center"
+        v-bind="itemProps"
+      >
+        <q-item-section avatar>
+          <q-icon
+            :name="iconForType((opt as any).type)"
+            :color="selected ? 'grey-4' : 'grey-7'"
+            size="xs"
+          />
+        </q-item-section>
+
+        <span
+          :class="[
+            ...fieldClass((opt as any).name),
+            selected ? 'text-weight-normal' : undefined,
+            selected ? 'text-grey-5' : undefined,
+          ]"
+        >
+          {{ (opt as any).name }}
+        </span>
+      </q-item>
+    </template>
+  </q-select>
 
   <!-- Table field -->
 
-  <table-field-select
+  <field-select
     v-else-if="type === 'field'"
     v-model="value"
-    :table-id="tableId"
+    :fields="fields"
     :outlined="property"
-    :disable="disabled || !tableId"
-    :extra-options="extraFields"
+    :disable="disabled"
     option-value="name"
     dense
     clearable
@@ -577,6 +604,7 @@
         v-if="arraySchemaIsObject"
         v-model="value[index]"
         v-model:forced-types="currentForcedTypes"
+        :root="root"
         :parents="[...parents, value]"
         :prop-name="subPropName(propName, index)"
         :schema="dynamicArraySchema(schema, value[index])"
@@ -593,6 +621,7 @@
         v-else
         v-model="value[index]"
         v-model:forced-types="currentForcedTypes"
+        :root="root"
         :parents="[...parents, value]"
         :prop-name="subPropName(propName, index)"
         :schema="arraySchema"
@@ -639,6 +668,7 @@
             v-if="arraySchemaIsObject"
             v-model="scope.value[index]"
             v-model:forced-types="currentForcedTypes"
+            :root="root"
             :parents="[...parents, scope.value]"
             :prop-name="subPropName(propName, index)"
             :schema="dynamicArraySchema(schema, scope.value[index])"
@@ -655,6 +685,7 @@
             v-else
             v-model="scope.value[index]"
             v-model:forced-types="currentForcedTypes"
+            :root="root"
             :parents="[...parents, scope.value]"
             :prop-name="subPropName(propName, index)"
             :schema="arraySchema"
@@ -703,20 +734,25 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import omit from 'lodash/omit'
+import compact from 'lodash/compact'
 import hexObjectId from 'hex-object-id'
 import { Static, TSchema } from '@feathersjs/typebox'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useI18n } from 'vue-i18n'
 import {
-  defaultValueForSchema, getTypeFor, optionsForSchema, primaryToType,
+  defaultValueForSchema, fieldClass, getTypeFor, iconForType, optionsForSchema, primaryToType,
 } from '@/shared/schema'
+import { extractKeyTypesFromArray } from '@/composites/utilities'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { useQuery } from '@/features/Query/composites'
-import { actionSchema } from '@/shared/schemas/actions'
 import { useAppEditor } from '@/features/Editor/store'
 import { useTable } from '@/features/Tables/composites'
 import { useExpression } from '@/features/Expression/composites'
 import { useProperties } from '@/features/Properties/composites'
+import { useFormElements } from '@/features/Forms/composites'
+import { actionSchema } from '@/shared/schemas/actions'
+import { tableFieldSchema } from '@/shared/schemas/table'
+import { fieldSchema } from '@/shared/schemas/form'
 import PaddingEditor from '@/features/Properties/components/PaddingEditor.vue'
 import MarginEditor from '@/features/Properties/components/MarginEditor.vue'
 import BorderEditor from '@/features/Properties/components/BorderEditor.vue'
@@ -731,7 +767,7 @@ import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import QueryEditor from '@/features/Query/components/Editor/QueryEditor.vue'
 import TableSelect from '@/features/Tables/components/TableSelect.vue'
 import ServiceSelect from '@/features/Fields/components/ServiceSelect.vue'
-import TableFieldSelect from '@/features/Tables/components/TableFieldSelect.vue'
+import FieldSelect from '@/features/Tables/components/FieldSelect.vue'
 import VariableSelect from '@/features/Variables/components/VariableSelect.vue'
 import PropertyHighlight from '@/features/Properties/components/PropertyHighlight.vue'
 import BtnToggleMulti from '@/features/Fields/components/BtnToggleMulti.vue'
@@ -739,10 +775,14 @@ import JsonEditor from '@/features/Json/components/Editor/JsonEditor.vue'
 import SizesEditor from '@/features/Properties/components/SizesEditor.vue'
 
 type Action = Static<typeof actionSchema>
+type FormField = Static<typeof fieldSchema>
+type TableFieldSchema = Static<typeof tableFieldSchema>
 
 const props = defineProps<{
   // value of the property
   modelValue: unknown
+  // root value (selected item)
+  root: unknown
   // is the property disabled or not?
   disable?: boolean
   // parent component values
@@ -804,11 +844,21 @@ const editor = useAppEditor()
 
 const { t } = useI18n()
 
-const { isExpr, exprCode, stringToExpr } = useExpression(t)
+const {
+  isExpr,
+  exprCode,
+  stringToExpr,
+  buildCtx,
+  runExpr,
+} = useExpression(t)
+
+const ctx = buildCtx()
 
 const { queryToString } = useQuery()
 
 const { tableFields } = useTable()
+
+const { pathTo } = useFormElements()
 
 const {
   dynamicArraySchema, getParentProp, subPropName,
@@ -1014,14 +1064,136 @@ const queryValue = computed((): string => (
     : '()'
 ))
 
-const fields = computed(() => (
-  tableFields(
-    table.value?.fields || [],
-    table.value?.created,
-    table.value?.updated,
-    table.value?.softDelete,
-  )
+/**
+ * Computes the fields from the form's data property
+ */
+const formFields = computed((): TableFieldSchema[] => (
+  (props.includeFormDataFields
+    ? Object.keys(form.value?.data || {}).map((k) => ({
+      _id: hexObjectId(),
+      name: k,
+      type: primaryToType(form.value?.data?.[k]),
+    }))
+    : []) as TableFieldSchema[]
 ))
+
+/**
+ * If the root field is inside a List component, returns the fields from the
+ * loop expression or the table fields specified
+ */
+const listFields = computed((): TableFieldSchema[] => {
+  // if as parent list component
+  const frm = editor.formInstance(editor.formId)
+  const path = pathTo(frm, props.root as FormField)
+  let lst = [] as TableFieldSchema[]
+  if (path) {
+    // eslint-disable-next-line no-underscore-dangle
+    const l = path.findLast((p) => p._type === 'list') as AnyData
+    if (l) {
+      // try to interpret value if loop expression specified
+      const expr = l.loopExpr
+      if (expr && isExpr(expr)) {
+        const v = runExpr(exprCode(expr), ctx) as unknown[]
+        if (Array.isArray(v)) {
+          const keyTypes = extractKeyTypesFromArray(v)
+          if (keyTypes.length) {
+            lst = [
+              {
+                _id: hexObjectId(),
+                name: '_index',
+                type: 'number',
+                readonly: true,
+                queryable: false,
+                array: false,
+                optional: false,
+                hidden: true,
+              },
+              ...Object.keys(keyTypes)
+                .map((k) => ({
+                  _id: hexObjectId(),
+                  name: k,
+                  type: keyTypes[k],
+                  readonly: true,
+                  queryable: false,
+                  array: false,
+                  optional: false,
+                  hidden: true,
+                })),
+            ]
+          }
+
+          // else make the list just _index and _value
+          if (lst.length === 0) {
+            lst = [
+              {
+                _id: hexObjectId(),
+                name: '_index',
+                type: 'number',
+                readonly: true,
+                queryable: false,
+                array: false,
+                optional: false,
+                hidden: true,
+              },
+              {
+                _id: hexObjectId(),
+                name: '_value',
+                type: '',
+                readonly: true,
+                queryable: false,
+                array: false,
+                optional: false,
+                hidden: true,
+              },
+            ]
+          }
+        }
+      } else if (l.tableId) {
+        // tableId provided in the list
+        const tbl = editor.tables?.find((s) => s._id === l.tableId)
+        if (tbl && tbl.fields) {
+          lst = tableFields(
+            tbl.fields,
+            tbl.created,
+            tbl.updated,
+            tbl.softDelete,
+          )
+        }
+      }
+    }
+  }
+  return lst
+})
+
+/**
+ * Computes a list of fields available for the selected field component
+ */
+const fields = computed((): TableFieldSchema[] => {
+  // root form fields
+  const tf = table.value?.fields?.length
+    ? tableFields(
+      table.value.fields || [],
+      table.value.created,
+      table.value.updated,
+      table.value.softDelete,
+    )
+    : []
+
+  return compact([
+    // list fields
+    ...listFields.value,
+
+    listFields.value.length ? { name: '-', type: '' } as TableFieldSchema : undefined,
+
+    // form table fields
+    ...tf,
+
+    tf.length ? { name: '-', type: '' } as TableFieldSchema : undefined,
+
+    // form fields
+    ...formFields.value,
+  ])
+})
 
 /**
  * Is editing disabled?
@@ -1057,19 +1229,6 @@ const checkboxLabel = computed(() => {
   }
   return undefined
 })
-
-/**
- * Computes the fields from the form's data property
- */
-const extraFields = computed(() => (
-  props.includeFormDataFields
-    ? Object.keys(form.value?.data || {}).map((k) => ({
-      _id: hexObjectId(),
-      name: k,
-      type: primaryToType(form.value?.data?.[k]),
-    }))
-    : []
-))
 
 /**
  * Clear the current property value
