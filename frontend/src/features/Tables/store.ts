@@ -205,12 +205,7 @@ export const useTableEditor = defineStore('table-editor', () => {
         _id: hexObjectId(),
         name: undefined,
         type: 'string',
-        hidden: false,
-        array: false,
-        optional: false,
-        readonly: false,
         queryable: true,
-        refTableId: undefined,
         refFields: [],
       }
       table.fields = [...table.fields, f]

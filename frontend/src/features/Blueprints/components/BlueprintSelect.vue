@@ -44,102 +44,36 @@
 
           <q-menu anchor="top end" self="top start" fit>
             <q-list dense>
-              <q-item
+              <blueprint-select-item
                 v-for="(blueprint, index) in editor.globalBlueprints()"
                 :key="blueprint._id"
-                clickable
-                v-close-popup
-                v-ripple
-                @mouseover="hover = index + 10000"
-                @mouseleave="hover = -1"
+                :blueprint="blueprint"
+                :field="field"
+                :index="index"
+                :hovered="hover === index + 10000"
                 @focus="hover = index + 10000"
                 @blur="hover = -1"
                 @click="toggleBlueprint(blueprint)"
-              >
-                <!-- Checkmark -->
-
-                <q-item-section style="width: 24px;" avatar>
-                  <q-icon
-                    v-if="editor.isBlueprintApplied(blueprint._id, field)"
-                    name="mdi-check"
-                    size="xs"
-                  />
-                </q-item-section>
-
-                <q-item-section>
-                  <q-item-label>
-                    {{ blueprint.name }}
-                  </q-item-label>
-                  <q-item-label caption>
-                    {{ blueprint.description }}
-                  </q-item-label>
-                </q-item-section>
-
-                <!-- Edit Button -->
-
-                <q-item-section side>
-                  <q-btn
-                    :style="{ opacity: hover === index + 10000 ? 1 : 0 }"
-                    icon="mdi-tune-vertical-variant"
-                    size="sm"
-                    dense
-                    round
-                    flat
-                    @click.stop="editBlueprint(blueprint)"
-                  />
-                </q-item-section>
-              </q-item>
+                @edit="editBlueprint(blueprint)"
+              />
             </q-list>
           </q-menu>
         </q-item>
 
         <!-- Local Blueprints -->
 
-        <q-item
+        <blueprint-select-item
           v-for="(blueprint, index) in editor.localBlueprints(editor.selectedMenu)"
           :key="blueprint._id"
-          clickable
-          v-close-popup
-          v-ripple
-          @mouseover="hover = index as number"
-          @mouseleave="hover = -1"
-          @focus="hover = index as number"
+          :blueprint="blueprint"
+          :field="field"
+          :index="index"
+          :hovered="hover === index"
+          @focus="hover = index"
           @blur="hover = -1"
           @click="toggleBlueprint(blueprint)"
-        >
-          <!-- Checkmark -->
-
-          <q-item-section style="width: 24px;" avatar>
-            <q-icon
-              v-if="editor.isBlueprintApplied(blueprint._id, field)"
-              name="mdi-check"
-              size="xs"
-            />
-          </q-item-section>
-
-          <q-item-section>
-            <q-item-label>
-              {{ blueprint.name }}
-            </q-item-label>
-            <q-item-label caption>
-              {{ blueprint.description }}
-            </q-item-label>
-          </q-item-section>
-
-          <!-- Edit Button -->
-
-          <q-item-section side>
-            <q-btn
-              :style="{ opacity: hover === index ? 1 : 0 }"
-              icon="mdi-tune-vertical-variant"
-              size="sm"
-              dense
-              round
-              flat
-              @click="editBlueprint(blueprint)"
-            />
-          </q-item-section>
-        </q-item>
+          @edit="editBlueprint(blueprint)"
+        />
       </q-list>
     </q-menu>
   </q-btn>
@@ -158,6 +92,7 @@
         <blueprint-editor
           v-model="editingBlueprint"
           :field="field"
+          :categories="categories"
         />
       </q-card-section>
 
@@ -193,15 +128,15 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import cloneDeep from 'lodash/cloneDeep'
-import omit from 'lodash/omit'
 import { Static } from '@feathersjs/typebox'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useAppEditor } from '@/features/Editor/store'
 import { blueprintSchema } from '@/shared/schemas/blueprints'
 import { fieldSchema } from '@/shared/schemas/form'
-import { TFormComponent } from '@/shared/interfaces/forms'
-import BlueprintEditor from '@/features/Blueprints/components/Editor/BlueprintEditor.vue'
+import { TFormComponent, TFormFieldCategory } from '@/shared/interfaces/forms'
+import BlueprintEditor from './Editor/BlueprintEditor.vue'
+import BlueprintSelectItem from './Editor/BlueprintSelectItem.vue'
 
 type Blueprint = Static<typeof blueprintSchema>
 type Field = Static<typeof fieldSchema>
@@ -209,6 +144,7 @@ type Field = Static<typeof fieldSchema>
 const props = defineProps<{
   field: Field
   component: TFormComponent
+  categories: Record<string, TFormFieldCategory>
 }>()
 
 const quasar = useQuasar()
@@ -270,7 +206,7 @@ const createBlueprint = () => {
   const blueprint = editor.addBlueprint({
     menuId: editor.selectedMenu,
     componentType: props.component.type,
-    properties: cloneDeep(omit(props.field, ['_id', '_type'])),
+    properties: {},
   })
   editBlueprint(blueprint)
 }

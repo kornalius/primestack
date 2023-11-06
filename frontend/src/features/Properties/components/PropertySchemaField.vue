@@ -545,6 +545,7 @@
     :include-form-data-fields="includeFormDataFields"
     :show-name="objectSchema.showName"
     :renameable="objectSchema.renameable"
+    :track-expanded="trackExpanded"
     embed-label
     flat
   />
@@ -581,6 +582,7 @@
         :include-form-data-fields="includeFormDataFields"
         :show-name="objectSchema.showName"
         :renameable="objectSchema.renameable"
+        :track-expanded="trackExpanded"
         embed-label
         flat
       />
@@ -613,6 +615,7 @@
         :include-form-data-fields="includeFormDataFields"
         :show-name="dynamicArraySchema(schema, value[index]).showName"
         :renameable="dynamicArraySchema(schema, value[index]).renameable"
+        :track-expanded="trackExpanded"
         embed-label
         flat
       />
@@ -627,6 +630,7 @@
         :schema="arraySchema"
         :required="arraySchema.required"
         :include-form-data-fields="includeFormDataFields"
+        :track-expanded="trackExpanded"
         embed-label
       />
     </template>
@@ -677,6 +681,7 @@
             :include-form-data-fields="includeFormDataFields"
             :show-name="dynamicArraySchema(schema, scope.value[index]).showName"
             :renameable="dynamicArraySchema(schema, scope.value[index]).renameable"
+            :track-expanded="trackExpanded"
             embed-label
             flat
           />
@@ -691,6 +696,7 @@
             :schema="arraySchema"
             :required="arraySchema.required"
             :include-form-data-fields="includeFormDataFields"
+            :track-expanded="trackExpanded"
             embed-label
           />
         </template>
@@ -742,7 +748,6 @@ import { useI18n } from 'vue-i18n'
 import {
   defaultValueForSchema, fieldClass, getTypeFor, iconForType, optionsForSchema, primaryToType,
 } from '@/shared/schema'
-import { extractKeyTypesFromArray } from '@/composites/utilities'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { useQuery } from '@/features/Query/composites'
 import { useAppEditor } from '@/features/Editor/store'
@@ -807,6 +812,8 @@ const props = defineProps<{
   hover?: boolean
   // is the element is displayed in horizontal form?
   horizontal?: boolean
+  // track (store/restore) expanded states?
+  trackExpanded?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -849,7 +856,6 @@ const {
   exprCode,
   stringToExpr,
   buildCtx,
-  runExpr,
 } = useExpression(t)
 
 const ctx = buildCtx()
@@ -858,11 +864,9 @@ const { queryToString } = useQuery()
 
 const { tableFields } = useTable()
 
-const { pathTo } = useFormElements()
+const { pathTo, componentsByType } = useFormElements()
 
-const {
-  dynamicArraySchema, getParentProp, subPropName,
-} = useProperties(t)
+const { dynamicArraySchema, getParentProp, subPropName } = useProperties(t)
 
 const currentForcedTypes = useSyncedProp(props, 'forcedTypes', emit)
 
@@ -1082,85 +1086,17 @@ const formFields = computed((): TableFieldSchema[] => (
  * loop expression or the table fields specified
  */
 const listFields = computed((): TableFieldSchema[] => {
-  // if as parent list component
   const frm = editor.formInstance(editor.formId)
   const path = pathTo(frm, props.root as FormField)
   let lst = [] as TableFieldSchema[]
   if (path) {
-    // eslint-disable-next-line no-underscore-dangle
-    const l = path.findLast((p) => p._type === 'list') as AnyData
-    if (l) {
-      // try to interpret value if loop expression specified
-      const expr = l.loopExpr
-      if (expr && isExpr(expr)) {
-        const v = runExpr(exprCode(expr), ctx) as unknown[]
-        if (Array.isArray(v)) {
-          const keyTypes = extractKeyTypesFromArray(v)
-          if (keyTypes.length) {
-            lst = [
-              {
-                _id: hexObjectId(),
-                name: '_index',
-                type: 'number',
-                readonly: true,
-                queryable: false,
-                array: false,
-                optional: false,
-                hidden: true,
-              },
-              ...Object.keys(keyTypes)
-                .map((k) => ({
-                  _id: hexObjectId(),
-                  name: k,
-                  type: keyTypes[k],
-                  readonly: true,
-                  queryable: false,
-                  array: false,
-                  optional: false,
-                  hidden: true,
-                })),
-            ]
-          }
-
-          // else make the list just _index and _value
-          if (lst.length === 0) {
-            lst = [
-              {
-                _id: hexObjectId(),
-                name: '_index',
-                type: 'number',
-                readonly: true,
-                queryable: false,
-                array: false,
-                optional: false,
-                hidden: true,
-              },
-              {
-                _id: hexObjectId(),
-                name: '_value',
-                type: '',
-                readonly: true,
-                queryable: false,
-                array: false,
-                optional: false,
-                hidden: true,
-              },
-            ]
-          }
-        }
-      } else if (l.tableId) {
-        // tableId provided in the list
-        const tbl = editor.tables?.find((s) => s._id === l.tableId)
-        if (tbl && tbl.fields) {
-          lst = tableFields(
-            tbl.fields,
-            tbl.created,
-            tbl.updated,
-            tbl.softDelete,
-          )
-        }
+    path.forEach((p) => {
+      // eslint-disable-next-line no-underscore-dangle
+      const comp = componentsByType[p._type]
+      if (typeof comp?.fields === 'function') {
+        lst = [...lst, ...comp.fields(p, editor, ctx)]
       }
-    }
+    })
   }
   return lst
 })

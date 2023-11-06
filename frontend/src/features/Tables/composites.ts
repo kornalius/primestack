@@ -29,8 +29,6 @@ export const extraFields = (
       type: 'date',
       readonly: true,
       queryable: true,
-      array: false,
-      optional: false,
       hidden: true,
     })
     fields.push({
@@ -39,8 +37,6 @@ export const extraFields = (
       type: 'objectid',
       readonly: true,
       queryable: true,
-      array: false,
-      optional: false,
       hidden: true,
     })
   }
@@ -52,8 +48,6 @@ export const extraFields = (
       type: 'date',
       readonly: true,
       queryable: true,
-      array: false,
-      optional: false,
       hidden: true,
     })
     fields.push({
@@ -62,8 +56,6 @@ export const extraFields = (
       type: 'objectid',
       readonly: true,
       queryable: true,
-      array: false,
-      optional: false,
       hidden: true,
     })
   }
@@ -75,8 +67,6 @@ export const extraFields = (
       type: 'date',
       readonly: true,
       queryable: true,
-      array: false,
-      optional: false,
       hidden: true,
     })
     fields.push({
@@ -85,8 +75,6 @@ export const extraFields = (
       type: 'objectid',
       readonly: true,
       queryable: true,
-      array: false,
-      optional: false,
       hidden: true,
     })
   }
@@ -115,11 +103,6 @@ export const tableFields = (
     _id: hexObjectId(),
     name: '-',
     type: '',
-    readonly: true,
-    queryable: false,
-    array: false,
-    optional: false,
-    hidden: true,
   })
 
   return compact([
@@ -130,8 +113,6 @@ export const tableFields = (
       type: 'objectid',
       readonly: true,
       queryable: true,
-      array: false,
-      optional: false,
       hidden: true,
     } : undefined,
 
@@ -149,8 +130,6 @@ export const tableFields = (
         type: 'object',
         readonly: true,
         queryable: true,
-        array: false,
-        optional: false,
         hidden: true,
       })),
 

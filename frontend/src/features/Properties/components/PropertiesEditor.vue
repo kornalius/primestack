@@ -50,6 +50,16 @@
       <q-tooltip :delay="500">
         {{ $t(`properties.categories.${k}`) }}
       </q-tooltip>
+
+      <q-badge
+        v-if="showCategoryCount && countCategory(k) > 0"
+        style="right: -28px;"
+        color="red-9"
+        floating
+        rounded
+      >
+        {{ countCategory(k) }}
+      </q-badge>
     </q-tab>
   </q-tabs>
 
@@ -59,51 +69,12 @@
     v-if="horizontal"
     class="row q-gutter-sm items-center"
   >
-    <property-editor
-      v-for="n in names"
-      :key="n.name"
-      v-model="value[n.name]"
-      v-model:forced-types="currentForcedTypes"
-      :root="value"
-      :parents="parents"
-      :disable="disable || disabledProperties?.includes(n.name)"
-      :prop-name="subPropName(propName, n.name)"
-      :schema="schema.properties[n.name]"
-      :required="schema.required.includes(n.name)"
-      :label="n.label"
-      :icon="n.icon"
-      :color="n.color"
-      :section-color="n.sectionColor"
-      :embed-label="embedLabel"
-      :include-form-data-fields="includeFormDataFields"
-      horizontal
-    >
-      <template #prepend="attrs">
-        prepend
-        <slot name="prepend" v-bind="attrs" />
-      </template>
-
-      <template #append="attrs">
-        append
-        <slot name="append" v-bind="attrs" />
-      </template>
-    </property-editor>
-  </div>
-
-  <!-- Vertical layout -->
-
-  <q-list
-    v-else
-    :bordered="!flat"
-    :separator="!flat"
-    dense
-  >
     <template
       v-for="n in names"
       :key="n.name"
     >
       <property-editor
-        v-if="n.name"
+        v-if="n.name && (!limitToExisting || value[n.name] !== undefined)"
         v-model="value[n.name]"
         v-model:forced-types="currentForcedTypes"
         :root="value"
@@ -118,6 +89,49 @@
         :section-color="n.sectionColor"
         :embed-label="embedLabel"
         :include-form-data-fields="includeFormDataFields"
+        :track-expanded="trackExpanded"
+        horizontal
+      >
+        <template #prepend="attrs">
+          <slot name="prepend" v-bind="attrs" />
+        </template>
+
+        <template #append="attrs">
+          <slot name="append" v-bind="attrs" />
+        </template>
+      </property-editor>
+    </template>
+  </div>
+
+  <!-- Vertical layout -->
+
+  <q-list
+    v-else
+    :bordered="!flat"
+    :separator="!flat"
+    dense
+  >
+    <template
+      v-for="n in names"
+      :key="n.name || n.label"
+    >
+      <property-editor
+        v-if="n.children?.length === 0 && n.name && (!limitToExisting || value[n.name] !== undefined)"
+        v-model="value[n.name]"
+        v-model:forced-types="currentForcedTypes"
+        :root="value"
+        :parents="parents"
+        :disable="disable || disabledProperties?.includes(n.name)"
+        :prop-name="subPropName(propName, n.name)"
+        :schema="schema.properties[n.name]"
+        :required="schema.required.includes(n.name)"
+        :label="n.label"
+        :icon="n.icon"
+        :color="n.color"
+        :section-color="n.sectionColor"
+        :embed-label="embedLabel"
+        :include-form-data-fields="includeFormDataFields"
+        :track-expanded="trackExpanded"
       >
         <template #prepend="attrs">
           <slot name="prepend" v-bind="attrs" />
@@ -129,8 +143,8 @@
       </property-editor>
 
       <q-expansion-item
-        v-else-if="n.children?.length > 0"
-        v-model="expanded[n.name]"
+        v-else-if="!limitToExisting || childrenCount(n.children)"
+        v-model="expanded[n.name || n.label]"
         header-class="q-pa-none"
         expand-separator
       >
@@ -191,54 +205,63 @@
               style="text-align: end; cursor: default;"
               :style="`width: ${labelWidth};`"
             >
-              <div
+              <template
                 v-for="c in serializeNames(n.children)"
                 :key="c.name"
-                class="row justify-end items-center"
-                :style="`height: ${lineHeight};`"
               >
-                <q-icon
-                  v-if="c.icon"
-                  :name="c.icon"
-                  :color="c.color"
-                  size="md"
-                />
-              </div>
+                <div
+                  v-if="c.name && (!limitToExisting || value[c.name] !== undefined)"
+                  class="row justify-end items-center"
+                  :style="`height: ${lineHeight};`"
+                >
+                  <q-icon
+                    v-if="c.icon"
+                    :name="c.icon"
+                    :color="c.color"
+                    size="md"
+                  />
+                </div>
+              </template>
             </div>
 
             <!-- Value column -->
 
             <div class="col">
-              <div
+              <template
                 v-for="c in serializeNames(n.children)"
                 :key="c.name"
-                class="row items-center"
               >
-                <property-editor
-                  v-model="value[c.name]"
-                  v-model:forced-types="currentForcedTypes"
-                  :root="value"
-                  :parents="parents"
-                  :disable="disable || disabledProperties?.includes(c.name)"
-                  :prop-name="subPropName(propName, c.name)"
-                  :schema="schema.properties[c.name]"
-                  :required="schema.required.includes(c.name)"
-                  :label="c.label"
-                  :icon="c.icon"
-                  :color="c.color"
-                  :section-color="n.sectionColor"
-                  :include-form-data-fields="includeFormDataFields"
-                  embed-label
+                <div
+                  v-if="c.name && (!limitToExisting || value[c.name] !== undefined)"
+                  class="row items-center"
                 >
-                  <template #prepend="attrs">
-                    <slot name="prepend" v-bind="attrs" />
-                  </template>
+                  <property-editor
+                    v-model="value[c.name]"
+                    v-model:forced-types="currentForcedTypes"
+                    :root="value"
+                    :parents="parents"
+                    :disable="disable || disabledProperties?.includes(c.name)"
+                    :prop-name="subPropName(propName, c.name)"
+                    :schema="schema.properties[c.name]"
+                    :required="schema.required.includes(c.name)"
+                    :label="c.label"
+                    :icon="c.icon"
+                    :color="c.color"
+                    :section-color="n.sectionColor"
+                    :include-form-data-fields="includeFormDataFields"
+                    :track-expanded="trackExpanded"
+                    embed-label
+                  >
+                    <template #prepend="attrs">
+                      <slot name="prepend" v-bind="attrs" />
+                    </template>
 
-                  <template #append="attrs">
-                    <slot name="append" v-bind="attrs" />
-                  </template>
-                </property-editor>
-              </div>
+                    <template #append="attrs">
+                      <slot name="append" v-bind="attrs" />
+                    </template>
+                  </property-editor>
+                </div>
+              </template>
             </div>
           </div>
         </template>
@@ -345,6 +368,10 @@ const props = defineProps<{
   renameable?: boolean
   // limit list to exisiting properties?
   limitToExisting?: boolean
+  // track (store/restore) expanded states?
+  trackExpanded?: boolean
+  // show badge in each tab of the count of properties assigned
+  showCategoryCount?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -408,6 +435,30 @@ const serializeNames = (names: (string | PropName)[]): PropName[] => (
 )
 
 /**
+ * Returns the number of assigned children property
+ *
+ * @param children Children names
+ *
+ * @returns {number}
+ */
+const childrenCount = (children: (PropName | string)[]): number => (
+  serializeNames(children || [])
+    .filter((i) => value.value[i.name] !== undefined).length
+)
+
+const countCategory = (name: string): number => {
+  const cat = serializeNames(props.categories[name].names)
+  let total = 0
+  cat.forEach((c) => {
+    if (c.children) {
+      total += childrenCount(c.children)
+    }
+    total += value.value[c.name] !== undefined ? 1 : 0
+  })
+  return total
+}
+
+/**
  * Computes the property names that appear in the selected category or all property names
  */
 const names = computed((): PropName[] => {
@@ -465,11 +516,13 @@ const expanded = ref({})
  * When expanded changes, update the store
  */
 watch(expanded, () => {
-  const id = value.value?._id || last(props.parents)?._id
-  if (id) {
-    Object.keys(expanded.value).forEach((k) => {
-      editor.setExpanded(id, k, expanded.value[k])
-    })
+  if (props.trackExpanded) {
+    const id = value.value?._id || last(props.parents)?._id
+    if (id) {
+      Object.keys(expanded.value).forEach((k) => {
+        editor.setExpanded(id, k, expanded.value[k])
+      })
+    }
   }
 }, { deep: true })
 
@@ -477,11 +530,13 @@ watch(expanded, () => {
  * When the main value changes, update the expanded ref
  */
 watch(value, () => {
-  const id = value.value?._id || last(props.parents)?._id
-  const e = editor.expandedForId(id)
-  Object.keys(e).forEach((k) => {
-    expanded.value[k] = e[k]
-  })
+  if (props.trackExpanded) {
+    const id = value.value?._id || last(props.parents)?._id
+    const e = editor.expandedForId(id)
+    Object.keys(e).forEach((k) => {
+      expanded.value[k] = e[k]
+    })
+  }
 }, { immediate: true })
 
 /**

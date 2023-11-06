@@ -26,6 +26,7 @@
       :categories="selectedAction.categories"
       :title="$t('actions.title')"
       icon="mdi-flash"
+      track-expanded
     />
 
     <!-- Table Column properties -->
@@ -42,6 +43,7 @@
       icon="mdi-table-column"
       show-name
       renameable
+      track-expanded
     />
 
     <!-- Form Field properties -->
@@ -58,6 +60,7 @@
       include-form-data-fields
       show-name
       renameable
+      track-expanded
     >
       <template #title-append="{ hover }">
         <blueprint-select
@@ -65,6 +68,7 @@
           :style="{ opacity: hover ? 1 : 0 }"
           :field="selectedField"
           :component="selectedComponent"
+          :categories="selectedComponent.categories"
         />
       </template>
     </properties-editor>
@@ -83,6 +87,7 @@
       icon="mdi-table"
       show-name
       renameable
+      track-expanded
     />
 
     <!-- Table editor Field properties -->
@@ -99,6 +104,7 @@
       icon="mdi-table"
       show-name
       renameable
+      track-expanded
     />
 
     <template v-else-if="!editor.actionId">
@@ -113,6 +119,7 @@
         :categories="selectedMenuSchema.categories"
         :title="$t('components.menu.label')"
         icon="mdi-menu"
+        track-expanded
       />
 
       <!-- Tab properties -->
@@ -126,6 +133,7 @@
         :categories="selectedTabSchema.categories"
         :title="$t('components.tab.label')"
         icon="mdi-tab"
+        track-expanded
       />
 
       <!-- Form properties -->
@@ -140,6 +148,7 @@
         icon="mdi-window-maximize"
         show-name
         renameable
+        track-expanded
       />
     </template>
   </q-drawer>

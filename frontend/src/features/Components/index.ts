@@ -39,6 +39,7 @@ import tab from './tab'
 import valueBox from './value-box'
 import statBox from './stat-box'
 import form from './form'
+// eslint-disable-next-line import/no-cycle
 import list from './list'
 import toolbar from './toolbar'
 

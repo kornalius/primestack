@@ -155,6 +155,7 @@
             :horizontal="horizontal"
             :include-form-data-fields="includeFormDataFields"
             :hover="hover"
+            :track-expanded="trackExpanded"
             property
           />
         </div>
@@ -224,6 +225,10 @@
     v-model="expanded"
     header-class="q-pa-none"
     expand-separator
+    @mouseover.stop="hover = true"
+    @mouseleave="hover = false"
+    @focus.stop="hover = true"
+    @blur="hover = false"
   >
     <template #header>
       <div
@@ -239,6 +244,12 @@
       />
 
       <div class="label row q-pr-sm full-width items-center">
+        <!-- Prepend -->
+
+        <div class="col-auto">
+          <slot name="prepend" v-bind="{ propName, hover }" />
+        </div>
+
         <div
           v-if="label && !embedLabel"
           class="col-auto q-mr-md"
@@ -292,6 +303,7 @@
                     :include-form-data-fields="includeFormDataFields"
                     :show-name="dynamicArraySchema(schema, scope.value[index]).showName"
                     :renameable="dynamicArraySchema(schema, scope.value[index]).renameable"
+                    :track-expanded="trackExpanded"
                     embed-label
                     flat
                   />
@@ -307,6 +319,7 @@
                     :schema="arraySchema"
                     :required="arraySchema.required"
                     :include-form-data-fields="includeFormDataFields"
+                    :track-expanded="trackExpanded"
                     embed-label
                   />
                 </template>
@@ -325,6 +338,14 @@
             @change-type="changeType"
           />
         </div>
+
+        <q-space />
+
+        <!-- Append -->
+
+        <div class="col-auto">
+          <slot name="append" v-bind="{ propName, hover }" />
+        </div>
       </div>
     </template>
 
@@ -336,6 +357,8 @@
           'items-center': type !== 'array',
         }"
       >
+        <!-- Section Color -->
+
         <div
           v-if="sectionColor"
           :style="{
@@ -377,6 +400,7 @@
             :include-form-data-fields="includeFormDataFields"
             :label="label"
             :horizontal="horizontal"
+            :track-expanded="trackExpanded"
             embed-label
             property
           />
@@ -442,6 +466,8 @@ const props = defineProps<{
   horizontal?: boolean
   // include extra form data fields in Field selector
   includeFormDataFields?: boolean
+  // track (store/restore) expanded states?
+  trackExpanded?: boolean
 }>()
 
 const emit = defineEmits<{

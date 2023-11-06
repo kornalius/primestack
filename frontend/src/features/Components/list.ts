@@ -1,11 +1,20 @@
-import { Type } from '@feathersjs/typebox'
+import { Static, Type } from '@feathersjs/typebox'
 import hexObjectId from 'hex-object-id'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import ExType from '@/shared/extypes'
+import { extractKeyTypesFromArray } from '@/composites/utilities'
+import { AnyData } from '@/shared/interfaces/commons'
+import { fieldSchema } from '@/shared/schemas/form'
+import { tableFieldSchema } from '@/shared/schemas/table'
+// eslint-disable-next-line import/no-cycle
+import { exprCode, isExpr, runExpr } from '@/features/Expression/composites'
 import {
   properties, commonProperties, defaultStyleValues, styleNames,
 } from './common'
+
+type FormField = Static<typeof fieldSchema>
+type TableFieldSchema = Static<typeof tableFieldSchema>
 
 export default {
   type: 'list',
@@ -73,5 +82,48 @@ export default {
         ...styleNames,
       ],
     },
+  },
+  fields: (field: FormField, ctx: AnyData): TableFieldSchema[] => {
+    let lst = [] as TableFieldSchema[]
+    // try to interpret value if loop expression specified
+    const expr = (field as AnyData).loopExpr
+    if (expr && isExpr(expr)) {
+      const v = runExpr(exprCode(expr), ctx) as unknown[]
+      if (Array.isArray(v)) {
+        const keyTypes = extractKeyTypesFromArray(v)
+        if (keyTypes.length) {
+          lst = [
+            {
+              _id: hexObjectId(),
+              name: '_index',
+              type: 'number',
+            },
+            ...Object.keys(keyTypes)
+              .map((k) => ({
+                _id: hexObjectId(),
+                name: k,
+                type: keyTypes[k],
+              })),
+          ]
+        }
+
+        // else make the list just _index and _value
+        if (lst.length === 0) {
+          lst = [
+            {
+              _id: hexObjectId(),
+              name: '_index',
+              type: 'number',
+            },
+            {
+              _id: hexObjectId(),
+              name: '_value',
+              type: '',
+            },
+          ]
+        }
+      }
+    }
+    return lst
   },
 } as TFormComponent

@@ -1,5 +1,5 @@
 import hexObjectId from 'hex-object-id'
-import { StringEnum, Type } from '@feathersjs/typebox'
+import { Static, StringEnum, Type } from '@feathersjs/typebox'
 import ExType from '@/shared/extypes'
 import {
   actionIcon, contentIcon, modelIcon, styleIcon,
@@ -7,10 +7,16 @@ import {
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { AnyData } from '@/shared/interfaces/commons'
 import SchemaTable from '@/features/Tables/components/SchemaTable.vue'
-import { formTableColumnSchema } from '@/shared/schemas/form'
+import { fieldSchema, formTableColumnSchema } from '@/shared/schemas/form'
+import { tableFields } from '@/features/Tables/composites'
+import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
 import {
   properties, commonProperties, defaultStyleValues, commonEventArgs, styleNames,
 } from './common'
+
+type FormField = Static<typeof fieldSchema>
+type Table = Static<typeof tableSchema>
+type TableFieldSchema = Static<typeof tableFieldSchema>
 
 export default {
   type: 'table',
@@ -265,5 +271,21 @@ export default {
       keys,
       added,
     }),
+  },
+  fields: (field: FormField, editor: AnyData): TableFieldSchema[] => {
+    let lst = [] as TableFieldSchema[]
+    const tid = (field as AnyData).tableId
+    if (tid) {
+      const tbl = editor.tables?.find((s: Table) => s._id === tid)
+      if (tbl && tbl.fields) {
+        lst = tableFields(
+          tbl.fields,
+          tbl.created,
+          tbl.updated,
+          tbl.softDelete,
+        )
+      }
+    }
+    return lst
   },
 } as TFormComponent

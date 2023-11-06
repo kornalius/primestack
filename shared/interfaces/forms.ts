@@ -1,8 +1,10 @@
 import { Static, TSchema } from '@feathersjs/typebox'
 import { fieldSchema } from '../schemas/form'
+import { tableFieldSchema } from '../schemas/table'
 import { AnyData } from './commons'
 
 type FormField = Static<typeof fieldSchema>
+type TableField = Static<typeof tableFieldSchema>
 
 export interface PropName {
   label: string
@@ -71,4 +73,6 @@ export interface TFormComponent {
   eventArgs?: EventArgs
   // specify the modelValue property when no "field" is used
   modelValueField?: string
+  // what fields does this component provide?
+  fields?: (field: FormField, editor: AnyData, ctx: AnyData) => TableField[]
 }

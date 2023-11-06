@@ -505,11 +505,7 @@ export const schemaToField = (name: string, schema: TSchema): TableFieldSchema =
   const base = {
     _id: hexObjectId(),
     name,
-    readonly: false,
     queryable: true,
-    array: false,
-    optional: false,
-    hidden: false,
   }
 
   const stringType = () => {

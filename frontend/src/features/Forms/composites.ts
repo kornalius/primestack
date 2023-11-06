@@ -3,6 +3,7 @@ import startCase from 'lodash/startCase'
 import omit from 'lodash/omit'
 import { EventArgs, EventArgsFn, TFormComponent } from '@/shared/interfaces/forms'
 import { AnyData, T18N } from '@/shared/interfaces/commons'
+// eslint-disable-next-line import/no-cycle
 import {
   components,
   componentForType,

@@ -565,7 +565,8 @@
       "remove": {
         "title": "Delete blueprint",
         "message": "Are you sure you want to delete this blueprint?"
-      }
+      },
+      "addProperty": "Add property..."
     }
   }
 }

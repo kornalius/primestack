@@ -551,14 +551,15 @@
       "name": "Nom",
       "description": "Description",
       "global": "Globale",
-      "properties": "Propriétées",
+      "properties": "Propriétés",
       "ok": "Sauvegarder",
       "cancel": "Annuler",
       "delete": "Supprimer",
       "remove": {
         "title": "Supprimer le plan",
         "message": "Êtes-vous certain de vouloir supprimer ce plan?"
-      }
+      },
+      "addProperty": "Ajouter une propriété..."
     }
   }
 }
