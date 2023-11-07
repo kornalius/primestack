@@ -657,6 +657,9 @@ export const fcts = {
   uniqueId: '`(): string`\n\n'
     + 'Returns a unique id',
 
+  nextNo: '`(previousNo: string): string`\n\n'
+    + 'Returns the next sequential number from a previous one',
+
   map: '`(array: AnyData[], keys: string[] | string): unknown[]`\n\n'
     + 'Returns a new array of objects by extracting specific keys from values',
 

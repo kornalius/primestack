@@ -34,6 +34,7 @@ export const categories = [
       'compare',
       'normalize',
       'substring',
+      'nextNo',
     ],
   },
   {

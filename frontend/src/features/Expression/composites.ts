@@ -64,6 +64,7 @@ import { AnyData, T18N } from '@/shared/interfaces/commons'
 // eslint-disable-next-line import/no-cycle
 import { exec } from '@/features/Actions/composites'
 import { Menu } from '@/features/Expression/interfaces'
+import { next } from '@/shared/seqno'
 import { categories } from '@/features/Expression/categories'
 import { fcts } from '@/features/Expression/fcts'
 import { iconForType } from '@/shared/schema'
@@ -1354,6 +1355,17 @@ export const buildCtx = (extra?: AnyData) => {
        */
       uniqueId: (): string => (
         hexObjectId()
+      ),
+
+      /**
+       * Returns the next sequential number from a string
+       *
+       * @param no Previous number
+       *
+       * @returns {string}
+       */
+      nextNo: (no: string): string => (
+        next(no)
       ),
 
       /**
