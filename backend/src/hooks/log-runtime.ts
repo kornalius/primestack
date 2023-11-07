@@ -2,7 +2,10 @@ import { NextFunction } from '@feathersjs/feathers'
 import { HookContext } from '@/declarations'
 import { info } from '@/logger'
 
-export const logRuntime = async (context: HookContext, next: NextFunction) => {
+/**
+ * Log service call runtime
+ */
+export const logRuntime = () => async (context: HookContext, next: NextFunction) => {
   const startTime = Date.now()
 
   await next()

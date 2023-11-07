@@ -20,7 +20,10 @@ import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
 type Table = Static<typeof tableSchema>
 type TableField = Static<typeof tableFieldSchema>
 
-const checkMaxTables = async (context: HookContext): Promise<HookContext> => {
+/**
+ * Checks to make sure user does not have more tables than is allowed
+ */
+const checkMaxTables = () => async (context: HookContext): Promise<HookContext> => {
   // skip check if from internal server
   if (!context.params.connection) {
     return context
@@ -37,7 +40,10 @@ const checkMaxTables = async (context: HookContext): Promise<HookContext> => {
   return context
 }
 
-const checkMaxRecords = async (context: HookContext): Promise<HookContext> => {
+/**
+ * Checks to make sure user does not have more records than is allowed
+ */
+const checkMaxRecords = () => async (context: HookContext): Promise<HookContext> => {
   // skip check if from internal server
   if (!context.params.connection) {
     return context
@@ -261,10 +267,10 @@ export const createDynamicService = (app: Application, id: string, t: AnyData) =
     hooks: {
       before: {
         all: [
-          checkRules,
+          checkRules(),
         ],
         create: [
-          checkMaxRecords,
+          checkMaxRecords(),
         ]
       }
     },
@@ -277,7 +283,10 @@ export const createDynamicService = (app: Application, id: string, t: AnyData) =
   }).init(app, {})
 }
 
-const updateCollections = (context: HookContext) => {
+/**
+ * The tables have been updated, registers the services again
+ */
+const updateCollections = () => (context: HookContext) => {
   if (context.data?.list) {
     const d = diff(
       context.prev?.list || [],
@@ -303,7 +312,10 @@ const updateCollections = (context: HookContext) => {
   return context
 }
 
-const forceCreatedAndUpdated = async (context: HookContext) => {
+/**
+ * Forces the data to have the created, updated fields set to to true
+ */
+const forceCreatedAndUpdated = () => async (context: HookContext) => {
   // skip check if from internal server
   if (!context.params.connection) {
     return context
@@ -323,21 +335,21 @@ export default {
   before: {
     all: [],
     create: [
-      checkMaxTables,
-      forceCreatedAndUpdated,
-      updateCollections,
+      checkMaxTables(),
+      forceCreatedAndUpdated(),
+      updateCollections(),
     ],
     update: [
-      checkMaxTables,
-      loadPrev,
-      updateCollections,
-      forceCreatedAndUpdated,
+      checkMaxTables(),
+      loadPrev(),
+      updateCollections(),
+      forceCreatedAndUpdated(),
     ],
     patch: [
-      checkMaxTables,
-      loadPrev,
-      updateCollections,
-      forceCreatedAndUpdated,
+      checkMaxTables(),
+      loadPrev(),
+      updateCollections(),
+      forceCreatedAndUpdated(),
     ],
   },
 }

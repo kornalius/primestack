@@ -36,7 +36,7 @@ export default {
     ]),
     mode: StringEnum(['cors', 'navigate', 'no-cors', 'same-origin']),
     priority: StringEnum(['high', 'low', 'auto']),
-    target: Type.String({ variable: true }),
+    target: ExType.Variable(),
   }),
   defaultValues: {
     method: 'GET',

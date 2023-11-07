@@ -651,6 +651,9 @@ export const fcts = {
     + 'Returns currently logged user\'s information\n\n'
     + 'Possible name values: email, firstname, lastname, locale',
 
+  setting: '`(name: string): string | undefined`\n\n'
+    + 'Returns currently logged user\'s setting key value\n\n',
+
   uniqueId: '`(): string`\n\n'
     + 'Returns a unique id',
 

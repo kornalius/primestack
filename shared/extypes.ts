@@ -78,6 +78,8 @@ export default {
 
   Variable: (options = {}) => Type.String({ variable: true, ...options }),
 
+  UserSetting: (options = {}) => Type.String({ userSetting: true, ...options }),
+
   Expr: (options = {}) => Type.String({ expr: true, ...options }),
 
   Menu: (options = {}) => Id({ service: 'menus', ...options }),

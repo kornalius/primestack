@@ -11,8 +11,8 @@ export default async (app: Application, data: AnyData) => {
   data.users.admin = await app.service('users').create({
     email: app.get('adminEmail'),
     password: app.get('adminPwd'),
-    firstname: 'Alain',
-    lastname: 'Deschênes',
+    firstname: app.get('adminFirstname'),
+    lastname: app.get('adminLastname'),
     maxShares: 0,
     maxTables: 0,
     maxMenus: 0,
@@ -21,7 +21,9 @@ export default async (app: Application, data: AnyData) => {
     maxRecords: 0,
     maxFiles: 0,
     maxFileSize: 0,
+    maxSettings: 0,
     rules: [],
+    settings: {},
   })
 
   // eslint-disable-next-line no-param-reassign

@@ -2,7 +2,10 @@
 import type { HookContext, NextFunction } from '@/declarations'
 import { error as err } from '@/logger'
 
-export const logError = async (context: HookContext, next: NextFunction) => {
+/**
+ * Logs the error to the logger
+ */
+export const logError = () => async (context: HookContext, next: NextFunction) => {
   try {
     await next()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

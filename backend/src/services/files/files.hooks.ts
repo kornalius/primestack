@@ -3,7 +3,10 @@ import { HookContext } from '@feathersjs/feathers'
 import { BadRequest, Forbidden } from '@feathersjs/errors'
 import { formatSize } from '@/shared/files/utils'
 
-const checkMaxFiles = async (context: HookContext): Promise<HookContext> => {
+/**
+ * Checks to make sure user does not store more files that is allowed
+ */
+const checkMaxFiles = () => async (context: HookContext): Promise<HookContext> => {
   // skip check if from internal server
   if (!context.params.connection) {
     return context
@@ -21,7 +24,10 @@ const checkMaxFiles = async (context: HookContext): Promise<HookContext> => {
   return context
 }
 
-const checkMaxFileSize = async (context: HookContext): Promise<HookContext> => {
+/**
+ * Checks to make sure the file is under the maximum file size allowed
+ */
+const checkMaxFileSize = () => async (context: HookContext): Promise<HookContext> => {
   // skip check if from internal server
   if (!context.params.connection) {
     return context
@@ -37,7 +43,10 @@ const checkMaxFileSize = async (context: HookContext): Promise<HookContext> => {
   return context
 }
 
-const checkRequiredQueryFields = async (context: HookContext): Promise<HookContext> => {
+/**
+ * Checks to the make sure the required fields are passed by the query
+ */
+const checkRequiredQueryFields = () => async (context: HookContext): Promise<HookContext> => {
   // skip check if from internal server
   if (!context.params.connection) {
     return context
@@ -66,11 +75,11 @@ const checkRequiredQueryFields = async (context: HookContext): Promise<HookConte
 export default {
   before: {
     all: [
-      checkRequiredQueryFields,
+      checkRequiredQueryFields(),
     ],
     create: [
-      checkMaxFiles,
-      checkMaxFileSize,
+      checkMaxFiles(),
+      checkMaxFileSize(),
     ]
   }
 }

@@ -3,7 +3,10 @@ import { checkPaidComponents } from '@/hooks/check-paid-components'
 import { HookContext } from '@feathersjs/feathers'
 import { Forbidden } from '@feathersjs/errors'
 
-const checkMaxForms = async (context: HookContext): Promise<HookContext> => {
+/**
+ * Checks if the user does not have more forms than allowed
+ */
+const checkMaxForms = () => async (context: HookContext): Promise<HookContext> => {
   // skip check if from internal server
   if (!context.params.connection) {
     return context
@@ -24,16 +27,16 @@ export default {
   before: {
     all: [],
     create: [
-      checkMaxForms,
-      checkPaidComponents,
+      checkMaxForms(),
+      checkPaidComponents(),
     ],
     update: [
-      checkMaxForms,
-      checkPaidComponents,
+      checkMaxForms(),
+      checkPaidComponents(),
     ],
     patch: [
-      checkMaxForms,
-      checkPaidComponents,
+      checkMaxForms(),
+      checkPaidComponents(),
     ],
   },
 }

@@ -20,6 +20,7 @@ export interface TFrontActionExecOptions {
   variables: AnyData
   snacks: AnyData
   store: AnyData
+  auth: AnyData,
   route: RouteLocationNormalizedLoaded,
   router: Router,
   $expr: AnyData,

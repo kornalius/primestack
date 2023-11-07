@@ -1,7 +1,10 @@
 // eslint-disable-next-line import/no-cycle
 import { HookContext } from '@/declarations'
 
-export const softDelete = async (context: HookContext) => {
+/**
+ * Instead of deleting the document, mark it as such
+ */
+export const softDelete = () => async (context: HookContext) => {
   const { service, method, params } = context
 
   if (method === 'remove') {

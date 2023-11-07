@@ -16,7 +16,10 @@ const methodToRuleName: Record<string, string> = {
   remove: 'delete',
 }
 
-export const checkRules = async (context: HookContext) => {
+/**
+ * Checks if user has the correct right for the hook method being used
+ */
+export const checkRules = () => async (context: HookContext) => {
   const {
     path,
     method,

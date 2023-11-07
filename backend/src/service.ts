@@ -339,7 +339,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
         schemaHooks.validateData(patchValidator),
       ],
       remove: [
-        ...(options.softDelete ? [softDelete] : []),
+        ...(options.softDelete ? [softDelete()] : []),
         ...expandHooks('before.remove'),
       ],
     },
@@ -524,7 +524,7 @@ export const createSchemalessService = (name: string, klass: Newable<AnyData>, o
         ...expandHooks('before.patch'),
       ],
       remove: [
-        ...(options.softDelete ? [softDelete] : []),
+        ...(options.softDelete ? [softDelete()] : []),
         ...expandHooks('before.remove'),
       ],
     },

@@ -9,7 +9,10 @@ const servicesToSkip = [
 
 export const mongoId = /^[a-f\d]{24}$/gi
 
-export const logEvent = async (context: HookContext) => {
+/**
+ * Log the service call to the events service
+ */
+export const logEvent = () => async (context: HookContext) => {
   const { user } = context.params
 
   if (

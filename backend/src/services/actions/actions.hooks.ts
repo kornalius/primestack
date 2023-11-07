@@ -8,7 +8,10 @@ import { actionSchema } from '@/shared/schemas/actions'
 
 type Action = Static<typeof actionSchema>
 
-export const checkPaidActions = async (context: HookContext) => {
+/**
+ * Checks if a paid action has been used without the proper rights
+ */
+export const checkPaidActions = () => async (context: HookContext) => {
   // skip check if from internal server
   if (!context.params.connection) {
     return context
@@ -39,13 +42,13 @@ export default {
   before: {
     all: [],
     create: [
-      checkPaidActions,
+      checkPaidActions(),
     ],
     update: [
-      checkPaidActions,
+      checkPaidActions(),
     ],
     patch: [
-      checkPaidActions,
+      checkPaidActions(),
     ],
   },
 }

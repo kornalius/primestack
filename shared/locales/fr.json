@@ -141,7 +141,9 @@
     "table_one": "Votre plan actuel supporte seulement {{tableCount}} table, svp considerez la mise-à-jour de votre plan",
     "table_other": "Votre plan actuel supporte seulement {{tableCount}} tables, svp considerez la mise-à-jour de votre plan",
     "record_one": "Votre plan actuel supporte seulement {{recordCount}} enregistrement par table, svp considerez la mise-à-jour de votre plan",
-    "record_other": "Votre plan actuel supporte seulement {{recordCount}} enregistrements par table, svp considerez la mise-à-jour de votre plan"
+    "record_other": "Votre plan actuel supporte seulement {{recordCount}} enregistrements par table, svp considerez la mise-à-jour de votre plan",
+    "setting_one": "Votre plan actuel supporte seulement {{settingCount}} paramètres utilisateur, svp considerez la mise-à-jour de votre plan",
+    "setting_other": "Votre plan actuel supporte seulement {{settingCount}} paramètres utilisateur, svp considerez la mise-à-jour de votre plan"
   },
   "query": {
     "missingField": "Champ '{{name}}' manquant"
@@ -170,6 +172,10 @@
     },
     "getvar": {
       "description": "Obtiens la valeur d'une variable",
+      "childrenMessage": ""
+    },
+    "getsetting": {
+      "description": "Obtiens la valeur d'une clé de paramètres utilisateur",
       "childrenMessage": ""
     },
     "if": {
@@ -223,7 +229,8 @@
       "variables": "Variables",
       "table": "Table",
       "json": "JSON",
-      "network": "Réseau"
+      "network": "Réseau",
+      "user": "Utlisateur"
     }
   },
   "editor": {
@@ -474,6 +481,7 @@
   },
   "user_profile": {
     "title": "Modifier le profile",
+    "tabTitle": "Profile",
     "sub_title": "Complèter votre profile",
     "add_photo": "Ajouter une photo...",
     "username": "Nom d'utilisateur",
@@ -485,7 +493,11 @@
     "current_password": "Mote de passe actuel",
     "new_password": "Nouveau mot de passe",
     "current_new_password": "Nouveau mot de passe actuel",
-    "confirm_new_password": "Confirmer votre mot de passe"
+    "confirm_new_password": "Confirmer votre mot de passe",
+    "settings": {
+      "title": "Modifier les paramètres",
+      "tabTitle": "Paramètres"
+    }
   },
   "stats": {
     "invalid_type": "Type invalide",

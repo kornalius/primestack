@@ -121,6 +121,10 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string | undefined 
   if (p.type === 'string' && p.variable) {
     return 'variable'
   }
+  // User setting selector
+  if (p.type === 'string' && p.userSetting) {
+    return 'userSetting'
+  }
   // Color picker
   if (p.type === 'string' && p.color) {
     return 'color'

@@ -2,7 +2,10 @@ import i18next from 'i18next'
 import { HookContext } from '@feathersjs/feathers'
 import { Forbidden } from '@feathersjs/errors'
 
-export const checkMaxShares = async (context: HookContext): Promise<HookContext> => {
+/**
+ * Checks to make sure user does not have more shares than is allowed
+ */
+export const checkMaxShares = () => async (context: HookContext): Promise<HookContext> => {
   // skip check if from internal server
   if (!context.params.connection) {
     return context
@@ -31,7 +34,7 @@ export default {
   before: {
     all: [],
     create: [
-      checkMaxShares,
+      checkMaxShares(),
     ],
   },
 }

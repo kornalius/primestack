@@ -141,7 +141,9 @@
     "table_one": "Your plan only supports {{tableCount}} table, please consider upgrading",
     "table_other": "Your plan only supports {{tableCount}} tables, please consider upgrading",
     "record_one": "Your plan only supports {{recordCount}} record per table, please consider upgrading",
-    "record_other": "Your plan only supports {{recordCount}} records per table, please consider upgrading"
+    "record_other": "Your plan only supports {{recordCount}} records per table, please consider upgrading",
+    "setting_one": "Your plan only supports {{settingCount}} user's settings, please consider upgrading",
+    "setting_other": "Your plan only supports {{settingCount}} user's settings, please consider upgrading"
   },
   "query": {
     "missingField": "Missing '{{name}}' field",
@@ -178,6 +180,10 @@
     },
     "getvar": {
       "description": "Get a variable value",
+      "childrenMessage": ""
+    },
+    "getsetting": {
+      "description": "Get a user setting value",
       "childrenMessage": ""
     },
     "if": {
@@ -231,7 +237,8 @@
       "variables": "Variables",
       "table": "Table",
       "json": "JSON",
-      "network": "Network"
+      "network": "Network",
+      "user": "User"
     }
   },
   "editor": {
@@ -481,6 +488,7 @@
   },
   "user_profile": {
     "title": "Edit Profile",
+    "tabTitle": "Profile",
     "sub_title": "Complete your profile",
     "add_photo": "Add Photo...",
     "username": "User Name",
@@ -492,7 +500,11 @@
     "current_password": "Current Password",
     "new_password": "New Password",
     "current_new_password": "Current New Password",
-    "confirm_new_password": "Confirm New Password"
+    "confirm_new_password": "Confirm New Password",
+    "settings": {
+      "title": "Edit Settings",
+      "tabTitle": "Settings"
+    }
   },
   "stats": {
     "invalid_type": "Invalid type specified",

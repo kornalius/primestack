@@ -10,26 +10,26 @@ export default (app: Application) => {
   app.hooks({
     around: {
       all: compact([
-        app.get('debug') === 'verbose' ? debug : undefined,
-        logError,
+        app.get('debug') === 'verbose' ? debug() : undefined,
+        logError(),
       ]),
     },
 
     before: {
       all: [
-        countCalls,
-        logEvent,
+        countCalls(),
+        logEvent(),
       ],
       find: [],
       get: [],
       create: [
-        removeNulls,
+        removeNulls(),
       ],
       update: [
-        removeNulls,
+        removeNulls(),
       ],
       patch: [
-        removeNulls,
+        removeNulls(),
       ],
       remove: []
     },

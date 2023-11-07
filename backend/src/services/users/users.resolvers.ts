@@ -13,9 +13,17 @@ export default {
     },
     $patch: {
       password: passwordHash({ strategy: 'local' }),
-      rights: () => undefined,
       _plan: () => undefined,
       _group: () => undefined,
+      maxShares: () => undefined,
+      maxTables: () => undefined,
+      maxMenus: () => undefined,
+      maxForms: () => undefined,
+      maxEdits: () => undefined,
+      maxRecords: () => undefined,
+      maxFiles: () => undefined,
+      maxFileSize: () => undefined,
+      rights: () => undefined,
     },
   },
   result: {

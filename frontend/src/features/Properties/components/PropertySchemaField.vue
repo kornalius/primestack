@@ -313,6 +313,19 @@
     @keydown="editor.preventSystemUndoRedo"
   />
 
+  <!-- User Setting -->
+
+  <user-setting-select
+    v-else-if="type === 'userSetting'"
+    v-model="value"
+    :outlined="property"
+    :disable="disabled"
+    dense
+    clearable
+    options-dense
+    @keydown="editor.preventSystemUndoRedo"
+  />
+
   <!-- Table -->
 
   <table-select
@@ -778,6 +791,7 @@ import PropertyHighlight from '@/features/Properties/components/PropertyHighligh
 import BtnToggleMulti from '@/features/Fields/components/BtnToggleMulti.vue'
 import JsonEditor from '@/features/Json/components/Editor/JsonEditor.vue'
 import SizesEditor from '@/features/Properties/components/SizesEditor.vue'
+import UserSettingSelect from '@/features/Users/components/UserSettingSelect.vue'
 
 type Action = Static<typeof actionSchema>
 type FormField = Static<typeof fieldSchema>

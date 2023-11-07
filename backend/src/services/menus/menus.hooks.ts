@@ -2,7 +2,10 @@ import i18next from 'i18next'
 import { HookContext } from '@feathersjs/feathers'
 import { Forbidden } from '@feathersjs/errors'
 
-const checkMaxMenus = async (context: HookContext): Promise<HookContext> => {
+/**
+ * Checks to make sure user does not have more menus than is allowed
+ */
+const checkMaxMenus = () => async (context: HookContext): Promise<HookContext> => {
   // skip check if from internal server
   if (!context.params.connection) {
     return context
@@ -23,13 +26,13 @@ export default {
   before: {
     all: [],
     create: [
-      checkMaxMenus,
+      checkMaxMenus(),
     ],
     update: [
-      checkMaxMenus,
+      checkMaxMenus(),
     ],
     patch: [
-      checkMaxMenus,
+      checkMaxMenus(),
     ],
   },
 }

@@ -15,6 +15,7 @@ export default async (app: Application, data: AnyData) => {
       '5 tables',
       '5 menus',
       '5 forms',
+      '5 user\'s setting keys',
       '100 records per table',
       '25 files',
       '10MB maximum file size'
@@ -27,6 +28,7 @@ export default async (app: Application, data: AnyData) => {
     maxRecords: 100,
     maxFiles: 25,
     maxFileSize: 10000,
+    maxSettings: 5,
     bestValue: false,
     color: '',
   })
@@ -42,6 +44,7 @@ export default async (app: Application, data: AnyData) => {
       '15 tables',
       '10 menus',
       '15 forms',
+      '10 user\'s setting keys',
       '10,000 records per table',
       '100 files',
       '25MB maximum file size'
@@ -54,6 +57,7 @@ export default async (app: Application, data: AnyData) => {
     maxRecords: 10000,
     maxFiles: 100,
     maxFileSize: 25000,
+    maxSettings: 10,
     bestValue: true,
     color: 'blue-1',
   })
@@ -69,6 +73,7 @@ export default async (app: Application, data: AnyData) => {
       '100 tables',
       '25 menus',
       '100 forms',
+      '25 user\'s setting keys',
       '1,000,000 records per table',
       '5000 files',
       '50MB maximum file size'
@@ -81,6 +86,7 @@ export default async (app: Application, data: AnyData) => {
     maxRecords: 1000000,
     maxFiles: 5000,
     maxFileSize: 50000,
+    maxSettings: 25,
     bestValue: false,
     color: '',
   })
@@ -96,6 +102,7 @@ export default async (app: Application, data: AnyData) => {
       'Unlimited tables',
       'Unlimited menus',
       'Unlimited forms',
+      '100 user\'s setting keys',
       'Unlimited records per table',
       '10,000 files',
       '100MB maximum file size'
@@ -108,6 +115,7 @@ export default async (app: Application, data: AnyData) => {
     maxRecords: -1,
     maxFiles: 10000,
     maxFileSize: 100000,
+    maxSettings: 100,
     bestValue: false,
     color: 'orange-1',
   })

@@ -3,9 +3,9 @@ import { TAction } from '../interfaces/actions'
 import ExType from '../extypes'
 
 export default {
-  type: 'getvar',
-  label: 'Get Variable',
+  type: 'unsetvar',
+  label: 'Unset Setting',
   schema: Type.Object({
-    name: ExType.Variable(),
+    name: ExType.UserSetting(),
   }),
 } as TAction

@@ -3,9 +3,10 @@ import { TAction } from '../interfaces/actions'
 import ExType from '../extypes'
 
 export default {
-  type: 'getvar',
-  label: 'Get Variable',
+  type: 'setsetting',
+  label: 'Set Setting',
   schema: Type.Object({
-    name: ExType.Variable(),
+    name: ExType.UserSetting(),
+    value: Type.String(),
   }),
 } as TAction

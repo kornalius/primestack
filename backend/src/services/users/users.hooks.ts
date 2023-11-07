@@ -4,6 +4,8 @@ import { HookContext } from '@/declarations'
 import { Static } from '@feathersjs/typebox'
 import { maxSchema, schema as ruleSchema } from '@/shared/schemas/rule'
 import { AnyData } from '@/shared/interfaces/commons'
+import { Forbidden } from '@feathersjs/errors'
+import i18next from 'i18next'
 
 type Rule = Static<typeof ruleSchema>
 type Maxes = Static<typeof maxSchema>
@@ -116,6 +118,7 @@ const aggregateMaxes = () => async (context: HookContext): Promise<HookContext> 
       maxTables: 0,
       maxFiles: 0,
       maxFileSize: 0,
+      maxSettings: 0,
     }
 
     const mixMaxes = (maxesToMix: AnyData) => {
@@ -134,6 +137,7 @@ const aggregateMaxes = () => async (context: HookContext): Promise<HookContext> 
       maxes.maxTables = mixMax(maxesToMix.maxTables, maxes.maxTables)
       maxes.maxFiles = mixMax(maxesToMix.maxFiles, maxes.maxFiles)
       maxes.maxFileSize = mixMax(maxesToMix.maxFileSize, maxes.maxFileSize)
+      maxes.maxSettings = mixMax(maxesToMix.maxSettings, maxes.maxSettings)
     }
 
     if (plan) {
@@ -189,6 +193,27 @@ const aggregateGroupPlanId = () => async (context: HookContext): Promise<HookCon
   return context
 }
 
+/**
+ * Checks the maximum number of user's setting keys allowed
+ */
+const checkMaxSettings = () => async (context: HookContext): Promise<HookContext> => {
+  // skip check if from internal server
+  if (!context.params.connection) {
+    return context
+  }
+
+  const count = Object.keys(context.data.settings || {})
+  const m = context.params?.user?.rights?.maxes?.maxSettings
+  if (m !== -1 && count >= m) {
+    throw new Forbidden(i18next.t('paid_feature.setting', {
+      settingCount: m,
+      count: m,
+      lng: context.params?.user?.lng as string || 'en',
+    }))
+  }
+  return context
+}
+
 export default {
   around: {
     all: [],
@@ -206,6 +231,18 @@ export default {
     ],
     remove: [
       authenticate('jwt'),
+    ],
+  },
+  before: {
+    all: [],
+    created: [
+      checkMaxSettings(),
+    ],
+    update: [
+      checkMaxSettings(),
+    ],
+    patch: [
+      checkMaxSettings(),
     ],
   },
   after: {

@@ -1337,6 +1337,17 @@ export const buildCtx = (extra?: AnyData) => {
       },
 
       /**
+       * Returns currently logged user's setting key value
+       *
+       * @param name key name
+       *
+       * @returns {string|undefined}
+       */
+      setting: (name: string): string | undefined => (
+        auth.user.settings[name]
+      ),
+
+      /**
        * Returns a unique id
        *
        * @returns {string}

@@ -2,7 +2,10 @@ import { NextFunction } from '@feathersjs/feathers'
 import { HookContext } from '@/declarations'
 import { info } from '@/logger'
 
-export const debug = async (context: HookContext, next: NextFunction) => {
+/**
+ * Ouput service's call debug information
+ */
+export const debug = () => async (context: HookContext, next: NextFunction) => {
   // internal calls
   if (context.params.provider === undefined) {
     await next()

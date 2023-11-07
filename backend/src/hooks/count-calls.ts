@@ -10,9 +10,11 @@ export const totalCalls: Record<string, number> = {
   remove: 0,
 }
 
-export const countCalls = async (context: HookContext) => {
+/**
+ * Count the total number of calls per method
+ */
+export const countCalls = () => async (context: HookContext) => {
   totalCalls[context.method] += 1
   totalCalls.total += 1
-
   return context
 }

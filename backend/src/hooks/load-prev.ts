@@ -1,6 +1,9 @@
 import { HookContext } from '@/declarations'
 
-export const loadPrev = async (context: HookContext) => {
+/**
+ * Load the stored document value in .prev key in context variable
+ */
+export const loadPrev = () => async (context: HookContext) => {
   const { service, method, params } = context
 
   if (method === 'patch' || method === 'update') {

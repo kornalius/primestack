@@ -68,6 +68,8 @@
   "mongodb": "MONGODB",
   "adminEmail": "ADMIN_EMAIL",
   "adminPwd": "ADMIN_PWD",
+  "adminFirstname": "ADMIN_FIRSTNAME",
+  "adminLastname": "ADMIN_LASTNAME",
   "locale": "I18N_LOCALE",
   "fallbackLocale": "I18N_FALLBACK_LOCALE"
 }

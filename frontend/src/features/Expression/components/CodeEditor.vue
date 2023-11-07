@@ -42,6 +42,7 @@ import { useAppEditor } from '@/features/Editor/store'
 import { useVariables } from '@/features/Variables/store'
 import { useTable } from '@/features/Tables/composites'
 import { useExpression } from '@/features/Expression/composites'
+import { useAuth } from '@/features/Auth/store'
 import { fcts } from '@/features/Expression/fcts'
 import CodeMenu from './CodeMenu.vue'
 
@@ -61,6 +62,8 @@ const emit = defineEmits<{
 const editor = useAppEditor()
 
 const app = useApp()
+
+const auth = useAuth()
 
 const variables = useVariables()
 
@@ -195,6 +198,8 @@ const myCompletions = (context: CompletionContext) => {
     ])
   } else if (check(['var', 'ArgList', '(', 'String'])) {
     options = toOptions(variables.names)
+  } else if (check(['setting', 'ArgList', '(', 'String'])) {
+    options = toOptions(Object.keys(auth.user.settings))
   } else if (nodeBefore.name === 'String') {
     options = []
   }

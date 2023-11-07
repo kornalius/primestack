@@ -1,7 +1,10 @@
 import { HookContext } from '@/declarations'
 import { AnyData } from '@/shared/interfaces/commons'
 
-export const removeNulls = async (context: HookContext) => {
+/**
+ * Remove all null key values from document
+ */
+export const removeNulls = () => async (context: HookContext) => {
   const { method, data } = context
 
   if (['create', 'update', 'patch'].includes(method)) {

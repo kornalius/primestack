@@ -8,7 +8,10 @@ import { Static } from '@feathersjs/typebox'
 
 type Form = Static<typeof formSchema>
 
-export const checkPaidComponents = async (context: HookContext) => {
+/**
+ * Checks is a form's component is a paid feature without rights to use it
+ */
+export const checkPaidComponents = () => async (context: HookContext) => {
   // skip check if from internal server
   if (!context.params.connection) {
     return context

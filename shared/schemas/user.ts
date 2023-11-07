@@ -20,6 +20,7 @@ export const schema = Type.Intersect([
     groupId: Type.Optional(ExType.Id({ service: 'groups' })),
     _group: Type.Optional(Type.Object({})),
     rules: Type.Array(ruleSchema),
+    settings: Type.Object({}, { additionalProperties: true }),
     locale: Type.Optional(Type.String()),
   }),
   maxSchema,

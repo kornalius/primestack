@@ -20,6 +20,7 @@ export default async (app: Application, data: AnyData) => {
     maxEdits: -1,
     maxFiles: -1,
     maxFileSize: -1,
+    maxSettings: -1,
     rules: [
       {
         read: true,

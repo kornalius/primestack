@@ -17,6 +17,9 @@ import ifExpr from './if'
 import interval from './interval'
 import timeout from './timeout'
 import cancel from './cancel'
+import getsetting from './getsetting'
+import setsetting from './setsetting'
+import unsetsetting from './unsetsetting'
 
 const separator = (label: string, icon: string, color?: string): TFrontAction => ({
   type: '$separator',
@@ -45,6 +48,10 @@ export const actions = [
   getvar,
   setvar,
   unsetvar,
+  separator('actions.separators.user', 'mdi-account', 'yellow-2'),
+  getsetting,
+  setsetting,
+  unsetsetting,
   separator('actions.separators.table', 'mdi-database', 'orange-2'),
   insert,
   patch,

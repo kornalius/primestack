@@ -219,6 +219,7 @@ export const categories = [
     icon: 'mdi-domain',
     children: [
       'user',
+      'setting',
       'uniqueId',
     ],
   },

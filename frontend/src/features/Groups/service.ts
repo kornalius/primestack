@@ -14,6 +14,7 @@ export default {
       maxRecords: 0,
       maxFiles: 0,
       maxFileSize: 0,
+      maxSettings: 0,
       read: [],
       create: [],
       update: [],
