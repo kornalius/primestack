@@ -215,15 +215,25 @@ export const createDynamicService = (app: Application, id: string, t: AnyData) =
    * Create resolvers for fields with refTableId and refFields specified.
    */
 
-  const resultResolvers: Record<string, AnyData> = {}
+  const resultResolvers: Record<string, unknown> = {}
 
+  // Secret fields resolvers (only viewable by its creator)
+  t.fields
+    .filter((f: TableField) => f.secret)
+    .forEach((f: TableField) => {
+      resultResolvers[f.name] = virtual(async (record: AnyData, context: HookContext) => {
+        if (context.user._id !== record.createdBy) {
+          return undefined
+        }
+        return record[f.name]
+      })
+    })
+
+  // Referenced field resolvers
   t.fields
     .filter((f: TableField) => f.refTableId)
     .forEach((f: TableField) => {
-      resultResolvers[refFieldname(f.name)] = virtual(async (
-        record: AnyData,
-        context: HookContext,
-      ) => {
+      resultResolvers[refFieldname(f.name)] = virtual(async (record: AnyData, context: HookContext) => {
         if (record[f.name]) {
           if (f.refTableId === t._id) {
             throw new BadRequest(i18next.t('table.sameTableResolve', {

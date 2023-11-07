@@ -57,6 +57,7 @@ export const tableFieldSchema = Type.Object(
     optional: Type.Optional(Type.Boolean()),
     readonly: Type.Optional(Type.Boolean()),
     queryable: Type.Optional(Type.Boolean()),
+    secret: Type.Optional(Type.Boolean()),
     slider: Type.Optional(Type.Boolean()),
     format: Type.Optional(StringEnum(supportedStringFormats)),
     multipleOf: Type.Optional(Type.Number()),
@@ -94,6 +95,7 @@ export const tableFieldSchema = Type.Object(
           'queryable',
           'array',
           'readonly',
+          'secret',
         ],
       },
       model: {

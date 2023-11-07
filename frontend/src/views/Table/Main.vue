@@ -327,5 +327,19 @@ const fieldColumns = ref([
     field: 'queryable',
     format: (val) => (val ? '\u2714' : ''),
   },
+  {
+    name: 'readonly',
+    label: 'Readonly',
+    align: 'center',
+    field: 'readonly',
+    format: (val) => (val ? '\u2714' : ''),
+  },
+  {
+    name: 'secret',
+    label: 'Secret',
+    align: 'center',
+    field: 'secret',
+    format: (val) => (val ? '\u2714' : ''),
+  },
 ])
 </script>
