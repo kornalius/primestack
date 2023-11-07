@@ -2,6 +2,7 @@ import { StringEnum, Type } from '@feathersjs/typebox'
 import { actionIcon, contentIcon, tableIcon } from '../icons'
 import ExType from '../extypes'
 import { keyboardEvent } from '../action'
+import { AnyData } from '../interfaces/commons'
 
 export const tabSchema = Type.Object(
   {
@@ -126,6 +127,9 @@ export const formSchema = Type.Object(
     unmounted: Type.Optional(ExType.Action()),
     keydown: Type.Optional(ExType.Action()),
     keyup: Type.Optional(ExType.Action()),
+    tableCreate: Type.Optional(ExType.Action()),
+    tablePatch: Type.Optional(ExType.Action()),
+    tableRemove: Type.Optional(ExType.Action()),
   },
   {
     $id: 'Form',
@@ -175,6 +179,9 @@ export const formSchema = Type.Object(
           'unmounted',
           'keydown',
           'keyup',
+          'tableCreate',
+          'tablePatch',
+          'tableRemove',
         ],
       },
     },
@@ -211,6 +218,9 @@ export const formSchema = Type.Object(
       mounted: () => ({}),
       updated: () => ({}),
       unmounted: () => ({}),
+      tableCreate: (doc: AnyData) => ({ value: doc }),
+      tablePatch: (doc: AnyData) => ({ value: doc }),
+      tableRemove: (doc: AnyData) => ({ value: doc }),
       keydown: keyboardEvent,
       keyup: keyboardEvent,
     },

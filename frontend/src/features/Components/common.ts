@@ -244,9 +244,13 @@ export const clickEvent = (e: MouseEvent) => ({
   meta: e.metaKey,
 })
 
-export const focusEvent = (e: FocusEvent) => ({ relatedTarget: e.relatedTarget })
+export const focusEvent = (e: FocusEvent) => ({
+  relatedTarget: e.relatedTarget,
+})
 
-export const updateEvent = (value: unknown) => ({ value })
+export const updateEvent = (value: unknown) => ({
+  value,
+})
 
 export const commonEventArgs = {
   update: updateEvent,

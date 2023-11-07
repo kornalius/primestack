@@ -24,7 +24,6 @@ type TableField = Static<typeof tableFieldSchema>
 type FormSchema = Static<typeof formSchema>
 type FormField = Static<typeof fieldSchema>
 type FormColumn = Static<typeof columnSchema>
-
 type Action = Static<typeof actionSchema>
 
 const validators = useValidators()
@@ -34,21 +33,25 @@ export const classSizes = ['xs', 'sm', 'md', 'lg', 'xl']
 /**
  * Returns the event arguments for a field action
  *
- * @param f
+ * @param type Component type
+ *
+ * @returns {EventArgs|undefined}
  */
-const eventArgsForField = (f: FormField | FormColumn): EventArgs | undefined => (
+export const eventArgsForField = (type: string): EventArgs | undefined => (
   // eslint-disable-next-line no-underscore-dangle
-  componentsByType[f._type]?.eventArgs
+  componentsByType[type]?.eventArgs
 )
 
 /**
  * Returns the argument keys for a field event
  *
- * @param f Field
- * @param name
+ * @param type Component type
+ * @param name Name of event
+ *
+ * @returns {string[]}
  */
-const argNames = (f: FormField | FormColumn, name: string): string[] => {
-  const eventArgsFn = eventArgsForField(f)?.[name]
+export const argNames = (type: string, name: string): string[] => {
+  const eventArgsFn = eventArgsForField(type)?.[name]
   if (eventArgsFn) {
     return Object.keys(eventArgsFn({}))
   }
@@ -272,6 +275,28 @@ export const pathTo = (form: FormSchema, field: FormField): FormField[] | undefi
   return undefined
 }
 
+/**
+ * Call an event action (exec function)
+ *
+ * @param id Id of the action
+ * @param ctx Context
+ * @param eventArgsFn Arguments to pass to the exec function
+ */
+export const callEventAction = (id: string, ctx: AnyData, eventArgsFn?: EventArgsFn) => (
+  async (...args: unknown[]) => {
+    const userActions = ctx.useFeathersService('actions')
+      .findOneInStore({ query: {} })?.value?.list || []
+    const act = userActions.find((a: Action) => a._id === id)
+    if (act) {
+      // eslint-disable-next-line no-underscore-dangle
+      await ctx.exec(act._actions, {
+        ...ctx,
+        $scoped: eventArgsFn && eventArgsFn(...args),
+      })
+    }
+  }
+)
+
 export const useFormElements = () => ({
   componentForField,
 
@@ -284,6 +309,8 @@ export const useFormElements = () => ({
   newNameForField,
 
   flattenFields,
+
+  callEventAction,
 
   /**
    * Returns an object that can be bound to a Vue Component (v-bind)
@@ -325,28 +352,6 @@ export const useFormElements = () => ({
 
     scanSchema(schema)
 
-    const userActions = ctx.useFeathersService('actions')
-      .findOneInStore({ query: {} })?.value?.list || []
-
-    /**
-     * Call an event action (exec function)
-     *
-     * @param id Id of the action
-     * @param eventArgsFn Arguments to pass to the exec function
-     */
-    const callEventAction = (id: string, eventArgsFn?: EventArgsFn) => (
-      async (...args: unknown[]) => {
-        const act = userActions.find((a: Action) => a._id === id)
-        if (act) {
-          // eslint-disable-next-line no-underscore-dangle
-          await ctx.exec(act._actions, {
-            ...ctx,
-            $scoped: eventArgsFn && eventArgsFn(...args),
-          })
-        }
-      }
-    )
-
     return Object.keys(omit(field, fieldsToOmit))
       .reduce((acc, k) => {
         let fieldname = k
@@ -358,10 +363,11 @@ export const useFormElements = () => ({
 
         // if it's an action, use onXxxx event key names instead
         if (prop && getTypeFor(schema.properties[k]) === 'action') {
-          const eventArgsFn = eventArgsForField(field)?.[k]
+          // eslint-disable-next-line no-underscore-dangle
+          const eventArgsFn = eventArgsForField(field._type)?.[k]
           return {
             ...acc,
-            [`on${startCase(k)}`]: callEventAction(field[k] as string, eventArgsFn),
+            [`on${startCase(k)}`]: callEventAction(field[k] as string, ctx, eventArgsFn),
           }
         }
 

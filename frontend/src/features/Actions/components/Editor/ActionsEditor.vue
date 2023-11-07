@@ -150,7 +150,8 @@ const eventArgs = computed(() => {
   // eslint-disable-next-line no-underscore-dangle
   const component = componentsByType[selectedField.value?._type]
   if (component) {
-    return argNames(selectedField.value, selectedActionEvent.value)
+    // eslint-disable-next-line no-underscore-dangle
+    return argNames(selectedField.value?._type, selectedActionEvent.value)
   }
   return []
 })

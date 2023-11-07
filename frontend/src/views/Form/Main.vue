@@ -315,6 +315,8 @@ const {
   componentsByType,
   fieldBinds,
   schemaForField,
+  callEventAction,
+  eventArgsForField,
 } = useFormElements()
 
 const currentId = ref()
@@ -566,7 +568,10 @@ const refresh = () => {
 const submit = async () => {
   const success = await qform.value.validate()
   if (success) {
+    const isNew = currentData.value._id === undefined
     const r = await currentData.value.save()
+    const eventName = isNew ? 'tableCreate' : 'tablePatch'
+    await callEventAction(form.value?.[eventName], ctx, eventArgsForField('form')?.[eventName])(r)
     prevData.value = cloneDeep(currentData.value)
     toggleSelection(r)
   }
@@ -654,6 +659,7 @@ const removeRecord = (value: AnyData) => {
     const r = await getRecord(getId(value))
     if (r) {
       await r.remove()
+      await callEventAction(form.value?.tableRemove, ctx, eventArgsForField('form')?.tableRemove)(r)
       refresh()
     }
   })
