@@ -4,7 +4,7 @@ import ExType from '../extypes'
 
 export default {
   type: 'extract',
-  label: 'Extract',
+  label: 'actions.extract.label',
   schema: Type.Object({
     value: ExType.JSON(),
     fields: Type.Array(Type.String({ jsonkeys: true, jsonProp: '../value' })),

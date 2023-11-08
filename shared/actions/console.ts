@@ -3,7 +3,7 @@ import { TAction } from '../interfaces/actions'
 
 export default {
   type: 'console',
-  label: 'Console',
+  label: 'actions.console.label',
   schema: Type.Object({
     type: StringEnum(['log', 'info', 'warn', 'error']),
     message: Type.String(),

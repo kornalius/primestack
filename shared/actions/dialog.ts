@@ -4,7 +4,7 @@ import { sizeString } from '../interfaces/commons'
 
 export default {
   type: 'dialog',
-  label: 'Dialog',
+  label: 'actions.dialog.label',
   schema: Type.Object({
     title: Type.String(),
     message: Type.String(),

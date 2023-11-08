@@ -4,7 +4,7 @@ import ExType from '../extypes'
 
 export default {
   type: 'timeout',
-  label: 'Timeout',
+  label: 'actions.timeout.label',
   schema: Type.Object({
     milliseconds: Type.Number(),
     varName: ExType.Variable(),

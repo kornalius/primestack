@@ -4,7 +4,7 @@ import ExType from '../extypes'
 
 export default {
   type: 'remove',
-  label: 'Remove',
+  label: 'actions.remove.label',
   schema: Type.Object({
     tableId: Type.String({ objectid: true, tableid: true }),
     query: Type.Optional(ExType.Query()),

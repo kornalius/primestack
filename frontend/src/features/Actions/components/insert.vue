@@ -2,11 +2,13 @@
   <div>
     <div class="row">
       <div class="col-auto text-bold">
-        Insert
+        {{ $t('actions.insert.label') }}
       </div>
+
       <div class="col-auto q-ml-xs">
-        into table
+        {{ $t('actions.insert.into') }}
       </div>
+
       <div class="col-auto q-ml-xs text-weight-medium text-italic">
         {{ tableName }}
       </div>

@@ -1,7 +1,7 @@
 <template>
   <div class="row items-center">
     <div class="col-auto text-bold">
-      Unset
+      {{ $t('actions.unsetvar.label') }}
     </div>
 
     <div v-if="modelValue.name" class="col-auto text-weight-medium">

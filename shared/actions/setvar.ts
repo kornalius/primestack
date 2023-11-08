@@ -4,7 +4,7 @@ import ExType from '../extypes'
 
 export default {
   type: 'setvar',
-  label: 'Set Variable',
+  label: 'actions.setvar.label',
   schema: Type.Object({
     name: ExType.Variable(),
     value: Type.String(),

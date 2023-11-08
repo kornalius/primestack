@@ -4,7 +4,7 @@ import ExType from '../extypes'
 
 export default {
   type: 'unsetvar',
-  label: 'Unset Variable',
+  label: 'actions.unsetvar.label',
   schema: Type.Object({
     name: ExType.Variable(),
   }),

@@ -2,8 +2,9 @@
   <div class="q-mb-sm q-mr-sm">
     <div class="row items-center">
       <div class="col-auto text-bold">
-        If
+        {{ $t('actions.if.label') }}
       </div>
+
       <div class="col q-ml-xs">
         <property-highlight
           :model-value="exprCode(modelValue.expr)"

@@ -2,11 +2,13 @@
   <div>
     <div class="row">
       <div class="col-auto text-bold">
-        Patch
+        {{ $t('actions.patch.label') }}
       </div>
+
       <div class="col-auto q-ml-xs">
-        into table
+        {{ $t('actions.patch.into') }}
       </div>
+
       <div class="col-auto q-ml-xs text-weight-medium text-italic">
         {{ tableName }}
       </div>
@@ -14,7 +16,7 @@
 
     <div class="row">
       <div class="col">
-        Query:
+        {{ $t('actions.patch.query') }}:
       </div>
     </div>
 
@@ -29,7 +31,7 @@
 
     <div class="row">
       <div class="col">
-        Patch Data:
+        {{ $t('actions.patch.data') }}
       </div>
     </div>
 

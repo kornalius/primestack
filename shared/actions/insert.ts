@@ -8,7 +8,7 @@ export const fieldSchema = Type.Object({
 
 export default {
   type: 'insert',
-  label: 'Insert',
+  label: 'actions.insert.label',
   schema: Type.Object({
     tableId: Type.String({ objectid: true, tableid: true }),
     fields: Type.Array(fieldSchema),

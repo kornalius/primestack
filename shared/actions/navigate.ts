@@ -4,7 +4,7 @@ import ExType from '../extypes'
 
 export default {
   type: 'navigate',
-  label: 'Navigate',
+  label: 'actions.navigate.label',
   schema: Type.Object({
     menuId: ExType.Menu(),
     tabId: ExType.Tab(),

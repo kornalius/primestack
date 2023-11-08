@@ -4,7 +4,7 @@ import ExType from '../extypes'
 
 export default {
   type: 'cancel',
-  label: 'Cancel',
+  label: 'actions.cancel.label',
   schema: Type.Object({
     varName: ExType.Variable(),
   }),

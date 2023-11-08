@@ -4,7 +4,7 @@ import ExType from '../extypes'
 
 export default {
   type: 'fetch',
-  label: 'Fetch ',
+  label: 'actions.fetch.label',
   schema: Type.Object({
     href: Type.String(),
     method: StringEnum(['GET', 'POST', 'PATCH', 'HEAD', 'OPTIONS']),

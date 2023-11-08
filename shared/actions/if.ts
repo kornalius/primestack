@@ -4,7 +4,7 @@ import ExType from '../extypes'
 
 export default {
   type: 'if',
-  label: 'If',
+  label: 'actions.if.label',
   schema: Type.Object({
     expr: ExType.Expr(),
   }),

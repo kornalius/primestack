@@ -1,7 +1,7 @@
 <template>
   <div class="row items-center">
     <div class="col-auto text-bold">
-      Set
+      {{ $t('actions.setvar.label') }}
     </div>
 
     <div v-if="modelValue.name" class="col-auto text-weight-medium">
@@ -9,7 +9,7 @@
     </div>
 
     <div v-if="modelValue.value" class="col-auto">
-      to
+      {{ $t('actions.setvar.to') }}
     </div>
 
     <div v-if="modelValue.value" class="col-auto q-ml-xs text-italic">

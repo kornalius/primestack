@@ -4,7 +4,7 @@ import ExType from '../extypes'
 
 export default {
   type: 'getvar',
-  label: 'Get Variable',
+  label: 'actions.getvar.label',
   schema: Type.Object({
     name: ExType.Variable(),
   }),

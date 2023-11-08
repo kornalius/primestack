@@ -159,74 +159,110 @@
   "actions": {
     "title": "Action",
     "cancel": {
+      "label": "Cancel",
       "description": "Cancel a timeout or an interval",
       "childrenMessage": ""
     },
     "console": {
+      "label": "Console",
       "description": "Output messages directly in the browser's console",
       "childrenMessage": ""
     },
     "dialog": {
+      "label": "Dialog",
       "description": "Displays a dialog on the screen with buttons for user's confirmation",
       "childrenMessage": "When user press the OK button..."
     },
     "extract": {
+      "label": "Extract",
       "description": "Extract keys from a JSON object",
       "childrenMessage": ""
     },
     "fetch": {
+      "label": "Fetch",
       "description": "Fetch a resource from the network",
-      "childrenMessage": ""
+      "childrenMessage": "",
+      "from": "from"
     },
     "getvar": {
+      "label": "Get variable",
       "description": "Get a variable value",
       "childrenMessage": ""
     },
     "getsetting": {
+      "label": "Get setting",
       "description": "Get a user setting value",
       "childrenMessage": ""
     },
     "if": {
+      "label": "If",
       "description": "Evaluate an expression",
       "childrenMessage": "If the expression is True, execute these actions..."
     },
     "insert": {
+      "label": "Insert",
       "description": "Insert a new record in a table",
-      "childrenMessage": ""
+      "childrenMessage": "",
+      "into": "into table"
     },
     "interval": {
+      "label": "Interval",
       "description": "Run children actions at intervals",
       "childrenMessage": "Execute these actions at intervals..."
     },
     "merge": {
+      "label": "Merge",
       "description": "Merge two JSON object together",
       "childrenMessage": ""
     },
     "navigate": {
+      "label": "Navigate",
       "description": "Navigate to another url",
-      "childrenMessage": ""
+      "childrenMessage": "",
+      "to": "to"
     },
     "notify": {
+      "label": "Notify",
       "description": "Displays a notification bar",
       "childrenMessage": ""
     },
     "patch": {
+      "label": "Patch",
       "description": "Patch a new record in a table",
-      "childrenMessage": ""
+      "childrenMessage": "",
+      "into": "into table",
+      "query": "Query",
+      "data": "Data"
     },
     "remove": {
+      "label": "Remove",
       "description": "Remove a new record from a table",
       "childrenMessage": ""
     },
+    "setsetting": {
+      "label": "Set setting",
+      "description": "Set a user's setting value",
+      "childrenMessage": "",
+      "to": "to"
+    },
     "setvar": {
+      "label": "Set variable",
       "description": "Set a variable value",
-      "childrenMessage": ""
+      "childrenMessage": "",
+      "to": "to"
     },
     "timeout": {
+      "label": "Timeout",
       "description": "Run children actions after some time",
       "childrenMessage": "Execute these actions after some time..."
     },
+    "unsetsetting": {
+      "label": "Unset setting",
+      "description": "Unset a user's setting",
+      "childrenMessage": ""
+    },
     "unsetvar": {
+      "label": "Unset variable",
       "description": "Unset a variable",
       "childrenMessage": ""
     },

@@ -151,74 +151,110 @@
   "actions": {
     "title": "Action",
     "cancel": {
+      "label": "Annuler",
       "description": "Annule une pause ou un interval",
       "childrenMessage": ""
     },
     "console": {
+      "label": "Écrire",
       "description": "Écrit un message directement dans la console du fureteur",
       "childrenMessage": ""
     },
     "dialog": {
+      "label": "Afficher",
       "description": "Affiche un dialogue à l'écran avec des boutons pour confirmation de l'utilisateur",
       "childrenMessage": "Quand le bouton 'OK' est appuyé..."
     },
     "extract": {
+      "label": "Extraire",
       "description": "Extrait des clées à partir d'un objet JSON",
       "childrenMessage": ""
     },
     "fetch": {
+      "label": "Recupérer",
       "description": "Récupérer une ressource sur le réseau\n",
-      "childrenMessage": ""
+      "childrenMessage": "",
+      "from": "à partir de"
     },
     "getvar": {
+      "label": "Lire la variable",
       "description": "Obtiens la valeur d'une variable",
       "childrenMessage": ""
     },
     "getsetting": {
+      "label": "Lire un paramètre",
       "description": "Obtiens la valeur d'une clé de paramètres utilisateur",
       "childrenMessage": ""
     },
     "if": {
+      "label": "Si",
       "description": "Évalue une expression",
       "childrenMessage": "Si l'expression est vraie, éxécute les actions suivantes..."
     },
     "insert": {
+      "label": "Insérer",
       "description": "Insère un enregistrement dans une table",
-      "childrenMessage": ""
+      "childrenMessage": "",
+      "into": "dans la table"
     },
     "interval": {
+      "label": "Interval",
       "description": "Exécuter des actions à intervals réguliers",
       "childrenMessage": "Exécuter ces actions à intervals réguliers..."
     },
     "merge": {
+      "label": "Combiner",
       "description": "Combine deux objets JSON ensemble",
       "childrenMessage": ""
     },
     "navigate": {
+      "label": "Naviguer",
       "description": "Navigue vers un autre lien",
-      "childrenMessage": ""
+      "childrenMessage": "",
+      "to": "vers"
     },
     "notify": {
+      "label": "Notifier",
       "description": "Affiche une bar de notification",
       "childrenMessage": ""
     },
     "patch": {
+      "label": "Corriger",
       "description": "Corrige un enregistrement dans une table",
-      "childrenMessage": ""
+      "childrenMessage": "",
+      "into": "dans la table",
+      "query": "Requête",
+      "data": "Données"
     },
     "remove": {
+      "label": "Enlever",
       "description": "Enlève un enregistrement d'une table",
       "childrenMessage": ""
     },
+    "setsetting": {
+      "label": "Changer un paramètre",
+      "description": "Change un paramètre utilisateur",
+      "childrenMessage": "",
+      "to": "à"
+    },
     "setvar": {
+      "label": "Changer une variable",
       "description": "Change la valeur d'une variable",
-      "childrenMessage": ""
+      "childrenMessage": "",
+      "to": "à"
     },
     "timeout": {
+      "label": "Pause",
       "description": "Exécuter des actions après un certain temps",
       "childrenMessage": "Exécuter ces actions après un certain temps..."
     },
+    "unsetsetting": {
+      "label": "Effacer un paramètre",
+      "description": "Efface la valeur d'un paramètre utilisateur",
+      "childrenMessage": ""
+    },
     "unsetvar": {
+      "label": "Effacer la variable",
       "description": "Efface la valeur d'une variable",
       "childrenMessage": ""
     },

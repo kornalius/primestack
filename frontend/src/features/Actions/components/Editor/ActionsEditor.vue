@@ -54,7 +54,7 @@
 
               <q-icon :name="actionIcon(value)" :color="actionIconColor(value)" />
 
-              <span class="q-ml-sm">{{ actionLabel(value) }}</span>
+              <span class="q-ml-sm">{{ $t(actionLabel(value)) }}</span>
 
               <q-icon
                 v-if="!isActionAvailable(value.type, auth.user._plan.code)"
@@ -199,7 +199,7 @@ onBeforeUnmount(() => {
 
 .drawer
   overflow: auto
-  width: 200px
+  width: 225px
   height: calc(100vh - 118px)
 
 .container

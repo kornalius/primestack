@@ -4,7 +4,7 @@ import ExType from '../extypes'
 
 export default {
   type: 'interval',
-  label: 'Interval',
+  label: 'actions.interval.label',
   schema: Type.Object({
     milliseconds: Type.Number(),
     varName: ExType.Variable(),

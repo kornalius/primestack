@@ -1,7 +1,7 @@
 <template>
   <div class="row items-center">
     <div v-if="modelValue.name" class="col-auto text-bold">
-      Get setting
+      {{ $t('actions.getsetting.label') }}
     </div>
 
     <div v-if="modelValue.name" class="col-auto text-weight-medium">

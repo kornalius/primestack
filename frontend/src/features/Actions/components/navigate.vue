@@ -1,7 +1,7 @@
 <template>
   <div class="row items-center">
     <div class="col-auto text-italic">
-      to
+      {{ $t('actions.navigate.to') }}
     </div>
 
     <div class="col-auto q-ml-xs text-weight-medium">

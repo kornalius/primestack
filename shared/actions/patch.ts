@@ -9,7 +9,7 @@ export const fieldSchema = Type.Object({
 
 export default {
   type: 'patch',
-  label: 'Patch',
+  label: 'actions.patch.label',
   schema: Type.Object({
     tableId: Type.String({ objectid: true, tableid: true }),
     id: Type.Optional(ExType.Id()),

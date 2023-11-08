@@ -5,6 +5,7 @@
         {{ exprToString(modelValue.title) }}
       </div>
     </div>
+
     <div class="row q-mb-sm">
       <div class="col-auto">
         {{ exprToString(modelValue.message) }}
@@ -19,6 +20,7 @@
           disable
         />
       </div>
+
       <div class="col-auto">
         <q-btn
           v-bind="modelValue.ok"

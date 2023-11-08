@@ -4,7 +4,7 @@ import ExType from '../extypes'
 
 export default {
   type: 'getsetting',
-  label: 'Get Setting',
+  label: 'actions.getsetting.label',
   schema: Type.Object({
     name: ExType.UserSetting(),
   }),

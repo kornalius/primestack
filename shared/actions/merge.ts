@@ -4,7 +4,7 @@ import ExType from '../extypes'
 
 export default {
   type: 'merge',
-  label: 'Merge',
+  label: 'actions.merge.label',
   schema: Type.Object({
     object1: ExType.JSON(),
     object2: ExType.JSON(),

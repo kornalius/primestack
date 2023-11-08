@@ -3,7 +3,7 @@ import { TAction } from '../interfaces/actions'
 
 export default {
   type: 'notify',
-  label: 'Notify',
+  label: 'actions.notify.label',
   schema: Type.Object({
     level: StringEnum(['Success', 'Error', 'Info', 'Warning']),
     message: Type.String(),
