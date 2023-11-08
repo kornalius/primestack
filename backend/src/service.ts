@@ -113,7 +113,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
 
   const limitToNonDeletedResolver = options.softDelete
     ? {
-      deletedAt: async () => null,
+      deletedAt: async () => undefined,
     } : {}
 
   const createdResolver = options.created
@@ -132,9 +132,9 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
       ),
     } : {}
 
-  const nullifyDeletedAtResolver = options.softDelete
+  const removeDeletedAtResolver = options.softDelete
     ? {
-      deletedAt: async () => null,
+      deletedAt: async () => undefined,
     } : {}
 
   const userResolver = options.user
@@ -202,7 +202,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
     {
       ...(options.resolvers?.data?.$create || options.resolvers?.data || {}),
       ...createdResolver as AnyData,
-      ...nullifyDeletedAtResolver as AnyData,
+      ...removeDeletedAtResolver as AnyData,
     }
   )
 

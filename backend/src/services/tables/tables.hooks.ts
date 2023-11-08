@@ -1,7 +1,23 @@
 import i18next from 'i18next'
 import diff from '@/diff-arrays'
 import { Application } from '@feathersjs/koa'
-import { pick } from 'lodash'
+import pick from 'lodash/pick'
+import camelCase from 'lodash/camelCase'
+import capitalize from 'lodash/capitalize'
+import kebabCase from 'lodash/kebabCase'
+import snakeCase from 'lodash/snakeCase'
+import startCase from 'lodash/startCase'
+import trim from 'lodash/trim'
+import trimStart from 'lodash/trimStart'
+import trimEnd from 'lodash/trimEnd'
+import deburr from 'lodash/deburr'
+import escape from 'lodash/escape'
+import unescape from 'lodash/unescape'
+import truncate from 'lodash/truncate'
+import ceil from 'lodash/ceil'
+import floor from 'lodash/floor'
+import round from 'lodash/round'
+import random from 'lodash/random'
 import { virtual } from '@feathersjs/schema'
 import { Static, TObject } from '@feathersjs/typebox'
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -211,25 +227,114 @@ export const createDynamicService = (app: Application, id: string, t: AnyData) =
   //     ]))
   //   })
 
-  /**
-   * Create resolvers for fields with refTableId and refFields specified.
-   */
-
+  const dataResolvers: Record<string, unknown> = {}
   const resultResolvers: Record<string, unknown> = {}
 
-  // Secret fields resolvers (only viewable by its creator)
+  // Transform field data resolvers
+  t.fields
+    .filter((f: TableField) => f.transforms?.length)
+    .forEach((f: TableField) => {
+      dataResolvers[f.name] = (value: unknown) => {
+        let v = value
+        f.transforms?.forEach((t) => {
+          if (typeof v === 'string') {
+            const s = v as string
+            switch (t.type) {
+              case 'lowerCase':
+                v = s.toLowerCase()
+                break
+              case 'upperCase':
+                v = s.toUpperCase()
+                break
+              case 'capitalize':
+                v = capitalize(s)
+                break
+              case 'camelCase':
+                v = camelCase(s)
+                break
+              case 'kebabCase':
+                v = kebabCase(s)
+                break
+              case 'snakeCase':
+                v = snakeCase(s)
+                break
+              case 'startCase':
+                v = startCase(s)
+                break
+              case 'cleanup':
+                v = s.replace(/[^a-zA-Z0-9-_]/, '')
+                break
+              case 'escape':
+                v = escape(s)
+                break
+              case 'unescape':
+                v = unescape(s)
+                break
+              case 'truncate':
+                v = truncate(s, { length: t.value })
+                break
+              case 'trim':
+                v = trim(s)
+                break
+              case 'trimLeft':
+                v = trimStart(s)
+                break
+              case 'trimRight':
+                v = trimEnd(s)
+                break
+              case 'deburr':
+                v = deburr(s)
+                break
+              default:
+                break
+            }
+          } else if (typeof v === 'number') {
+            const i = v as number
+            switch (t.type) {
+              case 'min':
+                v = Math.min(t.value || 0, i)
+                break
+              case 'max':
+                v = Math.max(t.value || 0, i)
+                break
+              case 'ceil':
+                v = ceil(i, t.value || 0)
+                break
+              case 'floor':
+                v = floor(i, t.value || 0)
+                break
+              case 'round':
+                v = round(i, t.value || 0)
+                break
+              default: break
+            }
+          } else if (t.type === 'random') {
+            v = random(t.value || 1)
+          } else if (t.type === 'discard') {
+            v = undefined
+          }
+        })
+        return v
+      }
+    })
+
+  /**
+   * Secret fields resolvers (only viewable by its creator)
+   */
   t.fields
     .filter((f: TableField) => f.secret)
     .forEach((f: TableField) => {
-      resultResolvers[f.name] = virtual(async (record: AnyData, context: HookContext) => {
+      resultResolvers[f.name] = async (record: AnyData, context: HookContext) => {
         if (context.user._id !== record.createdBy) {
           return undefined
         }
         return record[f.name]
-      })
+      }
     })
 
-  // Referenced field resolvers
+  /**
+   * Create resolvers for fields with refTableId and refFields specified.
+   */
   t.fields
     .filter((f: TableField) => f.refTableId)
     .forEach((f: TableField) => {
@@ -288,6 +393,7 @@ export const createDynamicService = (app: Application, id: string, t: AnyData) =
       // querySyntax: Object.keys(querySyntax).length ? querySyntax : undefined,
     },
     resolvers: {
+      data: dataResolvers,
       result: resultResolvers,
     }
   }).init(app, {})

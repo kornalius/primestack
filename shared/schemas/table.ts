@@ -47,6 +47,30 @@ export const supportedMethods = [
   'remove',
 ]
 
+export const transformNames = [
+  'lowerCase',
+  'upperCase',
+  'capitalize',
+  'kebabCase',
+  'snakeCase',
+  'startCase',
+  'cleanup',
+  'escape',
+  'unescape',
+  'truncate',
+  'discard',
+  'deburr',
+  'trim',
+  'trimLeft',
+  'trimRight',
+  'min',
+  'max',
+  'ceil',
+  'floor',
+  'round',
+  'random',
+]
+
 export const tableFieldSchema = Type.Object(
   {
     _id: ExType.Id(),
@@ -58,6 +82,12 @@ export const tableFieldSchema = Type.Object(
     readonly: Type.Optional(Type.Boolean()),
     queryable: Type.Optional(Type.Boolean()),
     secret: Type.Optional(Type.Boolean()),
+    transforms: Type.Optional(Type.Array(
+      Type.Object({
+        type: StringEnum(transformNames),
+        value: Type.Optional(Type.Number()),
+      }, { horizontal: true, horizontalPopup: true })
+    )),
     slider: Type.Optional(Type.Boolean()),
     format: Type.Optional(StringEnum(supportedStringFormats)),
     multipleOf: Type.Optional(Type.Number()),
@@ -74,7 +104,7 @@ export const tableFieldSchema = Type.Object(
       Type.Object({
         label: Type.String(),
         value: Type.String(),
-      }),
+      }, { horizontal: true, horizontalPopup: true }),
     )),
     refTableId: Type.Optional(ExType.Table()),
     refFields: Type.Optional(Type.Array(
@@ -88,6 +118,7 @@ export const tableFieldSchema = Type.Object(
       content: {
         icon: contentIcon,
         names: [
+          'name',
           'type',
           { name: 'refTableId', label: 'Reference Table' },
           { name: 'refFields', label: 'Reference Fields' },
@@ -101,6 +132,7 @@ export const tableFieldSchema = Type.Object(
       model: {
         icon: modelIcon,
         names: [
+          'transforms',
           'format',
           'options',
           'slider',
