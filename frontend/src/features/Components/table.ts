@@ -16,7 +16,7 @@ import {
 
 type FormField = Static<typeof fieldSchema>
 type Table = Static<typeof tableSchema>
-type TableFieldSchema = Static<typeof tableFieldSchema>
+type TableField = Static<typeof tableFieldSchema>
 
 export default {
   type: 'table',
@@ -272,8 +272,8 @@ export default {
       added,
     }),
   },
-  fields: (field: FormField, editor: AnyData): TableFieldSchema[] => {
-    let lst = [] as TableFieldSchema[]
+  fields: (field: FormField, editor: AnyData): TableField[] => {
+    let lst = [] as TableField[]
     const tid = (field as AnyData).tableId
     if (tid) {
       const tbl = editor.tables?.find((s: Table) => s._id === tid)

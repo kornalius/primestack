@@ -49,7 +49,7 @@
                 dense
                 no-caps
                 flat
-                @click="editor.addFieldToForm(value)"
+                @click="editor.addFieldToForm(value, undefined, true)"
               >
                 <q-icon
                   v-if="!isComponentAvailable(value.type, auth.user._plan.code)"
@@ -155,7 +155,6 @@ const unselectAll = () => {
   }
   if (editor.active && editor.actionId) {
     editor.unselectAll()
-    editor.unselectActionElement()
   }
 }
 

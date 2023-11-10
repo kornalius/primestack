@@ -22,8 +22,8 @@
       <template #item="{ index }">
         <action-element
           v-model="actionList[index]"
-          :selected="editor.isActionElementSelected(actionList[index]._id)"
-          @click="editor.selectActionElement"
+          :selected="editor.isSelected(actionList[index]._id)"
+          @click="editor.select"
           @remove="remove"
         />
       </template>

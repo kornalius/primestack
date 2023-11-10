@@ -12,16 +12,17 @@ import {
 } from '@/features/Components'
 import { useValidators } from '@/features/Validation/composites'
 import { getTypeFor } from '@/shared/schema'
-import { flattenFields, newNameForField } from '@/shared/form'
+import { flattenFields, newNameForField, parentFormField } from '@/shared/form'
 // eslint-disable-next-line import/no-cycle
 import { getProp } from '@/features/Expression/composites'
 import { useAppEditor } from '@/features/Editor/store'
 import { actionSchema } from '@/shared/schemas/actions'
 import { tableFieldSchema } from '@/shared/schemas/table'
 import { columnSchema, fieldSchema, formSchema } from '@/shared/schemas/form'
+import { useFeathersService } from '@/composites/feathers'
 
 type TableField = Static<typeof tableFieldSchema>
-type FormSchema = Static<typeof formSchema>
+type Form = Static<typeof formSchema>
 type FormField = Static<typeof fieldSchema>
 type FormColumn = Static<typeof columnSchema>
 type Action = Static<typeof actionSchema>
@@ -215,6 +216,18 @@ export const isLabel = (field: FormField | FormColumn | TFormComponent): boolean
 )
 
 /**
+ * Find the parent form for a field
+ *
+ * @param field Field to get the parent form for
+ *
+ * @returns {Form | undefined}
+ */
+export const parentForm = (field: FormField | FormColumn): Form | undefined => {
+  const userForm = useFeathersService('forms').findOneInStore({ query: {} })
+  return userForm.value?.list.find((f: Form) => parentFormField(f, field))
+}
+
+/**
  * Returns the path of elements from a form leading to an element
  *
  * @param form Form instance
@@ -222,7 +235,7 @@ export const isLabel = (field: FormField | FormColumn | TFormComponent): boolean
  *
  * @returns {FormField[]|undefined}
  */
-export const pathTo = (form: FormSchema, field: FormField): FormField[] | undefined => {
+export const pathTo = (form: Form, field: FormField): FormField[] | undefined => {
   const scanColumn = (columns: FormColumn[], path: FormField[]): FormField[] | undefined => {
     // eslint-disable-next-line no-underscore-dangle
     for (let i = 0; i < columns.length; i++) {
@@ -387,9 +400,9 @@ export const useFormElements = () => ({
    *
    * @returns {TSchema|undefined}
    */
-  schemaForField: (f: FormSchema | FormField | FormColumn): TSchema | undefined => {
+  schemaForField: (f: Form | FormField | FormColumn): TSchema | undefined => {
     // eslint-disable-next-line no-underscore-dangle
-    if ((f as FormSchema)?._fields) {
+    if ((f as Form)?._fields) {
       return formSchema
     }
     // eslint-disable-next-line no-underscore-dangle
@@ -423,6 +436,8 @@ export const useFormElements = () => ({
   eventArgsForField,
 
   argNames,
+
+  parentForm,
 
   /**
    * Serialize field's rules to bind to Quasar Inputs

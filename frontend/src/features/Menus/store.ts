@@ -1,31 +1,42 @@
 import { ref, computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { defineStore } from 'pinia'
+import cloneDeep from 'lodash/cloneDeep'
 import hexObjectId from 'hex-object-id'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
-// eslint-disable-next-line import/no-cycle
-import { menuOrPopupPresent } from '@/features/Editor/store'
+import { recreateMenuIds } from '@/shared/menu'
+import { AnyData } from '@/shared/interfaces/commons'
 
 type Menu = Static<typeof menuSchema>
 type Tab = Static<typeof tabSchema>
 
 export const useMenuEditor = defineStore('menu-editor', () => {
   const states = ref({
-    // selected menu id
-    selected: undefined,
+    // menu id begin edited
+    menuId: undefined,
     // menus being edited
     menus: [] as Menu[],
   })
 
   /**
-   * Selected menu id
+   * Menu id being edited
    */
-  const selected = computed(() => states.value.selected)
+  const menuId = computed(() => states.value.menuId)
 
   /**
    * Clone of the user's menus
    */
   const menus = computed(() => states.value.menus)
+
+  /**
+   * Selects a menu
+   *
+   * @param id Id of the menu
+   */
+  const setMenuId = (id: string): boolean => {
+    states.value.menuId = id
+    return true
+  }
 
   /**
    * Set the user's menu clones
@@ -34,41 +45,6 @@ export const useMenuEditor = defineStore('menu-editor', () => {
    */
   const setMenus = (list: Menu[]) => {
     states.value.menus = list
-  }
-
-  /**
-   * Checks to see if a menu is being selected or not
-   *
-   * @param id Id of the menu
-   *
-   * @returns {boolean} True if the menu is selected
-   */
-  const isSelected = (id: string): boolean => (
-    states.value.selected === id
-  )
-
-  /**
-   * Selects a menu
-   *
-   * @param id Id of the menu
-   */
-  const select = (id: string): boolean => {
-    if (!menuOrPopupPresent()) {
-      states.value.selected = id
-      return true
-    }
-    return false
-  }
-
-  /**
-   * Unselects currently selected menu
-   */
-  const unselect = (): boolean => {
-    if (!menuOrPopupPresent()) {
-      states.value.selected = undefined
-      return true
-    }
-    return false
   }
 
   /**
@@ -95,7 +71,7 @@ export const useMenuEditor = defineStore('menu-editor', () => {
   const tabInstance = (id: string): Tab | undefined => {
     for (let i = 0; i < states.value.menus.length; i++) {
       const m = states.value.menus[i]
-      const tab = m.tabs
+      const tab = m?.tabs
         .find((t) => t._id === id)
       if (tab) {
         return tab
@@ -107,11 +83,11 @@ export const useMenuEditor = defineStore('menu-editor', () => {
   /**
    * Adds a new menu
    *
-   * @param selectIt Should we select it?
+   * @param options Optional values
    *
    * @returns {Menu} New menu instance
    */
-  const add = (selectIt?: boolean): Menu => {
+  const add = (options?: AnyData): Menu => {
     const m: Menu = {
       _id: hexObjectId(),
       label: undefined,
@@ -121,11 +97,22 @@ export const useMenuEditor = defineStore('menu-editor', () => {
       target: '_self',
       tabs: [],
       variables: [],
+      ...(options || {}),
     }
     states.value.menus = [...states.value.menus, m]
-    if (selectIt) {
-      select(m._id)
-    }
+    return m
+  }
+
+  /**
+   * Duplicates a menu
+   *
+   * @param menu Menu instance to duplicate
+   *
+   * @returns {Menu} New menu instance
+   */
+  const duplicate = (menu: Menu): Menu => {
+    const m: Menu = recreateMenuIds(cloneDeep(menu))
+    states.value.menus = [...states.value.menus, m]
     return m
   }
 
@@ -151,15 +138,14 @@ export const useMenuEditor = defineStore('menu-editor', () => {
 
   return {
     states,
-    selected,
+    menuId,
     menus,
+    setMenuId,
     setMenus,
-    isSelected,
-    select,
-    unselect,
     instance,
     tabInstance,
     add,
+    duplicate,
     remove,
   }
 })

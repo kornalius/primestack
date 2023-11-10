@@ -79,7 +79,7 @@ const { menuUrl } = useUrl()
 
 const selectTab = (id: string) => {
   if (props.menu) {
-    editor.selectTab(id)
+    editor.setTabId(id)
   }
 }
 
@@ -98,7 +98,7 @@ const newTabName = (name: string): string => {
 
 const addTab = () => {
   if (props.menu) {
-    editor.addTab(true)
+    editor.addTab(props.menu, undefined, undefined, true)
   } else {
     const name = newTabName('Tab')
     tabs.value.push({
@@ -113,7 +113,7 @@ const addTab = () => {
 
 const removeTab = (t: Tab) => {
   if (props.menu) {
-    editor.removeTab(t._id)
+    editor.removeTab(t._id, props.menu)
   } else {
     const idx = tabs.value.indexOf(t)
     if (idx !== -1) {
@@ -122,17 +122,17 @@ const removeTab = (t: Tab) => {
   }
 }
 
-watch(() => editor.selectedTab, () => {
-  if (props.menu && currentTab.value !== editor.selectedTab) {
+watch(() => editor.tabId, () => {
+  if (props.menu && currentTab.value !== editor.tabId) {
     setTimeout(() => {
-      router.push(menuUrl(props.menu._id, editor.selectedTab))
+      router.push(menuUrl(props.menu._id, editor.tabId))
     }, 100)
   }
 })
 
 watch(currentTab, () => {
   if (props.menu) {
-    editor.selectTab(currentTab.value)
+    editor.setTabId(currentTab.value)
   }
 }, { immediate: true })
 

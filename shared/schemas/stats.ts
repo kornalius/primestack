@@ -18,7 +18,7 @@ export const schema = Type.Object(
         '!empty',
         '%empty',
         '%!empty',
-      ])
+      ]),
     ),
     groupFields: Type.Optional(Type.Array(Type.String())),
     value: Type.Optional(Type.Number()),

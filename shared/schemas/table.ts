@@ -86,7 +86,7 @@ export const tableFieldSchema = Type.Object(
       Type.Object({
         type: StringEnum(transformNames),
         value: Type.Optional(Type.Number()),
-      }, { horizontal: true, horizontalPopup: true })
+      }, { horizontal: true, horizontalPopup: true }),
     )),
     slider: Type.Optional(Type.Boolean()),
     format: Type.Optional(StringEnum(supportedStringFormats)),

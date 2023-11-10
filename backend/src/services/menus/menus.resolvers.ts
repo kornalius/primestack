@@ -9,14 +9,14 @@ import { menuSchema, schema, tabSchema } from '@/shared/schemas/menu'
 import { formSchema, schema as formListSchema } from '@/shared/schemas/form'
 import { schema as shareSchema } from '@/shared/schemas/share'
 
-type MenuSchema = Static<typeof schema>
+type MenuList = Static<typeof schema>
 type Menu = Static<typeof menuSchema>
 type Tab = Static<typeof tabSchema>
-type FormSchema = Static<typeof formListSchema>
+type FormList = Static<typeof formListSchema>
 type Form = Static<typeof formSchema>
 type Share = Static<typeof shareSchema>
 
-const getFormIds = (value: MenuSchema): string[] => (
+const getFormIds = (value: MenuList): string[] => (
   value?.list.reduce((acc: string[], m: Menu) => ([
     ...acc,
     ...m.tabs
@@ -26,17 +26,17 @@ const getFormIds = (value: MenuSchema): string[] => (
 )
 
 // return a list of menu ids in the list
-const menuIds = virtual(async (value: MenuSchema) => (
+const menuIds = virtual(async (value: MenuList) => (
   value?.list.map((m: Menu) => m._id.toString())
 ))
 
 // return a list of all form ids defined in the menu tabs
-const formIds = virtual(async (value: MenuSchema) => (
+const formIds = virtual(async (value: MenuList) => (
   getFormIds(value)
 ))
 
 // return a list of all table ids that are defined in the forms of the menu tabs
-const tableIds = virtual(async (value: MenuSchema, context: HookContext) => {
+const tableIds = virtual(async (value: MenuList, context: HookContext) => {
   // get all form ids used in the menu list
   const formIds = getFormIds(value)
   if (!formIds || formIds.length === 0) {
@@ -49,18 +49,18 @@ const tableIds = virtual(async (value: MenuSchema, context: HookContext) => {
       $limit: -1,
       $skip: 0,
     },
-  })).data as FormSchema[]
+  })).data as FormList[]
 
   return formsLists
     // flatten all the form's lists
-    .reduce((acc: Form[], f: FormSchema) => ([...acc, ...f.list]), [])
+    .reduce((acc: Form[], f: FormList) => ([...acc, ...f.list]), [])
     // filter forms in formIds with a tableId
     .filter((f: Form) => f.tableId && formIds.includes(f._id.toString()))
     .map((f: Form) => f.tableId?.toString())
 })
 
 // return a list of user ids that this menu is shared with
-const userIds = virtual(async (value: MenuSchema, context: HookContext) => {
+const userIds = virtual(async (value: MenuList, context: HookContext) => {
   // extract all menu ids from the list
   const menuIds = value?.list.map((m: Menu) => m._id)
   if (!menuIds || menuIds.length === 0) {

@@ -6,13 +6,13 @@ import { menuSchema, schema as menuListSchema, tabSchema } from '@/shared/schema
 import { formSchema, schema as formListSchema } from '@/shared/schemas/form'
 
 type Share = Static<typeof schema>
-type MenuSchema = Static<typeof menuListSchema>
+type MenuList = Static<typeof menuListSchema>
 type Menu = Static<typeof menuSchema>
 type Tab = Static<typeof tabSchema>
-type FormSchema = Static<typeof formListSchema>
+type FormList = Static<typeof formListSchema>
 type Form = Static<typeof formSchema>
 
-const getFormIds = (menu: MenuSchema): string[] => (
+const getFormIds = (menu: MenuList): string[] => (
   menu?.list.reduce((acc: string[], m: Menu) => ([
     ...acc,
     ...m.tabs
@@ -23,13 +23,13 @@ const getFormIds = (menu: MenuSchema): string[] => (
 
 // return a list of form ids this share provides
 const formIds = virtual(async (value: Share, context: HookContext) => {
-  const menu = await context.app.service('menus').get(value.menuId) as MenuSchema
+  const menu = await context.app.service('menus').get(value.menuId) as MenuList
   return getFormIds(menu)
 })
 
 // return a list of form ids this share provides
 const tableIds = virtual(async (value: Share, context: HookContext) => {
-  const menu = await context.app.service('menus').get(value.menuId) as MenuSchema
+  const menu = await context.app.service('menus').get(value.menuId) as MenuList
   const formIds = getFormIds(menu)
 
   const formsLists = (await context.app.service('menus').find({
@@ -38,11 +38,11 @@ const tableIds = virtual(async (value: Share, context: HookContext) => {
       $limit: -1,
       $skip: 0,
     },
-  })).data as FormSchema[]
+  })).data as FormList[]
 
   // flatten all the form's lists
   return formsLists
-    .reduce((acc: Form[], f: FormSchema) => ([...acc, ...f.list]), [])
+    .reduce((acc: Form[], f: FormList) => ([...acc, ...f.list]), [])
     // filter forms in formIds with a tableId
     .filter((f: Form) => f.tableId && formIds.includes(f._id.toString()))
     .map((f: Form) => f.tableId?.toString())

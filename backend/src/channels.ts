@@ -7,7 +7,7 @@ import { schema as tableSchema } from '@/shared/schemas/table'
 import { Application } from './declarations'
 
 type Share = Static<typeof shareSchema>
-type TableSchema = Static<typeof tableSchema>
+type TableList = Static<typeof tableSchema>
 
 export default function (app: Application): void {
   if (typeof app.channel !== 'function') {
@@ -63,7 +63,7 @@ export default function (app: Application): void {
             $limit: -1,
             $skip: 0,
           },
-        }, context.params)).data as TableSchema[]
+        }, context.params)).data as TableList[]
 
         const share = userShares.find((s: Share) => (
           s.tableIds?.includes(context.path)

@@ -131,12 +131,12 @@ import FieldSelect from '@/features/Tables/components/FieldSelect.vue'
 import CodeEditor from '@/features/Expression/components/CodeEditor.vue'
 import PropertyHighlight from '@/features/Properties/components/PropertyHighlight.vue'
 
-type TableFieldSchema = Static<typeof tableFieldSchema>
+type TableField = Static<typeof tableFieldSchema>
 
 const props = defineProps<{
   modelValue: QueryCriteria
   disable?: boolean
-  fields: TableFieldSchema[]
+  fields: TableField[]
   operators: string[]
 }>()
 

@@ -12,13 +12,13 @@ import hooks from './files.hooks'
 
 dataValidator.addSchema(schema)
 
-type FileInterface = Static<typeof schema>
+type File = Static<typeof schema>
 
 const path = 'files'
 const collection = 'files'
 
-export const readFiles = async (files: FileInterface[]): Promise<FileInterface[]> => {
-  const promises = files.map((file): Promise<FileInterface> => (
+export const readFiles = async (files: File[]): Promise<File[]> => {
+  const promises = files.map((file): Promise<File> => (
     new Promise((resolve, reject) => {
       let encoded = ''
 

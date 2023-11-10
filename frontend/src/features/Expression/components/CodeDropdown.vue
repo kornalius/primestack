@@ -56,10 +56,10 @@
 import { Marked } from 'marked'
 import { markedHighlight } from 'marked-highlight'
 import hljs from 'highlight.js'
-import { Menu } from '../interfaces'
+import { ExpressionMenu } from '../interfaces'
 
 defineProps<{
-  modelValue: Menu[]
+  modelValue: ExpressionMenu[]
 }>()
 
 defineEmits<{

@@ -1,17 +1,23 @@
 import { ref, computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
+import cloneDeep from 'lodash/cloneDeep'
 import hexObjectId from 'hex-object-id'
 import { defineStore } from 'pinia'
 import {
   columnSchema, fieldSchema, formSchema, formTableColumnSchema,
 } from '@/shared/schemas/form'
-import { flattenFields, newNameForField } from '@/shared/form'
+import {
+  flattenFields,
+  newNameForField,
+  parentFormFieldArray,
+  recreateFormIds,
+} from '@/shared/form'
 import { AnyData } from '@/shared/interfaces/commons'
 // eslint-disable-next-line import/no-cycle
 import { isTable } from '@/features/Forms/composites'
-import { menuOrPopupPresent } from '@/features/Editor/store'
 import { defaultValueForSchema, defaultValues } from '@/shared/schema'
 import { TFormComponent } from '@/shared/interfaces/forms'
+import { componentsByType } from '@/features/Components'
 
 type Form = Static<typeof formSchema>
 type FormField = Static<typeof fieldSchema>
@@ -24,8 +30,6 @@ export const useFormEditor = defineStore('form-editor', () => {
     formsEditor: false,
     // id of the form being edited
     formId: undefined,
-    // selected form table component column
-    selectedTableColumn: undefined,
     // forms being edited
     forms: [] as Form[],
     // is the preview mode activated or not?
@@ -55,13 +59,6 @@ export const useFormEditor = defineStore('form-editor', () => {
    */
   const forms = computed(() => (
     states.value.forms
-  ))
-
-  /**
-   * Selected form table component column id
-   */
-  const selectedTableColumn = computed(() => (
-    states.value.selectedTableColumn
   ))
 
   const preview = computed(() => states.value.preview)
@@ -144,49 +141,13 @@ export const useFormEditor = defineStore('form-editor', () => {
   }
 
   /**
-   * Selects a form's table component column
-   *
-   * @param id Id of the table column
-   */
-  const selectTableColumn = (id: string): FormField => {
-    if (!menuOrPopupPresent()) {
-      const col = tableColumnInstance(id)
-      states.value.selectedTableColumn = id
-      return col
-    }
-    return undefined
-  }
-
-  /**
-   * Unselects currently selected form's table component column
-   */
-  const unselectTableColumn = (): boolean => {
-    if (!menuOrPopupPresent()) {
-      states.value.selectedTableColumn = undefined
-      return true
-    }
-    return false
-  }
-
-  /**
-   * Checks to see if a form's table column is being selected or not
-   *
-   * @param id Id of the form's table colum
-   *
-   * @returns {boolean} True if the form's table column is selected
-   */
-  const isTableColumnSelected = (id: string): boolean => (
-    states.value.selectedTableColumn === id
-  )
-
-  /**
    * Returns the form field instance from an id
    *
    * @param id Id of the form field
    *
    * @returns {FormField|undefined} Instance of the form field
    */
-  const fieldInstance = (id: string): FormField | undefined => (
+  const fieldInstance = (id: string): FormField | FormColumn | undefined => (
     // eslint-disable-next-line no-underscore-dangle
     flatFields().find((f) => f._id === id) as FormField
   )
@@ -194,20 +155,34 @@ export const useFormEditor = defineStore('form-editor', () => {
   /**
    * Adds a new form
    *
-   * @param selectIt Should we select it?
+   * @param options Options to add to the form
    *
    * @returns {Form} New form instance
    */
-  const add = (selectIt?: boolean): Form => {
+  const add = (options?: AnyData): Form => {
     const f: Form = {
       _id: hexObjectId(),
       name: newNameForField('form', states.value.forms),
       _fields: [],
+      ...(options || {}),
     }
     states.value.forms = [...states.value.forms, f]
-    if (selectIt) {
-      setFormId(f._id)
+    return f
+  }
+
+  /**
+   * Duplicates a form
+   *
+   * @param form Form instance to duplicate
+   *
+   * @returns {Form} New form instance
+   */
+  const duplicate = (form: Form): Form => {
+    const f: Form = {
+      ...recreateFormIds(cloneDeep(form)),
+      name: newNameForField('form', states.value.forms),
     }
+    states.value.forms = [...states.value.forms, f]
     return f
   }
 
@@ -255,9 +230,8 @@ export const useFormEditor = defineStore('form-editor', () => {
             { ...acc, [k]: defaultValueForSchema(component.schema.properties[k]) }
           ), {}),
         ...(defaultValues(component.defaultValues) || {}),
-        ...(options || {}),
-        // eslint-disable-next-line no-underscore-dangle
         name: newNameForField(component.type, flatFields()),
+        ...(options || {}),
       }
     }
     return undefined
@@ -288,16 +262,44 @@ export const useFormEditor = defineStore('form-editor', () => {
   }
 
   /**
+   * Duplicates a field
+   *
+   * @param field Field instance
+   *
+   * @returns {FormField | FormColumn} New field instance
+   */
+  const duplicateField = (
+    field: FormField | FormColumn,
+  ): FormField | FormColumn | undefined => {
+    const form = instance(states.value.formId)
+    const arr = parentFormFieldArray(form, field) as unknown[]
+    if (arr) {
+      // eslint-disable-next-line no-underscore-dangle
+      const c = componentsByType[field._type]
+      if (c) {
+        const newField = {
+          ...cloneDeep(field),
+          _id: hexObjectId(),
+          // eslint-disable-next-line no-underscore-dangle
+          name: newNameForField(c.type, form._fields),
+        }
+        // eslint-disable-next-line no-underscore-dangle
+        arr.push(newField)
+        return newField
+      }
+    }
+    return undefined
+  }
+
+  /**
    * Adds a new column to a field
    *
-   * @param componentsByType Component instances classed by type
    * @param componentType Type of component of the field
    * @param field Field instance to add the column to
    *
    * @returns {FormColumn} New tab instance
    */
   const addColumnToField = (
-    componentsByType: Record<string, TFormComponent>,
     componentType: string,
     field: FormField,
   ): FormColumn => {
@@ -370,21 +372,19 @@ export const useFormEditor = defineStore('form-editor', () => {
     formsEditor,
     formId,
     forms,
+    setFormId,
     setForms,
     setFormsEditor,
-    setFormId,
     instance,
     tableColumnInstance,
     flatFields,
     fieldInstance,
-    selectedTableColumn,
-    selectTableColumn,
-    unselectTableColumn,
-    isTableColumnSelected,
     add,
+    duplicate,
     remove,
     createField,
     addField,
+    duplicateField,
     addColumnToField,
     removeColumnFromField,
     preview,

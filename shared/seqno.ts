@@ -2,7 +2,7 @@
  * Algorithm taken from KBala <kbala@adaptivemedia.in> https://github.com/amindia/invoice-number
  */
 
-const alphaNumericIncrementer = (str: string = ''): string => {
+const alphaNumericIncrementer = (str = ''): string => {
   let n = str
     .replace(/([^a-z0-9]+)/gi, '')
     .toUpperCase()
@@ -17,7 +17,7 @@ const alphaNumericIncrementer = (str: string = ''): string => {
       n = `${n.substring(0, i)}${char}${n.substring(i + 1)}`
       i = 0
     }
-    i--
+    i -= 1
   }
   return n
 }
@@ -29,7 +29,7 @@ const alphaNumericIncrementer = (str: string = ''): string => {
  *
  * @returns {string}
  */
-export const next = (no: string = ''): string => {
+export const next = (no = ''): string => {
   const last = no.split(/[_/:\-;\\]+/).pop() || ''
   const prior = no.substring(0, no.indexOf(last))
   const nxt = alphaNumericIncrementer(last)

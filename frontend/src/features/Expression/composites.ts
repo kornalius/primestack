@@ -63,7 +63,7 @@ import { useAuth } from '@/features/Auth/store'
 import { AnyData, T18N } from '@/shared/interfaces/commons'
 // eslint-disable-next-line import/no-cycle
 import { exec } from '@/features/Actions/composites'
-import { Menu } from '@/features/Expression/interfaces'
+import { ExpressionMenu } from '@/features/Expression/interfaces'
 import { next } from '@/shared/seqno'
 import { categories } from '@/features/Expression/categories'
 import { fcts } from '@/features/Expression/fcts'
@@ -72,11 +72,11 @@ import { menuSchema, tabSchema } from '@/shared/schemas/menu'
 import { formSchema } from '@/shared/schemas/form'
 import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
 
-type MenuSchema = Static<typeof menuSchema>
-type TabSchema = Static<typeof tabSchema>
-type FormSchema = Static<typeof formSchema>
-type TableSchema = Static<typeof tableSchema>
-type FieldSchema = Static<typeof tableFieldSchema>
+type Menu = Static<typeof menuSchema>
+type Tab = Static<typeof tabSchema>
+type Form = Static<typeof formSchema>
+type Table = Static<typeof tableSchema>
+type TableField = Static<typeof tableFieldSchema>
 
 dayjs.extend(weekOfYear)
 dayjs.extend(dayOfYear)
@@ -1452,7 +1452,7 @@ export const useExpression = (t: T18N) => {
   const userMenu = useFeathersService('menus')
     .findOneInStore({ query: {} })
 
-  const functions = computed((): Menu[] => (
+  const functions = computed((): ExpressionMenu[] => (
     sortBy(categories.map((category) => ({
       icon: category.icon,
       name: category.name,
@@ -1468,8 +1468,8 @@ export const useExpression = (t: T18N) => {
     })), 'label')
   ))
 
-  const tables = computed((): Menu[] => (
-    sortBy((userTable.value?.list || []).map((table: TableSchema) => ({
+  const tables = computed((): ExpressionMenu[] => (
+    sortBy((userTable.value?.list || []).map((table: Table) => ({
       icon: 'mdi-table',
       name: table._id,
       label: table.name,
@@ -1477,15 +1477,15 @@ export const useExpression = (t: T18N) => {
     })), 'label')
   ))
 
-  const fields = computed((): Menu[] => (
+  const fields = computed((): ExpressionMenu[] => (
     sortBy(
       (userTable.value?.list || [])
-        .filter((table: TableSchema) => table.fields.length > 0)
-        .map((table: TableSchema) => ({
+        .filter((table: Table) => table.fields.length > 0)
+        .map((table: Table) => ({
           icon: 'mdi-table',
           name: table._id,
           label: table.name,
-          children: sortBy(table.fields.map((field: FieldSchema) => ({
+          children: sortBy(table.fields.map((field: TableField) => ({
             icon: iconForType(field.type),
             name: field._id,
             label: field.name,
@@ -1496,8 +1496,8 @@ export const useExpression = (t: T18N) => {
     )
   ))
 
-  const menus = computed((): Menu[] => (
-    sortBy((userMenu.value?.list || []).map((menu: MenuSchema) => ({
+  const menus = computed((): ExpressionMenu[] => (
+    sortBy((userMenu.value?.list || []).map((menu: Menu) => ({
       icon: 'mdi-menu',
       name: menu._id,
       label: menu.label,
@@ -1505,15 +1505,15 @@ export const useExpression = (t: T18N) => {
     })), 'label')
   ))
 
-  const tabs = computed((): Menu[] => (
+  const tabs = computed((): ExpressionMenu[] => (
     sortBy(
       (userMenu.value?.list || [])
-        .filter((menu: MenuSchema) => menu.tabs.length > 0)
-        .map((menu: MenuSchema) => ({
+        .filter((menu: Menu) => menu.tabs.length > 0)
+        .map((menu: Menu) => ({
           icon: 'mdi-menu',
           name: menu._id,
           label: menu.label,
-          children: sortBy(menu.tabs.map((tab: TabSchema) => ({
+          children: sortBy(menu.tabs.map((tab: Tab) => ({
             icon: 'mdi-tab',
             name: tab._id,
             label: tab.label,
@@ -1524,8 +1524,8 @@ export const useExpression = (t: T18N) => {
     )
   ))
 
-  const forms = computed((): Menu[] => (
-    sortBy((userForm.value?.list || []).map((form: FormSchema) => ({
+  const forms = computed((): ExpressionMenu[] => (
+    sortBy((userForm.value?.list || []).map((form: Form) => ({
       icon: 'mdi-window-maximize',
       name: form._id,
       label: form.name,
@@ -1533,7 +1533,7 @@ export const useExpression = (t: T18N) => {
     })), 'label')
   ))
 
-  const vars = computed((): Menu[] => (
+  const vars = computed((): ExpressionMenu[] => (
     sortBy(variables.names.map((v) => ({
       icon: 'mdi-variable',
       name: v,
@@ -1542,7 +1542,7 @@ export const useExpression = (t: T18N) => {
     })), 'label')
   ))
 
-  const mainmenu = computed((): Menu[] => ([
+  const mainmenu = computed((): ExpressionMenu[] => ([
     {
       icon: 'mdi-flash',
       name: 'functions',
@@ -1587,7 +1587,7 @@ export const useExpression = (t: T18N) => {
     },
   ]))
 
-  const dropmenu = computed((): Menu[] => ([
+  const dropmenu = computed((): ExpressionMenu[] => ([
     {
       icon: 'mdi-flash-triangle',
       name: 'quickies',

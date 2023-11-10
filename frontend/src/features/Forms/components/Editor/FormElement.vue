@@ -37,7 +37,7 @@
       color="blue-4"
       size="xs"
       round
-      @click="editor.addColumnToField(componentsByType, component.type, field)"
+      @click="editor.addColumnToField(component.type, field)"
     >
       <q-tooltip :delay="500">
         Add Column or Section

@@ -40,9 +40,9 @@
               :class="{
                 label: true,
                 hovered: hover === index,
-                selected: editor.isFormTableColumnSelected(cols[index]._id),
+                selected: editor.isSelected(cols[index]._id),
               }"
-              @click.stop="editor.selectFormTableColumn(cols[index]._id)"
+              @click.stop="editor.select(cols[index]._id)"
             >
               {{ cols[index].label }}
             </div>

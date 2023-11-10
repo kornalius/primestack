@@ -201,17 +201,17 @@ import { Static, TSchema } from '@feathersjs/typebox'
 import { blueprintSchema } from '@/shared/schemas/blueprints'
 import { fieldSchema } from '@/shared/schemas/form'
 import { useModelValue } from '@/composites/prop'
-import { useAppEditor } from '@/features/Editor/store'
+import { useApp } from '@/features/App/store'
 import { useFormElements } from '@/features/Forms/composites'
 import { PropName, TFormFieldCategory } from '@/shared/interfaces/forms'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 
 type Blueprint = Static<typeof blueprintSchema>
-type Field = Static<typeof fieldSchema>
+type FormField = Static<typeof fieldSchema>
 
 const props = defineProps<{
   modelValue: Blueprint
-  field: Field
+  field: FormField
   categories: Record<string, TFormFieldCategory>
 }>()
 
@@ -223,7 +223,7 @@ const value = useModelValue(props, emit) as Ref<Blueprint>
 
 const global = ref(false)
 
-const editor = useAppEditor()
+const app = useApp()
 
 const { getPaletteColor } = colors
 
@@ -306,7 +306,7 @@ watch(global, () => {
   if (global.value) {
     value.value.menuId = undefined
   } else {
-    value.value.menuId = editor.selectedMenu
+    value.value.menuId = app.menuId
   }
 })
 

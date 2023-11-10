@@ -58,13 +58,13 @@ import { Static } from '@feathersjs/typebox'
 import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
 import { useExpression } from '@/features/Expression/composites'
-import { fieldSchema, tabSchema } from '@/shared/schemas/form'
+import { fieldSchema, formTabSchema } from '@/shared/schemas/form'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useFormElements } from '../composites'
 import FormDisplay from './FormDisplay.vue'
 
 type FormField = Static<typeof fieldSchema>
-type FormTab = Static<typeof tabSchema>
+type FormTab = Static<typeof formTabSchema>
 
 const props = defineProps<{
   modelValue: Record<string, unknown>

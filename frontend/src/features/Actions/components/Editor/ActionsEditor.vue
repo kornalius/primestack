@@ -46,7 +46,7 @@
               no-caps
               dense
               flat
-              @click="editor.addActionElement(value, true)"
+              @click="editor.addActionElement(value, undefined, true)"
             >
               <q-tooltip :delay="500">
                 {{ $t(actionDescription(value)) }}
@@ -70,7 +70,7 @@
 
     <div
       class="col container q-pa-sm"
-      @click="() => editor.unselectActionElement()"
+      @click="() => editor.unselectAll()"
     >
       <div class="row title items-center q-pa-xs q-mb-sm">
         <div class="col-auto">
@@ -178,12 +178,10 @@ const close = () => {
 onMounted(() => {
   selectedField.value = editor.formFieldInstance(editor.selected)
   selectedActionEvent.value = editor.actionEvent
-  editor.unselectAll()
 })
 
 onBeforeUnmount(() => {
   editor.unselectAll()
-  editor.unselectActionElement()
   editor.select(selectedField.value?._id)
 })
 

@@ -2,6 +2,7 @@ import { Type, StringEnum } from '@feathersjs/typebox'
 import { actionIcon, contentIcon } from '../icons'
 import ExType from '../extypes'
 import { hexObjectId } from '../schema'
+// eslint-disable-next-line import/no-cycle
 import { newNameForVariable } from '../menu'
 
 export const targetValues = ['_blank', '_self', '_parent', '_top']
@@ -29,7 +30,9 @@ export const tabSchema = Type.Object(
     badgeTableId: Type.Optional(ExType.Table()),
     badgeFilter: Type.Optional(ExType.Query({ tableProp: 'badgeTableId' })),
     badgeField: Type.Optional(ExType.Field({ tableProp: 'badgeTableId' })),
-    badgeGroupFields: Type.Optional(Type.Array(ExType.Field({ tableProp: '../badgeTableId' }))),
+    badgeGroupFields: Type.Optional(Type.Array(
+      ExType.Field({ tableProp: '../badgeTableId' }),
+    )),
     badgeStat: Type.Optional(StringEnum(badgetStats)),
     click: Type.Optional(ExType.Action()),
   },
@@ -75,6 +78,7 @@ export const variableSchema = Type.Object(
     additionalProperties: false,
     horizontal: true,
     horizontalPopup: true,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     newValue: (arr: any[]) => ({
       _id: hexObjectId(),
       name: newNameForVariable(arr),
@@ -84,7 +88,7 @@ export const variableSchema = Type.Object(
     renameable: true,
     names: [
       'value',
-    ]
+    ],
   },
 )
 

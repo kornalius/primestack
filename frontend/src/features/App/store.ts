@@ -46,7 +46,7 @@ export const useApp = defineStore('app', () => {
   const i18n = useI18n()
   const auth = useAuth()
 
-  const setLocale = (code: string) => {
+  const setLocale = async (code: string) => {
     states.value.locale = code
     localStorage.setItem('locale', code)
     i18n.locale.value = code
@@ -54,7 +54,7 @@ export const useApp = defineStore('app', () => {
       const user = useFeathersService('users')
         .getFromStore(auth.userId) as ServiceType<User>
       user.value.locale = code
-      user.value.save()
+      await user.value.save()
     }
   }
 
@@ -116,7 +116,7 @@ export const useApp = defineStore('app', () => {
     return userTable.value?.list.find((t: Table) => t._id === states.value.tableId)
   })
 
-  setLocale(states.value.locale)
+  setLocale(states.value.locale).then(() => {})
 
   return {
     states,

@@ -54,11 +54,11 @@ import { useModelValue } from '@/composites/prop'
 import { iconForType, fieldClass } from '@/shared/schema'
 import { tableFieldSchema } from '@/shared/schemas/table'
 
-type TableFieldSchema = Static<typeof tableFieldSchema>
+type TableField = Static<typeof tableFieldSchema>
 
 const props = defineProps<{
   modelValue: string | null | undefined
-  fields?: TableFieldSchema[]
+  fields?: TableField[]
   createNew?: boolean
   createLabel?: string
 }>()

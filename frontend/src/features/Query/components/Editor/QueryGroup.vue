@@ -58,14 +58,14 @@ import QueryCriteriaEditor from '@/features/Query/components/Editor/QueryCriteri
 import QueryLogicalOperators from '@/features/Query/components/Editor/QueryLogicalOperators.vue'
 import { tableFieldSchema } from '@/shared/schemas/table'
 
-type TableFieldSchema = Static<typeof tableFieldSchema>
+type TableField = Static<typeof tableFieldSchema>
 
 const props = defineProps<{
   modelValue: QueryGroup
   disable?: boolean
   label: string
   color: string
-  fields: TableFieldSchema[]
+  fields: TableField[]
   operators: string[]
 }>()
 

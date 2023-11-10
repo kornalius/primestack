@@ -2,10 +2,10 @@ import { useInstanceDefaults } from 'feathers-pinia'
 import { Static } from '@feathersjs/typebox'
 import { schema } from '@/shared/schemas/event'
 
-type EventInterface = Static<typeof schema>
+type Event = Static<typeof schema>
 
 export default {
-  setupInstance: (data: EventInterface): EventInterface => (
+  setupInstance: (data: Event): Event => (
     useInstanceDefaults({
       time: Date.now(),
     }, data)

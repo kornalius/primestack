@@ -1,8 +1,8 @@
-export interface Menu {
+export interface ExpressionMenu {
   name: string
   label: string
   icon?: string
-  children?: Menu[]
+  children?: ExpressionMenu[]
   value?: string
   cursorAdj?: number
   tooltip?: string

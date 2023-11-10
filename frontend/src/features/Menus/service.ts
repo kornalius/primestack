@@ -2,10 +2,10 @@ import { useInstanceDefaults } from 'feathers-pinia'
 import { Static } from '@feathersjs/typebox'
 import { schema } from '@/shared/schemas/menu'
 
-type MenuInterface = Static<typeof schema>
+type MenuList = Static<typeof schema>
 
 export default {
-  setupInstance: (data: MenuInterface): MenuInterface => (
+  setupInstance: (data: MenuList): MenuList => (
     useInstanceDefaults({
       list: [],
     }, data)

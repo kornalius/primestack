@@ -11,7 +11,7 @@ import { actions } from './definitions'
 
 type ActionElement = Static<typeof actionElementSchema>
 type Action = Static<typeof actionElementSchema>
-type Field = Static<typeof fieldSchema>
+type ActionField = Static<typeof fieldSchema>
 
 /**
  * Object of [type]: action
@@ -106,11 +106,11 @@ export const componentForAction = (action: Action): unknown => {
  *
  * @returns {ActionElement[]}
  */
-export const flattenActions = (acts: ActionElement[]): ActionElement[] => {
+export const flattenActions = (acts?: ActionElement[]): ActionElement[] => {
   const flattened: ActionElement[] = []
 
   const flatten = (list: ActionElement[]): void => {
-    list.forEach((a) => {
+    (list || []).forEach((a) => {
       flattened.push(a)
 
       // eslint-disable-next-line no-underscore-dangle
@@ -135,7 +135,7 @@ export const flattenActions = (acts: ActionElement[]): ActionElement[] => {
  *
  * @returns {AnyData}
  */
-export const fieldsArrayToObject = (fields: Field[], ctx: AnyData): AnyData => (
+export const fieldsArrayToObject = (fields: ActionField[], ctx: AnyData): AnyData => (
   fields.reduce((acc, f) => (
     { ...acc, [f.name]: getProp(f.value, ctx) }
   ), {})

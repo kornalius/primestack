@@ -10,8 +10,8 @@ import cloneDeep from 'lodash/cloneDeep'
 import { AnyData } from '@/shared/interfaces/commons'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
 import { columnSchema, fieldSchema, formSchema } from '@/shared/schemas/form'
-import { tableSchema } from '@/shared/schemas/table'
-import { actionSchema } from '@/shared/schemas/actions'
+import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
+import { actionElementSchema, actionSchema } from '@/shared/schemas/actions'
 import { blueprintSchema } from '@/shared/schemas/blueprints'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { useSnacks } from '@/features/Snacks/store'
@@ -28,6 +28,10 @@ import { useActionEditor } from '@/features/Actions/store'
 import { useTableEditor } from '@/features/Tables/store'
 import { usePropertiesEditor } from '@/features/Properties/store'
 import { useBlueprintEditor } from '@/features/Blueprints/store'
+import hexObjectId from 'hex-object-id'
+import { componentsByType } from '@/features/Components'
+import { TAction } from '@/shared/interfaces/actions'
+import { actionsByType } from '@/features/Actions/composites'
 
 type Menu = Static<typeof menuSchema>
 type Tab = Static<typeof tabSchema>
@@ -35,7 +39,9 @@ type Form = Static<typeof formSchema>
 type FormField = Static<typeof fieldSchema>
 type FormColumn = Static<typeof columnSchema>
 type Table = Static<typeof tableSchema>
+type TableField = Static<typeof tableFieldSchema>
 type Action = Static<typeof actionSchema>
+type ActionElement = Static<typeof actionElementSchema>
 type Blueprint = Static<typeof blueprintSchema>
 
 interface Snapshot {
@@ -61,7 +67,7 @@ export const useAppEditor = defineStore('app-editor', () => {
   const states = ref({
     // are we in an editing session or not?
     active: false,
-    // selected form element id
+    // selected entity id
     selected: undefined,
     // id of element being hovered on with the mouse
     hovered: undefined,
@@ -110,28 +116,88 @@ export const useAppEditor = defineStore('app-editor', () => {
   })
 
   /**
-   * Selects a form element
+   * Returns a type string from an entity id
    *
-   * @param id Id of the element
+   * @param id
+   *
+   * @returns {string|undefined}
+   */
+  const storeTypeForId = (id: string): string | undefined => {
+    if (formEditor.instance(id)) {
+      return 'form'
+    }
+    if (formEditor.fieldInstance(id)) {
+      return 'field'
+    }
+    if (formEditor.tableColumnInstance(id)) {
+      return 'table-column'
+    }
+    if (menuEditor.instance(id)) {
+      return 'menu'
+    }
+    if (menuEditor.tabInstance(id)) {
+      return 'tab'
+    }
+    if (tableEditor.instance(id)) {
+      return 'table'
+    }
+    if (tableEditor.fieldInstance(id)) {
+      return 'table-field'
+    }
+    if (actionEditor.instance(id)) {
+      return 'action'
+    }
+    if (actionEditor.actionElementInstance(id)) {
+      return 'action-element'
+    }
+    return undefined
+  }
+
+  /**
+   * Returns an instance from an id
+   *
+   * @param id
+   *
+   * @returns {AnyData|undefined}
+   */
+  const instance = (id: string): AnyData | undefined => {
+    const type = storeTypeForId(id)
+    switch (type) {
+      case 'form': return formEditor.instance(id)
+      case 'field': return formEditor.fieldInstance(id)
+      case 'menu': return menuEditor.instance(id)
+      case 'tab': return menuEditor.tabInstance(id)
+      case 'table': return tableEditor.instance(id)
+      case 'table-field': return tableEditor.fieldInstance(id)
+      case 'action': return actionEditor.instance(id)
+      case 'action-element': return actionEditor.actionElementInstance(id)
+      default: return undefined
+    }
+  }
+
+  /**
+   * Selects an entity by its id
+   *
+   * @param id Id of the entity
    */
   const select = (id: string): boolean => {
     if (!menuOrPopupPresent()) {
-      states.value.selected = id
-      formEditor.unselectTableColumn()
+      setTimeout(() => {
+        states.value.selected = id
+      }, 100)
       return true
     }
     return false
   }
 
   /**
-   * Unselects the form element
+   * Unselects the entity
    *
-   * @param id Id of the element
+   * @param id Id of the entity
    */
   const unselect = (id: string): boolean => {
     if (!menuOrPopupPresent() && states.value.selected === id) {
       states.value.selected = undefined
-      formEditor.unselectTableColumn()
       return true
     }
     return false
@@ -143,7 +209,6 @@ export const useAppEditor = defineStore('app-editor', () => {
   const unselectAll = (): void => {
     if (!menuOrPopupPresent()) {
       states.value.selected = undefined
-      formEditor.unselectTableColumn()
     }
   }
 
@@ -156,15 +221,6 @@ export const useAppEditor = defineStore('app-editor', () => {
    */
   const isSelected = (id: string): boolean => (
     states.value.selected === id
-  )
-
-  /**
-   * Selects a form's table component column
-   *
-   * @param id Id of the table column
-   */
-  const selectFormTableColumn = (id: string): boolean => (
-    !!formEditor.selectTableColumn(id)
   )
 
   /**
@@ -214,39 +270,86 @@ export const useAppEditor = defineStore('app-editor', () => {
   }
 
   /**
-   * Selects a menu
+   * Adds a new menu
    *
-   * @param id Id of the menu
+   * @param options Optional values
+   * @param selectIt Select the menu
+   *
+   * @returns {Menu} New menu instance
    */
-  const selectMenu = (id: string): boolean => {
-    if (menuEditor.select(id)) {
-      select(undefined)
-      return true
+  const addMenu = (options?: AnyData, selectIt?: boolean): Menu => {
+    const menu = menuEditor.add(options)
+    if (menu && selectIt) {
+      select(menu._id)
     }
-    return false
+    return menu
   }
 
   /**
-   * Selects a tab
+   * Adds a new tab
    *
-   * @param id Id of the tab
+   * @param menu Menu instance to add the tab to
+   * @param form Form instance associated with the tab
+   * @param options Options to add to the tab
+   * @param selectIt Should we select it?
+   *
+   * @returns {Tab} New tab instance
    */
-  const selectTab = (id: string): boolean => {
-    if (tabEditor.select(id)) {
-      select(undefined)
-      return true
+  const addTab = (menu: Menu, form: Form, options?: AnyData, selectIt?: boolean): Tab => {
+    const activeMenu = menuEditor.instance(menuEditor.menuId)
+    const tab = tabEditor.add(options, menu || activeMenu, form || formEditor.add())
+    if (tab && selectIt) {
+      select(tab._id)
     }
-    return false
+    return tab
   }
 
   /**
-   * Unselects currently selected menu
+   * Removes a tab
+   *
+   * @param id Id of the tab to remove
+   * @param menu Menu instance to remove tab from
+   *
+   * @returns {boolean} True is successful
    */
-  const unselectMenu = (): boolean => {
-    if (menuEditor.unselect()) {
-      return tabEditor.unselect()
+  const removeTab = (id: string, menu: Menu): boolean => {
+    const t = menuEditor.tabInstance(id)
+    formEditor.remove(t.formId)
+    const activeMenu = menuEditor.instance(menuEditor.menuId)
+    return tabEditor.remove(id, menu || activeMenu)
+  }
+
+  /**
+   * Adds a new table
+   *
+   * @param options Options to add to the table
+   * @param selectIt Should we select it?
+   *
+   * @returns {Table} New table instance
+   */
+  const addTable = (options?: AnyData, selectIt?: boolean): Table => {
+    const table = tableEditor.add(options)
+    if (table && selectIt) {
+      select(table._id)
     }
-    return false
+    return table
+  }
+
+  /**
+   * Adds a new table field to a table
+   *
+   * @param table Table instance to add the table field to
+   * @param options Options to add to the table field
+   * @param selectIt Should we select it?
+   *
+   * @returns {TableField} New table field instance
+   */
+  const addFieldToTable = (table: Table, options?: AnyData, selectIt?: boolean): TableField => {
+    const tableField = tableEditor.addField(table, options)
+    if (tableField && selectIt) {
+      select(tableField._id)
+    }
+    return tableField
   }
 
   /**
@@ -356,11 +459,13 @@ export const useAppEditor = defineStore('app-editor', () => {
   const endEdit = (): void => {
     undoStore.cancelWatch()
     states.value.active = false
-    menuEditor.unselect()
-    tableEditor.unselect()
+    menuEditor.setMenuId(undefined)
+    tableEditor.setTableId(undefined)
+    tableEditor.setTablesEditor(false)
     formEditor.setFormsEditor(false)
     formEditor.setFormId(undefined)
-    actionEditor.unselectActionElement()
+    menuEditor.setMenuId(undefined)
+    tabEditor.setTabId(undefined)
     actionEditor.setActionId(undefined)
     states.value.selected = undefined
     undoStore.clearUndoStack()
@@ -472,68 +577,471 @@ export const useAppEditor = defineStore('app-editor', () => {
   }
 
   /**
-   * Adds a new tab
-   *
-   * @param selectIt Should we select it?
-   *
-   * @returns {Tab} New tab instance
-   */
-  const addTab = (selectIt?: boolean): Tab => {
-    const menu = menuEditor.instance(menuEditor.selected)
-    return tabEditor.add(selectIt || false, menu, formEditor.add())
-  }
-
-  /**
-   * Removes a tab
-   *
-   * @param id Id of the tab to remove
-   *
-   * @returns {boolean} True is successful
-   */
-  const removeTab = (id: string): boolean => {
-    const t = menuEditor.tabInstance(id)
-    formEditor.remove(t.formId)
-    const menu = menuEditor.instance(menuEditor.selected)
-    return tabEditor.remove(id, menu)
-  }
-
-  /**
    * Adds a new field to the edited form
    *
    * @param component Component instance
    * @param options Options to add to the field
+   * @param selectIt Select it
    *
    * @returns {FormField | FormColumn} New field instance
    */
   const addFieldToForm = (
     component: TFormComponent,
     options?: AnyData,
+    selectIt?: boolean,
   ): FormField | FormColumn | undefined => {
     const field = formEditor.addField(component, options)
-    if (field) {
-      setTimeout(() => {
-        select(field._id)
-      }, 100)
-      return field
+    if (field && selectIt) {
+      select(field._id)
+    }
+    return field
+  }
+
+  /**
+   * Adds a new form
+   *
+   * @param options Options to add to the form
+   * @param selectIt Should we select it?
+   *
+   * @returns {Form} New form instance
+   */
+  const addForm = (options?: AnyData, selectIt?: boolean): Form => {
+    const form = formEditor.add(options)
+    if (form && selectIt) {
+      select(form._id)
+    }
+    return form
+  }
+
+  /**
+   * Duplicates a form
+   *
+   * @param form Form instance to duplicate
+   *
+   * @returns {Form} New form instance
+   */
+  const duplicateForm = (form: Form): Form | undefined => {
+    const newForm = formEditor.duplicate(form)
+    if (newForm) {
+      select(newForm._id)
+      return newForm
     }
     return undefined
+  }
+
+  /**
+   * Duplicates a field
+   *
+   * @param field Field instance to duplicate
+   *
+   * @returns {FormField|FormColumn|undefined} New field instance
+   */
+  const duplicateField = (field: FormField | FormColumn): FormField | FormColumn | undefined => {
+    const newField = formEditor.duplicateField(field)
+    if (newField) {
+      select(newField._id)
+      return newField
+    }
+    return undefined
+  }
+
+  /**
+   * Duplicates a tab
+   *
+   * @param tab Tab instance to duplicate
+   *
+   * @returns {Tab|undefined} New tab instance
+   */
+  const duplicateTab = (tab: Tab): Tab | undefined => {
+    const newTab = tabEditor.duplicate(
+      tab,
+      menuEditor.instance(menuEditor.menuId),
+    )
+
+    // duplicate forms for each tabs
+    const f = formEditor.duplicate(formEditor.instance(newTab.formId))
+    // eslint-disable-next-line no-param-reassign
+    newTab.formId = f._id
+
+    if (newTab) {
+      select(newTab._id)
+      return newTab
+    }
+    return undefined
+  }
+
+  /**
+   * Duplicates a menu
+   *
+   * @param menu Menu instance to duplicate
+   *
+   * @returns {Menu|undefined} New menu instance
+   */
+  const duplicateMenu = (menu: Menu): Menu | undefined => {
+    const newMenu = menuEditor.duplicate(menu)
+
+    // duplicate forms for each tabs
+    newMenu.tabs.forEach((t: Tab) => {
+      const f = formEditor.duplicate(formEditor.instance(t.formId))
+      // eslint-disable-next-line no-param-reassign
+      t.formId = f._id
+    })
+
+    if (newMenu) {
+      select(newMenu._id)
+      return newMenu
+    }
+    return undefined
+  }
+
+  /**
+   * Duplicates a table
+   *
+   * @param table Table instance to duplicate
+   *
+   * @returns {Table|undefined} New table instance
+   */
+  const duplicateTable = (table: Table): Table | undefined => {
+    const newTable = tableEditor.duplicate(table)
+    if (newTable) {
+      select(newTable._id)
+      return newTable
+    }
+    return undefined
+  }
+
+  /**
+   * Duplicates a table field
+   *
+   * @param field Table field instance to duplicate
+   *
+   * @returns {TableField} New table field instance
+   */
+  const duplicateTableField = (field: TableField): TableField => {
+    const newField = tableEditor.duplicateField(
+      field,
+      tableEditor.instance(tableEditor.tableId),
+    )
+    if (newField) {
+      select(newField._id)
+      return newField
+    }
+    return undefined
+  }
+
+  /**
+   * Duplicates an action
+   *
+   * @param action Action instance to duplicate
+   *
+   * @returns {Action|undefined} New field instance
+   */
+  const duplicateAction = (action: Action): Action | undefined => {
+    const newAction = actionEditor.duplicate(action)
+    if (newAction) {
+      select(newAction._id)
+      return newAction
+    }
+    return undefined
+  }
+
+  /**
+   * Duplicates an action element
+   *
+   * @param actionElement Action element instance to duplicate
+   *
+   * @returns {ActionElement|undefined} New field instance
+   */
+  const duplicateActionElement = (actionElement: ActionElement): ActionElement | undefined => {
+    const newActionElement = actionEditor.duplicateActionElement(
+      actionElement,
+      actionEditor.instance(actionEditor.actionId),
+    )
+    if (newActionElement) {
+      select(newActionElement._id)
+      return newActionElement
+    }
+    return undefined
+  }
+
+  /**
+   * Duplicate an instance
+   */
+  const duplicate = () => {
+    const o = instance(states.value.selected)
+    const type = storeTypeForId(o._id)
+
+    switch (type) {
+      case 'form': {
+        duplicateForm(o as Form)
+        select(o._id)
+        break
+      }
+
+      case 'field': {
+        duplicateField(o as FormField)
+        select(o._id)
+        break
+      }
+
+      case 'menu':
+        duplicateMenu(o as Menu)
+        select(o._id)
+        break
+
+      case 'tab':
+        duplicateTab(o as Tab)
+        select(o._id)
+        break
+
+      case 'action':
+        duplicateAction(o as Action)
+        select(o._id)
+        break
+
+      case 'action-element':
+        duplicateActionElement(o as ActionElement)
+        select(o._id)
+        break
+
+      case 'table':
+        duplicateTable(o as Table)
+        select(o._id)
+        break
+
+      case 'table-field':
+        duplicateTableField(o as TableField)
+        select(o._id)
+        break
+
+      default:
+        break
+    }
+  }
+
+  /**
+   * Sets the current action id being edited
+   * @param id
+   */
+  const setActionId = (id: string): void => {
+    actionEditor.setActionId(id)
+    const a = actionEditor.instance(id)
+    if (a) {
+      // eslint-disable-next-line no-underscore-dangle
+      select(a._actions?.[0]?._id)
+    }
+  }
+
+  /**
+   * Adds a new action
+   *
+   * @param options Options to add to the action
+   * @param selectIt Should we select it?
+   *
+   * @returns {Action} New action instance
+   */
+  const addAction = (options?: AnyData, selectIt?: boolean): Action => {
+    const action = actionEditor.add(options)
+    if (action && selectIt) {
+      select(action._id)
+    }
+    return action
+  }
+
+  /**
+   * Adds a new action element
+   *
+   * @param action Action type for the element
+   * @param options Options to add to the action element
+   * @param selectIt Should we select it?
+   *
+   * @returns {ActionElement} New action element instance
+   */
+  const addActionElement = (action: TAction, options?: AnyData, selectIt?: boolean): ActionElement => {
+    const actionElement = actionEditor.addActionElement(action, options)
+    if (actionElement && selectIt) {
+      select(actionElement._id)
+    }
+    return actionElement
+  }
+
+  /**
+   * Copy an object instance to the clipboard as text
+   *
+   * @param element Element instance
+   */
+  const copy = async (element?: AnyData) => {
+    const o = element || instance(states.value.selected)
+    return navigator.clipboard.writeText(JSON.stringify({
+      type: storeTypeForId(o._id),
+      data: o,
+    }, undefined, 2))
+  }
+
+  /**
+   * Paste from the clipboard into the selected instance
+   */
+  const paste = async () => {
+    const reid = (o: AnyData) => {
+      if (Array.isArray(o)) {
+        o.forEach((v) => reid(v))
+      } else if (typeof o === 'object') {
+        if (typeof o._id === 'string') {
+          // eslint-disable-next-line no-param-reassign
+          o._id = hexObjectId()
+        }
+        Object.keys(o).forEach((k) => reid(o[k]))
+      }
+    }
+
+    const t = await navigator.clipboard.readText()
+    try {
+      const { type, data: o } = JSON.parse(t)
+      reid(o.data)
+
+      const selectedType = storeTypeForId(states.value.selected)
+
+      switch (selectedType) {
+        case 'form': {
+          if (type === 'form') {
+            addForm(o)
+            select(o._id)
+          } else if (type === 'field') {
+            // eslint-disable-next-line no-underscore-dangle
+            formEditor.addField(componentsByType[o._type], o)
+            select(o._id)
+          }
+          break
+        }
+
+        case 'field': {
+          if (type === 'field') {
+            const s = instance(states.value.selected)
+            // eslint-disable-next-line no-underscore-dangle
+            const columns = (s as FormField)._columns
+            // eslint-disable-next-line no-underscore-dangle
+            const fields = (s as FormColumn)._fields
+            if (columns) {
+              columns.push(o)
+            } else if (fields) {
+              fields.push(o)
+            }
+            select(o._id)
+          }
+          break
+        }
+
+        case 'menu':
+          if (type === 'menu') {
+            addMenu(o, true)
+          }
+          break
+
+        case 'tab':
+          if (type === 'tab') {
+            addTab(undefined, undefined, o, true)
+          }
+          break
+
+        case 'action':
+        case 'action-element':
+          if (type === 'action-element') {
+            // eslint-disable-next-line no-underscore-dangle
+            addActionElement(actionsByType[o._type], o, true)
+          }
+          break
+
+        case 'table':
+          if (type === 'table') {
+            // eslint-disable-next-line no-underscore-dangle
+            addTable(o, true)
+          } else if (type === 'table-field') {
+            // eslint-disable-next-line no-underscore-dangle
+            addFieldToTable(tableEditor.instance(states.value.selected), o, true)
+          }
+          break
+
+        case 'table-field':
+          if (type === 'table-field') {
+            // eslint-disable-next-line no-underscore-dangle
+            addFieldToTable(tableEditor.instance(tableEditor.tableId), o, true)
+          }
+          break
+
+        default:
+          break
+      }
+    } catch (e) {
+      //
+    }
   }
 
   return {
     states,
     active,
+    reset,
+    isModified,
+    startEdit,
+    endEdit,
+
+    /**
+     * Duplicates
+     */
+    duplicate,
+    duplicateMenu,
+    duplicateTab,
+    duplicateTable,
+    duplicateTableField,
+    duplicateAction,
+    duplicateActionElement,
+    duplicateForm,
+    duplicateField,
+
+    /**
+     * Stores & instances
+     */
+    storeTypeForId,
+    instance,
+
+    /**
+     * Hovered
+     */
+
     hovered,
     hover,
     unhover,
     isHovered,
+
+    /**
+     * Dragging
+     */
+
     isDragging,
     setDragging,
-    startEdit,
-    endEdit,
+
+    /**
+     * Save
+     */
+
     canSave,
     save,
-    reset,
-    isModified,
+
+    /**
+     * Clipboard
+     */
+
+    copy,
+    paste,
+
+    /**
+     * Selection
+     */
+
+    selected,
+    select,
+    unselect,
+    unselectAll,
+    isSelected,
 
     /**
      * UndoStore
@@ -551,44 +1059,36 @@ export const useAppEditor = defineStore('app-editor', () => {
      */
 
     menus: computed(() => menuEditor.menus),
-    selectedMenu: computed(() => menuEditor.selected),
+    menuId: computed(() => menuEditor.menuId),
+    setMenuId: menuEditor.setMenuId,
     menuInstance: menuEditor.instance,
     tabInstance: menuEditor.tabInstance,
-    selectMenu,
-    unselectMenu,
-    isMenuSelected: menuEditor.isSelected,
-    addMenu: menuEditor.add,
+    addMenu,
     removeMenu: menuEditor.remove,
-    addTab,
-    removeTab,
 
     /**
      * TabEditor
      */
 
-    selectedTab: computed(() => tabEditor.selected),
-    selectTab,
-    unselectTab: tabEditor.unselect,
-    isTabSelected: tabEditor.selected,
+    tabId: computed(() => tabEditor.tabId),
+    setTabId: tabEditor.setTabId,
+    addTab,
+    removeTab,
 
     /**
      * TableEditor
      */
 
     tables: computed(() => tableEditor.tables),
-    selectedTable: computed(() => tableEditor.selected),
-    selectedTableField: computed(() => tableEditor.selectedField),
+    tableId: computed(() => tableEditor.tableId),
+    tablesEditor: computed(() => tableEditor.tablesEditor),
     tableInstance: tableEditor.instance,
     tableFieldInstance: tableEditor.fieldInstance,
-    selectTable: tableEditor.select,
-    unselectTable: tableEditor.unselect,
-    isTableSelected: tableEditor.isSelected,
-    selectTableField: tableEditor.selectField,
-    unselectTableField: tableEditor.unselectField,
-    isTableFieldSelected: tableEditor.isFieldSelected,
-    addTable: tableEditor.add,
+    setTableId: tableEditor.setTableId,
+    setTablesEditor: tableEditor.setTablesEditor,
+    addTable,
     removeTable: tableEditor.remove,
-    addFieldToTable: tableEditor.addField,
+    addFieldToTable,
     removeFieldFromTable: tableEditor.removeField,
 
     /**
@@ -596,20 +1096,16 @@ export const useAppEditor = defineStore('app-editor', () => {
      */
 
     actions: computed(() => actionEditor.actions),
-    selectedActionElement: computed(() => actionEditor.selectedActionElement),
     actionId: computed(() => actionEditor.actionId),
     actionEvent: computed(() => actionEditor.actionEvent),
-    setActionId: actionEditor.setActionId,
+    setActionId,
     setActionEvent: actionEditor.setActionEvent,
-    selectActionElement: actionEditor.selectActionElement,
-    unselectActionElement: actionEditor.unselectActionElement,
-    isActionElementSelected: actionEditor.isActionElementSelected,
     actionInstance: actionEditor.instance,
     actionElementInstance: actionEditor.actionElementInstance,
-    createAction: actionEditor.add,
+    addAction,
     removeAction: actionEditor.remove,
     createActionElement: actionEditor.createActionElement,
-    addActionElement: actionEditor.addActionElement,
+    addActionElement,
     removeActionElement: actionEditor.removeActionElement,
 
     /**
@@ -618,22 +1114,13 @@ export const useAppEditor = defineStore('app-editor', () => {
 
     forms: computed(() => formEditor.forms),
     formsEditor: computed(() => formEditor.formsEditor),
-    selected,
-    selectedFormTableColumn: computed(() => formEditor.selectedTableColumn),
     formId: computed(() => formEditor.formId),
-    select,
-    unselect,
-    unselectAll,
-    isSelected,
-    selectFormTableColumn,
-    unselectFormTableColumn: formEditor.unselectTableColumn,
-    isFormTableColumnSelected: formEditor.isTableColumnSelected,
     formInstance: formEditor.instance,
     formFieldInstance: formEditor.fieldInstance,
     formTableColumnInstance: formEditor.tableColumnInstance,
     setFormsEditor: formEditor.setFormsEditor,
     setFormId: formEditor.setFormId,
-    addForm: formEditor.add,
+    addForm,
     removeForm: formEditor.remove,
     createFormField: formEditor.createField,
     addFieldToForm,

@@ -2,10 +2,10 @@ import { useInstanceDefaults } from 'feathers-pinia'
 import { Static } from '@feathersjs/typebox'
 import { schema } from '@/shared/schemas/table'
 
-type SchemaInterface = Static<typeof schema>
+type TableList = Static<typeof schema>
 
 export default {
-  setupInstance: (data: SchemaInterface): SchemaInterface => (
+  setupInstance: (data: TableList): TableList => (
     useInstanceDefaults({
       list: [],
     }, data)

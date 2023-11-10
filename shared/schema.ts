@@ -4,8 +4,8 @@ import { Static, TSchema, Type } from '@feathersjs/typebox'
 import { tableFieldSchema, tableIndexSchema } from './schemas/table'
 import { AnyData } from './interfaces/commons'
 
-type TableFieldSchema = Static<typeof tableFieldSchema>
-type TableIndexSchema = Static<typeof tableIndexSchema>
+type TableField = Static<typeof tableFieldSchema>
+type TableIndex = Static<typeof tableIndexSchema>
 
 let COUNTER: number | null = null
 let PROCESS_UNIQUE: string | null = null
@@ -387,12 +387,12 @@ export const primaryToType = (o: unknown): string => {
  *
  * @returns {TSchema} JSON Schema for the field
  */
-export const fieldToSchema = (field: TableFieldSchema): TSchema => {
+export const fieldToSchema = (field: TableField): TSchema => {
   if (field.array) {
     const a = Type.Array(fieldToSchema({
       ...field,
       array: false,
-    } as TableFieldSchema))
+    } as TableField))
     return field.optional ? Type.Optional(a) : a
   }
 
@@ -490,7 +490,7 @@ export const fieldToSchema = (field: TableFieldSchema): TSchema => {
  *
  * @returns {TSchema} New JSON Schema
  */
-export const fieldsToSchema = (fields: TableFieldSchema[], $id: string): TSchema => (
+export const fieldsToSchema = (fields: TableField[], $id: string): TSchema => (
   Type.Object((fields || []).reduce((acc, f) => ({
     ...acc,
     [f.name]: fieldToSchema(f),
@@ -503,9 +503,9 @@ export const fieldsToSchema = (fields: TableFieldSchema[], $id: string): TSchema
  * @param name Name of the schema key
  * @param schema Schema
  *
- * @returns {TableFieldSchema}
+ * @returns {TableField}
  */
-export const schemaToField = (name: string, schema: TSchema): TableFieldSchema => {
+export const schemaToField = (name: string, schema: TSchema): TableField => {
   const base = {
     _id: hexObjectId(),
     name,
@@ -563,7 +563,7 @@ export const schemaToField = (name: string, schema: TSchema): TableFieldSchema =
  *
  * @returns {Index[]} Indexes usable for mongo table definition
  */
-export const indexesToMongo = (indexes: TableIndexSchema[]): Index[] => (
+export const indexesToMongo = (indexes: TableIndex[]): Index[] => (
   indexes.map((i) => ({
     fields: { [i.name]: i.order },
     unique: i.unique,

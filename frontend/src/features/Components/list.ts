@@ -14,13 +14,14 @@ import {
 } from './common'
 
 type FormField = Static<typeof fieldSchema>
-type TableFieldSchema = Static<typeof tableFieldSchema>
+type TableField = Static<typeof tableFieldSchema>
 
 export default {
   type: 'list',
   icon: 'mdi-format-list-text',
   label: 'components.list.label',
   list: true,
+  row: true,
   schema: properties([
     Type.Omit(commonProperties.style, ['dense']),
     Type.Object({
@@ -83,8 +84,8 @@ export default {
       ],
     },
   },
-  fields: (field: FormField, ctx: AnyData): TableFieldSchema[] => {
-    let lst = [] as TableFieldSchema[]
+  fields: (field: FormField, ctx: AnyData): TableField[] => {
+    let lst = [] as TableField[]
     // try to interpret value if loop expression specified
     const expr = (field as AnyData).loopExpr
     if (expr && isExpr(expr)) {

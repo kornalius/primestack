@@ -2,10 +2,10 @@ import { useInstanceDefaults } from 'feathers-pinia'
 import { Static } from '@feathersjs/typebox'
 import { schema } from '@/shared/schemas/group'
 
-type GroupInterface = Static<typeof schema>
+type Group = Static<typeof schema>
 
 export default {
-  setupInstance: (data: GroupInterface): GroupInterface => (
+  setupInstance: (data: Group): Group => (
     useInstanceDefaults({
       maxTables: 0,
       maxMenus: 0,

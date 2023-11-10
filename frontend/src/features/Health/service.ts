@@ -3,10 +3,10 @@ import { useInstanceDefaults } from 'feathers-pinia'
 import { Static } from '@feathersjs/typebox'
 import { schema } from '@/shared/schemas/health'
 
-type HealthInterface = Static<typeof schema>
+type Health = Static<typeof schema>
 
 export default {
-  setupInstance: (data: HealthInterface): HealthInterface => (
+  setupInstance: (data: Health): Health => (
     useInstanceDefaults({
       version: '',
       uptime: 0,

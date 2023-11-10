@@ -1,7 +1,7 @@
 <template>
   <array-editor
     v-model="menus"
-    :add-function="() => editor.addMenu(true)"
+    :add-function="() => editor.addMenu(undefined, true)"
     :remove-function="(m) => editor.removeMenu(m._id)"
     add-button="end"
     no-separator
@@ -15,7 +15,7 @@
         :to="(m as any).href || menuUrl((m as any)._id)"
         :target="(m as any).target as string"
         clickable
-        @click.stop="editor.selectMenu((m as any)._id)"
+        @click.stop="editor.setMenuId((m as any)._id)"
       >
         <q-item-section avatar>
           <q-icon :name="(m as any).icon" :color="(m as any).color" />
@@ -63,7 +63,7 @@ onMounted(() => {
   const tid = app.tabId
   const menuId = app.menuId || menus.value?.[0]?._id
   const menu = menus.value.find((m) => m._id === menuId)
-  editor.selectMenu(menuId)
-  editor.selectTab(tid || menu?.tabs?.[0]?._id)
+  editor.setMenuId(menuId)
+  editor.setTabId(tid || menu?.tabs?.[0]?._id)
 })
 </script>

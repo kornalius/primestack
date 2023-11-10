@@ -338,7 +338,9 @@ const userMenu = ref()
 /**
  * Selected menu instance
  */
-const selectedMenuObject = computed(() => editor.menuInstance(editor.selectedMenu))
+const selectedMenuObject = computed(() => (
+  editor.menuInstance(editor.menuId)
+))
 
 /**
  * Toggle left drawer expanded or collapsed states
@@ -354,7 +356,6 @@ watch(() => editor.active, () => {
   if (editor.active) {
     leftDrawerExpanded.value = true
   }
-  editor.unselectMenu()
 })
 
 const { menuUrl, tableUrl, formUrl } = useUrl()

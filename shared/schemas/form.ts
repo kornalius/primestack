@@ -4,7 +4,7 @@ import ExType from '../extypes'
 import { keyboardEvent } from '../action'
 import { AnyData } from '../interfaces/commons'
 
-export const tabSchema = Type.Object(
+export const formTabSchema = Type.Object(
   {
     _id: ExType.Id(),
     name: Type.String(),

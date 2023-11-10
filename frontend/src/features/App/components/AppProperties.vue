@@ -66,7 +66,7 @@
         <blueprint-select
           class="q-ml-sm"
           :style="{ opacity: hover ? 1 : 0 }"
-          :field="selectedField"
+          :field="selectedField as FormField"
           :component="selectedComponent"
           :categories="selectedComponent.categories"
         />
@@ -158,16 +158,19 @@
 import {
   computed, onBeforeUnmount, ref, watch,
 } from 'vue'
+import { Static } from '@feathersjs/typebox'
 import { useAppEditor } from '@/features/Editor/store'
 import { useFormElements } from '@/features/Forms/composites'
 import { useActions } from '@/features/Actions/composites'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
-import { formSchema, formTableColumnSchema } from '@/shared/schemas/form'
+import { fieldSchema, formSchema, formTableColumnSchema } from '@/shared/schemas/form'
 import { tableSchema, tableFieldSchema } from '@/shared/schemas/table'
 import { omitFields } from '@/shared/schema'
 import SectionTitle from '@/features/Fields/components/SectionTitle.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import BlueprintSelect from '@/features/Blueprints/components/BlueprintSelect.vue'
+
+type FormField = Static<typeof fieldSchema>
 
 const forcedTypes = ref({})
 
@@ -184,13 +187,15 @@ const { actionsByType } = useActions()
 /**
  * Computes the selected menu instance
  */
-const selectedMenu = computed(() => editor.menuInstance(editor.selectedMenu))
+const selectedMenu = computed(() => (
+  editor.menuInstance(editor.menuId)
+))
 
 /**
  * Computes the selected menu schema
  */
 const selectedMenuSchema = computed(() => (
-  editor.selectedMenu
+  editor.menuId
     ? menuSchema
     : undefined
 ))
@@ -210,14 +215,14 @@ const showMenuProperties = computed(() => (
  * Computes the selected tab index in the selected menu instance
  */
 const selectedTabIndex = computed(() => (
-  (selectedMenu.value || { tabs: [] }).tabs.findIndex((t) => t._id === editor.selectedTab)
+  (selectedMenu.value || { tabs: [] }).tabs.findIndex((t) => t._id === editor.tabId)
 ))
 
 /**
  * Computes the selected tab schema
  */
 const selectedTabSchema = computed(() => (
-  editor.selectedTab
+  editor.tabId
     ? tabSchema
     : undefined
 ))
@@ -236,18 +241,22 @@ const showTabProperties = computed(() => (
 /**
  * Computes the selected form instance
  */
-const form = computed(() => editor.formInstance(editor.formId))
+const form = computed(() => (
+  editor.formInstance(editor.formId)
+))
 
 /**
  * Computes the selected form field instance
  */
-const selectedField = computed(() => editor.formFieldInstance(editor.selected))
+const selectedField = computed(() => (
+  editor.formFieldInstance(editor.selected)
+))
 
 /**
  * Computes the selected form's table column instance
  */
 const selectedFormTableColumn = computed(() => (
-  editor.formTableColumnInstance(editor.selectedFormTableColumn)
+  editor.formTableColumnInstance(editor.selected)
 ))
 
 /**
@@ -291,13 +300,15 @@ const selectedFormSchema = computed(() => (
 /**
  * Computes the selected table instance
  */
-const selectedTable = computed(() => editor.tableInstance(editor.selectedTable))
+const selectedTable = computed(() => (
+  editor.tableInstance(editor.tableId)
+))
 
 /**
  * Computes the selected table field instance
  */
 const selectedTableField = computed(() => (
-  editor.tableFieldInstance(editor.selectedTableField)
+  editor.tableFieldInstance(editor.selected)
 ))
 
 /**
@@ -378,7 +389,9 @@ const disabledFormTableColumnProperties = computed((): string[] | undefined => {
 /**
  * Computes the selected action element instance
  */
-const selectedActionElement = computed(() => editor.actionElementInstance(editor.selectedActionElement))
+const selectedActionElement = computed(() => (
+  editor.actionElementInstance(editor.selected)
+))
 
 /**
  * Computes the selected action element action type

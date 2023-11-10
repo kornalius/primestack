@@ -6,7 +6,7 @@ import { tableSchema } from '@/shared/schemas/table'
 // eslint-disable-next-line import/no-cycle
 import { exprToString, isExpr, runExpr } from '@/features/Expression/composites'
 
-type TableSchema = Static<typeof tableSchema>
+type Table = Static<typeof tableSchema>
 
 const mongoOperators = {
   '=': '$eq',
@@ -80,7 +80,7 @@ const cleanupQuery = (q: AnyData): AnyData => {
   return q
 }
 
-export const queryToMongo = (q: Query, schema: TableSchema, ctx: AnyData): AnyData => {
+export const queryToMongo = (q: Query, schema: Table, ctx: AnyData): AnyData => {
   const cleanExpr = (expr: AnyData): AnyData => {
     if (expr.$and.length === 0) {
       // eslint-disable-next-line no-param-reassign
@@ -173,7 +173,7 @@ export const queryToMongo = (q: Query, schema: TableSchema, ctx: AnyData): AnyDa
   }
 }
 
-export const queryToString = (query: Query, schema: TableSchema): string => {
+export const queryToString = (query: Query, schema: Table): string => {
   let r = []
 
   const convertCriterias = (criterias: QueryCriteria[]): string[] => {

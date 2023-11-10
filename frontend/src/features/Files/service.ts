@@ -2,10 +2,10 @@ import { useInstanceDefaults } from 'feathers-pinia'
 import { Static } from '@feathersjs/typebox'
 import { schema } from '@/shared/schemas/file'
 
-type FileInterface = Static<typeof schema>
+type File = Static<typeof schema>
 
 export default {
-  setupInstance: (data: FileInterface): FileInterface => (
+  setupInstance: (data: File): File => (
     useInstanceDefaults({
       size: 0,
       state: 0,

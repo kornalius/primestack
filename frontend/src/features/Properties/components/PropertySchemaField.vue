@@ -795,7 +795,7 @@ import UserSettingSelect from '@/features/Users/components/UserSettingSelect.vue
 
 type Action = Static<typeof actionSchema>
 type FormField = Static<typeof fieldSchema>
-type TableFieldSchema = Static<typeof tableFieldSchema>
+type TableField = Static<typeof tableFieldSchema>
 
 const props = defineProps<{
   // value of the property
@@ -1085,24 +1085,24 @@ const queryValue = computed((): string => (
 /**
  * Computes the fields from the form's data property
  */
-const formFields = computed((): TableFieldSchema[] => (
+const formFields = computed((): TableField[] => (
   (props.includeFormDataFields
     ? Object.keys(form.value?.data || {}).map((k) => ({
       _id: hexObjectId(),
       name: k,
       type: primaryToType(form.value?.data?.[k]),
     }))
-    : []) as TableFieldSchema[]
+    : []) as TableField[]
 ))
 
 /**
  * If the root field is inside a List component, returns the fields from the
  * loop expression or the table fields specified
  */
-const listFields = computed((): TableFieldSchema[] => {
+const listFields = computed((): TableField[] => {
   const frm = editor.formInstance(editor.formId)
   const path = pathTo(frm, props.root as FormField)
-  let lst = [] as TableFieldSchema[]
+  let lst = [] as TableField[]
   if (path) {
     path.forEach((p) => {
       // eslint-disable-next-line no-underscore-dangle
@@ -1118,7 +1118,7 @@ const listFields = computed((): TableFieldSchema[] => {
 /**
  * Computes a list of fields available for the selected field component
  */
-const fields = computed((): TableFieldSchema[] => {
+const fields = computed((): TableField[] => {
   // root form fields
   const tf = table.value?.fields?.length
     ? tableFields(
@@ -1133,12 +1133,12 @@ const fields = computed((): TableFieldSchema[] => {
     // list fields
     ...listFields.value,
 
-    listFields.value.length ? { name: '-', type: '' } as TableFieldSchema : undefined,
+    listFields.value.length ? { name: '-', type: '' } as TableField : undefined,
 
     // form table fields
     ...tf,
 
-    tf.length ? { name: '-', type: '' } as TableFieldSchema : undefined,
+    tf.length ? { name: '-', type: '' } as TableField : undefined,
 
     // form fields
     ...formFields.value,
@@ -1204,7 +1204,7 @@ const createAction = (): Action => {
     return act
   }
 
-  const a = editor.createAction(
+  const a = editor.addAction(
     omit(props.schema, ['properties', 'type', 'objectid', 'action']),
     true,
   )

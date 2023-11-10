@@ -448,7 +448,6 @@ const unselectAll = () => {
   }
   if (editor.active && editor.actionId) {
     editor.unselectAll()
-    editor.unselectActionElement()
   }
 }
 
@@ -460,7 +459,7 @@ onBeforeUnmount(() => {
 
 watch(() => props.menuId, () => {
   if (!props.menuId) {
-    editor.unselectMenu()
+    editor.setMenuId(props.menuId)
     editor.setFormsEditor(true)
   } else {
     editor.setFormsEditor(false)

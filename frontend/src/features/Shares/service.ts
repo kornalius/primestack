@@ -2,10 +2,10 @@ import { useInstanceDefaults } from 'feathers-pinia'
 import { Static } from '@feathersjs/typebox'
 import { schema } from '@/shared/schemas/share'
 
-type ShareInterface = Static<typeof schema>
+type Share = Static<typeof schema>
 
 export default {
-  setupInstance: (data: ShareInterface): ShareInterface => (
+  setupInstance: (data: Share): Share => (
     useInstanceDefaults({
       read: true,
       create: true,

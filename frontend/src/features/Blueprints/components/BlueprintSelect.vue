@@ -1,7 +1,8 @@
 <template>
   <q-btn
     v-bind="$attrs"
-    icon="mdi-bookshelf"
+    icon="mdi-pencil-ruler"
+    color="grey-9"
     dense
     round
     flat
@@ -63,7 +64,7 @@
         <!-- Local Blueprints -->
 
         <blueprint-select-item
-          v-for="(blueprint, index) in editor.localBlueprints(editor.selectedMenu)"
+          v-for="(blueprint, index) in editor.localBlueprints(app.menuId)"
           :key="blueprint._id"
           :blueprint="blueprint"
           :field="field"
@@ -132,6 +133,7 @@ import { Static } from '@feathersjs/typebox'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useAppEditor } from '@/features/Editor/store'
+import { useApp } from '@/features/App/store'
 import { blueprintSchema } from '@/shared/schemas/blueprints'
 import { fieldSchema } from '@/shared/schemas/form'
 import { TFormComponent, TFormFieldCategory } from '@/shared/interfaces/forms'
@@ -139,10 +141,10 @@ import BlueprintEditor from './Editor/BlueprintEditor.vue'
 import BlueprintSelectItem from './Editor/BlueprintSelectItem.vue'
 
 type Blueprint = Static<typeof blueprintSchema>
-type Field = Static<typeof fieldSchema>
+type FormField = Static<typeof fieldSchema>
 
 const props = defineProps<{
-  field: Field
+  field: FormField
   component: TFormComponent
   categories: Record<string, TFormFieldCategory>
 }>()
@@ -160,6 +162,8 @@ const origBlueprint = ref()
 const showEditor = ref(false)
 
 const editor = useAppEditor()
+
+const app = useApp()
 
 /**
  * Start editing a blueprint
@@ -204,7 +208,7 @@ const saveBlueprint = () => {
  */
 const createBlueprint = () => {
   const blueprint = editor.addBlueprint({
-    menuId: editor.selectedMenu,
+    menuId: app.menuId,
     componentType: props.component.type,
     properties: {},
   })

@@ -96,13 +96,13 @@ const auth = useAuth()
 
 onMounted(() => {
   editor.unselectAll()
-  editor.unselectMenu()
+  editor.setTablesEditor(true)
 })
 
 onBeforeUnmount(() => {
   editor.unselectAll()
-  editor.unselectTableField()
-  editor.unselectTable()
+  editor.setTableId(undefined)
+  editor.setTablesEditor(false)
 })
 
 const selectedTable = ref([])
@@ -161,21 +161,20 @@ watch(() => props.fieldId, () => {
 
 watch(selectedTable, () => {
   if (selectedTable.value?.[0]?._id) {
-    editor.unselectTableField()
-    editor.selectTable(selectedTable.value?.[0]?._id)
+    editor.setTableId(selectedTable.value?.[0]?._id)
     router.push(tableUrl(selectedTable.value?.[0]?._id))
   }
 })
 
 watch(selectedTableField, () => {
   if (selectedTable.value?.[0]?._id && selectedTableField.value?.[0]?._id) {
-    editor.selectTableField(selectedTableField.value?.[0]?._id)
+    editor.select(selectedTableField.value?.[0]?._id)
     router.push(tableUrl(selectedTable.value?.[0]?._id, selectedTableField.value?.[0]?._id))
   }
 })
 
 const addTable = () => {
-  const ta = editor.addTable(true)
+  const ta = editor.addTable(undefined, true)
   selectedTable.value = [ta]
   return ta
 }
@@ -215,14 +214,14 @@ const removeTable = (table: Table): void => {
     },
   }).onOk(async () => {
     if (editor.removeTable(table._id)) {
-      editor.unselectTable()
+      editor.setTableId(undefined)
       selectedTable.value = []
     }
   })
 }
 
 const addTableField = () => {
-  const field = editor.addFieldToTable(selectedTable.value?.[0]?._id)
+  const field = editor.addFieldToTable(selectedTable.value?.[0])
   selectedTableField.value = [field]
 }
 
@@ -243,7 +242,7 @@ const removeTableField = (f: TableField): void => {
     },
   }).onOk(async () => {
     if (editor.removeFieldFromTable(f._id, selectedTable.value?.[0])) {
-      editor.unselectTableField()
+      editor.unselectAll()
       selectedTableField.value = []
     }
   })

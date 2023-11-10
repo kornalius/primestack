@@ -54,10 +54,10 @@ import { fieldSchema } from '@/shared/schemas/form'
 import { useAppEditor } from '@/features/Editor/store'
 
 type Blueprint = Static<typeof blueprintSchema>
-type Field = Static<typeof fieldSchema>
+type FormField = Static<typeof fieldSchema>
 
 defineProps<{
-  field: Field
+  field: FormField
   blueprint: Blueprint
   index: number
   hovered: boolean

@@ -2,10 +2,10 @@ import { useInstanceDefaults } from 'feathers-pinia'
 import { Static } from '@feathersjs/typebox'
 import { schema } from '@/shared/schemas/plan'
 
-type PlanInterface = Static<typeof schema>
+type Plan = Static<typeof schema>
 
 export default {
-  setupInstance: (data: PlanInterface): PlanInterface => (
+  setupInstance: (data: Plan): Plan => (
     useInstanceDefaults({
       price: 0.0,
       maxShares: 0,

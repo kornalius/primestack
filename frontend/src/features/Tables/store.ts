@@ -1,33 +1,34 @@
 import { ref, computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { defineStore } from 'pinia'
+import cloneDeep from 'lodash/cloneDeep'
 import hexObjectId from 'hex-object-id'
 import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
-// eslint-disable-next-line import/no-cycle
-import { menuOrPopupPresent } from '@/features/Editor/store'
+import { newNameForTable, recreateTableIds } from '@/shared/table'
+import { AnyData } from '@/shared/interfaces/commons'
 
 type Table = Static<typeof tableSchema>
 type TableField = Static<typeof tableFieldSchema>
 
 export const useTableEditor = defineStore('table-editor', () => {
   const states = ref({
-    // selected table id
-    selected: undefined,
-    // selected table field id
-    selectedField: undefined,
+    // is the table editor active?
+    tablesEditor: false,
+    // table id being edited
+    tableId: undefined,
     // tables being edited
     tables: [] as Table[],
   })
 
   /**
-   * Selected table id
+   * Table id being edited
    */
-  const selected = computed(() => states.value.selected)
+  const tableId = computed(() => states.value.tableId)
 
   /**
-   * Selected table field id
+   * Is the tables editor active?
    */
-  const selectedField = computed(() => states.value.selectedField)
+  const tablesEditor = computed(() => states.value.tablesEditor)
 
   /**
    * Clone of the user's tables
@@ -41,6 +42,24 @@ export const useTableEditor = defineStore('table-editor', () => {
    */
   const setTables = (list: Table[]) => {
     states.value.tables = list
+  }
+
+  /**
+   * Sets the table id being edited
+   *
+   * @param id ID of the table
+   */
+  const setTableId = (id: string) => {
+    states.value.tableId = id
+  }
+
+  /**
+   * Sets the tables editor as active or not
+   *
+   * @param active
+   */
+  const setTablesEditor = (active: boolean) => {
+    states.value.tablesEditor = active
   }
 
   /**
@@ -66,7 +85,7 @@ export const useTableEditor = defineStore('table-editor', () => {
   const fieldInstance = (id: string): TableField | undefined => {
     for (let i = 0; i < states.value.tables.length; i++) {
       const t = states.value.tables[i]
-      const field = t.fields
+      const field = t?.fields
         .find((f) => f._id === id)
       if (field) {
         return field
@@ -76,83 +95,13 @@ export const useTableEditor = defineStore('table-editor', () => {
   }
 
   /**
-   * Selects a table
-   *
-   * @param id Id of the table
-   */
-  const select = (id: string): boolean => {
-    if (!menuOrPopupPresent()) {
-      states.value.selected = id
-      return true
-    }
-    return false
-  }
-
-  /**
-   * Unselects currently selected table
-   */
-  const unselect = (): boolean => {
-    if (!menuOrPopupPresent()) {
-      states.value.selected = undefined
-      return true
-    }
-    return false
-  }
-
-  /**
-   * Checks to see if a table is being selected or not
-   *
-   * @param id Id of the table
-   *
-   * @returns {boolean} True if the table is selected
-   */
-  const isSelected = (id: string): boolean => (
-    states.value.selected === id
-  )
-
-  /**
-   * Selects a table field
-   *
-   * @param id Id of the table field
-   */
-  const selectField = (id: string): boolean => {
-    if (!menuOrPopupPresent()) {
-      states.value.selectedField = id
-      return true
-    }
-    return false
-  }
-
-  /**
-   * Unselects currently selected table field
-   */
-  const unselectField = (): boolean => {
-    if (!menuOrPopupPresent()) {
-      states.value.selectedField = undefined
-      return true
-    }
-    return false
-  }
-
-  /**
-   * Checks to see if a table field is being selected or not
-   *
-   * @param id Id of the table field
-   *
-   * @returns {boolean} True if the table field is selected
-   */
-  const isFieldSelected = (id: string): boolean => (
-    states.value.selectedField === id
-  )
-
-  /**
    * Adds a new table
    *
-   * @param selectIt Should we select it?
+   * @param options Options to add to the table
    *
    * @returns {Table} New table instance
    */
-  const add = (selectIt?: boolean): Table => {
+  const add = (options?: AnyData): Table => {
     const t = {
       _id: hexObjectId(),
       name: undefined,
@@ -163,11 +112,25 @@ export const useTableEditor = defineStore('table-editor', () => {
       user: true,
       fields: [],
       indexes: [],
+      ...(options || {}),
     }
     states.value.tables = [...states.value.tables, t]
-    if (selectIt) {
-      select(t._id)
+    return t
+  }
+
+  /**
+   * Duplicates a table
+   *
+   * @param table Table instance to duplicate
+   *
+   * @returns {Table} New table instance
+   */
+  const duplicate = (table: Table): Table => {
+    const t = {
+      ...recreateTableIds(cloneDeep(table)),
+      name: newNameForTable(states.value.tables),
     }
+    states.value.tables = [...states.value.tables, t]
     return t
   }
 
@@ -194,26 +157,43 @@ export const useTableEditor = defineStore('table-editor', () => {
   /**
    * Adds a new table field
    *
-   * @param tableId Table id to add the field to
+   * @param table Table instance the field will belong to
+   * @param options Options to add to the table field
    *
    * @returns {TableField} New table field instance
    */
-  const addField = (tableId: string): TableField => {
-    const table = instance(tableId)
-    if (table) {
-      const f = {
-        _id: hexObjectId(),
-        name: undefined,
-        type: 'string',
-        queryable: true,
-        optional: true,
-        transforms: [],
-        refFields: [],
-      }
-      table.fields = [...table.fields, f]
-      return f
+  const addField = (table: Table, options?: AnyData): TableField => {
+    const f = {
+      _id: hexObjectId(),
+      name: undefined,
+      type: 'string',
+      queryable: true,
+      optional: true,
+      transforms: [],
+      refFields: [],
+      ...(options || {}),
     }
-    return undefined
+    // eslint-disable-next-line no-param-reassign
+    table.fields = [...table.fields, f]
+    return f
+  }
+
+  /**
+   * Duplicates a table field
+   *
+   * @param field Table field instance to duplicate
+   * @param table Table instance the field belongs to
+   *
+   * @returns {TableField} New table field instance
+   */
+  const duplicateField = (field: TableField, table: Table): TableField => {
+    const f = {
+      ...cloneDeep(field),
+      _id: hexObjectId(),
+    }
+    // eslint-disable-next-line no-param-reassign
+    table.fields = [...table.fields, f]
+    return f
   }
 
   /**
@@ -225,13 +205,13 @@ export const useTableEditor = defineStore('table-editor', () => {
    * @returns {boolean} True is successful
    */
   const removeField = (id: string, table: Table): boolean => {
-    const t = instance(table._id)
-    const index = t.fields
+    const index = table.fields
       .findIndex((f) => f._id === id)
     if (index !== -1) {
-      t.fields = [
-        ...t.fields.slice(0, index),
-        ...t.fields.slice(index + 1),
+      // eslint-disable-next-line no-param-reassign
+      table.fields = [
+        ...table.fields.slice(0, index),
+        ...table.fields.slice(index + 1),
       ]
       return true
     }
@@ -240,21 +220,19 @@ export const useTableEditor = defineStore('table-editor', () => {
 
   return {
     states,
-    selected,
-    selectedField,
+    tablesEditor,
+    tableId,
     tables,
+    setTableId,
+    setTablesEditor,
     setTables,
     instance,
     fieldInstance,
-    select,
-    unselect,
-    isSelected,
-    selectField,
-    unselectField,
-    isFieldSelected,
     add,
+    duplicate,
     remove,
     addField,
+    duplicateField,
     removeField,
   }
 })

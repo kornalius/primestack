@@ -4,7 +4,7 @@ import hexObjectId from 'hex-object-id'
 import { tableFieldSchema } from '@/shared/schemas/table'
 import { refFieldname } from '@/shared/schema'
 
-type TableFieldSchema = Static<typeof tableFieldSchema>
+type TableField = Static<typeof tableFieldSchema>
 
 /**
  * Returns a list of extra fields that are not specified in the fields of tables
@@ -19,8 +19,8 @@ export const extraFields = (
   created: boolean,
   updated: boolean,
   softDelete: boolean,
-): TableFieldSchema[] => {
-  const fields: TableFieldSchema[] = []
+): TableField[] => {
+  const fields: TableField[] = []
 
   if (created) {
     fields.push({
@@ -90,15 +90,15 @@ export const extraFields = (
  * @param softDelete Add deletedAt, deletedBy fields
  * @param userFields Add extra user fields
  *
- * @returns {TableFieldSchema[]}
+ * @returns {TableField[]}
  */
 export const tableFields = (
-  fields: TableFieldSchema[],
+  fields: TableField[],
   created: boolean,
   updated: boolean,
   softDelete: boolean,
-  userFields?: TableFieldSchema[],
-): TableFieldSchema[] => {
+  userFields?: TableField[],
+): TableField[] => {
   const separator = () => ({
     _id: hexObjectId(),
     name: '-',

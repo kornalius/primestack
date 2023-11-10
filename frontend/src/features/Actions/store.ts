@@ -8,6 +8,7 @@ import { flattenActions } from '@/features/Actions/composites'
 import { AnyData } from '@/shared/interfaces/commons'
 import { TAction } from '@/shared/interfaces/actions'
 import { defaultValueForSchema, defaultValues } from '@/shared/schema'
+import cloneDeep from 'lodash/cloneDeep'
 
 type Action = Static<typeof actionSchema>
 type ActionElement = Static<typeof actionElementSchema>
@@ -18,16 +19,9 @@ export const useActionEditor = defineStore('action-editor', () => {
     actionId: undefined,
     // name of action event being edited
     actionEvent: undefined,
-    // selected action element id
-    selectedActionElement: undefined,
     // actions being edited
     actions: [] as Action[],
   })
-
-  /**
-   * Selected action element id
-   */
-  const selectedActionElement = computed(() => states.value.selectedActionElement)
 
   /**
    * Selected action id
@@ -73,30 +67,9 @@ export const useActionEditor = defineStore('action-editor', () => {
    */
   const actionElementInstance = (id: string): ActionElement | undefined => {
     const currentAction = instance(states.value.actionId)
-    if (!currentAction) {
-      return undefined
-    }
     // eslint-disable-next-line no-underscore-dangle
-    return flattenActions(currentAction._actions)
+    return flattenActions(currentAction?._actions)
       .find((a) => a._id === id)
-  }
-
-  /**
-   * Selects a action element
-   *
-   * @param id Id of the action element
-   */
-  const selectActionElement = (id: string): boolean => {
-    states.value.selectedActionElement = id
-    return true
-  }
-
-  /**
-   * Unselects currently selected action element
-   */
-  const unselectActionElement = (): boolean => {
-    states.value.selectedActionElement = undefined
-    return true
   }
 
   /**
@@ -105,11 +78,6 @@ export const useActionEditor = defineStore('action-editor', () => {
    */
   const setActionId = (id: string): void => {
     states.value.actionId = id
-    const a = instance(id)
-    if (a) {
-      // eslint-disable-next-line no-underscore-dangle
-      selectActionElement(a._actions?.[0]?._id)
-    }
   }
 
   /**
@@ -122,34 +90,19 @@ export const useActionEditor = defineStore('action-editor', () => {
   }
 
   /**
-   * Checks to see if a action element is being selected or not
-   *
-   * @param id Id of the action element
-   *
-   * @returns {boolean} True if the action element is selected
-   */
-  const isActionElementSelected = (id: string): boolean => (
-    states.value.selectedActionElement === id
-  )
-
-  /**
    * Creates a new action
    *
    * @param options Options to add to the action
-   * @param selectIt Should we select it?
    *
    * @returns {Action} New action
    */
-  const add = (options: AnyData, selectIt?: boolean): Action => {
+  const add = (options: AnyData): Action => {
     const a: Action = {
       _id: hexObjectId(),
       _actions: [],
       ...options,
     }
     states.value.actions = [...states.value.actions, a]
-    if (selectIt) {
-      setActionId(a._id)
-    }
     return a
   }
 
@@ -197,26 +150,15 @@ export const useActionEditor = defineStore('action-editor', () => {
    * Adds a new action element
    *
    * @param action Action type for the element
-   * @param selectIt Should we select it?
+   * @param options Options to add to the element
    *
    * @returns {ActionElement} New action element instance
    */
-  const addActionElement = (action: TAction, selectIt?: boolean): ActionElement => {
+  const addActionElement = (action: TAction, options?: AnyData): ActionElement => {
     const currentAction = instance(states.value.actionId)
-
-    const a: ActionElement = {
-      _id: hexObjectId(),
-      _type: action.type,
-      _children: [],
-      ...action.defaultValues,
-    }
+    const a: ActionElement = createActionElement(action, options)
     // eslint-disable-next-line no-underscore-dangle
     currentAction._actions.push(a)
-    if (selectIt) {
-      setTimeout(() => {
-        selectActionElement(a._id)
-      }, 100)
-    }
     return a
   }
 
@@ -245,9 +187,42 @@ export const useActionEditor = defineStore('action-editor', () => {
     return false
   }
 
+  /**
+   * Duplicates an action
+   *
+   * @param action Action instance to duplicate
+   *
+   * @returns {Action} New action
+   */
+  const duplicate = (action: Action): Action => {
+    const a: Action = {
+      ...cloneDeep(action),
+      _id: hexObjectId(),
+    }
+    states.value.actions = [...states.value.actions, a]
+    return a
+  }
+
+  /**
+   * Duplicates an action element
+   *
+   * @param actionElement Action instance element to duplicate
+   * @param action Action instance to duplicate into
+   *
+   * @returns {ActionElement} New action element
+   */
+  const duplicateActionElement = (actionElement: ActionElement, action: Action): ActionElement => {
+    const e: ActionElement = {
+      ...cloneDeep(actionElement),
+      _id: hexObjectId(),
+    }
+    // eslint-disable-next-line no-underscore-dangle
+    action._actions.push(e)
+    return e
+  }
+
   return {
     states,
-    selectedActionElement,
     actionId,
     actionEvent,
     actions,
@@ -256,13 +231,12 @@ export const useActionEditor = defineStore('action-editor', () => {
     setActionEvent,
     instance,
     actionElementInstance,
-    selectActionElement,
-    unselectActionElement,
-    isActionElementSelected,
     add,
+    duplicate,
     remove,
     createActionElement,
     addActionElement,
+    duplicateActionElement,
     removeActionElement,
   }
 })

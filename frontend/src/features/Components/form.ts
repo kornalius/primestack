@@ -1,5 +1,5 @@
 import { Type } from '@feathersjs/typebox'
-import { actionIcon, contentIcon, modelIcon } from '@/shared/icons'
+import { actionIcon, contentIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import ExType from '@/shared/extypes'
 import FormEmbedded from '@/features/Forms/components/FormEmbedded.vue'

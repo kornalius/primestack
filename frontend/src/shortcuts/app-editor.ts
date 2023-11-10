@@ -7,7 +7,7 @@ export default () => {
   hotkeys('ctrl+s', scope, (e) => {
     const editor = useAppEditor()
     if (editor.canSave) {
-      editor.save()
+      editor.save().then(() => {})
     }
     e.preventDefault()
   })
@@ -21,6 +21,24 @@ export default () => {
   hotkeys('ctrl+shift+z', scope, (e) => {
     const editor = useAppEditor()
     editor.redo()
+    e.preventDefault()
+  })
+
+  hotkeys('ctrl+c', scope, (e) => {
+    const editor = useAppEditor()
+    editor.copy().then(() => {})
+    e.preventDefault()
+  })
+
+  hotkeys('ctrl+v', scope, (e) => {
+    const editor = useAppEditor()
+    editor.paste().then(() => {})
+    e.preventDefault()
+  })
+
+  hotkeys('ctrl+d', scope, (e) => {
+    const editor = useAppEditor()
+    editor.duplicate()
     e.preventDefault()
   })
 }

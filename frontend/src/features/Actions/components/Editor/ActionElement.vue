@@ -11,7 +11,7 @@
       @mouseleave="editor.unhover()"
       @focus.stop="editor.hover(actionElement._id)"
       @blur="editor.unhover()"
-      @click.stop="editor.selectActionElement(actionElement._id)"
+      @click.stop="editor.select(actionElement._id)"
     >
       <div
         class="banner"

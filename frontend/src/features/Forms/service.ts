@@ -2,10 +2,10 @@ import { useInstanceDefaults } from 'feathers-pinia'
 import { Static } from '@feathersjs/typebox'
 import { schema } from '@/shared/schemas/form'
 
-type FormInterface = Static<typeof schema>
+type FormList = Static<typeof schema>
 
 export default {
-  setupInstance: (data: FormInterface): FormInterface => (
+  setupInstance: (data: FormList): FormList => (
     useInstanceDefaults({
       list: [],
     }, data)
