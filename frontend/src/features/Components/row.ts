@@ -1,6 +1,7 @@
 import hexObjectId from 'hex-object-id'
 import { Type } from '@feathersjs/typebox'
 import { styleIcon } from '@/shared/icons'
+import { hAlignString, sizeString, vAlignString } from '@/shared/interfaces/commons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import FormElementRow from '@/features/Forms/components/Editor/FormElementRow.vue'
 import {
@@ -16,8 +17,16 @@ export default {
   nokey: true,
   schema: properties([
     Type.Omit(commonProperties.style, ['dense']),
+    Type.Object({
+      hGutter: sizeString,
+      vGutter: sizeString,
+      items: vAlignString,
+      justify: hAlignString,
+    }),
   ], false),
   defaultValues: {
+    hGutter: 'xs',
+    vGutter: 'xs',
     _columns: () => ([
       {
         _id: hexObjectId(),
@@ -37,6 +46,15 @@ export default {
     style: {
       icon: styleIcon,
       names: [
+        {
+          label: 'Gutters',
+          children: [
+            { label: 'Horizontal', name: 'hGutter' },
+            { label: 'Vertical', name: 'vGutter' },
+          ],
+        },
+        'items',
+        'justify',
         ...styleNames,
       ],
     },

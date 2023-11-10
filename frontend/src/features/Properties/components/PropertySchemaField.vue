@@ -249,7 +249,6 @@
     :options="toggleOptions"
     :clearable="clearableToggle"
     :disable="disabled"
-    spread
     stretch
     unelevated
     dense
@@ -264,7 +263,6 @@
     :options="toggleOptions"
     :clearable="clearableToggle"
     :disable="disabled"
-    spread
     stretch
     unelevated
     dense
@@ -948,7 +946,7 @@ interface ToggleOption {
  */
 const toggleOptions = computed((): ToggleOption[] => {
   const p = props.schema
-  return p.options
+  return p.options.map((o) => ({ ...{ attrs: { class: 'text-grey-9' } }, ...o }))
 })
 
 /**

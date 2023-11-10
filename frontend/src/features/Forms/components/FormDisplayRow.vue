@@ -2,7 +2,10 @@
   <div
     :class="{
       row: true,
-      'q-gutter-sm': true,
+      [`q-gutter-x-${(field as any).hGutter}`]: true,
+      [`q-gutter-y-${(field as any).vGutter}`]: true,
+      [`items-${(field as any).items}`]: true,
+      [`justify-${(field as any).justify}`]: true,
       ...(component?.classes || {}),
       ...classBinds(field),
     }"
@@ -17,6 +20,8 @@
       :key="column._id"
       :class="{
         [colName(column)]: true,
+        [colBreakName(column)]: true,
+        [offsetName(column)]: true,
         ...(componentsByType.col?.classes || {}),
         ...classBinds(column),
       }"
@@ -41,7 +46,6 @@ import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
 import { useExpression } from '@/features/Expression/composites'
 import { columnSchema, fieldSchema } from '@/shared/schemas/form'
-import { AnyData } from '@/shared/interfaces/commons'
 import { useFormElements } from '../composites'
 import FormDisplay from './FormDisplay.vue'
 
@@ -66,6 +70,9 @@ const {
   classBinds,
   styleBinds,
   schemaForField,
+  colName,
+  colBreakName,
+  offsetName,
 } = useFormElements()
 
 const { t } = useI18n()
@@ -78,12 +85,4 @@ const component = computed(() => (
   // eslint-disable-next-line no-underscore-dangle
   componentsByType[props.field._type]
 ))
-
-const colName = (column: FormColumn): string => {
-  const c = column as AnyData
-  if (c.col === undefined || c.col === null || c.col === '') {
-    return 'col'
-  }
-  return `col-${c.col}`
-}
 </script>

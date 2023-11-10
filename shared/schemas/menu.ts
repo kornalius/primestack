@@ -25,7 +25,7 @@ export const tabSchema = Type.Object(
     label: Type.String(),
     description: Type.Optional(Type.String()),
     icon: ExType.Icon(),
-    color: Type.Optional(ExType.Color()),
+    color: Type.Optional(ExType.Color({ quasarPalette: true })),
     formId: ExType.Id({ service: 'forms' }),
     badgeTableId: Type.Optional(ExType.Table()),
     badgeFilter: Type.Optional(ExType.Query({ tableProp: 'badgeTableId' })),

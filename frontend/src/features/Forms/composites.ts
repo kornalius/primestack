@@ -310,6 +310,54 @@ export const callEventAction = (id: string, ctx: AnyData, eventArgsFn?: EventArg
   }
 )
 
+/**
+ * Returns the class name for a column size
+ *
+ * @param column Column
+ *
+ * @returns {string}
+ */
+export const colName = (column: FormColumn): string => {
+  const c = column as AnyData
+  if (c.col === undefined || c.col === null || c.col === '') {
+    return 'col'
+  }
+  return `col-${c.col}`
+}
+
+/**
+ * Returns the class name for a offset size
+ *
+ * @param column Column
+ *
+ * @returns {string}
+ */
+export const offsetName = (column: FormColumn): string => {
+  const c = column as AnyData
+  if (c.offset === undefined || c.offset === null || c.offset === '') {
+    return 'offset'
+  }
+  return `offset-${c.offset}`
+}
+
+/**
+ * Returns the class name for a column breakpoint name
+ *
+ * @param column Column
+ *
+ * @returns {string}
+ */
+export const colBreakName = (column: FormColumn): string => {
+  const c = column as AnyData
+  if (c.breakpoint === undefined || c.breakpoint === null || c.breakpoint === '') {
+    return 'col'
+  }
+  if (c.breakpointCol === undefined || c.breakpointCol === null || c.breakpointCol === '') {
+    return `col-${c.breakpoint}`
+  }
+  return `col-${c.breakpoint}-${c.breakpointCol}`
+}
+
 export const useFormElements = () => ({
   componentForField,
 
@@ -408,6 +456,12 @@ export const useFormElements = () => ({
     // eslint-disable-next-line no-underscore-dangle
     return componentsByType[(f as FormField | FormColumn)._type]?.schema
   },
+
+  colName,
+
+  offsetName,
+
+  colBreakName,
 
   isRow,
 

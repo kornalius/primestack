@@ -198,32 +198,6 @@
               }"
             />
 
-            <!-- Label column -->
-
-            <div
-              class="col-auto q-mr-md"
-              style="text-align: end; cursor: default;"
-              :style="`width: ${labelWidth};`"
-            >
-              <template
-                v-for="c in serializeNames(n.children)"
-                :key="c.name"
-              >
-                <div
-                  v-if="c.name && (!limitToExisting || value[c.name] !== undefined)"
-                  class="row justify-end items-center"
-                  :style="`height: ${lineHeight};`"
-                >
-                  <q-icon
-                    v-if="c.icon"
-                    :name="c.icon"
-                    :color="c.color"
-                    size="md"
-                  />
-                </div>
-              </template>
-            </div>
-
             <!-- Value column -->
 
             <div class="col">
@@ -250,7 +224,6 @@
                     :section-color="n.sectionColor"
                     :include-form-data-fields="includeFormDataFields"
                     :track-expanded="trackExpanded"
-                    embed-label
                   >
                     <template #prepend="attrs">
                       <slot name="prepend" v-bind="attrs" />
@@ -571,9 +544,9 @@ const changeName = () => {
 watch(newName, () => {
   let v: true | string
 
-  const menu = editor.menuInstance(editor.selectedMenu)
-  const table = editor.tableInstance(editor.selectedTable)
-  const tableField = editor.tableFieldInstance(editor.selectedTableField)
+  const menu = editor.menuInstance(editor.menuId)
+  const table = editor.tableInstance(editor.tableId)
+  const tableField = editor.tableFieldInstance(editor.selected)
 
   if (menu && props.propName === 'variables') {
     v = validateVariableName(
@@ -581,7 +554,7 @@ watch(newName, () => {
       value.value._id,
       newName.value,
     )
-  } else if (tableField) {
+  } else if (table && tableField) {
     v = validateTableFieldName(
       table,
       tableField._id,

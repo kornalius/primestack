@@ -167,7 +167,7 @@ const myCompletions = (context: CompletionContext) => {
     options = []
   } else if (check(['$result', 'ArgList', '(', 'String'])) {
     options = []
-    const action = editor.actionElementInstance(editor.selectedActionElement)
+    const action = editor.actionElementInstance(editor.selected)
     if (action) {
       // eslint-disable-next-line no-underscore-dangle
       const actions = editor.actionInstance(editor.actionId)._actions

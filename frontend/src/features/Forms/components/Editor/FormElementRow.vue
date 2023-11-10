@@ -3,6 +3,10 @@
     :class="{
       row: true,
       'form-row': true,
+      [`q-gutter-x-${(field as any).hGutter}`]: true,
+      [`q-gutter-y-${(field as any).vGutter}`]: true,
+      [`items-${(field as any).items}`]: true,
+      [`justify-${(field as any).justify}`]: true,
       ...(component?.editClasses || {}),
       ...classBinds(field),
     }"
@@ -16,6 +20,8 @@
       :key="column._id"
       :class="{
         [colName(column)]: true,
+        [colBreakName(column)]: true,
+        [offsetName(column)]: true,
         'form-column': true,
         selected: editor.isSelected(column._id),
         hovered: editor.isHovered(column._id),
@@ -72,7 +78,6 @@ import { useAppEditor } from '@/features/Editor/store'
 import { useExpression } from '@/features/Expression/composites'
 import { stringValue } from '@/composites/utilities'
 import { columnSchema, fieldSchema } from '@/shared/schemas/form'
-import { AnyData } from '@/shared/interfaces/commons'
 // eslint-disable-next-line import/no-cycle
 import { useFormElements } from '../../composites'
 import FieldsEditor from './FieldsEditor.vue'
@@ -99,6 +104,9 @@ const {
   styleBinds,
   schemaForField,
   componentsByType,
+  colName,
+  colBreakName,
+  offsetName,
 } = useFormElements()
 
 const { t } = useI18n()
@@ -108,14 +116,6 @@ const { buildCtx } = useExpression(t)
 const ctx = buildCtx()
 
 const columnIcon = computed(() => stringValue(componentsByType.col?.icon))
-
-const colName = (column: FormColumn): string => {
-  const c = column as AnyData
-  if (c.col === undefined || c.col === null || c.col === '') {
-    return 'col'
-  }
-  return `col-${c.col}`
-}
 
 const component = computed(() => (
   // eslint-disable-next-line no-underscore-dangle
@@ -146,7 +146,6 @@ const onRemoveClick = (column: FormColumn) => {
 
 .form-column
   position: relative
-  margin: 8px 4px
   padding: 8px 4px 4px 4px
   outline: 1px dashed $blue-grey-2
   border-radius: 4px
