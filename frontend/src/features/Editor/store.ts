@@ -34,7 +34,12 @@ import hexObjectId from 'hex-object-id'
 import { componentsByType } from '@/features/Components'
 import { TAction } from '@/shared/interfaces/actions'
 import { actionsByType } from '@/features/Actions/composites'
-import { parentFormField, parentFormFieldArray, recreateFormIds } from '@/shared/form'
+import {
+  flattenFields,
+  parentFormField,
+  parentFormFieldArray,
+  recreateFormIds,
+} from '@/shared/form'
 import { recreateMenuIds } from '@/shared/menu'
 import { recreateTableIds } from '@/shared/table'
 
@@ -181,6 +186,16 @@ export const useAppEditor = defineStore('app-editor', () => {
       default: return undefined
     }
   }
+
+  /**
+   * Return a flatten list of all the fields in the currently edited form
+   *
+   * @returns {FormField[]}
+   */
+  const flattenFormFields = (): FormField[] => (
+    // eslint-disable-next-line no-underscore-dangle
+    flattenFields(formEditor.instance(formEditor.formId)._fields)
+  )
 
   /**
    * Selects an entity by its id
@@ -1242,6 +1257,7 @@ export const useAppEditor = defineStore('app-editor', () => {
      * FormEditor
      */
 
+    flattenFormFields,
     forms: computed(() => formEditor.forms),
     formsEditor: computed(() => formEditor.formsEditor),
     formId: computed(() => formEditor.formId),

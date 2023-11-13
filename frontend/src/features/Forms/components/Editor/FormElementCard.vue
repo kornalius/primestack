@@ -32,17 +32,21 @@
         @click.stop="onClick(section)"
       />
 
+      <!-- Component icon -->
+
       <div
-        v-if="!editor.isDragging && editor.isHovered(section._id)"
-        class="action-button component-icon bg-grey-9 rounded-borders no-pointer-events"
+        v-if="(!editor.isDragging && editor.isHovered(section._id))
+          || editor.isSelected(section._id)"
+        class="component-icon bg-grey-9 rounded-borders no-pointer-events"
       >
         <q-icon :name="sectionIcon" color="white" size="xs" />
       </div>
 
+      <!-- Remove action button -->
+
       <q-btn
         v-if="!editor.isDragging && editor.isHovered(section._id)"
-        class="action-button"
-        style="right: 0;"
+        class="action-button remove"
         icon="mdi-trash-can"
         color="red-4"
         size="xs"
@@ -50,7 +54,7 @@
         @click="onRemoveClick(section)"
       >
         <q-tooltip :delay="500">
-          Remove
+          {{ $t('form.controls.removeSection') }}
         </q-tooltip>
       </q-btn>
 
@@ -58,6 +62,8 @@
         v-model="section._fields"
       />
     </q-card-section>
+
+    <!-- Card Actions -->
 
     <q-card-actions
       v-for="action in actions"
@@ -74,23 +80,29 @@
       @focus.stop="editor.hover(action._id)"
       @blur="editor.unhover()"
     >
+      <!-- Overlay -->
+
       <div
         v-if="!editor.isDragging"
         class="overlay"
         @click.stop="onClick(action)"
       />
 
+      <!-- Component icon -->
+
       <div
-        v-if="!editor.isDragging && editor.isHovered(action._id)"
-        class="action-button component-icon bg-grey-9 rounded-borders no-pointer-events"
+        v-if="(!editor.isDragging && editor.isHovered(action._id))
+          || editor.isSelected(action._id)"
+        class="component-icon bg-grey-9 rounded-borders no-pointer-events"
       >
         <q-icon :name="actionIcon" color="white" size="xs" />
       </div>
 
+      <!-- Add action button -->
+
       <q-btn
         v-if="!editor.isDragging && editor.isHovered(action._id)"
-        class="action-button"
-        style="right: 26px;"
+        class="action-button add"
         icon="mdi-plus"
         color="blue-4"
         size="xs"
@@ -98,14 +110,15 @@
         @click="onAddActionClick(action)"
       >
         <q-tooltip :delay="500">
-          Add Button
+          {{ $t('form.controls.addAction') }}
         </q-tooltip>
       </q-btn>
 
+      <!-- Remove action button -->
+
       <q-btn
         v-if="!editor.isDragging && editor.isHovered(action._id)"
-        class="action-button"
-        style="right: 0;"
+        class="action-button remove"
         icon="mdi-trash-can"
         color="red-4"
         size="xs"
@@ -113,7 +126,7 @@
         @click="onRemoveClick(action)"
       >
         <q-tooltip :delay="500">
-          Remove
+          {{ $t('form.controls.removeSection') }}
         </q-tooltip>
       </q-btn>
 
@@ -122,6 +135,22 @@
       />
     </q-card-actions>
   </q-card>
+
+  <!-- Add section button -->
+
+  <q-btn
+    v-if="!editor.isDragging && editor.isHovered(field._id)"
+    class="action-button add"
+    icon="mdi-plus"
+    color="blue-4"
+    size="xs"
+    round
+    @click="editor.addColumnToField(component.type, field)"
+  >
+    <q-tooltip :delay="500">
+      {{ $t('form.controls.addSection') }}
+    </q-tooltip>
+  </q-btn>
 </template>
 
 <script setup lang="ts">
@@ -166,6 +195,7 @@ const {
   componentsByType,
   isCardActions,
   isCardSection,
+  newNameForField,
 } = useFormElements()
 
 const { t } = useI18n()
@@ -220,15 +250,16 @@ const onAddActionClick = (cardActions: FormColumn) => {
   const btn = {
     _id: hexObjectId(),
     _type: type,
-    name: '',
     _columns: [],
     ...Object.keys(btnComponent.schema?.properties || {})
       .reduce((acc, k) => (
         { ...acc, [k]: defaultValueForSchema(btnComponent.schema.properties[k]) }
       ), {}),
     ...(defaultValues(btnComponent.defaultValues) || {}),
+    name: newNameForField(type, editor.flattenFormFields()),
     label: 'Action',
   }
+
   // eslint-disable-next-line no-underscore-dangle
   cardActions._fields.push(btn)
 }
@@ -247,6 +278,7 @@ const onRemoveClick = (column: FormColumn) => {
 
 .card
   position: relative
+  padding: 4px 0
   min-height: 40px
 
 .card-section
@@ -298,7 +330,14 @@ const onRemoveClick = (column: FormColumn) => {
 .action-button
   position: absolute
   top: 0
+  right: 0
+  width: 24px
+  height: 24px
+  transform: translate(50%, -50%)
   z-index: 5
+
+  &.add
+    right: 26px
 
 .overlay
   position: absolute

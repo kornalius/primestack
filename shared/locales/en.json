@@ -97,6 +97,16 @@
     },
     "files": {
       "title": "Files ({count})"
+    },
+    "controls": {
+      "remove": "Remove",
+      "removeSection": "Remove section",
+      "addColumn": "Add column",
+      "addAction": "Add action",
+      "addSection": "Add section",
+      "drag": "Drag",
+      "edit": "Edit",
+      "editForm": "Edit form"
     }
   },
   "buttons": {

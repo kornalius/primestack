@@ -162,7 +162,7 @@
         />
 
         <form-editor
-          v-else
+          v-else-if="form"
           v-model="fields"
           :form="form"
         />
@@ -328,12 +328,12 @@ const { buildCtx, getProp } = useExpression(t)
 const ctx = buildCtx()
 
 /**
- * Should we show the drawer with a list on the left?
+ * Should we show the drawer with a list of forms on the left?
  */
 const showDrawer = computed(() => (
   (!editor.active && !form.value?.hideTable && !!table.value && !formsViewMode.value)
     // we are in forms view mode
-    || (editor.active && formsViewMode.value)
+    || (editor.active && formsViewMode.value && !form.value)
 ))
 
 /**

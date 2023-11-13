@@ -64,8 +64,9 @@
     >
       <template #title-append="{ hover }">
         <blueprint-select
-          class="q-ml-sm"
-          :style="{ opacity: hover ? 1 : 0 }"
+          v-model="blueprintsOpen"
+          class="blueprints-title-button"
+          :style="{ opacity: hover || blueprintsOpen ? 1 : 0 }"
           :field="selectedField as FormField"
           :component="selectedComponent"
           :categories="selectedComponent.categories"
@@ -175,6 +176,8 @@ type FormField = Static<typeof fieldSchema>
 const forcedTypes = ref({})
 
 const editor = useAppEditor()
+
+const blueprintsOpen = ref(false)
 
 const { componentsByType } = useFormElements()
 
@@ -501,3 +504,13 @@ onBeforeUnmount(() => {
   }
 })
 </script>
+
+<style lang="sass">
+.blueprints-title-button
+  position: absolute
+  top: 0
+  right: 0
+  width: 24px
+  height: 24px
+  transform: translate(-25%, 35%)
+</style>

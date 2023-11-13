@@ -10,18 +10,30 @@
     @blur="hoverName = false"
   >
     <template #title>
-      <div class="row items-center" style="height: 30px;">
+      <div class="row items-center">
         <div class="col-auto">
           <q-btn
             class="name"
-            :label="title || value?.name"
-            :icon-right="hoverName && value?.name ? 'mdi-pencil' : undefined"
             :disable="!renameable || !hoverName || !value?.name"
             no-caps
             dense
             flat
             @click="rename"
-          />
+          >
+            <span>
+              {{ title || value?.name }}
+            </span>
+
+            <q-icon
+              v-if="hoverName"
+              class="q-ml-xs"
+              name="mdi-pencil"
+              color="grey-8"
+              size="xs"
+            />
+
+            <div v-else class="spacer" />
+          </q-btn>
         </div>
 
         <div class="col">
@@ -369,7 +381,7 @@ const {
 
 const { getPaletteColor } = colors
 
-const { subPropName, labelWidth, lineHeight } = useProperties(t)
+const { subPropName, labelWidth } = useProperties(t)
 
 const currentForcedTypes = props.forcedTypes
   ? useSyncedProp(props, 'forcedTypes', emit)
@@ -593,6 +605,6 @@ watch(newNameInput, () => {
   opacity: 1 !important
   min-width: 50px
 
-:deep(.name.q-field--dense .q-field__control)
-  height: 32px
+.spacer
+  width: 24px
 </style>

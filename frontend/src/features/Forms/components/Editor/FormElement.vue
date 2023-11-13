@@ -17,7 +17,8 @@
     <!-- Component Icon -->
 
     <div
-      v-if="!editor.isDragging && editor.isHovered(field._id)"
+      v-if="(!editor.isDragging && editor.isHovered(field._id))
+        || editor.isSelected(field._id)"
       class="action-button component-icon bg-grey-9 rounded-borders no-pointer-events"
     >
       <q-icon
@@ -27,29 +28,11 @@
       />
     </div>
 
-    <!-- Add column button -->
-
-    <q-btn
-      v-if="showAddButton && !editor.isDragging && editor.isHovered(field._id)"
-      class="action-button"
-      style="right: 26px;"
-      icon="mdi-plus"
-      color="blue-4"
-      size="xs"
-      round
-      @click="editor.addColumnToField(component.type, field)"
-    >
-      <q-tooltip :delay="500">
-        Add Column or Section
-      </q-tooltip>
-    </q-btn>
-
     <!-- Interact button -->
 
     <q-btn
-      v-else-if="interactable && !editor.isDragging && editor.isHovered(field._id)"
-      class="action-button"
-      style="right: 26px;"
+      v-if="interactable && !editor.isDragging && editor.isHovered(field._id)"
+      class="action-button interactable"
       :icon="activeInteractable ? 'mdi-cursor-pointer' : 'mdi-cursor-move'"
       color="green-4"
       size="xs"
@@ -57,7 +40,7 @@
       @click="toggleInteractable"
     >
       <q-tooltip :delay="500">
-        {{ activeInteractable ? 'Drag' : 'Edit' }}
+        {{ activeInteractable ? $t('form.controls.drag') : $t('form.controls.edit') }}
       </q-tooltip>
     </q-btn>
 
@@ -65,8 +48,7 @@
 
     <q-btn
       v-if="!editor.isDragging && editor.isHovered(field._id)"
-      class="action-button"
-      style="right: 0;"
+      class="action-button remove"
       icon="mdi-trash-can"
       color="red-4"
       size="xs"
@@ -74,7 +56,7 @@
       @click="onRemoveClick"
     >
       <q-tooltip :delay="500">
-        Remove
+        {{ $t('form.controls.remove') }}
       </q-tooltip>
     </q-btn>
 
@@ -123,7 +105,6 @@
       <form-element-card
         v-else-if="isCard(field)"
         v-model="field"
-        class="card"
         @remove="(col) => editor.removeColumnFromField(col, field)"
         @click="onColumnClick"
       />
@@ -133,8 +114,14 @@
       <form-element-embedded-form
         v-else-if="isEmbeddedForm(field)"
         v-model="field"
-        class="form"
         @click="onClick"
+      />
+
+      <!-- Paragraph -->
+
+      <paragraph
+        v-else-if="isParagraph(field)"
+        v-model="field[componentsByType[field._type].modelValueField]"
       />
 
       <!-- Table -->
@@ -213,6 +200,7 @@ import { useExpression } from '@/features/Expression/composites'
 import { stringValue } from '@/composites/utilities'
 import { columnSchema, fieldSchema } from '@/shared/schemas/form'
 import TableEditor from '@/features/Forms/components/Editor/TableEditor.vue'
+import Paragraph from '@/features/Fields/components/Editor.vue'
 import { useFormElements } from '../../composites'
 import FormElementRow from './FormElementRow.vue'
 import FormElementCard from './FormElementCard.vue'
@@ -250,6 +238,7 @@ const {
   isEmbeddedForm,
   isIcon,
   isTable,
+  isParagraph,
   schemaForField,
 } = useFormElements()
 
@@ -307,10 +296,6 @@ const toggleInteractable = () => {
   activeInteractable.value = !activeInteractable.value
 }
 
-const showAddButton = computed(() => (
-  isRow(field.value) || isCard(field.value)
-))
-
 const overlayTop = ref('')
 
 watch([() => props.modelValue, component], () => {
@@ -346,17 +331,17 @@ watch([() => props.modelValue, component], () => {
   &.hovered
     outline: 1px dashed $blue-grey-4
 
-.card
-  padding: 4px 0
-
 .action-button
   position: absolute
-  right: 0
   top: 0
+  right: 0
   width: 24px
   height: 24px
   transform: translate(50%, -50%)
   z-index: 5
+
+  &.interactable
+    right: 26px
 
 .component-icon
   position: absolute

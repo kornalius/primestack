@@ -1,7 +1,6 @@
 import { Type } from '@feathersjs/typebox'
 import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
-import Editor from '@/features/Fields/components/Editor.vue'
 import ExType from '@/shared/extypes'
 import {
   properties, commonProperties, defaultStyleValues, styleNames,
@@ -11,7 +10,6 @@ export default {
   type: 'paragraph',
   icon: 'mdi-text-box-edit-outline',
   label: 'components.paragraph.label',
-  component: Editor,
   interactable: true,
   schema: properties([
     commonProperties.state,

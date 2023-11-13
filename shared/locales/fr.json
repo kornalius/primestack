@@ -97,6 +97,16 @@
     },
     "files": {
       "title": "Fichiers ({count})"
+    },
+    "controls": {
+      "remove": "Effacer",
+      "removeSection": "Enlever la section",
+      "addColumn": "Ajouter une colonne",
+      "addAction": "Ajouter une action",
+      "addSection": "Ajouter une section",
+      "drag": "Glisser",
+      "edit": "Modifier",
+      "editForm": "Modifier formulaire"
     }
   },
   "buttons": {

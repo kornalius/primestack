@@ -2,6 +2,7 @@
   <q-item
     class="bg-grey-4 items-center"
     :class="`bg-${color}`"
+    style="height: 40px;"
     dense
   >
     <q-item-section v-if="icon" avatar>
@@ -10,9 +11,11 @@
 
     <q-item-label>
       <slot name="title-before" />
+
       <slot name="title">
         {{ title }}
       </slot>
+
       <slot name="title-after" />
     </q-item-label>
 

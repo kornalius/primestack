@@ -19,7 +19,7 @@ type Definitions = {
 
 const props = defineProps<{
   modelValue: string
-  definitions: unknown[]
+  definitions?: unknown[]
 }>()
 
 const emit = defineEmits<{

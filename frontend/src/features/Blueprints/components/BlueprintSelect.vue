@@ -2,7 +2,8 @@
   <q-btn
     v-bind="$attrs"
     icon="mdi-pencil-ruler"
-    color="grey-9"
+    color="grey-8"
+    size="sm"
     dense
     round
     flat
@@ -11,7 +12,10 @@
       {{ $t('blueprints.tooltip') }}
     </q-tooltip>
 
-    <q-menu fit>
+    <q-menu
+      v-model="value"
+      fit
+    >
       <q-list dense>
         <!-- New -->
 
@@ -137,6 +141,7 @@ import { useApp } from '@/features/App/store'
 import { blueprintSchema } from '@/shared/schemas/blueprints'
 import { fieldSchema } from '@/shared/schemas/form'
 import { TFormComponent, TFormFieldCategory } from '@/shared/interfaces/forms'
+import { useModelValue } from '@/composites/prop'
 import BlueprintEditor from './Editor/BlueprintEditor.vue'
 import BlueprintSelectItem from './Editor/BlueprintSelectItem.vue'
 
@@ -144,9 +149,15 @@ type Blueprint = Static<typeof blueprintSchema>
 type FormField = Static<typeof fieldSchema>
 
 const props = defineProps<{
+  // is the menu opened or not?
+  modelValue: boolean
   field: FormField
   component: TFormComponent
   categories: Record<string, TFormFieldCategory>
+}>()
+
+const emit = defineEmits<{
+  (e: 'update:model-value', value: boolean): void,
 }>()
 
 const quasar = useQuasar()
@@ -160,6 +171,8 @@ const editingBlueprint = ref()
 const origBlueprint = ref()
 
 const showEditor = ref(false)
+
+const value = useModelValue(props, emit)
 
 const editor = useAppEditor()
 

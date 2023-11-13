@@ -39,18 +39,25 @@
       @focus.stop="editor.hover(column._id)"
       @blur="editor.unhover()"
     >
+      <!-- Overlay -->
+
       <div
         v-if="!editor.isDragging"
         class="overlay"
         @click.stop="onClick(column)"
       />
 
+      <!-- Component icon -->
+
       <div
-        v-if="!editor.isDragging && editor.isHovered(column._id)"
+        v-if="(!editor.isDragging && editor.isHovered(column._id))
+          || editor.isSelected(column._id)"
         class="action-button component-icon bg-grey-9 rounded-borders no-pointer-events"
       >
         <q-icon :name="columnIcon" color="white" size="xs" />
       </div>
+
+      <!-- Remove button -->
 
       <q-btn
         v-if="!editor.isDragging && editor.isHovered(column._id)"
@@ -61,11 +68,31 @@
         size="xs"
         round
         @click.stop="onRemoveClick(column)"
-      />
+      >
+        <q-tooltip :delay="500">
+          {{ $t('form.controls.remove') }}
+        </q-tooltip>
+      </q-btn>
 
       <fields-editor v-model="column._fields" />
     </div>
   </div>
+
+  <!-- Add column button -->
+
+  <q-btn
+    v-if="!editor.isDragging && editor.isHovered(field._id)"
+    class="action-button add"
+    icon="mdi-plus"
+    color="blue-4"
+    size="xs"
+    round
+    @click="editor.addColumnToField(component.type, field)"
+  >
+    <q-tooltip :delay="500">
+      {{ $t('form.controls.addColumn') }}
+    </q-tooltip>
+  </q-btn>
 </template>
 
 <script setup lang="ts">
@@ -165,10 +192,14 @@ const onRemoveClick = (column: FormColumn) => {
 .action-button
   position: absolute
   top: 0
+  right: 0
   width: 24px
   height: 24px
   transform: translate(50%, -50%)
   z-index: 5
+
+  &.add
+    right: 26px
 
 .component-icon
   position: absolute
