@@ -54,6 +54,7 @@ export default {
         'angle',
         'instantFeedback',
         'showValue',
+        'renderWhen',
       ],
     },
     model: {

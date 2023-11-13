@@ -40,6 +40,7 @@ export default {
             { label: 'Size', name: 'breakpointCol' },
           ],
         },
+        'renderWhen',
       ],
     },
     style: {

@@ -68,6 +68,7 @@ export default {
         'target',
         'replace',
         'loading',
+        'renderWhen',
       ],
     },
     style: {

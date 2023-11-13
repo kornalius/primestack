@@ -74,6 +74,7 @@ export default {
         'firstDayOfWeek',
         'navigationMinYearMonth',
         'navigationMaxYearMonth',
+        'renderWhen',
       ],
     },
     model: {

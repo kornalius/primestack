@@ -34,6 +34,7 @@ export default {
       names: [
         'icon',
         'field',
+        'renderWhen',
       ],
     },
     style: {

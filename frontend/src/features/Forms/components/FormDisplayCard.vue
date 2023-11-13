@@ -25,6 +25,7 @@
       v-bind="fieldBinds(cardSection, schemaForField(cardSection), ctx)"
     >
       <form-display
+        v-if="shouldRender(cardSection)"
         v-model="value"
         :fields="cardSection._fields as FormField[]"
       />
@@ -46,6 +47,7 @@
       v-bind="fieldBinds(cardAction, schemaForField(cardAction), ctx)"
     >
       <form-display
+        v-if="shouldRender(cardAction)"
         v-model="value"
         :fields="cardAction._fields as FormField[]"
       />
@@ -60,6 +62,7 @@ import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
 import { useExpression } from '@/features/Expression/composites'
 import { columnSchema, fieldSchema } from '@/shared/schemas/form'
+import { AnyData } from '@/shared/interfaces/commons'
 import { useFormElements } from '../composites'
 import FormDisplay from './FormDisplay.vue'
 
@@ -90,9 +93,19 @@ const {
 
 const { t } = useI18n()
 
-const { buildCtx } = useExpression(t)
+const {
+  buildCtx,
+  isExpr,
+  runExpr,
+  exprCode,
+} = useExpression(t)
 
 const ctx = buildCtx()
+
+const shouldRender = (field: AnyData) => {
+  const rw = field.renderWhen
+  return !isExpr(rw) || runExpr(exprCode(rw), ctx.$expr)
+}
 
 const cardSections = computed(() => (
   // eslint-disable-next-line no-underscore-dangle

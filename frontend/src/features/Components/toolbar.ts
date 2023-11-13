@@ -1,6 +1,6 @@
 import { Type } from '@feathersjs/typebox'
 import hexObjectId from 'hex-object-id'
-import { styleIcon } from '@/shared/icons'
+import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import ExType from '@/shared/extypes'
 import {
@@ -32,6 +32,12 @@ export default {
     minHeight: '50px',
   },
   categories: {
+    content: {
+      icon: contentIcon,
+      names: [
+        'renderWhen',
+      ],
+    },
     style: {
       icon: styleIcon,
       names: [

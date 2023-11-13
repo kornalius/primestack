@@ -72,6 +72,7 @@ export default {
         'readonly',
         'reverse',
         'markers',
+        'renderWhen',
       ],
     },
     model: {

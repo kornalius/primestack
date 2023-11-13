@@ -1,5 +1,5 @@
 import { Type } from '@feathersjs/typebox'
-import { styleIcon } from '@/shared/icons'
+import { contentIcon, styleIcon } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import {
   properties, commonProperties, defaultStyleValues, styleNames,
@@ -23,6 +23,12 @@ export default {
     ...defaultStyleValues,
   },
   categories: {
+    content: {
+      icon: contentIcon,
+      names: [
+        'renderWhen',
+      ],
+    },
     style: {
       icon: styleIcon,
       names: [

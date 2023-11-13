@@ -120,6 +120,7 @@ export default {
           ],
         },
         'tag',
+        'renderWhen',
       ],
     },
     style: {

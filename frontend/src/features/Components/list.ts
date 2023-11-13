@@ -74,6 +74,7 @@ export default {
             { name: 'virtualScrollStickySizeEnd', label: 'Sticky Size End' },
           ],
         },
+        'renderWhen',
       ],
     },
     style: {

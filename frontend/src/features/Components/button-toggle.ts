@@ -46,6 +46,7 @@ export default {
         'options',
         'disable',
         'readonly',
+        'renderWhen',
       ],
     },
     style: {

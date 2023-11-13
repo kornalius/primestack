@@ -4,7 +4,7 @@
     v-bind="fieldBinds(field, schemaForField(field), ctx)"
   >
     <q-tab
-      v-for="tab in tabs"
+      v-for="tab in tabsToRender"
       :key="tab._id"
       :name="tab._id"
       :content-class="`text-${tab.color}`"
@@ -39,7 +39,7 @@
       animated
     >
       <q-tab-panel
-        v-for="tab in tabs"
+        v-for="tab in tabsToRender"
         :key="tab._id"
         :name="tab._id"
       >
@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
@@ -82,11 +82,23 @@ const { fieldBinds, schemaForField } = useFormElements()
 
 const { t } = useI18n()
 
-const { buildCtx } = useExpression(t)
+const {
+  buildCtx,
+  isExpr,
+  runExpr,
+  exprCode,
+} = useExpression(t)
 
 const ctx = buildCtx()
 
 const active = ref()
+
+const tabsToRender = computed(() => (
+  props.tabs?.filter((tab: AnyData) => {
+    const rw = tab.renderWhen
+    return !isExpr(rw) || runExpr(exprCode(rw), ctx.$expr)
+  })
+))
 
 watch(() => (props.field as AnyData).field, () => {
   if ((props.field as AnyData).field) {

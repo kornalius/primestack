@@ -51,6 +51,7 @@ export default {
         'disable',
         'readonly',
         'calendar',
+        'renderWhen',
       ],
     },
     style: {

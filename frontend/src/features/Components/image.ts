@@ -80,6 +80,7 @@ export default {
         'reffererpolicy',
         'fetchpriority',
         'draggable',
+        'renderWhen',
       ],
     },
     style: {

@@ -76,6 +76,7 @@ export default {
         'suffix',
         'tableColspan',
         'loading',
+        'renderWhen',
       ],
     },
     model: {

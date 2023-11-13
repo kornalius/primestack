@@ -63,6 +63,7 @@ export default {
         'readonly',
         'label',
         'markers',
+        'renderWhen',
       ],
     },
     model: {

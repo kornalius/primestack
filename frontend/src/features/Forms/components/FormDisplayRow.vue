@@ -32,6 +32,7 @@
       v-bind="fieldBinds(column, schemaForField(column), ctx)"
     >
       <form-display
+        v-if="shouldRender(column)"
         v-model="value"
         :fields="column._fields as FormField[]"
       />
@@ -46,6 +47,7 @@ import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
 import { useExpression } from '@/features/Expression/composites'
 import { columnSchema, fieldSchema } from '@/shared/schemas/form'
+import { AnyData } from '@/shared/interfaces/commons'
 import { useFormElements } from '../composites'
 import FormDisplay from './FormDisplay.vue'
 
@@ -77,9 +79,19 @@ const {
 
 const { t } = useI18n()
 
-const { buildCtx } = useExpression(t)
+const {
+  buildCtx,
+  isExpr,
+  runExpr,
+  exprCode,
+} = useExpression(t)
 
 const ctx = buildCtx()
+
+const shouldRender = (field: AnyData) => {
+  const rw = field.renderWhen
+  return !isExpr(rw) || runExpr(exprCode(rw), ctx.$expr)
+}
 
 const component = computed(() => (
   // eslint-disable-next-line no-underscore-dangle

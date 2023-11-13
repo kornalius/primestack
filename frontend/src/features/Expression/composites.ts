@@ -208,8 +208,8 @@ export const buildCtx = (extra?: AnyData) => {
        *
        * @returns {unknown | undefined} Value of the variable
        */
-      var: (name: string): unknown | undefined => (
-        variables.get(name) as string
+      variable: (name: string): unknown | undefined => (
+        variables.get(name)
       ),
 
       /**
@@ -1538,7 +1538,7 @@ export const useExpression = (t: T18N) => {
       icon: 'mdi-variable',
       name: v,
       label: v,
-      value: `var('${v}')`,
+      value: `variable('${v}')`,
     })), 'label')
   ))
 

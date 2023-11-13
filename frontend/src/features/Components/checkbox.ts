@@ -42,6 +42,7 @@ export default {
         'label',
         'checkedIcon',
         'uncheckedIcon',
+        'renderWhen',
       ],
     },
     style: {

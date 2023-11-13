@@ -94,6 +94,7 @@ export default {
         'hint',
         'tableColspan',
         'loading',
+        'renderWhen',
       ],
     },
     model: {

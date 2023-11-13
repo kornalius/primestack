@@ -57,6 +57,7 @@ export default {
       icon: contentIcon,
       names: [
         'type',
+        'renderWhen',
       ],
     },
     style: {

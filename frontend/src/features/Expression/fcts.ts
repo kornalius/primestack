@@ -126,7 +126,7 @@ export const fcts = {
   doc: '`(): unknown`\n\n'
     + 'Returns currently selected document',
 
-  var: '`(name: string): unknown`\n\n'
+  variable: '`(name: string): unknown`\n\n'
     + 'Returns the value of a variable',
 
   field: '`(tablename: string, fieldname: string): unknown`\n\n'

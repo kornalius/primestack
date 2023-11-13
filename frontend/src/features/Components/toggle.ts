@@ -41,6 +41,7 @@ export default {
         'readonly',
         'label',
         'leftLabel',
+        'renderWhen',
       ],
     },
     style: {

@@ -1,6 +1,6 @@
 import hexObjectId from 'hex-object-id'
 import { Type } from '@feathersjs/typebox'
-import { styleIcon } from '@/shared/icons'
+import { contentIcon, styleIcon } from '@/shared/icons'
 import { hAlignString, sizeString, vAlignString } from '@/shared/interfaces/commons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import FormElementRow from '@/features/Forms/components/Editor/FormElementRow.vue'
@@ -43,6 +43,12 @@ export default {
     ]),
   },
   categories: {
+    content: {
+      icon: contentIcon,
+      names: [
+        'renderWhen',
+      ],
+    },
     style: {
       icon: styleIcon,
       names: [

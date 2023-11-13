@@ -62,6 +62,7 @@ export default {
         'placeholder',
         'minHeight',
         'maxHeight',
+        'renderWhen',
       ],
     },
     toolbar: {

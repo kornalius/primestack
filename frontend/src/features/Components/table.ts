@@ -166,6 +166,7 @@ export default {
           ],
         },
         'tableColspan',
+        'renderWhen',
       ],
     },
     model: {

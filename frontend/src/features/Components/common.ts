@@ -137,6 +137,7 @@ export const ruleTypes: RuleType[] = [
 export const commonProperties = {
   name: Type.Object({
     name: Type.String({ name: true }),
+    renderWhen: ExType.Expr(),
   }),
 
   field: Type.Object({

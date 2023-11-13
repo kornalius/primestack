@@ -47,6 +47,7 @@ export default {
         'fetchpriority',
         'reffererpolicy',
         'loading',
+        'renderWhen',
       ],
     },
     style: {

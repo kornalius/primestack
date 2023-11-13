@@ -53,6 +53,7 @@ export default {
         'icon',
         'iconSelected',
         'iconHalf',
+        'renderWhen',
       ],
     },
     style: {

@@ -196,7 +196,7 @@ const myCompletions = (context: CompletionContext) => {
       ...(table.fields?.map((f) => f.name) || []),
       ...extraFields(table?.created, table?.updated, table?.softDelete).map((f) => f.name),
     ])
-  } else if (check(['var', 'ArgList', '(', 'String'])) {
+  } else if (check(['variable', 'ArgList', '(', 'String'])) {
     options = toOptions(variables.names)
   } else if (check(['setting', 'ArgList', '(', 'String'])) {
     options = toOptions(Object.keys(auth.user.settings))

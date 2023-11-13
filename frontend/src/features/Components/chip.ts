@@ -50,6 +50,7 @@ export default {
         'selected',
         'clickable',
         'removable',
+        'renderWhen',
       ],
     },
     style: {

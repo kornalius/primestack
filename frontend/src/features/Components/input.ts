@@ -86,6 +86,7 @@ export default {
         'suffix',
         'loading',
         'counter',
+        'renderWhen',
       ],
     },
     model: {

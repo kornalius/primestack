@@ -74,6 +74,7 @@ export default {
       names: [
         'label',
         'field',
+        'renderWhen',
       ],
     },
     style: {

@@ -42,6 +42,7 @@ export default {
         'icon',
         'alert',
         'badgeValue',
+        'renderWhen',
       ],
     },
     style: {

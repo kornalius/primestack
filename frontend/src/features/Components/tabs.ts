@@ -64,6 +64,7 @@ export default {
         'vertical',
         'leftIcon',
         'rightIcon',
+        'renderWhen',
       ],
     },
     style: {

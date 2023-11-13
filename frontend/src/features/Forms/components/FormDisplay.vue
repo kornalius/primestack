@@ -6,11 +6,11 @@
     @keydown="(e) => $emit('keydown', e)"
     @keyup="(e) => $emit('keyup', e)"
   >
-    <div>
+    <div v-if="shouldRender(field)">
       <!-- Row -->
 
       <form-display-row
-        v-if="isRow(field)"
+        v-if="isRow(field) && shouldRender(field)"
         v-model="value"
         :field="field"
         :columns="field._columns"
@@ -194,8 +194,8 @@ import { onMounted, onUnmounted, onUpdated } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
-import { getProp, useExpression } from '@/features/Expression/composites'
-import { fieldSchema, tabSchema } from '@/shared/schemas/form'
+import { useExpression } from '@/features/Expression/composites'
+import { fieldSchema, formTabSchema } from '@/shared/schemas/form'
 import LabelField from '@/features/Fields/components/LabelField.vue'
 import { AnyData } from '@/shared/interfaces/commons'
 // eslint-disable-next-line import/no-cycle
@@ -209,7 +209,7 @@ import FormDisplayList from './FormDisplayList.vue'
 import FormDisplayToolbar from './FormDisplayToolbar.vue'
 
 type FormField = Static<typeof fieldSchema>
-type FormTab = Static<typeof tabSchema>
+type FormTab = Static<typeof formTabSchema>
 
 const props = defineProps<{
   modelValue: Record<string, unknown>
@@ -246,7 +246,13 @@ const {
   serializeRules,
 } = useFormElements()
 
-const { buildCtx } = useExpression(t)
+const {
+  buildCtx,
+  getProp,
+  isExpr,
+  runExpr,
+  exprCode,
+} = useExpression(t)
 
 const value = useModelValue(props, emit)
 
@@ -260,6 +266,11 @@ const modelValueForField = (field: FormField) => (
 const displayValue = (field: FormField) => {
   const f = field as AnyData
   return getProp(f.field ? value.value[f.field] : f[modelValueForField(field)], ctx)
+}
+
+const shouldRender = (field: FormField) => {
+  const rw = (field as AnyData).renderWhen
+  return !isExpr(rw) || runExpr(exprCode(rw), ctx.$expr)
 }
 
 onMounted(() => {

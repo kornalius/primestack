@@ -61,7 +61,7 @@ export default async (app: Application, data: AnyData) => {
             _type: 'console',
             _children: [],
             type: 'info',
-            message: '```var(\'$x\')```',
+            message: '```variable(\'$x\')```',
           },
         ],
       },
