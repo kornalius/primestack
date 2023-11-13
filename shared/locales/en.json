@@ -626,5 +626,9 @@
       },
       "addProperty": "Add property..."
     }
+  },
+  "sidebar": {
+    "open": "Open sidebar",
+    "close": "Close sidebar"
   }
 }

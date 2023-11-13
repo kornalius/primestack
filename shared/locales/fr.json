@@ -619,5 +619,9 @@
       },
       "addProperty": "Ajouter une propriété..."
     }
+  },
+  "sidebar": {
+    "open": "Ouvrir barre latérale",
+    "close": "Fermer barre latérale"
   }
 }

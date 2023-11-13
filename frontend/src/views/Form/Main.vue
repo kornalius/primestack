@@ -1,9 +1,12 @@
 <template>
   <q-page class="q-pa-sm">
     <div class="row">
-      <div
+      <sidebar
         v-if="showDrawer"
+        v-model="leftDrawerOpened"
         class="col-auto q-mr-sm"
+        :storage-key="`form-${form._id}`"
+        closeable
       >
         <schema-table
           v-if="!formsViewMode"
@@ -45,7 +48,7 @@
           @remove="removeForm"
           @row-click="toggleSelection"
         />
-      </div>
+      </sidebar>
 
       <div
         class="col"
@@ -215,6 +218,7 @@ import SchemaTable from '@/features/Tables/components/SchemaTable.vue'
 import ExTable from '@/features/Fields/components/ExTable.vue'
 import ActionsEditor from '@/features/Actions/components/Editor/ActionsEditor.vue'
 import Uploader from '@/features/Files/components/Uploader.vue'
+import Sidebar from '@/features/Fields/components/Sidebar.vue'
 
 type Form = Static<typeof formSchema>
 type FormField = Static<typeof fieldSchema>
@@ -243,6 +247,8 @@ const { queryToMongo } = useQuery()
 const { mimetypes, maxFileSize } = useFiles(t)
 
 const formsViewMode = computed(() => props.menuId === undefined)
+
+const leftDrawerOpened = ref(true)
 
 /**
  * Menu
