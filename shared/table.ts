@@ -29,17 +29,12 @@ export const newNameForTable = (list: Table[]): string => {
  * @returns {Table}
  */
 export const recreateTableIds = (table: Table): Table => {
-  const oid = table._id
   // eslint-disable-next-line no-param-reassign
   table._id = hexObjectId()
 
   table.fields.forEach((f) => {
     // eslint-disable-next-line no-param-reassign
     f._id = hexObjectId()
-    if (f.refTableId === oid) {
-      // eslint-disable-next-line no-param-reassign
-      f.refTableId = table._id
-    }
   })
 
   table.indexes.forEach((i) => {

@@ -121,9 +121,9 @@ export const useFormEditor = defineStore('form-editor', () => {
    *
    * @param id Id of the form's table column
    *
-   * @returns {FormField} Form's table instance
+   * @returns {FormTableColumn} Form's table instance
    */
-  const tableColumnInstance = (id: string): FormField | undefined => {
+  const tableColumnInstance = (id: string): FormTableColumn | undefined => {
     // eslint-disable-next-line no-underscore-dangle
     const fc = flatFields()
     for (let i = 0; i < fc.length; i++) {
@@ -134,6 +134,30 @@ export const useFormEditor = defineStore('form-editor', () => {
           .find((c: FormTableColumn) => c._id === id)
         if (col) {
           return col
+        }
+      }
+    }
+    return undefined
+  }
+
+  /**
+   * Return the parent form element instance for the table's column
+   *
+   * @param id Id of the form's table column
+   *
+   * @returns {FormField} Form's table instance
+   */
+  const parentTableColumnInstance = (id: string): FormField | undefined => {
+    // eslint-disable-next-line no-underscore-dangle
+    const fc = flatFields()
+    for (let i = 0; i < fc.length; i++) {
+      // eslint-disable-next-line no-underscore-dangle
+      if (isTable(fc[i])) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const col = (fc[i] as any)?.columns
+          .find((c: FormTableColumn) => c._id === id)
+        if (col) {
+          return fc[i]
         }
       }
     }
@@ -355,6 +379,53 @@ export const useFormEditor = defineStore('form-editor', () => {
     return false
   }
 
+  /**
+   * Removes a table column from a table
+   *
+   * @param id Id of the table column
+   *
+   * @returns {boolean} True is successful
+   */
+  const removeTableColumn = (id: string): boolean => {
+    const p: AnyData = parentTableColumnInstance(id)
+    if (p) {
+      // eslint-disable-next-line no-underscore-dangle
+      const index = p.columns
+        .findIndex((c: FormTableColumn) => c._id === id)
+      if (index !== -1) {
+        // eslint-disable-next-line no-underscore-dangle,no-param-reassign
+        p.columns = [
+          // eslint-disable-next-line no-underscore-dangle
+          ...p.columns.slice(0, index),
+          // eslint-disable-next-line no-underscore-dangle
+          ...p.columns.slice(index + 1),
+        ]
+        return true
+      }
+    }
+    return false
+  }
+
+  /**
+   * Duplicates a table column in a table
+   *
+   * @param column Table column instance
+   *
+   * @returns {FormTableColumn} New field instance
+   */
+  const duplicateTableColumn = (column: FormTableColumn): FormTableColumn | undefined => {
+    const p: AnyData = parentTableColumnInstance(column._id)
+    if (p) {
+      const newColumn: FormTableColumn = {
+        ...cloneDeep(column),
+        _id: hexObjectId(),
+      }
+      p.columns.push(newColumn)
+      return newColumn
+    }
+    return undefined
+  }
+
   const setPreview = (p: boolean) => {
     states.value.preview = p
   }
@@ -377,6 +448,7 @@ export const useFormEditor = defineStore('form-editor', () => {
     setFormsEditor,
     instance,
     tableColumnInstance,
+    parentTableColumnInstance,
     flatFields,
     fieldInstance,
     add,
@@ -387,6 +459,8 @@ export const useFormEditor = defineStore('form-editor', () => {
     duplicateField,
     addColumnToField,
     removeColumnFromField,
+    removeTableColumn,
+    duplicateTableColumn,
     preview,
     previewFormData,
     showPreviewFormData,

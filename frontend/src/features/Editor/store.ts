@@ -9,7 +9,9 @@ import { useFeathersService } from '@/composites/feathers'
 import cloneDeep from 'lodash/cloneDeep'
 import { AnyData } from '@/shared/interfaces/commons'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
-import { columnSchema, fieldSchema, formSchema } from '@/shared/schemas/form'
+import {
+  columnSchema, fieldSchema, formSchema, formTableColumnSchema,
+} from '@/shared/schemas/form'
 import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
 import { actionElementSchema, actionSchema } from '@/shared/schemas/actions'
 import { blueprintSchema } from '@/shared/schemas/blueprints'
@@ -32,12 +34,16 @@ import hexObjectId from 'hex-object-id'
 import { componentsByType } from '@/features/Components'
 import { TAction } from '@/shared/interfaces/actions'
 import { actionsByType } from '@/features/Actions/composites'
+import { parentFormField, parentFormFieldArray, recreateFormIds } from '@/shared/form'
+import { recreateMenuIds } from '@/shared/menu'
+import { recreateTableIds } from '@/shared/table'
 
 type Menu = Static<typeof menuSchema>
 type Tab = Static<typeof tabSchema>
 type Form = Static<typeof formSchema>
 type FormField = Static<typeof fieldSchema>
 type FormColumn = Static<typeof columnSchema>
+type FormTableColumn = Static<typeof formTableColumnSchema>
 type Table = Static<typeof tableSchema>
 type TableField = Static<typeof tableFieldSchema>
 type Action = Static<typeof actionSchema>
@@ -165,6 +171,7 @@ export const useAppEditor = defineStore('app-editor', () => {
     switch (type) {
       case 'form': return formEditor.instance(id)
       case 'field': return formEditor.fieldInstance(id)
+      case 'table-column': return formEditor.tableColumnInstance(id)
       case 'menu': return menuEditor.instance(id)
       case 'tab': return menuEditor.tabInstance(id)
       case 'table': return tableEditor.instance(id)
@@ -646,6 +653,22 @@ export const useAppEditor = defineStore('app-editor', () => {
   }
 
   /**
+   * Duplicates a table column
+   *
+   * @param field Table column instance to duplicate
+   *
+   * @returns {FormTableColumn|undefined} New table column instance
+   */
+  const duplicateTableColumn = (field: FormTableColumn): FormTableColumn | undefined => {
+    const newField = formEditor.duplicateTableColumn(field)
+    if (newField) {
+      select(newField._id)
+      return newField
+    }
+    return undefined
+  }
+
+  /**
    * Duplicates a tab
    *
    * @param tab Tab instance to duplicate
@@ -784,6 +807,12 @@ export const useAppEditor = defineStore('app-editor', () => {
         break
       }
 
+      case 'table-column': {
+        duplicateTableColumn(o as FormTableColumn)
+        select(o._id)
+        break
+      }
+
       case 'menu':
         duplicateMenu(o as Menu)
         select(o._id)
@@ -882,89 +911,113 @@ export const useAppEditor = defineStore('app-editor', () => {
    * Paste from the clipboard into the selected instance
    */
   const paste = async () => {
-    const reid = (o: AnyData) => {
-      if (Array.isArray(o)) {
-        o.forEach((v) => reid(v))
-      } else if (typeof o === 'object') {
-        if (typeof o._id === 'string') {
-          // eslint-disable-next-line no-param-reassign
-          o._id = hexObjectId()
+    const reid = (o: AnyData): AnyData => {
+      if (o !== undefined && o !== null) {
+        if (Array.isArray(o)) {
+          o.forEach((v) => reid(v))
+        } else if (typeof o === 'object') {
+          if (typeof o._id === 'string') {
+            // eslint-disable-next-line no-param-reassign
+            o._id = hexObjectId()
+          }
+          Object.keys(o).forEach((k) => reid(o[k]))
         }
-        Object.keys(o).forEach((k) => reid(o[k]))
       }
+      return o
     }
 
     const t = await navigator.clipboard.readText()
     try {
       const { type, data: o } = JSON.parse(t)
-      reid(o.data)
 
-      const selectedType = storeTypeForId(states.value.selected)
+      const selectedElement = instance(
+        states.value.selected
+          || formEditor.formId
+          || tableEditor.tableId,
+      )
+
+      const selectedType = storeTypeForId(selectedElement?._id)
 
       switch (selectedType) {
         case 'form': {
           if (type === 'form') {
-            addForm(o)
-            select(o._id)
+            const form = recreateFormIds(o)
+            addForm(form)
+            select(form._id)
           } else if (type === 'field') {
+            const field = reid(o)
             // eslint-disable-next-line no-underscore-dangle
-            formEditor.addField(componentsByType[o._type], o)
-            select(o._id)
+            formEditor.addField(componentsByType[field._type], field)
+            select(field._id)
           }
           break
         }
 
         case 'field': {
           if (type === 'field') {
-            const s = instance(states.value.selected)
+            const field = reid(o)
             // eslint-disable-next-line no-underscore-dangle
-            const columns = (s as FormField)._columns
+            const sc = componentsByType[selectedElement._type]
             // eslint-disable-next-line no-underscore-dangle
-            const fields = (s as FormColumn)._fields
-            if (columns) {
-              columns.push(o)
-            } else if (fields) {
-              fields.push(o)
+            const oc = componentsByType[field._type]
+            if (sc.row && oc.col) {
+              // eslint-disable-next-line no-underscore-dangle
+              const columns = (selectedElement as FormField)._columns
+              if (columns) {
+                columns.push(field as FormColumn)
+              }
+            } else if (sc.col) {
+              // eslint-disable-next-line no-underscore-dangle
+              const fields = (selectedElement as FormColumn)._fields
+              if (fields) {
+                fields.push(field as FormField)
+              }
+            } else if (!oc.col) {
+              const form = formEditor.instance(formEditor.formId)
+              const arr = parentFormFieldArray(form, selectedElement as FormField)
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              arr.push(field as any)
             }
-            select(o._id)
+            select(field._id)
           }
           break
         }
 
         case 'menu':
           if (type === 'menu') {
-            addMenu(o, true)
+            addMenu(recreateMenuIds(o), true)
           }
           break
 
         case 'tab':
           if (type === 'tab') {
-            addTab(undefined, undefined, o, true)
+            addTab(undefined, undefined, reid(o), true)
           }
           break
 
         case 'action':
         case 'action-element':
           if (type === 'action-element') {
+            const actionElement = reid(o)
             // eslint-disable-next-line no-underscore-dangle
-            addActionElement(actionsByType[o._type], o, true)
+            addActionElement(actionsByType[actionElement._type], actionElement, true)
           }
           break
 
         case 'table':
           if (type === 'table') {
             // eslint-disable-next-line no-underscore-dangle
-            addTable(o, true)
+            addTable(recreateTableIds(o), true)
           } else if (type === 'table-field') {
             // eslint-disable-next-line no-underscore-dangle
-            addFieldToTable(tableEditor.instance(states.value.selected), o, true)
+            addFieldToTable(tableEditor.instance(states.value.selected), reid(o), true)
           }
           break
 
         case 'table-field':
           if (type === 'table-field') {
             // eslint-disable-next-line no-underscore-dangle
-            addFieldToTable(tableEditor.instance(tableEditor.tableId), o, true)
+            addFieldToTable(tableEditor.instance(tableEditor.tableId), reid(o), true)
           }
           break
 
@@ -972,7 +1025,81 @@ export const useAppEditor = defineStore('app-editor', () => {
           break
       }
     } catch (e) {
-      //
+      // eslint-disable-next-line no-console
+      console.error(e)
+    }
+  }
+
+  const removeSelected = () => {
+    const o = instance(states.value.selected)
+    const type = storeTypeForId(o?._id)
+
+    switch (type) {
+      case 'form': {
+        formEditor.remove(o._id)
+        break
+      }
+
+      case 'field': {
+        const p = parentFormField(formEditor.instance(formEditor.formId), o as FormField)
+        if (p) {
+          // eslint-disable-next-line no-underscore-dangle
+          const columns = (p as FormField)._columns
+          if (columns) {
+            const parent = p as FormField
+            const idx = columns.indexOf(o as FormColumn)
+            // eslint-disable-next-line no-underscore-dangle
+            parent._columns = [
+              ...columns.slice(0, idx),
+              ...columns.slice(idx + 1),
+            ]
+          }
+          // eslint-disable-next-line no-underscore-dangle
+          const fields = (p as FormColumn)._fields
+          if (fields) {
+            const parent = p as FormColumn
+            const idx = fields.indexOf(o as FormField)
+            // eslint-disable-next-line no-underscore-dangle
+            parent._fields = [
+              ...fields.slice(0, idx),
+              ...fields.slice(idx + 1),
+            ]
+          }
+        }
+        break
+      }
+
+      case 'table-column': {
+        formEditor.removeTableColumn(o._id)
+        break
+      }
+
+      case 'menu':
+        menuEditor.remove(o._id)
+        break
+
+      case 'tab':
+        tabEditor.remove(o._id, menuEditor.instance(menuEditor.menuId))
+        break
+
+      case 'action':
+        actionEditor.remove(o._id)
+        break
+
+      case 'action-element':
+        actionEditor.removeActionElement(o._id, actionEditor.instance(actionEditor.actionId))
+        break
+
+      case 'table':
+        tableEditor.remove(o._id)
+        break
+
+      case 'table-field':
+        tableEditor.removeField(o._id, tableEditor.instance(tableEditor.tableId))
+        break
+
+      default:
+        break
     }
   }
 
@@ -987,6 +1114,7 @@ export const useAppEditor = defineStore('app-editor', () => {
     /**
      * Duplicates
      */
+
     duplicate,
     duplicateMenu,
     duplicateTab,
@@ -1000,6 +1128,7 @@ export const useAppEditor = defineStore('app-editor', () => {
     /**
      * Stores & instances
      */
+
     storeTypeForId,
     instance,
 
@@ -1042,6 +1171,7 @@ export const useAppEditor = defineStore('app-editor', () => {
     unselect,
     unselectAll,
     isSelected,
+    removeSelected,
 
     /**
      * UndoStore

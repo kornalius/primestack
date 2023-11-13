@@ -92,7 +92,7 @@
         <q-td>
           <q-btn
             v-if="editable && !showConfirmButtons(p.row)"
-            :class="{ 'edit-button': true, remove: showRemoveButton(p.row) }"
+            :class="{ 'edit-button': true, 'right-margin': showRemoveButton(p.row) }"
             :style="{ opacity: hover === p.row._id ? 1 : 0 }"
             :disable="disable"
             :icon="editIcon || 'mdi-pencil'"
@@ -410,7 +410,7 @@ const cancelRow = (row: AnyData) => {
   transform: translateY(-50%)
   right: 2px
 
-  &.remove
+  &.right-margin
     right: 36px
 
 .save-button

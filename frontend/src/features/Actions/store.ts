@@ -166,21 +166,21 @@ export const useActionEditor = defineStore('action-editor', () => {
    * Removes an action element
    *
    * @param id Id of the action element to remove
+   * @param action Action to remove the action element from
    *
    * @returns {boolean} True is successful
    */
-  const removeActionElement = (id: string): boolean => {
-    const currentAction = instance(states.value.actionId)
+  const removeActionElement = (id: string, action: Action): boolean => {
     // eslint-disable-next-line no-underscore-dangle
-    const index = currentAction._actions
+    const index = action._actions
       .findIndex((a) => a._id === id)
     if (index !== -1) {
-      // eslint-disable-next-line no-underscore-dangle
-      currentAction._actions = [
+      // eslint-disable-next-line no-underscore-dangle,no-param-reassign
+      action._actions = [
         // eslint-disable-next-line no-underscore-dangle
-        ...currentAction._actions.slice(0, index),
+        ...action._actions.slice(0, index),
         // eslint-disable-next-line no-underscore-dangle
-        ...currentAction._actions.slice(index + 1),
+        ...action._actions.slice(index + 1),
       ]
       return true
     }

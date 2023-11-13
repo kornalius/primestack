@@ -4,6 +4,12 @@ import { useAppEditor } from '@/features/Editor/store'
 const scope = 'edit'
 
 export default () => {
+  hotkeys('del', scope, (e) => {
+    const editor = useAppEditor()
+    editor.removeSelected()
+    e.preventDefault()
+  })
+
   hotkeys('ctrl+s', scope, (e) => {
     const editor = useAppEditor()
     if (editor.canSave) {
@@ -27,6 +33,13 @@ export default () => {
   hotkeys('ctrl+c', scope, (e) => {
     const editor = useAppEditor()
     editor.copy().then(() => {})
+    e.preventDefault()
+  })
+
+  hotkeys('ctrl+x', scope, (e) => {
+    const editor = useAppEditor()
+    editor.copy().then(() => {})
+    editor.removeSelected()
     e.preventDefault()
   })
 

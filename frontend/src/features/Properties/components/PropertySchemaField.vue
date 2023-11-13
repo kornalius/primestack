@@ -799,7 +799,7 @@ const props = defineProps<{
   // value of the property
   modelValue: unknown
   // root value (selected item)
-  root: unknown
+  root?: unknown
   // is the property disabled or not?
   disable?: boolean
   // parent component values
@@ -1098,6 +1098,9 @@ const formFields = computed((): TableField[] => (
  * loop expression or the table fields specified
  */
 const listFields = computed((): TableField[] => {
+  if (!props.root) {
+    return []
+  }
   const frm = editor.formInstance(editor.formId)
   const path = pathTo(frm, props.root as FormField)
   let lst = [] as TableField[]
