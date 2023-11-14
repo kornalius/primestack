@@ -15,7 +15,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useModelValue } from '@/composites/prop'
-import { useAuth } from '@/features/Auth/store'
+import { useUser } from '@/features/Users/store'
 import Autocomplete from '@/features/Fields/components/Autocomplete.vue'
 
 const props = defineProps<{
@@ -28,9 +28,9 @@ const emit = defineEmits<{
 
 const value = useModelValue(props, emit)
 
-const auth = useAuth()
+const user = useUser()
 
 const options = computed(() => (
-  Object.keys(auth.user.settings)
+  Object.keys(user.settings)
 ))
 </script>

@@ -1,55 +1,54 @@
 <template>
   <q-card
     :class="{
-      'q-gutter-sm': true,
-      ...(component?.classes || {}),
+      ...objectValue(component?.classes || {}, field),
       ...classBinds(field),
     }"
     :style="{
-      ...(component?.styles || {}),
+      ...objectValue(component?.styles || {}, field),
       ...styleBinds(field),
     }"
     v-bind="fieldBinds(field, schemaForField(field), ctx)"
   >
     <q-card-section
-      v-for="cardSection in cardSections"
-      :key="cardSection._id"
+      v-for="section in cardSections"
+      :key="section._id"
       :class="{
-        ...(componentsByType['card-section']?.classes || {}),
-        ...classBinds(cardSection),
+        ...objectValue(componentsByType['card-section']?.classes || {}, section),
+        ...classBinds(section),
       }"
       :style="{
-        ...(componentsByType['card-section']?.styles || {}),
-        ...styleBinds(cardSection),
+        ...objectValue(componentsByType['card-section']?.styles || {}, section),
+        ...styleBinds(section),
       }"
-      v-bind="fieldBinds(cardSection, schemaForField(cardSection), ctx)"
+      v-bind="fieldBinds(section, schemaForField(section), ctx)"
     >
       <form-display
-        v-if="shouldRender(cardSection)"
+        v-if="shouldRender(section)"
         v-model="value"
-        :fields="cardSection._fields as FormField[]"
+        :fields="section._fields as FormField[]"
       />
     </q-card-section>
 
     <q-card-actions
-      v-for="cardAction in cardActions"
-      :key="cardAction._id"
+      v-for="action in cardActions"
+      :key="action._id"
       :class="{
-        'card-cardAction': true,
-        ...(componentsByType['card-action']?.classes || {}),
-        ...classBinds(cardAction),
+        'card-action': true,
+        ...objectValue(componentsByType['card-action']?.classes || {}, action),
+        ...classBinds(action),
       }"
       :style="{
         'z-index': 1,
-        ...(componentsByType['card-action']?.styles || {}),
-        ...styleBinds(cardAction),
+        ...objectValue(componentsByType['card-action']?.styles || {}, action),
+        ...styleBinds(action),
       }"
-      v-bind="fieldBinds(cardAction, schemaForField(cardAction), ctx)"
+      v-bind="fieldBinds(action, schemaForField(action), ctx)"
     >
       <form-display
-        v-if="shouldRender(cardAction)"
+        v-if="shouldRender(action)"
         v-model="value"
-        :fields="cardAction._fields as FormField[]"
+        :fields="action._fields as FormField[]"
       />
     </q-card-actions>
   </q-card>
@@ -63,6 +62,7 @@ import { useModelValue } from '@/composites/prop'
 import { useExpression } from '@/features/Expression/composites'
 import { columnSchema, fieldSchema } from '@/shared/schemas/form'
 import { AnyData } from '@/shared/interfaces/commons'
+import { objectValue } from '@/composites/utilities'
 import { useFormElements } from '../composites'
 import FormDisplay from './FormDisplay.vue'
 

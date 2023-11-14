@@ -21,6 +21,7 @@ export const schema = Type.Intersect([
     _group: Type.Optional(Type.Object({})),
     rules: Type.Array(ruleSchema),
     settings: Type.Object({}, { additionalProperties: true }),
+    sidebars: Type.Object({}, { additionalProperties: true }),
     locale: Type.Optional(Type.String()),
   }),
   maxSchema,

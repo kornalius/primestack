@@ -3,11 +3,11 @@
     <q-virtual-scroll
       v-if="(field as any).virtualScroll"
       :class="{
-        ...(component?.classes || {}),
+        ...objectValue(component?.classes || {}, field),
         ...classBinds(field),
       }"
       :style="{
-        ...(component?.styles || {}),
+        ...objectValue(component?.styles || {}, field),
         ...styleBinds(field),
       }"
       v-bind="fieldBinds(field, schemaForField(field), ctx)"
@@ -29,12 +29,12 @@
     <div
       v-else
       :class="{
-        ...(component?.classes || {}),
+        ...objectValue(component?.classes || {}, field),
         ...classBinds(field),
       }"
       :style="{
         overflow: 'auto',
-        ...(component?.styles || {}),
+        ...objectValue(component?.styles || {}, field),
         ...styleBinds(field),
       }"
       v-bind="fieldBinds(field, schemaForField(field), ctx)"
@@ -70,6 +70,7 @@ import { AnyData } from '@/shared/interfaces/commons'
 import { useFeathersService } from '@/composites/feathers'
 import { queryToMongo } from '@/features/Query/composites'
 import { Query } from '@/shared/interfaces/query'
+import { objectValue } from '@/composites/utilities'
 import { useFormElements } from '../composites'
 import FormDisplay from './FormDisplay.vue'
 
@@ -111,7 +112,7 @@ const ctx = buildCtx()
 
 const fields = computed((): FormField[] => (
   // eslint-disable-next-line no-underscore-dangle
-  props.columns[0]._fields as FormField[]
+  props.columns?.[0]?._fields as FormField[] || []
 ))
 
 const component = computed(() => (

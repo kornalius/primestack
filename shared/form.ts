@@ -30,7 +30,7 @@ export const flattenFields = (fields: FormField[] | FormColumn[]): FormField[] =
     })
   }
 
-  flatten(fields)
+  flatten(fields || [])
 
   return flattended as FormField[]
 }

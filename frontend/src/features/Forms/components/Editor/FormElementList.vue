@@ -2,16 +2,16 @@
   <div
     :class="{
       list: true,
-      ...(component?.editClasses || {}),
+      ...objectValue(component?.editClasses || {}, field),
       ...classBinds(field),
     }"
     :style="{
-      ...(component?.editStyles || {}),
+      ...objectValue(component?.editStyles || {}, field),
       ...styleBinds(field),
     }"
     @click.stop="$emit('click')"
   >
-    <div class="list-column">
+    <div class="list-column" style="z-index: 1;">
       <fields-editor v-model="fields" />
     </div>
   </div>
@@ -22,6 +22,7 @@ import { computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { useModelValue } from '@/composites/prop'
 import { fieldSchema } from '@/shared/schemas/form'
+import { objectValue } from '@/composites/utilities'
 // eslint-disable-next-line import/no-cycle
 import { useFormElements } from '../../composites'
 import FieldsEditor from './FieldsEditor.vue'
@@ -47,7 +48,7 @@ const {
 
 const fields = computed((): FormField[] => (
   // eslint-disable-next-line no-underscore-dangle
-  field.value._columns[0]._fields
+  field.value._columns?.[0]?._fields || []
 ))
 
 const component = computed(() => (

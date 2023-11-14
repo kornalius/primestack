@@ -7,14 +7,16 @@
       [`q-gutter-y-${(field as any).vGutter}`]: true,
       [`items-${(field as any).items}`]: true,
       [`justify-${(field as any).justify}`]: true,
-      ...(component?.editClasses || {}),
+      ...objectValue(component?.editClasses || {}, field),
       ...classBinds(field),
     }"
     :style="{
-      ...(component?.editStyles || {}),
+      ...objectValue(component?.editStyles || {}, field),
       ...styleBinds(field),
     }"
   >
+    <!-- Columns -->
+
     <div
       v-for="column in field._columns"
       :key="column._id"
@@ -25,13 +27,13 @@
         'form-column': true,
         selected: editor.isSelected(column._id),
         hovered: editor.isHovered(column._id),
-        ...(componentsByType.col?.editClasses || {}),
+        ...objectValue(componentsByType.col?.editClasses || {}, column),
         ...classBinds(column),
       }"
       :style="{
-        'z-index': 1,
-        ...(componentsByType.col?.editStyles || {}),
+        ...objectValue(componentsByType.col?.editStyles || {}, column),
         ...styleBinds(column),
+        'z-index': 1,
       }"
       v-bind="fieldBinds(column, schemaForField(column), ctx)"
       @mouseover.stop="editor.hover(column._id)"
@@ -43,7 +45,13 @@
 
       <div
         v-if="!editor.isDragging"
-        class="overlay"
+        :class="{
+          overlay: true,
+          ...objectValue(component.overlayClasses || {}, column),
+        }"
+        :style="{
+          ...objectValue(component.overlayStyles || {}, column),
+        }"
         @click.stop="onClick(column)"
       />
 
@@ -52,7 +60,7 @@
       <div
         v-if="(!editor.isDragging && editor.isHovered(column._id))
           || editor.isSelected(column._id)"
-        class="action-button component-icon bg-grey-9 rounded-borders no-pointer-events"
+        class="component-icon bg-grey-9 rounded-borders no-pointer-events"
       >
         <q-icon :name="columnIcon" color="white" size="xs" />
       </div>
@@ -62,7 +70,6 @@
       <q-btn
         v-if="!editor.isDragging && editor.isHovered(column._id)"
         class="action-button"
-        style="right: 0;"
         icon="mdi-trash-can"
         color="red-4"
         size="xs"
@@ -103,7 +110,7 @@ import { useModelValue } from '@/composites/prop'
 // eslint-disable-next-line import/no-cycle
 import { useAppEditor } from '@/features/Editor/store'
 import { useExpression } from '@/features/Expression/composites'
-import { stringValue } from '@/composites/utilities'
+import { stringValue, objectValue } from '@/composites/utilities'
 import { columnSchema, fieldSchema } from '@/shared/schemas/form'
 // eslint-disable-next-line import/no-cycle
 import { useFormElements } from '../../composites'

@@ -1,7 +1,8 @@
 <template>
-  <q-toolbar
+  <div
     :class="{
-      toolbar: true,
+      sidebar: true,
+      right: (field as any).right,
       ...objectValue(component?.editClasses || {}, field),
       ...classBinds(field),
     }"
@@ -9,25 +10,22 @@
       ...objectValue(component?.editStyles || {}, field),
       ...styleBinds(field),
     }"
-    v-bind="fieldBinds(field, schemaForField(field), ctx)"
+    @click.stop="$emit('click')"
   >
-    <div class="toolbar-column">
-      <fields-editor
-        v-model="fields"
-        horizontal
-      />
+    <div class="sidebar-column">
+      <fields-editor v-model="fields" />
     </div>
-  </q-toolbar>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
-import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
+// eslint-disable-next-line import/no-cycle
 import { fieldSchema } from '@/shared/schemas/form'
-import { useExpression } from '@/features/Expression/composites'
 import { objectValue } from '@/composites/utilities'
+// eslint-disable-next-line import/no-cycle
 import { useFormElements } from '../../composites'
 import FieldsEditor from './FieldsEditor.vue'
 
@@ -38,48 +36,49 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
+  (e: 'click'): void,
   (e: 'update:model-value', value: FormField): void,
 }>()
 
 const field = useModelValue(props, emit)
 
 const {
-  componentsByType,
-  fieldBinds,
   classBinds,
   styleBinds,
-  schemaForField,
+  componentsByType,
 } = useFormElements()
-
-const { t } = useI18n()
-
-const { buildCtx } = useExpression(t)
-
-const ctx = buildCtx()
-
-const fields = computed((): FormField[] => (
-  // eslint-disable-next-line no-underscore-dangle
-  field.value._columns[0]._fields as FormField[]
-))
 
 const component = computed(() => (
   // eslint-disable-next-line no-underscore-dangle
   componentsByType[field.value._type]
+))
+
+const fields = computed((): FormField[] => (
+  // eslint-disable-next-line no-underscore-dangle
+  field.value._columns?.[0]?._fields || []
 ))
 </script>
 
 <style scoped lang="sass">
 @import 'quasar/src/css/variables'
 
-.toolbar
+.sidebar
+  position: absolute
+  top: 0
+  height: 100%
+  min-width: 200px
+  width: 100%
+  background: whitesmoke
+  z-index: 1000
+
+  &.right
+    right: 0
+
+.sidebar-column
   position: relative
-  min-height: 40px
+  padding: 8px 4px 4px 4px
   outline: 1px dashed $blue-grey-2
   border-radius: 4px
-
-.toolbar-column
-  position: relative
-  margin: 8px 4px
-  width: 100%
   z-index: 1
+  height: 100%
 </style>

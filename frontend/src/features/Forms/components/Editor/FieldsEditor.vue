@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="form-builder-container">
     <draggable
-      class="form-builder-container"
+      class="form-builder-inner-container"
       :list="fields"
       :group="{ name: 'form-builder' }"
       :animation="150"
@@ -78,5 +78,9 @@ const onChange = (evt: AnyData) => {
 
 <style scoped lang="sass">
 .form-builder-container
+  height: 100%
+
+.form-builder-inner-container
   min-height: 24px
+  height: 100%
 </style>

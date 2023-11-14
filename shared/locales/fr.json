@@ -428,6 +428,9 @@
     "separator": {
       "label": "Séparateur"
     },
+    "sidebar": {
+      "label": "Barre latérale"
+    },
     "skeleton": {
       "label": "Skelète"
     },

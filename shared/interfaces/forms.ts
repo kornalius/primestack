@@ -37,10 +37,18 @@ export interface TFormComponent {
   color?: string | ((value?: AnyData) => string)
   // component to use
   component?: unknown
+  // check if the component is disabled
+  disabled?: () => boolean
   // component classes to apply while editing
   classes?: AnyData
   // component styles to apply while editing
   styles?: AnyData
+  // form-element classes to apply while editing
+  elementClasses?: AnyData
+  // form-element styles to apply while editing
+  elementStyles?: AnyData
+  // apply some classes to the overlay while editing
+  overlayClasses?: AnyData
   // apply some styling to the overlay while editing
   overlayStyles?: AnyData
   // icon for the component

@@ -42,6 +42,8 @@ import form from './form'
 // eslint-disable-next-line import/no-cycle
 import list from './list'
 import toolbar from './toolbar'
+// eslint-disable-next-line import/no-cycle
+import sidebar from './sidebar'
 
 type FormField = Static<typeof fieldSchema>
 type FormColumn = Static<typeof columnSchema>
@@ -69,6 +71,7 @@ export const components = [
   form,
   list,
   toolbar,
+  sidebar,
   addSeparator('components.separators.progress', 'mdi-progress-clock', 'blue-2'),
   progress,
   spinner,

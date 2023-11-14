@@ -62,16 +62,24 @@
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
       />
 
+      <!-- Sidebar -->
+
+      <form-display-sidebar
+        v-else-if="isSidebar(field)"
+        v-model="value"
+        :field="field"
+      />
+
       <!-- Paragraph -->
 
       <div
         v-else-if="isParagraph(field)"
         :class="{
-          ...(componentsByType[field._type]?.classes || {}),
+          ...objectValue(componentsByType[field._type]?.classes || {}, field),
           ...classBinds(field),
         }"
         :style="{
-          ...(componentsByType[field._type]?.styles || {}),
+          ...objectValue(componentsByType[field._type]?.styles || {}, field),
           ...styleBinds(field),
         }"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
@@ -84,11 +92,11 @@
         v-else-if="isLabel(field)"
         :model-value="displayValue(field) as string"
         :class="{
-          ...(componentsByType[field._type]?.classes || {}),
+          ...objectValue(componentsByType[field._type]?.classes || {}, field),
           ...classBinds(field),
         }"
         :style="{
-          ...(componentsByType[field._type]?.styles || {}),
+          ...objectValue(componentsByType[field._type]?.styles || {}, field),
           ...styleBinds(field),
         }"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
@@ -100,11 +108,11 @@
         v-else-if="isIcon(field)"
         :name="displayValue(field) as string"
         :class="{
-          ...(componentsByType[field._type]?.classes || {}),
+          ...objectValue(componentsByType[field._type]?.classes || {}, field),
           ...classBinds(field),
         }"
         :style="{
-          ...(componentsByType[field._type]?.styles || {}),
+          ...objectValue(componentsByType[field._type]?.styles || {}, field),
           ...styleBinds(field),
         }"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
@@ -117,11 +125,11 @@
         v-else-if="isNumericInput(field) && (field as any).field"
         v-model.number="value[(field as any).field]"
         :class="{
-          ...(componentsByType[field._type]?.classes || {}),
+          ...objectValue(componentsByType[field._type]?.classes || {}, field),
           ...classBinds(field),
         }"
         :style="{
-          ...(componentsByType[field._type]?.styles || {}),
+          ...objectValue(componentsByType[field._type]?.styles || {}, field),
           ...styleBinds(field),
         }"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
@@ -136,11 +144,11 @@
         v-else-if="isNumericInput(field)"
         :model-value="field[modelValueForField(field)]"
         :class="{
-          ...(componentsByType[field._type]?.classes || {}),
+          ...objectValue(componentsByType[field._type]?.classes || {}, field),
           ...classBinds(field),
         }"
         :style="{
-          ...(componentsByType[field._type]?.styles || {}),
+          ...objectValue(componentsByType[field._type]?.styles || {}, field),
           ...styleBinds(field),
         }"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
@@ -155,11 +163,11 @@
         v-else-if="(field as any).field"
         v-model="value[(field as any).field]"
         :class="{
-          ...(componentsByType[field._type]?.classes || {}),
+          ...objectValue(componentsByType[field._type]?.classes || {}, field),
           ...classBinds(field),
         }"
         :style="{
-          ...(componentsByType[field._type]?.styles || {}),
+          ...objectValue(componentsByType[field._type]?.styles || {}, field),
           ...styleBinds(field),
         }"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
@@ -174,11 +182,11 @@
         v-else
         :model-value="field[modelValueForField(field)]"
         :class="{
-          ...(componentsByType[field._type]?.classes || {}),
+          ...objectValue(componentsByType[field._type]?.classes || {}, field),
           ...classBinds(field),
         }"
         :style="{
-          ...(componentsByType[field._type]?.styles || {}),
+          ...objectValue(componentsByType[field._type]?.styles || {}, field),
           ...styleBinds(field),
         }"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
@@ -200,6 +208,7 @@ import LabelField from '@/features/Fields/components/LabelField.vue'
 import { AnyData } from '@/shared/interfaces/commons'
 // eslint-disable-next-line import/no-cycle
 import { componentsByType } from '@/features/Components'
+import { objectValue } from '@/composites/utilities'
 import { useFormElements } from '../composites'
 import FormDisplayRow from './FormDisplayRow.vue'
 import FormDisplayCard from './FormDisplayCard.vue'
@@ -207,6 +216,7 @@ import FormDisplayTabs from './FormDisplayTabs.vue'
 import FormEmbedded from './FormEmbedded.vue'
 import FormDisplayList from './FormDisplayList.vue'
 import FormDisplayToolbar from './FormDisplayToolbar.vue'
+import FormDisplaySidebar from './FormDisplaySidebar.vue'
 
 type FormField = Static<typeof fieldSchema>
 type FormTab = Static<typeof formTabSchema>
@@ -241,6 +251,7 @@ const {
   isCard,
   isEmbeddedForm,
   isIcon,
+  isSidebar,
   isParagraph,
   isLabel,
   serializeRules,

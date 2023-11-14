@@ -177,6 +177,19 @@ export const isIcon = (field: FormField | FormColumn | TFormComponent): boolean 
 )
 
 /**
+   * Returns true if field is a sidebar
+   *
+   * @param field Field
+   *
+   * @returns {boolean}
+   */
+export const isSidebar = (field: FormField | FormColumn | TFormComponent): boolean => (
+  // eslint-disable-next-line no-underscore-dangle
+  (field as FormField)._type === 'sidebar'
+    || (field as TFormComponent).type === 'sidebar'
+)
+
+/**
    * Returns true if field is a table
    *
    * @param field Field
@@ -480,6 +493,8 @@ export const useFormElements = () => ({
   isEmbeddedForm,
 
   isIcon,
+
+  isSidebar,
 
   isTable,
 

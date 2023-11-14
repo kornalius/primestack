@@ -5,7 +5,6 @@
         v-if="showDrawer"
         v-model="leftDrawerOpened"
         class="col-auto q-mr-sm"
-        :storage-key="`form-${form._id}`"
         closeable
       >
         <schema-table
@@ -51,6 +50,7 @@
       </sidebar>
 
       <div
+        ref="mainCol"
         class="col"
         @click="unselectAll"
       >
@@ -211,6 +211,7 @@ import { columnSchema, fieldSchema, formSchema } from '@/shared/schemas/form'
 import { getId } from '@/composites/utilities'
 import { useQuery } from '@/features/Query/composites'
 import { useFiles } from '@/features/Files/composites'
+import { useUser } from '@/features/Users/store'
 import { AnyData } from '@/shared/interfaces/commons'
 import FormEditor from '@/features/Forms/components/Editor/FormEditor.vue'
 import FormDisplay from '@/features/Forms/components/FormDisplay.vue'
@@ -247,8 +248,6 @@ const { queryToMongo } = useQuery()
 const { mimetypes, maxFileSize } = useFiles(t)
 
 const formsViewMode = computed(() => props.menuId === undefined)
-
-const leftDrawerOpened = ref(true)
 
 /**
  * Menu
@@ -791,6 +790,88 @@ const formBindings = computed(() => form.value && fieldBinds(
   ctx,
   ['mounted', 'update', 'unmounted', 'keydown', 'keyup'],
 ))
+
+/**
+ * Sidebars
+ */
+
+const user = useUser()
+
+const mainCol = ref()
+
+const leftDrawerOpened = ref(false)
+
+watch(leftDrawerOpened, () => {
+  if (form.value) {
+    user.setSidebar(form.value._id, false, leftDrawerOpened.value)
+  }
+})
+
+const rightSidebarField = computed((): FormField | undefined => {
+  if (form.value) {
+    // eslint-disable-next-line no-underscore-dangle
+    const flds = flattenFields(form.value._fields)
+    // eslint-disable-next-line no-underscore-dangle
+    return flds.find((f) => f._type === 'sidebar' && (f as AnyData).right)
+  }
+  return undefined
+})
+
+watch(rightSidebarField, () => {
+  if (form.value) {
+    user.setSidebar(form.value._id, true, (rightSidebarField.value as AnyData).opened)
+  }
+}, { immediate: true, deep: true })
+
+/**
+ * When authenticated user changes, set the left and right drawer opened state
+ * to the previous user sidebar setting
+ */
+watch([form, () => user.user], () => {
+  if (form.value) {
+    leftDrawerOpened.value = user.isSidebarOpen(form.value._id, false)
+    if (rightSidebarField.value) {
+      (rightSidebarField.value as AnyData).opened = user.isSidebarOpen(form.value._id, true)
+    }
+  }
+}, { immediate: true })
+
+let marginTimeout = 0
+
+/**
+ * When the mainCol reference or any of the fields (including properties) change,
+ * try to figure out if the is a left or right sidebar on the form
+ * and then apply appropriate margins to the mainCol element
+ */
+watch([mainCol, fields], () => {
+  if (mainCol.value) {
+    clearTimeout(marginTimeout)
+    marginTimeout = setTimeout(() => {
+      const margins = { left: '0', right: '0' }
+
+      const left = mainCol.value.querySelector('.sidebar:not(.right)')
+      if (left) {
+        const r = left.getBoundingClientRect()
+        margins.left = `${r.width}px`
+        if (!editor.active) {
+          left.style.right = `-${r.width - 4}px`
+        }
+      }
+
+      const right = mainCol.value.querySelector('.sidebar.right')
+      if (right) {
+        const r = right.getBoundingClientRect()
+        margins.right = `${r.width}px`
+        if (!editor.active) {
+          right.style.right = `-${r.width + 4}px`
+        }
+      }
+
+      mainCol.value.style.marginLeft = margins.left
+      mainCol.value.style.marginRight = margins.right
+    }, 100)
+  }
+}, { deep: true })
 </script>
 
 <style scoped lang="sass">

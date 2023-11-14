@@ -137,6 +137,9 @@ export const ruleTypes: RuleType[] = [
 export const commonProperties = {
   name: Type.Object({
     name: Type.String({ name: true }),
+  }),
+
+  render: Type.Object({
     renderWhen: ExType.Expr(),
   }),
 
@@ -282,6 +285,7 @@ export const properties = (props: TObject[], field = true) => Type.Intersect(
   compact([
     ...props,
     commonProperties.name,
+    commonProperties.render,
     field ? commonProperties.field : undefined,
   ]),
 )

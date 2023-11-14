@@ -3,11 +3,11 @@
     v-model:selected="selected"
     :class="{
       'table-editor': true,
-      ...(component?.editClasses || {}),
+      ...objectValue(component?.editClasses || {}, field),
       ...classBinds(field),
     }"
     :style="{
-      ...(component?.editStyles || {}),
+      ...objectValue(component?.editStyles || {}, field),
       ...styleBinds(field),
     }"
     v-bind="{ ...fieldBinds(field, schemaForField(field), ctx), ...$attrs }"
@@ -79,16 +79,17 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { Static } from '@feathersjs/typebox'
+import { useI18n } from 'vue-i18n'
 import draggable from 'vuedraggable'
 import hexObjectId from 'hex-object-id'
 import startCase from 'lodash/startCase'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { useAppEditor } from '@/features/Editor/store'
 import { useFormElements } from '@/features/Forms/composites'
+import { useExpression } from '@/features/Expression/composites'
+import { objectValue } from '@/composites/utilities'
 import { fieldSchema } from '@/shared/schemas/form'
 import SchemaTable from '@/features/Tables/components/SchemaTable.vue'
-import { useI18n } from 'vue-i18n'
-import { useExpression } from '@/features/Expression/composites'
 
 type FormField = Static<typeof fieldSchema>
 

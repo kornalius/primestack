@@ -4,11 +4,11 @@
     v-model:tab="active"
     :class="{
       toolbar: true,
-      ...(component?.editClasses || {}),
+      ...objectValue(component?.editClasses || {}, field),
       ...classBinds(field),
     }"
     :style="{
-      ...(component?.editStyles || {}),
+      ...objectValue(component?.editStyles || {}, field),
       ...styleBinds(field),
     }"
     v-bind="{ ...fieldBinds(field, schemaForField(field), ctx), ...$attrs }"
@@ -46,6 +46,7 @@ import { fieldSchema } from '@/shared/schemas/form'
 import { useExpression } from '@/features/Expression/composites'
 import { useFormElements } from '@/features/Forms/composites'
 import { useAppEditor } from '@/features/Editor/store'
+import { objectValue } from '@/composites/utilities'
 import TabsEditor from '@/features/Tabs/components/TabsEditor.vue'
 import FieldsEditor from '@/features/Forms/components/Editor/FieldsEditor.vue'
 

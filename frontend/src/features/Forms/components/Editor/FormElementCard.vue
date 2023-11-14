@@ -2,11 +2,11 @@
   <q-card
     :class="{
       card: true,
-      ...(component?.editClasses || {}),
+      ...objectValue(component?.editClasses || {}, field),
       ...classBinds(field),
     }"
     :style="{
-      ...(component?.editStyles || {}),
+      ...objectValue(component?.editStyles || {}, field),
       ...styleBinds(field),
     }"
     v-bind="fieldBinds(field, schemaForField(field), ctx)"
@@ -16,9 +16,9 @@
       :key="section._id"
       :class="cclass(section)"
       :style="{
-        'z-index': 1,
-        ...(componentsByType['card-section']?.editStyles || {}),
+        ...objectValue(componentsByType['card-section']?.editStyles || {}, section),
         ...styleBinds(section),
+        'z-index': 1,
       }"
       v-bind="fieldBinds(section, schemaForField(section), ctx)"
       @mouseover.stop="editor.hover(section._id)"
@@ -28,7 +28,13 @@
     >
       <div
         v-if="!editor.isDragging"
-        class="overlay"
+        :class="{
+          overlay: true,
+          ...objectValue(component.overlayClasses || {}, section),
+        }"
+        :style="{
+          ...objectValue(component.overlayStyles || {}, section),
+        }"
         @click.stop="onClick(section)"
       />
 
@@ -70,9 +76,9 @@
       :key="action._id"
       :class="cclass(action, true)"
       :style="{
-        'z-index': 1,
-        ...(componentsByType['card-action']?.editStyles || {}),
+        ...objectValue(componentsByType['card-action']?.editStyles || {}, action),
         ...styleBinds(action),
+        'z-index': 1,
       }"
       v-bind="fieldBinds(action, schemaForField(action), ctx)"
       @mouseover.stop="editor.hover(action._id)"
@@ -84,7 +90,13 @@
 
       <div
         v-if="!editor.isDragging"
-        class="overlay"
+        :class="{
+          overlay: true,
+          ...objectValue(component.overlayClasses || {}, action),
+        }"
+        :style="{
+          ...objectValue(component.overlayStyles || {}, action),
+        }"
         @click.stop="onClick(action)"
       />
 
@@ -164,7 +176,7 @@ import { useAppEditor } from '@/features/Editor/store'
 // eslint-disable-next-line import/no-cycle
 import { defaultValueForSchema, defaultValues } from '@/shared/schema'
 import { useExpression } from '@/features/Expression/composites'
-import { stringValue } from '@/composites/utilities'
+import { stringValue, objectValue } from '@/composites/utilities'
 import { columnSchema, fieldSchema } from '@/shared/schemas/form'
 // eslint-disable-next-line import/no-cycle
 import { useFormElements } from '../../composites'
@@ -238,8 +250,11 @@ const cclass = (section: FormColumn, action = false) => ({
   'card-action': action,
   selected: editor.isSelected(section._id),
   hovered: editor.isHovered(section._id),
-  ...(componentsByType[action ? 'card-action' : 'card-section']?.editClasses || {}),
-  ...classBinds(field),
+  ...objectValue(
+    componentsByType[action ? 'card-action' : 'card-section']?.editClasses || {},
+    section,
+  ),
+  ...classBinds(section),
 })
 
 const onAddActionClick = (cardActions: FormColumn) => {

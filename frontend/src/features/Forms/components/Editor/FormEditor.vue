@@ -12,8 +12,8 @@
               pull: 'clone',
               put: false,
             }"
-            filter=".overlay,[disabled]"
             :sort="false"
+            filter=".overlay,[disabled]"
             @start="editor.setDragging(true)"
             @end="editor.setDragging(false)"
           >
@@ -42,7 +42,7 @@
                 class="form-component q-mx-sm"
                 :icon="componentIcon(value)"
                 :label="$t(componentLabel(value))"
-                :disabled="!isComponentAvailable(value.type, auth.user._plan.code)"
+                :disabled="isComponentDisabled(value)"
                 type="button"
                 size="12px"
                 align="left"
@@ -57,6 +57,7 @@
                   color="red-9"
                   size="xs"
                 />
+
                 <q-tooltip :delay="500">
                   {{ $t(componentLabel(value)) }}
                 </q-tooltip>
@@ -163,6 +164,14 @@ const componentColor = (c: TFormComponent) => stringValue(c?.color)
 const componentIcon = (c: TFormComponent) => stringValue(c?.icon)
 
 const componentLabel = (c: TFormComponent) => stringValue(c?.label)
+
+const isComponentDisabled = (c: TFormComponent) => {
+  if (typeof c.disabled === 'function' && c.disabled()) {
+    return true
+  }
+  // eslint-disable-next-line no-underscore-dangle
+  return !isComponentAvailable(c.type, auth.user._plan.code)
+}
 </script>
 
 <style scoped lang="sass">

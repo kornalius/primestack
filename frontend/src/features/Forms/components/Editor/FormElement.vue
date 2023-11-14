@@ -1,6 +1,7 @@
 <template>
   <div
     :class="{
+      ...objectValue(component?.elementClasses || {}, field),
       'form-element': true,
       selected,
       hovered: editor.isHovered(field._id),
@@ -8,6 +9,7 @@
     :style="{
       display: horizontal ? 'inline-block' : undefined,
       width: !horizontal ? '100%' : undefined,
+      ...objectValue(component?.elementStyles || {}, field),
     }"
     @mouseover.stop="editor.hover(field._id)"
     @mouseleave="editor.unhover()"
@@ -65,7 +67,10 @@
     <div
       ref="element"
       class="element"
-      :style="{ display: horizontal ? 'inline-block' : undefined }"
+      :style="{
+        display: horizontal ? 'inline-block' : undefined,
+        height: '100%',
+      }"
     >
       <!-- Row -->
 
@@ -124,6 +129,14 @@
         v-model="field[componentsByType[field._type].modelValueField]"
       />
 
+      <!-- Sidebar -->
+
+      <form-element-sidebar
+        v-else-if="isSidebar(field)"
+        v-model="field"
+        @click="onClick"
+      />
+
       <!-- Table -->
 
       <table-editor
@@ -131,11 +144,11 @@
         v-model:columns="field.columns"
         v-model:visible-columns="field.visibleColumns"
         :class="{
-          ...(component?.classes || {}),
+          ...objectValue(component?.classes || {}, field),
           ...classBinds(field),
         }"
         :style="{
-          ...(component?.styles || {}),
+          ...objectValue(component?.styles || {}, field),
           ...styleBinds(field),
         }"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
@@ -150,11 +163,11 @@
         v-else-if="isIcon(field)"
         :name="displayValue as string"
         :class="{
-          ...(component?.classes || {}),
+          ...objectValue(component?.classes || {}, field),
           ...classBinds(field),
         }"
         :style="{
-          ...(component?.styles || {}),
+          ...objectValue(component?.styles || {}, field),
           ...styleBinds(field),
         }"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
@@ -167,11 +180,11 @@
         v-else
         :model-value="displayValue"
         :class="{
-          ...(component?.classes || {}),
+          ...objectValue(component?.classes || {}, field),
           ...classBinds(field),
         }"
         :style="{
-          ...(component?.styles || {}),
+          ...objectValue(component?.styles || {}, field),
           ...styleBinds(field),
         }"
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
@@ -181,8 +194,14 @@
 
       <div
         v-if="!editor.isDragging && !activeInteractable"
-        class="overlay"
-        :style="{ ...(component.overlayStyles || {}), top: overlayTop }"
+        :class="{
+          overlay: true,
+          ...objectValue(component.overlayClasses || {}, field),
+        }"
+        :style="{
+          ...objectValue(component.overlayStyles || {}, field),
+          top: overlayTop,
+        }"
         @click.stop="onClick"
       />
     </div>
@@ -197,7 +216,7 @@ import { useModelValue } from '@/composites/prop'
 import { useAppEditor } from '@/features/Editor/store'
 import { useQuery } from '@/features/Query/composites'
 import { useExpression } from '@/features/Expression/composites'
-import { stringValue } from '@/composites/utilities'
+import { stringValue, objectValue } from '@/composites/utilities'
 import { columnSchema, fieldSchema } from '@/shared/schemas/form'
 import TableEditor from '@/features/Forms/components/Editor/TableEditor.vue'
 import Paragraph from '@/features/Fields/components/Editor.vue'
@@ -208,6 +227,7 @@ import FormElementTabs from './FormElementTabs.vue'
 import FormElementEmbeddedForm from './FormElementEmbeddedForm.vue'
 import FormElementList from './FormElementList.vue'
 import FormElementToolbar from './FormElementToolbar.vue'
+import FormElementSidebar from './FormElementSidebar.vue'
 
 type FormField = Static<typeof fieldSchema>
 type FormColumn = Static<typeof columnSchema>
@@ -237,6 +257,7 @@ const {
   isCard,
   isEmbeddedForm,
   isIcon,
+  isSidebar,
   isTable,
   isParagraph,
   schemaForField,
@@ -338,7 +359,7 @@ watch([() => props.modelValue, component], () => {
   width: 24px
   height: 24px
   transform: translate(50%, -50%)
-  z-index: 5
+  z-index: 1001
 
   &.interactable
     right: 26px
@@ -350,6 +371,7 @@ watch([() => props.modelValue, component], () => {
   width: 18px
   height: 22px
   transform: translate(-50%, -50%)
+  z-index: 1001
 
 .element
   position: relative

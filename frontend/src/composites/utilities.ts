@@ -196,7 +196,7 @@ export const removeAccentsFromString = (str: string): string => (
  * @param v A string or a function
  * @param value Optional value to pass to the function call
  *
- * @returns {string}
+ * @returns {string|undefined}
  */
 export const stringValue = (v?: string | ((value?: AnyData) => string), value?: unknown): string | undefined => {
   if (typeof v === 'function') {
@@ -211,9 +211,24 @@ export const stringValue = (v?: string | ((value?: AnyData) => string), value?: 
  * @param v A boolean or a function
  * @param value Optional value to pass to the function call
  *
- * @returns {boolean}
+ * @returns {boolean|undefined}
  */
 export const booleanValue = (v?: boolean | ((value?: AnyData) => boolean), value?: unknown): boolean | undefined => {
+  if (typeof v === 'function') {
+    return v(value)
+  }
+  return v
+}
+
+/**
+ * Evaluate `v` if it's a function else return it
+ *
+ * @param v A AnyData or a function
+ * @param value Optional value to pass to the function call
+ *
+ * @returns {AnyData|undefined}
+ */
+export const objectValue = (v?: AnyData | ((value?: AnyData) => AnyData), value?: unknown): AnyData | undefined => {
   if (typeof v === 'function') {
     return v(value)
   }

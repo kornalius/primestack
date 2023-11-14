@@ -1,11 +1,11 @@
 <template>
   <q-toolbar
     :class="{
-      ...(component?.classes || {}),
+      ...objectValue(component?.classes || {}, field),
       ...classBinds(field),
     }"
     :style="{
-      ...(component?.styles || {}),
+      ...objectValue(component?.styles || {}, field),
       ...styleBinds(field),
     }"
     v-bind="fieldBinds(field, schemaForField(field), ctx)"
@@ -23,6 +23,7 @@ import { Static } from '@feathersjs/typebox'
 import { useI18n } from 'vue-i18n'
 import { columnSchema, fieldSchema } from '@/shared/schemas/form'
 import { useExpression } from '@/features/Expression/composites'
+import { objectValue } from '@/composites/utilities'
 import { useFormElements } from '../composites'
 import FormDisplay from './FormDisplay.vue'
 

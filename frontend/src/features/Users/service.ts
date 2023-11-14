@@ -21,6 +21,9 @@ export default {
       planId: undefined,
       groupId: undefined,
       rules: [],
+      locale: 'en',
+      settings: {},
+      sidebars: {},
     }, data)
   ),
 }

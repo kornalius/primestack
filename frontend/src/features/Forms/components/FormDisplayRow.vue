@@ -6,11 +6,11 @@
       [`q-gutter-y-${(field as any).vGutter}`]: true,
       [`items-${(field as any).items}`]: true,
       [`justify-${(field as any).justify}`]: true,
-      ...(component?.classes || {}),
+      ...objectValue(component?.classes || {}, field),
       ...classBinds(field),
     }"
     :style="{
-      ...(component?.styles || {}),
+      ...objectValue(component?.styles || {}, field),
       ...styleBinds(field),
     }"
     v-bind="fieldBinds(field, schemaForField(field), ctx)"
@@ -22,11 +22,11 @@
         [colName(column)]: true,
         [colBreakName(column)]: true,
         [offsetName(column)]: true,
-        ...(componentsByType.col?.classes || {}),
+        ...objectValue(componentsByType.col?.classes || {}, column),
         ...classBinds(column),
       }"
       :style="{
-        ...(componentsByType.col?.styles || {}),
+        ...objectValue(componentsByType.col?.styles || {}, column),
         ...styleBinds(column),
       }"
       v-bind="fieldBinds(column, schemaForField(column), ctx)"
@@ -47,6 +47,7 @@ import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
 import { useExpression } from '@/features/Expression/composites'
 import { columnSchema, fieldSchema } from '@/shared/schemas/form'
+import { objectValue } from '@/composites/utilities'
 import { AnyData } from '@/shared/interfaces/commons'
 import { useFormElements } from '../composites'
 import FormDisplay from './FormDisplay.vue'

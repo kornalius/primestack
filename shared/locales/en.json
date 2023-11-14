@@ -435,6 +435,9 @@
     "separator": {
       "label": "Separator"
     },
+    "sidebar": {
+      "label": "Sidebar"
+    },
     "skeleton": {
       "label": "Skeleton"
     },
