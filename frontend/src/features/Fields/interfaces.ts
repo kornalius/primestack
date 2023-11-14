@@ -49,3 +49,10 @@ export interface Unit {
   min?: number,
   max?: number,
 }
+
+export interface ExTableRowAction {
+  label: string
+  icon: string
+  color?: string
+  click: string
+}

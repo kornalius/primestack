@@ -99,6 +99,12 @@ export default {
       rowDblClick: ExType.Action(),
       rowContextMenu: ExType.Action(),
       selection: ExType.Action(),
+      actions: Type.Array(Type.Object({
+        label: Type.String(),
+        icon: ExType.Icon(),
+        color: ExType.Color({ quasarPalette: true }),
+        click: ExType.Action(),
+      }, { horizontalPopup: true })),
     }),
   ], false),
   defaultValues: {
@@ -166,19 +172,6 @@ export default {
           ],
         },
         'tableColspan',
-        'renderWhen',
-      ],
-    },
-    model: {
-      icon: modelIcon,
-      names: [
-        { name: 'tableId', label: 'Table' },
-        'query',
-        { name: 'temps', label: 'Show Temps' },
-        'rows',
-        'rowKey',
-        'editable',
-        { name: 'extraFields', label: 'Extra Fields' },
         {
           label: 'Add button',
           sectionColor: 'blue-1',
@@ -215,6 +208,20 @@ export default {
             { name: 'cancelIcon', label: 'Icon' },
           ],
         },
+        { name: 'actions', label: 'Row Actions' },
+        'renderWhen',
+      ],
+    },
+    model: {
+      icon: modelIcon,
+      names: [
+        { name: 'tableId', label: 'Table' },
+        'query',
+        { name: 'temps', label: 'Show Temps' },
+        'rows',
+        'rowKey',
+        'editable',
+        { name: 'extraFields', label: 'Extra Fields' },
       ],
     },
     style: {

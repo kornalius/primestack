@@ -6,6 +6,7 @@
     v-bind="$attrs"
     :rows="filteredRows"
     :schema="schemaForRows"
+    :actions="actions"
     :hide-filter="hideFilter"
     :editable="editable"
     :disable="disable"
@@ -22,6 +23,13 @@
     :remove-function="removeFunction"
     :remove-disable="removeDisable"
     :selection-style="selectionStyle"
+    :is-row-modified="isRowModified"
+    :save-icon="saveIcon"
+    :save-label="saveLabel"
+    :cancel-icon="cancelIcon"
+    :cancel-label="cancelLabel"
+    :edit-icon="editIcon"
+    :edit-label="editLabel"
     :loading="isPending"
     :row-keys="[$attrs.rowKey as string, '__tempId']"
     custom-filter
@@ -57,13 +65,15 @@ import { filterToMongo } from '@/composites/filter'
 import { getId } from '@/composites/utilities'
 import { fieldsToSchema } from '@/shared/schema'
 import { ExtraField } from '@/features/Tables/interfaces'
-import { AddOption, Pagination } from '@/features/Fields/interfaces'
+import { AddOption, ExTableRowAction, Pagination } from '@/features/Fields/interfaces'
 import { buildCtx, getProp } from '@/features/Expression/composites'
 import ExTable from '@/features/Fields/components/ExTable.vue'
 
 const props = defineProps<{
   // rows to display in table
   rows?: unknown[]
+  // row action buttons
+  actions?: ExTableRowAction[]
   // schema to generate columns with
   schema?: TSchema
   // Fields to automatically add to filter or document in creation mode
@@ -106,6 +116,20 @@ const props = defineProps<{
   removeDisable?: boolean
   // type of selection allowed
   selectionStyle?: 'single' | 'multiple' | 'none'
+  // returns true if the row is considered modified
+  isRowModified?: (row: AnyData) => boolean
+  // icon for the save button
+  saveIcon?: string
+  // label for the save button
+  saveLabel?: string
+  // icon for the cancel button
+  cancelIcon?: string
+  // label for the cancel button
+  cancelLabel?: string
+  // icon for the edit button
+  editIcon?: string
+  // label for the edit button
+  editLabel?: string
   // custom mongo query to apply on top of filter
   query?: AnyData
   // table id to use for rows

@@ -90,22 +90,7 @@
         </q-td>
 
         <q-td>
-          <q-btn
-            v-if="editable && !showConfirmButtons(p.row)"
-            :class="{ 'edit-button': true, 'right-margin': showRemoveButton(p.row) }"
-            :style="{ opacity: hover === p.row._id ? 1 : 0 }"
-            :disable="disable"
-            :icon="editIcon || 'mdi-pencil'"
-            color="grey-8"
-            size="sm"
-            round
-            flat
-            @click.stop="editRow(p.row)"
-          >
-            <q-tooltip :delay="500">
-              {{ editLabel || $t('buttons.edit') }}
-            </q-tooltip>
-          </q-btn>
+          <!-- Save button -->
 
           <q-btn
             v-if="showConfirmButtons(p.row)"
@@ -123,6 +108,8 @@
             </q-tooltip>
           </q-btn>
 
+          <!-- Cancel button -->
+
           <q-btn
             v-if="showConfirmButtons(p.row)"
             class="cancel-button"
@@ -139,21 +126,96 @@
             </q-tooltip>
           </q-btn>
 
+          <!-- Actions button -->
+
           <q-btn
-            v-if="showRemoveButton(p.row)"
-            class="remove-button"
+            v-if="
+              !showConfirmButtons(p.row)
+                && (editable
+                  || showRemoveButton(p.row)
+                  || actions?.length > 0)
+            "
+            class="action-button"
             :style="{ opacity: hover === p.row._id ? 1 : 0 }"
-            :disable="disable || removeDisable"
-            :icon="removeIcon || 'mdi-trash-can-outline'"
-            color="red-6"
+            icon="mdi-dots-vertical"
+            text-color="grey-9"
             size="sm"
+            dense
             round
             flat
-            @click.stop="removeRow(p.row)"
           >
-            <q-tooltip :delay="500">
-              {{ removeLabel || $t('buttons.delete') }}
-            </q-tooltip>
+            <q-menu fit>
+              <q-list dense>
+                <!-- Edit button -->
+
+                <q-item
+                  v-if="editable && !showConfirmButtons(p.row)"
+                  :disable="disable"
+                  clickable
+                  v-close-popup
+                  v-ripple
+                  @click.stop="editRow(p.row)"
+                >
+                  <q-item-section avatar>
+                    <q-icon
+                      :name="editIcon || 'mdi-pencil'"
+                      color="green-5"
+                      size="sm"
+                    />
+                  </q-item-section>
+
+                  <q-item-section>
+                    {{ editLabel || $t('buttons.edit') }}
+                  </q-item-section>
+                </q-item>
+
+                <!-- Remove button -->
+
+                <q-item
+                  v-if="showRemoveButton(p.row)"
+                  :disable="disable || removeDisable"
+                  clickable
+                  v-close-popup
+                  v-ripple
+                  @click.stop="removeRow(p.row)"
+                >
+                  <q-item-section avatar>
+                    <q-icon
+                      :name="removeIcon || 'mdi-trash-can-outline'"
+                      color="red-4"
+                      size="sm"
+                    />
+                  </q-item-section>
+
+                  <q-item-section>
+                    {{ removeLabel || $t('buttons.delete') }}
+                  </q-item-section>
+                </q-item>
+
+                <q-separator
+                  v-if="(editable && !showConfirmButtons(p.row)) || showRemoveButton(p.row)"
+                />
+
+                <!-- Actions -->
+
+                <q-item
+                  v-for="action in actions"
+                  :key="action.label"
+                  clickable
+                  v-close-popup
+                  v-ripple
+                  @click="runAction(action, p.row)"
+                >
+                  <q-item-section v-if="action.icon" avatar>
+                    <q-icon :name="action.icon" :color="action.color" size="sm" />
+                  </q-item-section>
+
+                  <q-item-section>
+                    {{ action.label }}
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
           </q-btn>
         </q-td>
       </q-tr>
@@ -183,19 +245,24 @@ import startCase from 'lodash/startCase'
 import omit from 'lodash/omit'
 import { TSchema } from '@feathersjs/typebox'
 import { useSyncedProp } from '@/composites/prop'
+import { useFormElements } from '@/features/Forms/composites'
 import { columnAlignmentFor, getTypeFor, schemaToField } from '@/shared/schema'
 import { filterToMongo } from '@/composites/filter'
-import { AddOption, Pagination } from '@/features/Fields/interfaces'
+import { AddOption, ExTableRowAction, Pagination } from '@/features/Fields/interfaces'
 import { AnyData } from '@/shared/interfaces/commons'
 import PropertySchemaField from '@/features/Properties/components/PropertySchemaField.vue'
 import AddButton from '@/features/Fields/components/AddButton.vue'
 import FilterEditor from '@/features/Tables/components/FilterEditor.vue'
+import { useExpression } from '@/features/Expression/composites'
+import { useI18n } from 'vue-i18n'
 
 const attrs = useAttrs()
 
 const props = defineProps<{
   // rows to display in table
   rows: unknown[]
+  // row action buttons
+  actions?: ExTableRowAction[]
   // key for rows
   rowKeys?: string[]
   // pagination
@@ -275,6 +342,14 @@ const currentSelected = useSyncedProp(props, 'selected', emit)
 const currentPagination = useSyncedProp(props, 'pagination', emit)
 
 const currentFilter = useSyncedProp(props, 'filter', emit)
+
+const { callEventAction } = useFormElements()
+
+const { t } = useI18n()
+
+const { buildCtx } = useExpression(t)
+
+const ctx = buildCtx()
 
 const columns = computed(() => {
   if (attrs.columns) {
@@ -387,6 +462,10 @@ const cancelRow = (row: AnyData) => {
   emit('cancel', row)
   delete editing.value[getId(row)]
 }
+
+const runAction = async (action: ExTableRowAction, row: AnyData) => {
+  await callEventAction(action.click, ctx, (value: AnyData) => ({ value }))(row)
+}
 </script>
 
 <style scoped lang="sass">
@@ -398,20 +477,11 @@ const cancelRow = (row: AnyData) => {
 :deep(.q-table__bottom)
   padding-right: 32px
 
-.remove-button
+.action-button
   position: absolute
   top: 50%
   transform: translateY(-50%)
   right: 2px
-
-.edit-button
-  position: absolute
-  top: 50%
-  transform: translateY(-50%)
-  right: 2px
-
-  &.right-margin
-    right: 36px
 
 .save-button
   position: absolute
