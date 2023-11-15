@@ -320,8 +320,11 @@ export const fcts = {
     + '|minute|m|now, but with 0 seconds and 0 milliseconds|\n'
     + '|second|s|now, but with 0 milliseconds|\n',
 
-  relative: '`(d: Date, withoutSuffix?: boolean): string`\n\n'
-    + 'Returns the string of relative time from now',
+  fromNow: '`(d: Date, withoutSuffix?: boolean): string`\n\n'
+    + 'Returns the string of relative time from now to a date in the future',
+
+  toNow: '`(d: Date, withoutSuffix?: boolean): string`\n\n'
+    + 'Returns the string of relative time from now from a date in the past',
 
   diff: '`(d1: Date, d2: Date): Date`\n\n'
     + 'Get the difference between `d2` and `d1`\n\n'

@@ -687,14 +687,26 @@ export const buildCtx = (extra?: AnyData) => {
       ),
 
       /**
-       * Returns a string of relative time between now and a date
+       * Returns a string of relative time between now and a date in the past
        *
        * @param d Date
        * @param withoutSuffix Optionally remove suffix from string
        *
        * @returns {string} String of relative time
        */
-      relative: (d: Date, withoutSuffix = false): string => (
+      toNow: (d: Date, withoutSuffix = false): string => (
+        dayjs(d).toNow(withoutSuffix)
+      ),
+
+      /**
+       * Returns a string of relative time between now and a date in the future
+       *
+       * @param d Date
+       * @param withoutSuffix Optionally remove suffix from string
+       *
+       * @returns {string} String of relative time
+       */
+      fromNow: (d: Date, withoutSuffix = false): string => (
         dayjs(d).fromNow(withoutSuffix)
       ),
 
