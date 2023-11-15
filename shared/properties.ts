@@ -1,3 +1,4 @@
+import compact from 'lodash/compact'
 import { TSchema } from '@feathersjs/typebox'
 import { AnyData } from './interfaces/commons'
 
@@ -12,7 +13,9 @@ import { AnyData } from './interfaces/commons'
 export const getParentProp = (parents: AnyData[], name: string): string | undefined => {
   const parts = name.split('/')
 
-  let lvl = parents.length - 1
+  const pp = compact(parents)
+
+  let lvl = pp.length - 1
   let i = 0
   while (i < parts.length - 1) {
     if (parts[i] === '..') {
@@ -30,14 +33,16 @@ export const getParentProp = (parents: AnyData[], name: string): string | undefi
   parts.splice(0, i)
   const n = parts.join('.')
 
+  console.log(name, n, pp, lvl, pp[lvl]?.[n])
+
   if (lvl !== -1) {
-    return parents[lvl]?.[n]
+    return pp[lvl]?.[n]
   }
 
-  i = parents.length - 1
+  i = pp.length - 1
   while (i >= 0) {
-    if (parents[i][n]) {
-      return parents[i]?.[n]
+    if (pp[i][n]) {
+      return pp[i]?.[n]
     }
     i -= 1
   }

@@ -29,7 +29,7 @@
       track-expanded
     />
 
-    <!-- Table Column properties -->
+    <!-- Form Table Column properties -->
 
     <properties-editor
       v-else-if="showFormTableColumnProperties"
@@ -266,7 +266,7 @@ const selectedFormTableColumn = computed(() => (
  * Should we show the form's table column properties?
  */
 const showFormTableColumnProperties = computed(() => (
-  !!selectedField.value && !!selectedFormTableColumn.value
+  !!selectedFormTableColumn.value
 ))
 
 /**

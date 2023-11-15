@@ -4,6 +4,7 @@ import {
 } from '@/shared/icons'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import LookupSelect from '@/features/Tables/components/LookupSelect.vue'
+import { lookupSchema } from '@/shared/schemas/table'
 import ExType from '@/shared/extypes'
 import {
   properties, commonProperties, defaultStyleValues, commonEventArgs, styleNames,
@@ -21,18 +22,10 @@ export default {
     Type.Object({
       value: Type.String(),
       tableId: ExType.Table(),
+      query: ExType.Query(),
       valueField: ExType.Field(),
       labelField: ExType.Field(),
-      columns: Type.Array(Type.Object({
-        field: ExType.Field(),
-        size: Type.Optional(Type.Number()),
-        filterable: Type.Optional(Type.Boolean()),
-        class: Type.Optional(Type.String()),
-        style: Type.Optional(Type.String()),
-        title: Type.Optional(Type.String()),
-        titleClass: Type.Optional(Type.String()),
-        titleStyle: Type.Optional(Type.String()),
-      })),
+      columns: Type.Array(lookupSchema),
       virtualScrollHorizontal: Type.Boolean(),
       loading: Type.Boolean(),
       clearable: Type.Boolean(),
@@ -98,6 +91,7 @@ export default {
         'value',
         'field',
         { name: 'tableId', label: 'Table' },
+        'query',
         'valueField',
         'labelField',
         'columns',

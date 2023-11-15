@@ -5,6 +5,7 @@
     v-model:filter="tempFilter"
     v-bind="$attrs"
     :rows="filteredRows"
+    :columns="columns"
     :schema="schemaForRows"
     :actions="actions"
     :hide-filter="hideFilter"
@@ -65,13 +66,20 @@ import { filterToMongo } from '@/composites/filter'
 import { getId } from '@/composites/utilities'
 import { fieldsToSchema } from '@/shared/schema'
 import { ExtraField } from '@/features/Tables/interfaces'
-import { AddOption, ExTableRowAction, Pagination } from '@/features/Fields/interfaces'
+import {
+  AddOption,
+  ExTableColumn,
+  ExTableRowAction,
+  Pagination,
+} from '@/features/Fields/interfaces'
 import { buildCtx, getProp } from '@/features/Expression/composites'
 import ExTable from '@/features/Fields/components/ExTable.vue'
 
 const props = defineProps<{
   // rows to display in table
   rows?: unknown[]
+  // table columns definitions
+  columns?: ExTableColumn[]
   // row action buttons
   actions?: ExTableRowAction[]
   // schema to generate columns with
@@ -184,12 +192,14 @@ const table = computed(() => (
 ))
 
 const fields = computed(() => (
-  tableFields(
-    table.value?.fields || [],
-    table.value?.created,
-    table.value?.updated,
-    table.value?.softDelete,
-  )
+  table.value
+    ? tableFields(
+      table.value.fields || [],
+      table.value.created,
+      table.value.updated,
+      table.value.softDelete,
+    )
+    : []
 ))
 
 const schemaForRows = computed(() => (
@@ -198,6 +208,9 @@ const schemaForRows = computed(() => (
 
 let timeout = 0
 
+/**
+ * When the temporary filter changes, we set the current filter to it
+ */
 watch(tempFilter, () => {
   clearTimeout(timeout)
   timeout = setTimeout(() => {
@@ -303,7 +316,12 @@ watch([() => props.rows, query], () => {
  */
 const filteredRows = computed(() => data.value || dataRows.value || [])
 
-const addRecord = (value?: AnyData) => {
+/**
+ * Add a new record
+ *
+ * @param value Optional values to extend the row with
+ */
+const addRecord = (value?: AnyData): AnyData => {
   if (props.tableId) {
     const extraFields = props.extraFields && props.extraFields
       .filter((ef) => ef.create)
@@ -323,9 +341,11 @@ const addRecord = (value?: AnyData) => {
     r.createInStore()
     currentSelected.value = [r]
     emit('add', r)
-  } else {
-    emit('add', value)
+    return r
   }
+
+  emit('add', value)
+  return value
 }
 
 /**
@@ -381,20 +401,35 @@ const removeRecord = (value: AnyData) => {
   }
 }
 
-const editRecord = async (value: AnyData) => {
-  value.clone()
+/**
+ * Start editing a specific row
+ *
+ * @param row Row
+ */
+const editRecord = async (row: AnyData) => {
+  row.clone()
 }
 
-const saveRecord = async (value: AnyData) => {
-  const tempId = value.__tempId
-  await value.save()
+/**
+ * Save and end editing for a specific row
+ *
+ * @param row Row
+ */
+const saveRecord = async (row: AnyData) => {
+  const tempId = row.__tempId
+  await row.save()
   if (tempId) {
     useFeathersService(props.tableId).removeFromStore(tempId)
   }
 }
 
-const cancelRecord = (value: AnyData) => {
-  value.reset()
+/**
+ * Cancel editing on a specific row
+ *
+ * @param row Row
+ */
+const cancelRecord = (row: AnyData) => {
+  row.reset()
 }
 </script>
 

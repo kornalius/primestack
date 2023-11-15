@@ -131,6 +131,7 @@
     class="full-width"
     :label="checkboxLabel"
     :disable="disabled"
+    :color="schema.color"
     dense
   >
     <q-tooltip :delay="500">
@@ -150,8 +151,20 @@
     :marker-labels="property"
     :snap="property"
     :disable="disabled"
+    :color="schema.color"
     label
     dense
+  />
+
+  <!-- Numeric rating -->
+
+  <q-rating
+    v-else-if="type === 'rating'"
+    v-model.number="value"
+    :max="schema.max"
+    :disable="disabled"
+    :color="schema.color"
+    size="sm"
   />
 
   <!-- Number -->
@@ -249,6 +262,7 @@
     :options="toggleOptions"
     :clearable="clearableToggle"
     :disable="disabled"
+    :toggle-color="schema.color"
     stretch
     unelevated
     dense
@@ -263,6 +277,7 @@
     :options="toggleOptions"
     :clearable="clearableToggle"
     :disable="disabled"
+    :toggle-color="schema.color"
     stretch
     unelevated
     dense
@@ -348,11 +363,11 @@
     :options="fields"
     :outlined="property"
     :disable="disabled"
+    :multiple="schema.multiple"
     option-label="name"
     option-value="name"
     autocomplete="name"
     dense
-    multiple
     use-chips
     clearable
     emit-value

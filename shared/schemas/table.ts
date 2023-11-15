@@ -71,6 +71,17 @@ export const transformNames = [
   'random',
 ]
 
+export const lookupSchema = Type.Object({
+  field: ExType.Field(),
+  size: Type.Optional(Type.Number()),
+  filterable: Type.Optional(Type.Boolean()),
+  class: Type.Optional(Type.String()),
+  style: Type.Optional(Type.String()),
+  title: Type.Optional(Type.String()),
+  titleClass: Type.Optional(Type.String()),
+  titleStyle: Type.Optional(Type.String()),
+})
+
 export const tableFieldSchema = Type.Object(
   {
     _id: ExType.Id(),
@@ -106,6 +117,19 @@ export const tableFieldSchema = Type.Object(
         value: Type.String(),
       }, { horizontal: true, horizontalPopup: true }),
     )),
+    multiple: Type.Optional(Type.Boolean()),
+    toggles: Type.Optional(Type.Boolean()),
+    chip: Type.Optional(Type.Boolean()),
+    color: Type.Optional(ExType.Color({ quasarPalette: true })),
+    rating: Type.Optional(Type.Boolean()),
+    ratingIcon: Type.Optional(ExType.Icon()),
+    ratingIconFilled: Type.Optional(ExType.Icon()),
+    ratingIconHalf: Type.Optional(ExType.Icon()),
+    service: Type.Optional(ExType.Table()),
+    query: Type.Optional(ExType.Query({ tableProp: 'service' })),
+    columns: Type.Optional(Type.Array(lookupSchema)),
+    valueField: Type.Optional(ExType.Field({ tableProp: 'service' })),
+    labelField: Type.Optional(ExType.Field({ tableProp: 'service' })),
     refTableId: Type.Optional(ExType.Table()),
     refFields: Type.Optional(Type.Array(
       ExType.Field({ select: true, tableProp: '../refTableId' }),
@@ -134,18 +158,55 @@ export const tableFieldSchema = Type.Object(
         names: [
           'transforms',
           'format',
-          'options',
-          'slider',
-          'multipleOf',
-          'min',
-          'exclusiveMin',
-          'max',
-          'exclusiveMax',
-          'dateMin',
-          'dateExclusiveMin',
-          'dateMax',
-          'dateExclusiveMax',
+          'chip',
+          'color',
           'pattern',
+          { name: 'options', label: 'Items' },
+          {
+            label: 'Options',
+            children: [
+              { name: 'multiple', label: 'Multiple' },
+              { name: 'toggles', label: 'Toggles' },
+            ],
+          },
+          {
+            label: 'Numeric',
+            children: [
+              { name: 'slider', label: 'Slider' },
+              { name: 'multipleOf', label: 'Multiple' },
+              { name: 'min', label: 'Minimum' },
+              { name: 'exclusiveMin', label: 'Exclusive Minimum' },
+              { name: 'max', label: 'Maximum' },
+              { name: 'exclusiveMax', label: 'Exclusive Maximum' },
+            ],
+          },
+          {
+            label: 'Rating',
+            children: [
+              { name: 'ratingIcon', label: 'Icon' },
+              { name: 'ratingIconFilled', label: 'Filled Icon' },
+              { name: 'ratingIconHalf', label: 'Half Icon' },
+            ],
+          },
+          {
+            label: 'Date',
+            children: [
+              { name: 'dateMin', label: 'Minimum date' },
+              { name: 'dateExclusiveMin', label: 'Minimum exclusive date' },
+              { name: 'dateMax', label: 'Maximum date' },
+              { name: 'dateExclusiveMax', label: 'Maximum exlusive date' },
+            ],
+          },
+          { name: 'columns', label: 'Lookup columns' },
+          {
+            label: 'Lookup',
+            children: [
+              { name: 'service', label: 'Service' },
+              { name: 'query', label: 'Query' },
+              { name: 'valueField', label: 'Value Field' },
+              { name: 'labelField', label: 'Label Field' },
+            ],
+          },
         ],
       },
     },

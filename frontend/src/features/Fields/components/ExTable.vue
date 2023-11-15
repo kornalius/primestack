@@ -4,7 +4,7 @@
     v-model:selected="currentSelected"
     v-bind="$attrs"
     :rows="filteredRows"
-    :columns="columns as any"
+    :columns="computedColumns as any"
     :selection="selectionStyle"
     :visible-columns="($attrs.visibleColumns?.length > 0
       ? $attrs.visibleColumns
@@ -80,7 +80,24 @@
             horizontal
           />
 
-          <span v-else>
+          <q-chip
+            v-else-if="col.chip"
+            style="margin: 0;"
+            :text-color="stringValue(col.textColor, p.row)"
+            :color="stringValue(col.color, p.row)"
+            dense
+          >
+            {{
+              col.format
+                ? col.format(col.value)
+                : col.value
+            }}
+          </q-chip>
+
+          <span
+            v-else
+            :class="rowColClass(col, p.row)"
+          >
             {{
               col.format
                 ? col.format(col.value)
@@ -90,7 +107,7 @@
         </q-td>
 
         <q-td>
-          <!-- Save button -->
+          <!-- Save editing button -->
 
           <q-btn
             v-if="showConfirmButtons(p.row)"
@@ -108,7 +125,7 @@
             </q-tooltip>
           </q-btn>
 
-          <!-- Cancel button -->
+          <!-- Cancel editing button -->
 
           <q-btn
             v-if="showConfirmButtons(p.row)"
@@ -132,7 +149,7 @@
             v-if="
               !showConfirmButtons(p.row)
                 && (editable
-                  || showRemoveButton(p.row)
+                  || showRemoveAction(p.row)
                   || actions?.length > 0)
             "
             class="action-button"
@@ -146,7 +163,7 @@
           >
             <q-menu fit>
               <q-list dense>
-                <!-- Edit button -->
+                <!-- Edit action -->
 
                 <q-item
                   v-if="editable && !showConfirmButtons(p.row)"
@@ -160,7 +177,7 @@
                     <q-icon
                       :name="editIcon || 'mdi-pencil'"
                       color="green-5"
-                      size="sm"
+                      size="xs"
                     />
                   </q-item-section>
 
@@ -169,10 +186,10 @@
                   </q-item-section>
                 </q-item>
 
-                <!-- Remove button -->
+                <!-- Remove action -->
 
                 <q-item
-                  v-if="showRemoveButton(p.row)"
+                  v-if="showRemoveAction(p.row)"
                   :disable="disable || removeDisable"
                   clickable
                   v-close-popup
@@ -183,7 +200,7 @@
                     <q-icon
                       :name="removeIcon || 'mdi-trash-can-outline'"
                       color="red-4"
-                      size="sm"
+                      size="xs"
                     />
                   </q-item-section>
 
@@ -193,7 +210,7 @@
                 </q-item>
 
                 <q-separator
-                  v-if="(editable && !showConfirmButtons(p.row)) || showRemoveButton(p.row)"
+                  v-if="(editable && !showConfirmButtons(p.row)) || showRemoveAction(p.row)"
                 />
 
                 <!-- Actions -->
@@ -207,7 +224,11 @@
                   @click="runAction(action, p.row)"
                 >
                   <q-item-section v-if="action.icon" avatar>
-                    <q-icon :name="action.icon" :color="action.color" size="sm" />
+                    <q-icon
+                      :name="action.icon"
+                      :color="action.color"
+                      size="xs"
+                    />
                   </q-item-section>
 
                   <q-item-section>
@@ -243,24 +264,35 @@ import {
 import sift from 'sift'
 import startCase from 'lodash/startCase'
 import omit from 'lodash/omit'
-import { TSchema } from '@feathersjs/typebox'
+import { Static, TSchema } from '@feathersjs/typebox'
 import { useSyncedProp } from '@/composites/prop'
 import { useFormElements } from '@/features/Forms/composites'
 import { columnAlignmentFor, getTypeFor, schemaToField } from '@/shared/schema'
 import { filterToMongo } from '@/composites/filter'
-import { AddOption, ExTableRowAction, Pagination } from '@/features/Fields/interfaces'
+import {
+  AddOption,
+  ExTableColumn,
+  ExTableRowAction,
+  Pagination,
+} from '@/features/Fields/interfaces'
 import { AnyData } from '@/shared/interfaces/commons'
+import { tableFieldSchema } from '@/shared/schemas/table'
+import { stringValue } from '@/composites/utilities'
+import { useExpression } from '@/features/Expression/composites'
+import { useI18n } from 'vue-i18n'
 import PropertySchemaField from '@/features/Properties/components/PropertySchemaField.vue'
 import AddButton from '@/features/Fields/components/AddButton.vue'
 import FilterEditor from '@/features/Tables/components/FilterEditor.vue'
-import { useExpression } from '@/features/Expression/composites'
-import { useI18n } from 'vue-i18n'
+
+type TableField = Static<typeof tableFieldSchema>
 
 const attrs = useAttrs()
 
 const props = defineProps<{
   // rows to display in table
   rows: unknown[]
+  // table columns definitions
+  columns?: ExTableColumn[]
   // row action buttons
   actions?: ExTableRowAction[]
   // key for rows
@@ -351,9 +383,9 @@ const { buildCtx } = useExpression(t)
 
 const ctx = buildCtx()
 
-const columns = computed(() => {
-  if (attrs.columns) {
-    return attrs.columns.map((c) => omit(c, ['_id']))
+const computedColumns = computed(() => {
+  if (props.columns) {
+    return props.columns.map((c) => omit(c, ['_id']))
   }
 
   const cols = []
@@ -406,10 +438,73 @@ watch([
   }
 }, { immediate: true })
 
-const fieldSchema = (name: string) => props.schema?.properties[name]
+/**
+ * Get the TSchema for a column
+ *
+ * @param name Name of the column
+ *
+ * @returns {TSchema}
+ */
+const fieldSchema = (name: string): TSchema => {
+  const col = props.columns.find((c) => c.name === name)
+  const cf = col
+    ? {
+      type: col.type,
+      format: col.editFormat,
+      color: col.color,
+      min: col.min,
+      max: col.max,
+      pattern: col.pattern,
+      slider: col.slider,
+      exclusiveMin: col.exclusiveMin,
+      exclusiveMax: col.exclusiveMax,
+      dateMin: col.dateMin,
+      dateMax: col.dateMax,
+      dateExclusiveMin: col.dateExclusiveMin,
+      dateExclusiveMax: col.dateExclusiveMax,
+      options: col.options,
+      multiple: col.multiple,
+      toggles: col.toggles,
+      chip: col.chip,
+      rating: col.rating,
+      ratingIcon: col.ratingIcon,
+      ratingFilled: col.ratingIconFilled,
+      ratingHalf: col.ratingIconHalf,
+    }
+    : {} as TableField
+  return {
+    ...(props.schema?.properties[name] || {}),
+    ...cf,
+  }
+}
 
+/**
+ * Returns the column class for the row display
+ *
+ * @param col Column
+ * @param row Row
+ *
+ * @returns {string}
+ */
+const rowColClass = (col: ExTableColumn, row: AnyData): string => {
+  const c = []
+  c.push(stringValue(col.textColor, row))
+  c.push(stringValue(col.color, row))
+  return c.join(' ')
+}
+
+/**
+ * Editing state for rows
+ */
 const editing = ref({})
 
+/**
+ * Get the id from a row
+ *
+ * @param row Row to get the id from
+ *
+ * @returns {string}
+ */
 const getId = (row: AnyData): string => {
   const keys = props.rowKeys || [attrs['row-key']]
   // eslint-disable-next-line no-restricted-syntax
@@ -421,6 +516,11 @@ const getId = (row: AnyData): string => {
   return undefined
 }
 
+/**
+ * Start editing on a specific row
+ *
+ * @param row Row to start editing on
+ */
 const editRow = (row: AnyData) => {
   const id = editing.value[getId(row)]
   if (!editing.value[id]) {
@@ -429,6 +529,9 @@ const editRow = (row: AnyData) => {
   }
 }
 
+/**
+ * Add a new row
+ */
 const addRow = () => {
   const newValue = props.addFunction ? props.addFunction() : {}
   if (newValue) {
@@ -436,6 +539,11 @@ const addRow = () => {
   }
 }
 
+/**
+ * Remove a specific row
+ *
+ * @param row Row to remove
+ */
 const removeRow = (row: AnyData) => {
   if (!props.canRemove || props.canRemove(row)) {
     if (props.removeFunction) {
@@ -445,24 +553,54 @@ const removeRow = (row: AnyData) => {
   }
 }
 
+/**
+ * Should we show the editing confirmation buttons?
+ *
+ * @param row Row to show the buttons on
+ *
+ * @returns {boolean}
+ */
 const showConfirmButtons = (row: AnyData): boolean => (
   editing.value[getId(row)]
 )
 
-const showRemoveButton = (row: AnyData): boolean => (
+/**
+ * Should we show the remove action for a specific row
+ *
+ * @param row Row to show the action on
+ *
+ * @returns {boolean}
+ */
+const showRemoveAction = (row: AnyData): boolean => (
   !showConfirmButtons(row) && props.removeButton === 'end' && (!props.canRemove || props.canRemove(row))
 )
 
+/**
+ * Save the editing for a row
+ *
+ * @param row Row to save the editing from
+ */
 const saveRow = (row: AnyData) => {
   emit('save', row)
   delete editing.value[getId(row)]
 }
 
+/**
+ * Cancel row editing
+ *
+ * @param row Row to cancel editing on
+ */
 const cancelRow = (row: AnyData) => {
   emit('cancel', row)
   delete editing.value[getId(row)]
 }
 
+/**
+ * Run a row action from the dropdown menu
+ *
+ * @param action Row action to execute
+ * @param row Row it is run on
+ */
 const runAction = async (action: ExTableRowAction, row: AnyData) => {
   await callEventAction(action.click, ctx, (value: AnyData) => ({ value }))(row)
 }

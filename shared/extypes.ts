@@ -39,8 +39,23 @@ interface QueryOptions {
   [key: string]: unknown
 }
 
+export interface IdColumn {
+  title?: string
+  field: string
+  size?: number
+  filterable?: boolean
+  class?: string
+  style?: string
+  titleClass?: string
+  titleStyle?: string
+}
+
 interface IdOptions {
   service?: string
+  query?: AnyData
+  columns?: IdColumn[]
+  valueField?: string
+  labelField?: string
   [key: string]: unknown
 }
 

@@ -1,8 +1,11 @@
 import { StringEnum, Type } from '@feathersjs/typebox'
-import { actionIcon, contentIcon, tableIcon } from '../icons'
+import {
+  actionIcon, contentIcon, styleIcon, tableIcon,
+} from '../icons'
 import ExType from '../extypes'
 import { keyboardEvent } from '../action'
 import { AnyData } from '../interfaces/commons'
+import { supportedFieldTypes, supportedStringFormats, lookupSchema } from './table'
 
 export const formTabSchema = Type.Object(
   {
@@ -75,6 +78,38 @@ export const formTableColumnSchema = Type.Object({
     ],
     toggles: true,
   }),
+  type: StringEnum(supportedFieldTypes),
+  slider: Type.Optional(Type.Boolean()),
+  format: Type.Optional(StringEnum(supportedStringFormats)),
+  multipleOf: Type.Optional(Type.Number()),
+  min: Type.Optional(Type.Number()),
+  exclusiveMin: Type.Optional(Type.Number()),
+  max: Type.Optional(Type.Number()),
+  exclusiveMax: Type.Optional(Type.Number()),
+  dateMin: Type.Optional(Type.String()),
+  dateExclusiveMin: Type.Optional(Type.String()),
+  dateMax: Type.Optional(Type.String()),
+  dateExclusiveMax: Type.Optional(Type.String()),
+  pattern: Type.Optional(Type.String()),
+  options: Type.Optional(Type.Array(
+    Type.Object({
+      label: Type.String(),
+      value: Type.String(),
+    }, { horizontal: true, horizontalPopup: true }),
+  )),
+  multiple: Type.Optional(Type.Boolean()),
+  toggles: Type.Optional(Type.Boolean()),
+  chip: Type.Optional(Type.Boolean()),
+  color: Type.Optional(ExType.Color({ quasarPalette: true })),
+  rating: Type.Optional(Type.Boolean()),
+  ratingIcon: Type.Optional(ExType.Icon()),
+  ratingIconFilled: Type.Optional(ExType.Icon()),
+  ratingIconHalf: Type.Optional(ExType.Icon()),
+  service: Type.Optional(ExType.Table()),
+  query: Type.Optional(ExType.Query({ tableProp: 'service' })),
+  columns: Type.Optional(Type.Array(lookupSchema)),
+  valueField: Type.Optional(ExType.Field({ tableProp: 'service' })),
+  labelField: Type.Optional(ExType.Field({ tableProp: 'service' })),
 }, {
   categories: {
     content: {
@@ -86,6 +121,61 @@ export const formTableColumnSchema = Type.Object({
         'required',
         'sortable',
         'sortOrder',
+      ],
+    },
+    style: {
+      icon: styleIcon,
+      names: [
+        'type',
+        'chip',
+        'color',
+        'pattern',
+        { name: 'options', label: 'Items' },
+        {
+          label: 'Options',
+          children: [
+            { name: 'multiple', label: 'Multiple' },
+            { name: 'toggles', label: 'Toggles' },
+          ],
+        },
+        {
+          label: 'Numeric',
+          children: [
+            { name: 'slider', label: 'Slider' },
+            { name: 'multipleOf', label: 'Multiple' },
+            { name: 'min', label: 'Minimum' },
+            { name: 'exclusiveMin', label: 'Exclusive Minimum' },
+            { name: 'max', label: 'Maximum' },
+            { name: 'exclusiveMax', label: 'Exclusive Maximum' },
+          ],
+        },
+        {
+          label: 'Rating',
+          children: [
+            { name: 'ratingIcon', label: 'Icon' },
+            { name: 'ratingIconFilled', label: 'Filled Icon' },
+            { name: 'ratingIconHalf', label: 'Half Icon' },
+          ],
+        },
+        {
+          label: 'Date',
+          children: [
+            { name: 'dateMin', label: 'Minimum date' },
+            { name: 'dateExclusiveMin', label: 'Minimum exclusive date' },
+            { name: 'dateMax', label: 'Maximum date' },
+            { name: 'dateExclusiveMax', label: 'Maximum exlusive date' },
+          ],
+        },
+        { name: 'columns', label: 'Lookup columns' },
+        {
+          label: 'Lookup',
+          children: [
+            { name: 'service', label: 'Service' },
+            { name: 'query', label: 'Query' },
+            { name: 'valueField', label: 'Value Field' },
+            { name: 'labelField', label: 'Label Field' },
+          ],
+        },
       ],
     },
   },

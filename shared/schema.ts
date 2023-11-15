@@ -3,6 +3,7 @@ import cloneDeep from 'lodash/cloneDeep'
 import { Static, TSchema, Type } from '@feathersjs/typebox'
 import { tableFieldSchema, tableIndexSchema } from './schemas/table'
 import { AnyData } from './interfaces/commons'
+import ExType from './extypes'
 
 type TableField = Static<typeof tableFieldSchema>
 type TableIndex = Static<typeof tableIndexSchema>
@@ -76,6 +77,10 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string | undefined 
   if (p.type === 'number' && p.slider) {
     return 'slider'
   }
+  // Number field with a slider (optional properties: min, max, step)
+  if (p.type === 'number' && p.rating) {
+    return 'rating'
+  }
   // Regular numberic input field (optional properties: min, max, step)
   if (p.type === 'number') {
     return 'number'
@@ -97,7 +102,7 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string | undefined 
   if (p.type === 'string' && p.objectid === true && p.action === true) {
     return 'action'
   }
-  // Service selector (optional properties: service, query)
+  // Service selector (optional properties: service, query, columns)
   if (p.type === 'string' && p.objectid === true) {
     return 'objectid'
   }
@@ -399,11 +404,11 @@ export const fieldToSchema = (field: TableField): TSchema => {
   // if field is a reference to another field in another table
   if (field.refTableId) {
     if (field.array) {
-      const a = Type.Array(Type.String({ objectid: true }))
+      const a = Type.Array(ExType.Id())
       return field.optional ? Type.Optional(a) : a
     }
 
-    const s = Type.String({ objectid: true })
+    const s = ExType.Id()
     return field.optional ? Type.Optional(s) : s
   }
 
@@ -427,10 +432,15 @@ export const fieldToSchema = (field: TableField): TSchema => {
       // eslint-disable-next-line no-case-declarations
       const n = Type.Number({
         slider: field.slider,
+        color: field.color,
         minimum: field.min,
         maximum: field.max,
         exclusiveMinimum: field.exclusiveMin,
         exclusiveMaximum: field.exclusiveMax,
+        rating: field.rating,
+        ratingIcon: field.ratingIcon,
+        ratingIconFilled: field.ratingIconFilled,
+        ratingIconHalf: field.ratingIconHalf,
       })
       return field.optional ? Type.Optional(n) : n
 
@@ -458,24 +468,38 @@ export const fieldToSchema = (field: TableField): TSchema => {
 
     case 'color':
       // eslint-disable-next-line no-case-declarations
-      const c = Type.String({
-        color: true,
+      const c = ExType.Color({
+        quasarPalette: false,
       })
       return field.optional ? Type.Optional(c) : c
 
     case 'icon':
       // eslint-disable-next-line no-case-declarations
-      const i = Type.String({
-        icon: true,
-      })
+      const i = ExType.Icon()
       return field.optional ? Type.Optional(i) : i
 
     case 'select':
       // eslint-disable-next-line no-case-declarations
       const e = Type.String({
         options: field.options,
+        multiple: field.multiple,
+        toggles: field.toggles,
+        chip: field.chip,
+        color: field.color,
       })
       return field.optional ? Type.Optional(e) : e
+
+    case 'objectid':
+      // eslint-disable-next-line no-case-declarations
+      const o = ExType.Id({
+        service: field.service,
+        query: field.query,
+        columns: field.columns,
+        valueField: field.valueField,
+        labelField: field.labelField,
+        multiple: field.multiple,
+      })
+      return field.optional ? Type.Optional(o) : o
 
     default:
       return field.optional ? Type.Optional(Type.String()) : Type.String()

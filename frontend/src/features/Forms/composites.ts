@@ -613,14 +613,12 @@ export const useFormElements = () => ({
 
     let border = ''
     if (b) {
-      border = `${b.width}px ${b.style} ${b.color}`
+      border = b.style !== 'none' && b.width > 0 && b.color
+        ? `${b.width}px ${b.style} ${b.color}`
+        : undefined
     }
 
     const radius = b?.radius as AnyData
-    const tl = radius?.topLeft || '0'
-    const tr = radius?.topRight || '0'
-    const br = radius?.bottomLeft || '0'
-    const bl = radius?.bottomRight || '0'
 
     return {
       paddingTop: field.padding?.top,
@@ -631,11 +629,14 @@ export const useFormElements = () => ({
       marginLeft: field.margin?.left,
       marginBottom: field.margin?.bottom,
       marginRight: field.margin?.right,
-      borderTop: b?.sides?.top ? border : 'none',
-      borderBottom: b?.sides?.bottom ? border : 'none',
-      borderLeft: b?.sides?.left ? border : 'none',
-      borderRight: b?.sides?.right ? border : 'none',
-      borderRadius: `${tl} ${tr} ${bl} ${br}`,
+      borderTop: b?.sides?.top ? border : undefined,
+      borderBottom: b?.sides?.bottom ? border : undefined,
+      borderLeft: b?.sides?.left ? border : undefined,
+      borderRight: b?.sides?.right ? border : undefined,
+      borderTopLeftRadius: radius?.topLeft,
+      borderTopRightRadius: radius?.topRight,
+      borderBottomLeftRadius: radius?.bottomLeft,
+      borderBottomRightRadius: radius?.bottomRight,
       color: field.color,
       backgroundColor: field.backgroundColor,
       width: field.sizes?.width,
@@ -680,7 +681,8 @@ export const useFormElements = () => ({
         .forEach((f) => {
           // if field is reference to another field in a table
           if (f.refTableId) {
-            addFieldToForm('lookup-field', f, {
+            addFieldToForm('lookup-select', f, {
+              tableId: f.refTableId,
               columns: f.refFields.map((fc) => ({
                 field: fc,
                 filterable: true,

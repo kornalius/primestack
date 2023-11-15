@@ -817,18 +817,18 @@ const rightSidebarField = computed((): FormField | undefined => {
   return undefined
 })
 
-watch(rightSidebarField, () => {
-  if (form.value) {
+watch([() => (rightSidebarField.value as AnyData)?.opened], () => {
+  if (form.value && rightSidebarField.value) {
     user.setSidebar(form.value._id, true, (rightSidebarField.value as AnyData).opened)
   }
-}, { immediate: true, deep: true })
+})
 
 /**
  * When authenticated user changes, set the left and right drawer opened state
  * to the previous user sidebar setting
  */
-watch([form, () => user.user], () => {
-  if (form.value) {
+watch([form, rightSidebarField, () => user.user], () => {
+  if (form.value && user.user) {
     leftDrawerOpened.value = user.isSidebarOpen(form.value._id, false)
     if (rightSidebarField.value) {
       (rightSidebarField.value as AnyData).opened = user.isSidebarOpen(form.value._id, true)
