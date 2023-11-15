@@ -81,7 +81,7 @@ export default {
       addLabel: Type.String(),
       addIcon: ExType.Icon(),
       addDisable: Type.Boolean(),
-      removeButton: StringEnum(['end']),
+      removeButton: Type.Boolean(),
       removeLabel: Type.String(),
       removeIcon: ExType.Icon(),
       removeDisable: Type.Boolean(),
@@ -186,7 +186,7 @@ export default {
           label: 'Remove button',
           sectionColor: 'red-2',
           children: [
-            { name: 'removeButton', label: 'Position' },
+            { name: 'removeButton', label: 'Enabled' },
             { name: 'removeLabel', label: 'Label' },
             { name: 'removeIcon', label: 'Icon' },
             { name: 'removeDisable', label: 'Disabled' },

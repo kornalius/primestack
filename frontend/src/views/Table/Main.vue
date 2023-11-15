@@ -12,10 +12,10 @@
           :add-options="addOptions"
           :remove-function="removeTable"
           add-button="start"
-          remove-button="end"
           title="Tables"
           selection-style="single"
           row-key="_id"
+          remove-button
           virtual-scroll
           bordered
           dense
@@ -39,10 +39,10 @@
           :add-disable="tableHasService"
           :can-remove="() => !tableHasService"
           add-button="start"
-          remove-button="end"
           title="Fields"
           selection-style="single"
           row-key="_id"
+          remove-button
           virtual-scroll
           bordered
           dense
@@ -68,7 +68,7 @@ import { useAuth } from '@/features/Auth/store'
 import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
 import { eventTable } from '@/shared/schemas/event'
 import { fileTable } from '@/shared/schemas/file'
-import { AddOption } from '@/features/Fields/interfaces'
+import { AddOption, ExTableColumn } from '@/features/Fields/interfaces'
 import { isServiceAvailable } from '@/shared/plan'
 import { useI18n } from 'vue-i18n'
 import ExTable from '@/features/Fields/components/ExTable.vue'
@@ -281,7 +281,7 @@ const schemaColumns = ref([
     field: 'fields',
     format: (val, row) => (!row ? val : val?.length),
   },
-])
+] as ExTableColumn[])
 
 const fieldColumns = ref([
   {
@@ -340,5 +340,5 @@ const fieldColumns = ref([
     field: 'secret',
     format: (val) => (val ? '\u2714' : ''),
   },
-])
+] as ExTableColumn[])
 </script>

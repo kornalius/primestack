@@ -33,8 +33,6 @@ export const getParentProp = (parents: AnyData[], name: string): string | undefi
   parts.splice(0, i)
   const n = parts.join('.')
 
-  console.log(name, n, pp, lvl, pp[lvl]?.[n])
-
   if (lvl !== -1) {
     return pp[lvl]?.[n]
   }

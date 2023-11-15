@@ -325,8 +325,8 @@ const props = defineProps<{
   addOptions?: AddOption[]
   // should we disable the add feature?
   addDisable?: boolean
-  // position of the remove button on the rows
-  removeButton?: 'end'
+  // should we show the remove action?
+  removeButton?: boolean
   // icon for the remove button
   removeIcon?: string
   // function called before removing item at index
@@ -572,7 +572,7 @@ const showConfirmButtons = (row: AnyData): boolean => (
  * @returns {boolean}
  */
 const showRemoveAction = (row: AnyData): boolean => (
-  !showConfirmButtons(row) && props.removeButton === 'end' && (!props.canRemove || props.canRemove(row))
+  !showConfirmButtons(row) && props.removeButton && (!props.canRemove || props.canRemove(row))
 )
 
 /**

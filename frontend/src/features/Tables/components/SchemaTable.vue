@@ -9,15 +9,15 @@
     :schema="schemaForRows"
     :actions="actions"
     :hide-filter="hideFilter"
-    :editable="editable"
+    :editable="isEditable"
     :disable="disable"
-    :add-button="addButton"
+    :add-button="addButtonSide"
     :add-function="addFunction"
     :add-icon="addIcon"
     :add-label="addLabel"
     :add-options="addOptions"
     :add-disable="addDisable"
-    :remove-button="removeButton"
+    :remove-button="hasRemoveButton"
     :remove-icon="removeIcon"
     :can-remove="canRemove"
     :remove-label="removeLabel"
@@ -110,8 +110,8 @@ const props = defineProps<{
   addOptions?: AddOption[]
   // should we disable the add feature?
   addDisable?: boolean
-  // position of the remove button on the rows
-  removeButton?: 'end'
+  // should we show the remove action?
+  removeButton?: boolean
   // icon for the remove button
   removeIcon?: string
   // function called before removing item at index
@@ -189,6 +189,18 @@ const ctx = buildCtx()
 
 const table = computed(() => (
   userTable.value?.list.find((tt) => tt._id === props.tableId)
+))
+
+const addButtonSide = computed(() => (
+  table.value?.methods.includes('create') ? props.addButton : undefined
+))
+
+const hasRemoveButton = computed(() => (
+  table.value?.methods.includes('remove') && props.removeButton
+))
+
+const isEditable = computed(() => (
+  table.value?.methods.includes('patch') && props.editable
 ))
 
 const fields = computed(() => (

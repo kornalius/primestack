@@ -17,9 +17,9 @@
           :hide-filter="form.hideFilter"
           :pagination="{}"
           add-button="start"
-          remove-button="end"
           selection-style="single"
           row-key="_id"
+          remove-button
           virtual-scroll
           bordered
           dense
@@ -36,9 +36,9 @@
           :schema="formSchemaForDisplay"
           :rows="editor.forms"
           add-button="start"
-          remove-button="end"
           selection-style="single"
           row-key="_id"
+          remove-button
           virtual-scroll
           bordered
           dense
