@@ -1,6 +1,7 @@
 import { Type, StringEnum } from '@feathersjs/typebox'
 import { contentIcon, modelIcon } from '../icons'
 import ExType from '../extypes'
+import { flexSizeString } from '../interfaces/commons'
 
 export const supportedFieldTypes = [
   'string',
@@ -73,7 +74,7 @@ export const transformNames = [
 
 export const lookupSchema = Type.Object({
   field: ExType.Field(),
-  size: Type.Optional(Type.Number()),
+  col: Type.Optional(flexSizeString()),
   filterable: Type.Optional(Type.Boolean()),
   class: Type.Optional(Type.String()),
   style: Type.Optional(Type.String()),
@@ -97,6 +98,7 @@ export const tableFieldSchema = Type.Object(
       Type.Object({
         type: StringEnum(transformNames),
         value: Type.Optional(Type.Number()),
+        disable: Type.Optional(Type.Boolean()),
       }, { horizontal: true, horizontalPopup: true }),
     )),
     slider: Type.Optional(Type.Boolean()),
@@ -173,7 +175,7 @@ export const tableFieldSchema = Type.Object(
             label: 'Numeric',
             children: [
               { name: 'slider', label: 'Slider' },
-              { name: 'multipleOf', label: 'Multiple' },
+              { name: 'multipleOf', label: 'Multiple of' },
               { name: 'min', label: 'Minimum' },
               { name: 'exclusiveMin', label: 'Exclusive Minimum' },
               { name: 'max', label: 'Maximum' },
@@ -216,20 +218,22 @@ export const tableFieldSchema = Type.Object(
 export const tableIndexSchema = Type.Object(
   {
     _id: ExType.Id(),
-    name: ExType.Field(),
-    order: Type.Number({ minimum: -1, maximum: 1 }),
+    name: Type.String(),
+    fields: Type.Array(Type.Object({
+      field: ExType.Field({ tableProp: '../../_id'}),
+      descending: Type.Boolean(),
+    }, { horizontal: true })),
     unique: Type.Boolean(),
     sparse: Type.Boolean(),
   },
   {
     $id: 'TableIndex',
-    horizontal: true,
-    horizontalPopup: true,
     additionalProperties: false,
     categories: {
       content: {
         names: [
-          'order',
+          'name',
+          'fields',
           'unique',
           'sparse',
         ],
@@ -248,7 +252,7 @@ export const tableSchema = Type.Object(
     softDelete: Type.Boolean(),
     user: Type.Boolean(),
     fields: Type.Array(tableFieldSchema),
-    indexes: Type.Array(tableIndexSchema),
+    indexes: Type.Array(tableIndexSchema, { fixed: true }),
     // when specified (events, files), the data will come from those services instead
     service: Type.Optional(StringEnum(['events', 'files'])),
   },

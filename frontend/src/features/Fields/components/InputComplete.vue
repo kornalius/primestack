@@ -6,7 +6,11 @@
     <q-input
       v-model="value"
       v-bind="$attrs"
-    />
+    >
+      <q-tooltip v-if="tooltip" :delay="500">
+        {{ tooltip }}
+      </q-tooltip>
+    </q-input>
 
     <div
       v-if="showMenu"
@@ -51,6 +55,7 @@ const props = defineProps<{
   items: { label: string, value: string, icon?: string, color?: string }[]
   // string to add to end of completion
   suffix?: string
+  tooltip?: string
 }>()
 
 const emit = defineEmits<{

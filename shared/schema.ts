@@ -252,7 +252,13 @@ export const columnAlignmentFor = (type: string): string => {
  */
 export const defaultValueForSchema = (schema: TSchema, forcedType?: string): unknown => {
   switch (forcedType || schema?.type) {
-    case 'string': return undefined
+    case 'string': {
+      // auto-magically create a new id if the schema says so!!!
+      if (schema.objectid) {
+        return hexObjectId()
+      }
+      return undefined
+    }
     case 'number': return 0
     case 'boolean': return false
     case 'array': return []
@@ -589,7 +595,10 @@ export const schemaToField = (name: string, schema: TSchema): TableField => {
  */
 export const indexesToMongo = (indexes: TableIndex[]): Index[] => (
   indexes.map((i) => ({
-    fields: { [i.name]: i.order },
+    fields: (i.fields || []).reduce((acc, f) => ({
+      ...acc,
+      [f.field]: f.descending ? -1 : 1,
+    }), {}),
     unique: i.unique,
     sparse: i.sparse,
   }))

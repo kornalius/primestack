@@ -344,140 +344,900 @@
     "title": "Expression pour '{label}'"
   },
   "components": {
+    "tooltips": {
+      "field": "Spécifie un nom de champ qui sera associé à cette valeur de modèle de composant. Cela peut provenir des données du formulaire ou de la table du formulaire",
+      "noCaps": "Évite de transformer le texte de l'étiquette en majuscules (ce qui se produit par défaut)",
+      "noWrap": "Évite l'habillage du texte de l'étiquette",
+      "glossy": "Utilise un design brillant",
+      "outline": "Utilise un design avec contour",
+      "flat": "Utilise un design plat",
+      "filled": "Utilise un design un rempli pour le champ",
+      "push": "Utilise le design 'push'",
+      "stretch": "Lorsqu'il est utilisé sur un parent flexbox, s'étendra jusqu'à la hauteur du parent",
+      "round": "Utilise une forme en cercle",
+      "rounded": "Applique un rayon de bordure plus proéminent pour une forme carrée",
+      "square": "Supprime le rayon de bordure pour que les bordures soient au carré",
+      "unelevated": "Enlève l'ombrage",
+      "standout": "Utiliser un design 'remarquable' pour le champ; Spécifie les classes à appliquer lors du focus (en remplaçant celles par défaut)",
+      "size": "Unité de taille du composant",
+      "renderWhen": "Fait le rendu ce composant uniquement lorsque cette valeur renvoie 'true'' (via une expression)",
+      "dense": "Mode dense; occupe moins d'espace",
+      "update": "Déclenché lorsque la valeur du composant est mise à jour",
+      "click": "Déclenché lorsque le composant est cliqué",
+      "focus": "Déclenché lorsque le composant obtient le focus",
+      "blur": "Déclenché lorsque le composant perd le focus",
+      "clear": "Déclenché lorsque l'utilisateur appuie sur le bouton d'effacement, pour effacer la valeur du modèle du composant",
+      "input": "Déclenché lorsque la valeur dans la saisie de texte change",
+      "keydown": "Déclenché lorsqu'une touche est enfoncée alors que le composant est en focus",
+      "keyup": "Déclenché lorsqu'une touche est relâchée",
+      "border": "Appliquer des bordures au composant",
+      "padding": "Appliquer un remplissage au composant",
+      "margin": "Appliquer des marges au composant",
+      "sizes": "Définit la taille de composant fixe, minimale ou maximale",
+      "disable": "Désactive les interactions de l'utilisateur avec le composant",
+      "readonly": "Rend le composant en lecture seule. L'utilisateur ne peut pas modifier sa valeur.",
+      "clearable": "Efface la valeur en cliquant sur le bouton effacer",
+      "spread": "Réparti horizontalement sur tout l'espace disponible",
+      "color": "Couleur du contenu du composant",
+      "textColor": "Remplace la couleur du texte (si nécessaire)",
+      "bgColor": "Appliquer une couleur d'arrière-plan au composant",
+      "backgroundColor": "Appliquer une couleur d'arrière-plan au composant",
+      "stack": "Empile l'icône et l'étiquette verticalement plutôt que sur la même ligne (comme c'est le cas par défaut)",
+      "hideBottomSpace": "Ne réserve plus d'espace pour les indices/erreurs/compteurs lorsque ceux-ci ne sont pas utilisés; En conséquence, cela désactive également l’animation pour ceux-ci; Il permet également à la zone d'indice/erreur de s'étendre verticalement en fonction de son contenu",
+      "value": "Valeur du modèle de composant",
+      "defaultValue": "Valeur du modèle de composant par défaut",
+      "landscape": "Affiche en mode paysage",
+      "popupShow": "Déclenché lorsque la fenêtre contextuelle s'affiche",
+      "popupHide": "Déclenché lorsque la fenêtre contextuelle se ferme",
+      "loading": "Place le composant en état de chargement",
+      "label": "Étiquette de contenu du composant sous forme de chaîne",
+      "labelColor": "Couleur de l'étiquette de contenu du composant",
+      "virtualScrollHorizontal": "Faire fonctionner la liste virtuelle en mode horizontal",
+      "noErrorIcon": "Masque l'icône d'erreur en cas d'erreur",
+      "multiple": "Autoriser la sélection multiple; Le modèle doit être un tableau",
+      "maxValues": "Autorise un nombre maximum de sélections que l'utilisateur peut effectuer",
+      "hideSelected": "Masque la sélection; Utilisez la balise d'entrée sous-jacente pour contenir l'étiquette (au lieu de l'afficher à droite de l'entrée) de l'option sélectionnée; Fonctionne uniquement pour les sélections non-multiple",
+      "hint": "Texte d'aide (indice) qui est placé sous votre composant de formulaire encapsulé",
+      "hideHint": "Masque le texte d'aide (indice) lorsque le champ n'a pas le focus",
+      "prefix": "Chaîne de préfixe qui sera affichée au début de la zone de saisie du composant",
+      "suffix": "Chaîne de suffixe qui sera affichée à la fin de la zone de saisie du composant",
+      "stackLabel": "L'étiquette sera toujours affichée au-dessus du champ quel que soit le contenu du champ (le cas échéant)",
+      "itemAligned": "Fait correspondre l'alignement du contenu interne à celui de l'élément",
+      "placeholder": "Texte à afficher comme espace réservé",
+      "useInput": "Utilise une balise d'entrée où les utilisateurs peuvent taper",
+      "tableColspan": "Le nombre de colonnes dans le tableau (vous en avez besoin si vous utilisez table-layout:fixed)",
+      "useChips": "Utilise la puce pour afficher ce qui est actuellement sélectionné",
+      "optionsDense": "Mode dense pour la liste d'options; occupe moins d'espace",
+      "displayValue": "Remplace la chaîne de sélection par défaut, si vous n'utilisez pas la propriété 'use-chips'",
+      "virtualScroll": "Vous permet d'afficher uniquement une partie d'une longue liste d'éléments et de mettre à jour les éléments visibles au fur et à mesure que l'utilisateur fait défiler le conteneur",
+      "virtualScrollSliceSize": "Nombre minimum d'éléments à afficher dans la liste virtuelle",
+      "virtualScrollSliceRatioBefore": "Rapport du nombre d'éléments dans la zone visible à restituer avant",
+      "virtualScrollSliceRatioAfter": "Rapport du nombre d'éléments dans la zone visible à restituer après",
+      "virtualScrollItemSize": "Taille par défaut en pixels (hauteur si vertical, largeur si horizontal) d'un élément; Cette valeur est utilisée pour restituer la liste initiale; Essayez d'utiliser une valeur proche de la taille minimale d'un élément",
+      "virtualScrollStickySizeStart": "Taille en pixels (hauteur si verticale, largeur si horizontale) de la partie collante (si vous en utilisez une) en début de liste; Une valeur correcte améliorera la précision du défilement",
+      "virtualScrollStickySizeEnd": "Taille en pixels (hauteur si verticale, largeur si horizontale) de la partie collante (si vous en utilisez une) en fin de liste; Une valeur correcte améliorera la précision du défilement"
+    },
     "button": {
-      "label": "Bouton"
+      "label": "Bouton",
+      "tooltips": {
+        "label": "Etiquette du bouton",
+        "icon": "Icône de bouton",
+        "to": "Lien natif vers lequel accéder lorsque le bouton est cliqué",
+        "target": "Attribut de cible de lien natif; Utilisez-le uniquement avec la propriété 'to'",
+        "replace": "Remplacez au lieu de pousser régulièrement l'emplacement actuel du navigateur",
+        "align": "Alignement des étiquettes ou du contenu",
+        "fab": "Rend la taille et la forme du bouton adaptées à un bouton d'action flottant",
+        "fabMini": "Rend la taille et la forme du bouton adaptées à un petit bouton d'action flottant"
+      }
     },
     "button-toggle": {
-      "label": "Boutons"
+      "label": "Boutons",
+      "tooltips": {
+        "options": "Options du bouton",
+        "options_label": "Etiquette du bouton",
+        "options_value": "Valeur du bouton (utilisé pour définir la valeur de bascule)",
+        "options_icon": "Icône de bouton"
+      }
     },
     "card": {
       "label": "Carte"
     },
     "card-actions": {
-      "label": "Actions de carte"
+      "label": "Actions de carte",
+      "tooltips": {
+        "align": "Précise comment aligner les actions",
+        "vertical": "Affiche les actions les unes en dessous des autres"
+      }
     },
     "card-section": {
-      "label": "Section de carte"
+      "label": "Section de carte",
+      "tooltips": {
+        "horizontal": "Affiche une section horizontale (n'aura pas de remplissage et peut contenir une autre section de carte)"
+      }
     },
     "checkbox": {
-      "label": "Case à cocher"
+      "label": "Case à cocher",
+      "tooltips": {
+        "leftLabel": "L'étiquette (le cas échéant) doit être affichée sur le côté gauche du composant",
+        "keepColor": "La couleur (si spécifiée) doit-elle être conservée lorsque le composant est décoché/ off?",
+        "checkedIcon": "L'icône à utiliser lorsque le modèle est fidèle (au lieu du design par défaut)",
+        "uncheckedIcon": "L'icône à utiliser lorsque la bascule est fausse (au lieu du design par défaut"
+      }
     },
     "chip": {
-      "label": "Puce"
+      "label": "Puce",
+      "tooltips": {
+        "visible": "La puce est-elle visible ou non?",
+        "selected": "La puce est-elle sélectionnée ou non?",
+        "icon": "Icône à afficher à côté du label",
+        "clickable": "La puce est-elle cliquable? Si c'est le cas, il ajoutera des effets de survol et émettra des événements de 'clic'",
+        "removable": "S'il est défini, il affiche une icône 'supprimer' qui, lorsque vous cliquez dessus, la puce émet un événement 'supprimer'",
+        "remove": "Déclenché lorsque le bouton de suppression est cliqué sur la puce"
+      }
     },
     "col": {
-      "label": "Colonne"
+      "label": "Colonne",
+      "tooltips": {
+        "col": "Taille de la colonne Flexbox",
+        "offset": "Décalage de colonne Flexbox",
+        "breakpoint": "Point d'arrêt de la colonne Flexbox",
+        "breakpointCol": "La colonne Flexbox se divise en taille"
+      }
     },
     "color": {
-      "label": "Ceuilleur de couleurs"
+      "label": "Picker de couleurs",
+      "tooltips": {
+        "formatModel": "Modèle de format couleur à retourner",
+        "defaultView": "Vue par défaut à utiliser",
+        "noHeader": "Cacher l'en-tête",
+        "noHeaderTabs": "Masquer les onglets d'en-tête",
+        "noFooter": "Masquer le pied de page"
+      }
     },
     "date": {
-      "label": "Ceuilleur de date"
+      "label": "Picker de date",
+      "tooltips": {
+        "yearsInMonthView": "Affiche le sélecteur d'années en vue mois",
+        "title": "Lorsqu'il est spécifié, il remplace le titre d'en-tête par défaut; cela a du sens lorsqu'il n'est pas en mode 'minimal'",
+        "subTitle": "Lorsqu'il est spécifié, il remplace le sous-titre d'en-tête par défaut; cela a du sens lorsqu'il n'est pas en mode 'minimal'",
+        "todayBtn": "Afficher le bouton Aujourd'hui",
+        "minimal": "Ne pas afficher l'en-tête",
+        "mask": "Masque (chaîne de formatage) utilisé pour l'analyse et le formatage de la valeur. Ex: 'YYYY/MM/JJ'",
+        "calendar": "Spécifier le type de calendrier",
+        "defaultYearMonth": "L'année et le mois par défaut à afficher (au format YYYY/MM) lorsque le modèle n'est pas renseigné (non défini ou nul); Veuillez vous assurer qu'ils se situent dans la navigation min/max année-mois (si vous les utilisez)",
+        "defaultView": "La vue qui sera affichée par défaut",
+        "firstDayOfWeek": "Définit le jour de la semaine considéré comme le premier jour (0 - dimanche, 1 - lundi, ...); ce jour s'affichera dans la colonne la plus à gauche du calendrier",
+        "range": "Autoriser la sélection de plages; Compatibilité partielle avec la propriété 'options' : les plages sélectionnées peuvent également inclure des jours 'non sélectionnables'",
+        "emitImmediately": "Émettre le modèle lorsque l'utilisateur parcourt également le mois et l'année; UNIQUEMENT pour une sélection unique (non multiple, sans plage)",
+        "navigationMinYearMonth": "Empêcher l'utilisateur de naviguer en dessous d'une année et d'un mois spécifiques (au format YYYY/MM); Cette propriété n'est pas utilisée pour corriger le modèle; Vous souhaiterez peut-être également utiliser la propriété 'default-year-month'",
+        "navigationMaxYearMonth": "Empêcher l'utilisateur de naviguer au-dessus d'une année et d'un mois spécifiques (au format YYYY/MM); Cette propriété n'est pas utilisée pour corriger le modèle; Vous souhaiterez peut-être également utiliser la propriété 'default-year-month'",
+        "noUnset": "Suppression de la possibilité de désélectionner une date; cela ne s'applique pas à la sélection d'une plage sur des dates déjà sélectionnées",
+        "navigation": "Déclenché lorsque l'utilisateur navigue vers un mois ou une année différent (et même lorsque le modèle change depuis une source externe)",
+        "rangeStart": "Déclenché lorsque l'utilisateur a démarré une sélection de plage",
+        "rangeEnd": "Déclenché lorsque l'utilisateur a terminé une sélection de plage"
+      }
     },
     "form": {
-      "label": "Formulaire"
-    },
+      "label": "Formulaire",
+      "tooltips": {
+        "data": "Données passées au formulaire",
+        "formId": "Formulaire à afficher",
+        "Mounted": "Déclenché lorsque le formulaire a été monté. Un composant est considéré comme monté après: Tous ses composants enfants synchrones ont été montés. Sa propre arborescence DOM a été créée et insérée dans le conteneur parent",
+        "updated": "Déclenché après que le composant a mis à jour son arborescence DOM en raison d'un changement d'état réactif",
+        "unmount": "Déclenché après le démontage du composant, lorsque tous ses composants enfants ont été démontés."
+      }    },
     "icon": {
-      "label": "Icône"
+      "label": "Icône",
+      "tooltips": {
+        "icon": "Icône à afficher",
+        "left": "Aligne l'icône à gauche",
+        "right": "Aligne l'icône à droite"
+      }
     },
     "icon-select": {
-      "label": "Ceuilleur d'icône"
+      "label": "Picker d'icône",
+      "tooltips": {
+        "remove": "Déclenché lorsqu'une valeur est supprimée de la sélection multiple",
+        "add": "Déclenché lorsqu'une valeur est ajoutée à la sélection multiple"
+      }
     },
     "image": {
-      "label": "Image"
+      "label": "Image",
+      "tooltips": {
+        "src": "Chemin d'accès à l'image que vous souhaitez intégrer",
+        "srcset": "Chaîne qui identifie une ou plusieurs chaînes d'images candidates, séparées par des virgules (,), chacune spécifiant les ressources d'image à utiliser dans des circonstances données",
+        "alt": "Fournit un texte de secours (alternatif) à afficher lorsque l'image spécifiée par l'élément <img> n'est pas chargée",
+        "sizes": "Vous permet de spécifier la largeur de mise en page de l'image pour chacune d'une liste de conditions de support. Cela offre la possibilité de sélectionner automatiquement parmi différentes images (même des images d'orientations ou de formats d'image différents) à mesure que l'état du document passe à correspondre à différentes conditions médiatiques",
+        "placeholderSrc": "En attendant le chargement de votre image, vous pouvez utiliser une image de substitution",
+        "loading": "chaîne dont la valeur fournit une indication à l'agent utilisateur sur la manière de gérer le chargement de l'image qui se trouve actuellement en dehors de la fenêtre visuelle de la fenêtre",
+        "crossorigin": "Chaîne qui spécifie le paramètre CORS (Cross-Origin Resource Sharing) à utiliser lors de la récupération de l'image",
+        "decoding": "Fournit une indication au navigateur sur la façon dont il doit décoder l'image. Plus précisément, s'il doit attendre que l'image soit décodée avant de présenter d'autres mises à jour de contenu ou non",
+        "reffererpolicy": "Définit quel référent est envoyé lors de la récupération de la ressource",
+        "fetchpriority": "Fournit une indication de la priorité relative à utiliser lors de la récupération de l'image",
+        "draggable": "Ajoute l'attribut natif 'draggable'",
+        "noSpinner": "Ne pas afficher le spinner par défaut en attendant le chargement de l'image",
+        "noNativeMenu": "Désactive le menu contextuel natif de l'image",
+        "noTransition": "Désactive la transition par défaut lors du basculement entre l'ancienne et la nouvelle image",
+        "ratio": "Force le composant à conserver un rapport hauteur/largeur. Ex : '4/3', '16/9', '1'",
+        "position": "L'alignement de l'image dans le conteneur; équivalent de la propriété CSS object-position",
+        "width": "Largeur à laquelle une image est dessinée en pixels CSS si elle est dessinée ou rendue sur n'importe quel support visuel tel qu'un écran ou une imprimante. Sinon, il s'agit de la largeur naturelle de l'image, corrigée en fonction de la densité de pixels",
+        "height": "Hauteur à laquelle l'image est dessinée, en pixels CSS si l'image est dessinée ou rendue sur un support visuel tel qu'un écran ou une imprimante; sinon, il s'agit de la hauteur naturelle de l'image corrigée en termes de densité de pixels",
+        "fit": "Comment l'image s'insérera dans le conteneur; Équivalent de la propriété object-fit; Peut être coordonné avec la propriété 'position'",
+        "spinnerColor": "Nom de la couleur du spinner par défaut",
+        "spinnerSize": "Taille en unités CSS, y compris le nom de l'unité, pour le spinner par défaut",
+        "load": "Déclenché lorsque l'image a été chargée par le navigateur",
+        "error": "Déclenché lorsque le navigateur n'a pas pu charger l'image"
+      }
     },
     "input": {
-      "label": "Saisi de texte"
+      "label": "Saisi de texte",
+      "tooltips": {
+        "mask": "Saisie du masque",
+        "fillMask": "Rempli le masque",
+        "unmaskedValue": "Valeur non masquée",
+        "counter": "Affiche un compteur automatique en bas à droite",
+        "autogrow": "Agrandit automatiquement le champ avec son contenu (utilise une zone de texte)",
+        "type": "Type d'entrée",
+        "maxLength": "Spécifie une longueur maximale du modèle"
+      }
     },
     "knob": {
-      "label": "Poignée"
+      "label": "Poignée",
+      "tooltips": {
+        "angle": "Angle de rotation de l'arc de progression",
+        "reverse": "Inverse le sens de la progression",
+        "instantFeedback": "Aucune animation lors du changement de modèle",
+        "showValue": "Active l'emplacement par défaut et l'utilise (si disponible), sinon il affiche la propriété 'value' sous forme de texte; Assurez-vous que le texte dispose de suffisamment d'espace pour être affiché à l'intérieur du composant",
+        "min": "La valeur minimale à laquelle le modèle (la valeur du bouton) doit démarrer",
+        "max": "La valeur maximale à laquelle le modèle (la valeur du bouton) doit aller",
+        "innerMin": "Valeur minimale interne du modèle; À utiliser si vous avez besoin que la valeur du modèle soit comprise dans les valeurs min-max de la piste; Doit être supérieure ou égale à 'min' prop; La valeur par défaut est 'min' prop" ,
+        "innerMax": "Valeur maximale interne du modèle; À utiliser si vous avez besoin que la valeur du modèle soit à l'intérieur des valeurs min-max de la piste; Doit être inférieure ou égale à la propriété 'max'; La valeur par défaut est 'max' prop" ,
+        "step": "Un nombre représentant les étapes de la valeur du modèle, lors du réglage du bouton",
+        "fontSize": "Taille du texte en unités CSS, y compris le nom de l'unité. Suggestion: utilisez les unités 'em' pour synchroniser avec la taille du composant",
+        "centerColor": "Couleur de la partie centrale du composant",
+        "trackColor": "Couleur de la piste du composant",
+        "thickness": "Épaisseur de l'arc de progression en tant que rapport (0,0 < x < 1,0) de la taille du composant",
+        "change": "Déclenché à la fin du réglage d'un bouton et propose la valeur du modèle",
+        "dragValue": "Déclenché alors que le glissement est toujours en cours"
+      }
     },
     "label": {
-      "label": "Libelé"
+      "label": "Libelé",
+      "tooltips": {
+        "format": "Formatage de police à utiliser",
+        "heading": "Style de police de taille d'en-tête",
+        "styling": "Style de police à utiliser",
+        "casing": "Force le boîtier de l'écran",
+        "pre": "Affichage en utilisant du texte préformaté (police à espacement fixe)"
+      }
     },
     "list": {
-      "label": "Liste"
+      "label": "Liste",
+      "tooltips": {
+        "iterationVar": "Variable d'itération qui sera utilisée pour stocker la valeur de l'itération de boucle en cours",
+        "loopExpr": "Expression en boucle. Peut renvoyer une valeur numérique, un tableau ou un objet",
+        "tableId": "Table à utiliser pour l'itération. La propriété 'loopExpr' ne sera pas utilisée si une table est spécifiée",
+        "query": "Requête à utiliser sur la table pour le bouclage",
+        "horizontal": "Affiche la liste horizontalement"
+      }
     },
     "lookup-select": {
-      "label": "Sélecteur de jointures"
-    },
-    "menu": {
-      "label": "Menu"
+      "label": "Sélecteur de jointures",
+      "tooltips": {
+        "tableId": "Table dans laquelle rechercher les valeurs",
+        "query": "Requête à appliquer à la table",
+        "valueField": "Champ qui sert de valeur au modèle du composant",
+        "labelField": "Champ qui sert de valeur d'affichage dans la liste",
+        "columns": "Colonnes à afficher dans le tableau",
+        "columns_field": "Champ de la colonne",
+        "columns_size": "Taille de la colonne dans Flexbox",
+        "columns_filterable": "La colonne est-elle filtrable?",
+        "columns_class": "Classe à appliquer à l'en-tête de colonne",
+        "columns_style": "Styles à appliquer à l'en-tête de colonne",
+        "columns_title": "Titre de l'en-tête de la colonne",
+        "columns_titleClass": "Classe de titre d'en-tête de colonne",
+        "columns_titleStyle": "Style de titre d'en-tête de colonne"
+      }
     },
     "option-group": {
-      "label": "Groupe d'options"
+      "label": "Groupe d'options",
+      "tooltips": {
+        "keepColor": "La couleur (si spécifiée) doit-elle être conservée lorsque les composants d'entrée sont décochés?",
+        "type": "Le type de composant d'entrée à utiliser",
+        "leftLabel": "L'étiquette (le cas échéant) doit être affichée sur le côté gauche des composants d'entrée",
+        "inline": "Affiche les composants d'entrée sous forme de bloc en ligne plutôt que chacun ayant sa propre ligne",
+        "options": "Tableau d'objets avec des accessoires de valeur, d'étiquette et de désactivation (facultatifs)",
+        "options_label": "Étiquette d'option pour l'affichage",
+        "options_value": "Valeur de l'option à transmettre au modèle une fois sélectionnée",
+        "options_disable": "Désactive l'option"
+      }
     },
     "paragraph": {
-      "label": "Paragraphe"
+      "label": "Paragraphe",
+      "tooltips": {
+        "text": "Valeur du modèle HTML",
+        "noRouteFullscreenExit": "L'application de modification d'itinéraire ne quittera pas le mode plein écran",
+        "minHeight": "Unité CSS pour la hauteur minimale de la zone modifiable",
+        "maxHeight": "Unité CSS pour la hauteur maximale de la zone de saisie",
+        "definitions": "Définition des commandes et de leurs boutons à inclure dans la propriété 'toolbar'",
+        "definitions_commandName": "Nom de commande unique",
+        "definitions_label": "Libellé du bouton",
+        "definitions_tip": "Texte à afficher sous forme d'info-bulle au survol",
+        "definitions_icon": "Icône du bouton",
+        "definitions_key": "Code clé d'une touche à utiliser avec la touche <ctrl> à utiliser comme raccourci pour déclencher cet élément",
+        "toolbar": "Un tableau de chaînes que vous utilisez pour définir la construction des éléments et commandes disponibles dans la barre d'outils",
+        "toolbarColor": "Couleur de police des boutons et du texte dans la barre d'outils",
+        "toolbarTextColor": "Couleur du texte des commandes de la barre d'outils",
+        "toolbarToggleColor": "La couleur active du bouton des commandes de la barre d'outils",
+        "toolbarBg": "Couleur d'arrière-plan de la barre d'outils",
+        "toolbarOutline": "Les boutons de la barre d'outils sont rendus 'encadrés'",
+        "toolbarPush": "Les boutons de la barre d'outils sont rendus sous la forme d'un type 'bouton-poussoir'",
+        "toolbarRounded": "Les boutons de la barre d'outils sont rendus 'arrondis'"
+      }
     },
     "progress": {
-      "label": "Progrès"
+      "label": "Progrès",
+      "tooltips": {
+        "angle": "Angle de rotation de l'arc de progression",
+        "indeterminate": "Mettre le composant dans l'état 'indéterminé'; ignore la propriété 'valeur'",
+        "reverse": "Inverse le sens de progression; Uniquement pour un état déterminé",
+        "instantFeedback": "Aucune animation lors du changement de modèle",
+        "showValue": "Active l'emplacement par défaut et l'utilise (si disponible), sinon il affiche la propriété 'value' sous forme de texte; Assurez-vous que le texte dispose de suffisamment d'espace pour être affiché à l'intérieur du composant",
+        "min": "Valeur minimale définissant 'pas de progrès' (doit être inférieure à 'max')",
+        "max": "Valeur maximale définissant 100% de progression réalisée (doit être supérieure à 'min')",
+        "fontSize": "Taille du texte en unités CSS, y compris le nom de l'unité. Suggestion: utilisez les unités 'em' pour synchroniser avec la taille du composant",
+        "centerColor": "Nom de la couleur pour la partie centrale du composant",
+        "trackColor": "Nom de couleur pour la piste du composant",
+        "thickness": "Épaisseur de l'arc de progression en tant que rapport (0,0 < x < 1,0) de la taille du composant",
+        "animationSpeed": "Vitesse d'animation (en millisecondes, sans unité)"
+      }
     },
     "range": {
-      "label": "Sélecteur d'écarts"
+      "label": "Sélecteur d'écarts",
+      "tooltips": {
+        "min": "Valeur minimale du modèle; Définir la valeur minimale de la piste",
+        "max": "Valeur maximale du modèle; Définir la valeur maximale de la piste",
+        "innerMin": "Valeur minimale interne du modèle; À utiliser si vous avez besoin que la valeur du modèle soit comprise dans les valeurs min-max de la piste; Doit être supérieure ou égale à 'min' prop; La valeur par défaut est 'min' prop" ,
+        "innerMax": "Valeur maximale interne du modèle; À utiliser si vous avez besoin que la valeur du modèle soit à l'intérieur des valeurs min-max de la piste; Doit être inférieure ou égale à la propriété 'max'; La valeur par défaut est 'max' prop" ,
+        "step": "Spécifie le montant du pas entre les valeurs valides (> 0,0); lorsque le pas est égal à 0, il définit une granularité infinie",
+        "snap": "Accroche les valeurs valides, plutôt que de glisser librement; Suggestion: utiliser avec la propriété 'step'",
+        "labelAlways": "Toujours afficher le libellé",
+        "reverse": "Travaille en sens inverse (changer de sens)",
+        "vertical": "Affichage dans le sens vertical",
+        "markers": "Affiche les marqueurs sur la piste, un pour chaque valeur possible pour le modèle ou en utilisant une étape personnalisée (lors de la spécification d'un numéro)",
+        "markerLabels": "Affiche les étiquettes des marqueurs",
+        "dragRange": "L'utilisateur peut faire glisser la plage au lieu de seulement les deux pouces",
+        "dragOnlyRange": "L'utilisateur peut faire glisser uniquement la plage et NON les deux pouces",
+        "leftLabelValue": "Remplace l'étiquette par défaut pour la valeur minimale",
+        "rightLabelValue": "Remplace l'étiquette par défaut par la valeur maximale",
+        "switchLabelSide": "Change la position de l'étiquette (haut <-> bas ou gauche <-> droite)",
+        "switchMarkerLabelSide": "Change la position des étiquettes des marqueurs (haut <-> bas ou gauche <-> droite)",
+        "thumbSize": "Taille du pouce (y compris l'unité CSS)",
+        "trackSize": "Taille de la piste (y compris l'unité CSS)",
+        "labelTextColor": "Nom de la couleur du composant",
+        "trackColor": "Nom de couleur pour la piste (peut aussi être 'transparent')",
+        "thumbColor": "Nom de la couleur du composant de la palette de couleurs Quasar",
+        "selectionColor": "Nom de la couleur pour la barre de sélection (peut aussi être 'transparent')",
+        "leftLabelColor": "Nom de la couleur pour l'arrière-plan de l'étiquette gauche",
+        "leftLabelTextColor": "Nom de la couleur pour le texte de l'étiquette de gauche",
+        "rightLabelColor": "Nom de la couleur pour l'arrière-plan de l'étiquette de droite",
+        "rightLabelTextColor": "Nom de la couleur pour le texte de l'étiquette de droite",
+        "leftThumbColor": "Nom de la couleur du pouce gauche",
+        "rightThumbColor": "Nom de la couleur du pouce droit",
+        "change": "Déclenché lors d'un changement paresseux de la valeur du modèle (après que l'utilisateur a glissé puis relâché le pouce)",
+        "pan": "Déclenché lorsque l'utilisateur commence à effectuer un panoramique sur le composant"
+      }
     },
     "rating": {
-      "label": "Sélecteur d'évaluation"
+      "label": "Sélecteur d'évaluation",
+      "tooltips": {
+        "icon": "Nom de l'icône",
+        "iconSelected": "Nom de l'icône à utiliser lorsqu'elle est sélectionnée (facultatif)",
+        "iconHalf": "Nom de l'icône à utiliser lorsqu'elle est sélectionnée (facultatif)",
+        "max": "Nombre d'icônes à afficher",
+        "noReset": "Lorsqu'il est utilisé, désactive le comportement par défaut consistant à cliquer/appuyer sur l'icône qui représente la valeur actuelle du modèle pour réinitialiser le modèle à 0",
+        "noDimming": "Ne réduit pas l'opacité des icônes non sélectionnées",
+        "colorSelected": "Nom de la couleur des icônes sélectionnées",
+        "colorHalf": "Nom de couleur pour les icônes à moitié sélectionnées"
+      }
     },
     "row": {
-      "label": "Ligne"
+      "label": "Ligne",
+      "tooltips": {
+        "hGutter": "Utilisé lorsque les éléments que vous souhaitez éloigner horizontalement les uns des autres",
+        "vGutter": "Utilisé lorsque les éléments que vous souhaitez éloigner verticalement les uns des autres",
+        "items": "Alignement vertical des éléments",
+        "justify": "Justification horizontale des éléments"
+      }
     },
     "select": {
-      "label": "Sélecteur"
+      "label": "Sélecteur",
+      "tooltips": {
+        "tableId": "Tableau dans lequel sélectionner les valeurs",
+        "emitValue": "Mettre à jour le modèle avec la valeur de l'option sélectionnée au lieu de l'option entière",
+        "options": "Options disponibles parmi lesquelles l'utilisateur peut sélectionner. Pour de meilleures performances, gelez la liste des options",
+        "options_label": "Étiquette d'option",
+        "options_value": "Valeur de l'option",
+        "options_disable": "Désactiver l'option",
+        "optionLabel": "Propriété de l'option qui contient l'étiquette'",
+        "optionValue": "Propriété de l'option qui contient la valeur",
+        "optionDisable": "Propriété de l'option qui indique qu'elle est désactivée; La valeur de la propriétériété doit être un booléen",
+        "remove": "Déclenché lorsqu'une sélection est supprimée (en sélection multiple uniquement)",
+        "add": "Déclenché lorsqu'une sélection est ajoutée (en sélection multiple uniquement)"
+      }
     },
     "separator": {
-      "label": "Séparateur"
+      "label": "Séparateur",
+      "tooltips": {
+        "spaced": "Si défini sur 'true', les marges de direction correspondantes seront définies sur 8px; elles peuvent également être définies sur une taille en unités CSS, y compris le nom de l'unité, ou l'un des xs|sm|md|lg|xl prédéfinis tailles",
+        "inset": "Si la valeur est Boolean 'true', les marges gauche et droite seront définies sur 16 pixels. Si la valeur est 'item', elle correspondra au design d'un élément. Si la valeur est 'item-thumbnail', elle correspondra au design d'un élément avec une vignette à gauche",
+        "vertical": "Si défini sur 'true', le séparateur sera vertical"
+      }
     },
     "sidebar": {
-      "label": "Barre latérale"
+      "label": "Barre latérale",
+      "tooltips": {
+        "opened": "La barre latérale est-elle ouverte ou fermée",
+        "bordered": "Applique une bordure pour séparer visuellement la barre latérale du contenu de la page",
+        "closeable": "Autorise la fermeture de la barre latérale par l'utilisateur",
+        "closeIcon": "Spécifie une icône de bouton de fermeture personnalisée",
+        "openIcon": "Spécifie une icône de bouton d'ouverture personnalisée",
+        "menuIcon": "Spécifie une icône de bouton de menu personnalisée",
+        "openTooltip": "Info-bulle à utiliser au survol du bouton Ouvrir",
+        "closeTooltip": "Info-bulle à utiliser en survolant le bouton de fermeture"
+      }
     },
     "skeleton": {
-      "label": "Skelète"
+      "label": "Skelète",
+      "tooltips": {
+        "type": "Type d'espace réservé au squelette",
+        "animation": "L'effet d'animation de l'espace réservé du squelette",
+        "animationSpeed": "Vitesse d'animation (en millisecondes, sans unité)",
+        "width": "Largeur en unités CSS, y compris le nom de l'unité; Appliquer une largeur personnalisée; Utiliser cet accessoire ou via CSS; Remplacer par la propriété 'size' s'il est utilisé",
+        "height": "Hauteur en unités CSS, y compris le nom de l'unité; Appliquer une hauteur personnalisée; Utiliser cet accessoire ou via CSS; Remplacer par la propriété 'size' s'il est utilisé"
+      }
     },
     "slider": {
-      "label": "Glissière"
+      "label": "Glissière",
+      "tooltips": {
+        "min": "Valeur minimale du modèle; Définir la valeur minimale de la piste",
+        "max": "Valeur maximale du modèle; Définir la valeur maximale de la piste",
+        "innerMin": "Valeur minimale interne du modèle; À utiliser si vous avez besoin que la valeur du modèle soit comprise dans les valeurs min-max de la piste; Doit être supérieure ou égale à 'min' prop; La valeur par défaut est 'min' prop" ,
+        "innerMax": "Valeur maximale interne du modèle; À utiliser si vous avez besoin que la valeur du modèle soit à l'intérieur des valeurs min-max de la piste; Doit être inférieure ou égale à la propriété 'max'; La valeur par défaut est 'max' prop" ,
+        "step": "Spécifie le montant du pas entre les valeurs valides (> 0,0); lorsque le pas est égal à 0, il définit une granularité infinie",
+        "snap": "Accroche des valeurs valides, plutôt que de glisser librement; Suggestion: utiliser avec la propriété 'step'",
+        "reverse": "Travaille en sens inverse (changer de sens)",
+        "vertical": "Affichage dans le sens vertical",
+        "labelAlways": "Toujours afficher le label",
+        "switchLabelSide": "Change la position de l'étiquette (haut <-> bas ou gauche <-> droite)",
+        "switchMarkerLabelSide": "Change la position des étiquettes des marqueurs (haut <-> bas ou gauche <-> droite)",
+        "thumbSize": "Taille du pouce (y compris l'unité CSS)",
+        "trackSize": "Taille de la piste (y compris l'unité CSS)",
+        "markers": "Affiche les marqueurs sur la piste, un pour chaque valeur possible pour le modèle ou en utilisant une étape personnalisée (lors de la spécification d'un numéro)",
+        "markerLabels": "Affiche les étiquettes des marqueurs",
+        "labelTextColor": "Nom de la couleur du composant",
+        "thumbColor": "Nom de la couleur du composant",
+        "innerTrackColor": "Nom de la couleur de la piste interne (peut aussi être 'transparent')",
+        "selectionColor": "Nom de la couleur pour la barre de sélection (peut aussi être 'transparent')",
+        "change": "Déclenché lors d'un changement paresseux de la valeur du modèle (après que l'utilisateur a glissé puis relâché le pouce)",
+        "pan": "Déclenché lorsque l'utilisateur commence à effectuer un panoramique sur le composant"
+      }
     },
     "space": {
-      "label": "Espaceur"
+      "label": "Espaceur",
+      "tooltips": {
+      }
     },
     "spinner": {
-      "label": "Spinner"
+      "label": "Spinner",
+      "tooltips": {
+        "thickness": "Remplace la valeur à utiliser pour la largeur du trait"
+      }
     },
     "tab": {
-      "label": "Onglet"
+      "label": "Onglet",
+      "tooltips": {
+        "name": "Nom de l'onglet",
+        "alert": "Ajoute un symbole d'alerte à l'onglet, informant l'utilisateur qu'il y a des mises à jour; Si sa valeur n'est pas booléenne, alors vous pouvez spécifier une couleur",
+        "alertColor": "Couleur de l'icône d'alerte",
+        "alertIcon": "Ajoute une icône flottante à l'onglet, informant l'utilisateur qu'il y a des mises à jour; Elle s'affiche uniquement si 'alert' est défini; Peut utiliser la couleur spécifiée par la propriété 'alert'",
+        "badgeValue": "Valeur du badge",
+        "badgeColor": "Couleur du badge"
+      }
     },
     "table": {
-      "label": "Table"
+      "label": "Table",
+      "tooltips": {
+        "noRouteFullscreenExit": "L'application de modification d'itinéraire ne quittera pas le mode plein écran",
+        "grid": "Affiche les données sous forme de grille au lieu du tableau par défaut",
+        "gridHeader": "Affiche également l'en-tête pour le mode grille",
+        "editable": "Permet à l'utilisateur de modifier les lignes",
+        "title": "Titre du tableau",
+        "hideHeader": "Masque la couche d'en-tête du tableau",
+        "hideBottom": "Masque le calque inférieur du tableau indépendamment de ce qu'il doit afficher",
+        "hideSelectedBanner": "Masque la bannière des lignes sélectionnées (le cas échéant)",
+        "hideNoData": "Masque la couche inférieure sans données par défaut",
+        "hidePagination": "Masque les contrôles de pagination en bas",
+        "separator": "Utilise un séparateur/bordure entre les lignes, colonnes ou toutes les cellules",
+        "wrapCells": "Enroule le texte dans les cellules du tableau",
+        "noDataLabel": "Remplace le texte par défaut à afficher lorsqu'aucune donnée n'est disponible",
+        "noResultsLabel": "Remplace le texte par défaut à afficher lorsque l'utilisateur filtre le tableau et qu'aucun résultat correspondant n'est trouvé",
+        "loadingLabel": "Remplace le texte par défaut à afficher lorsque la table est en état de chargement (voir propriété 'loading')",
+        "expanded": "Conserve le tableau avec les clés de lignes étendues",
+        "filter": "Chaîne avec laquelle filtrer la table",
+        "rows": "Lignes de données à afficher",
+        "rowKey": "Propriété de chaque ligne qui définit la clé unique de chaque ligne (le résultat doit être une primitive, pas un objet, un tableau, etc.); La valeur de la propriété doit être une chaîne ou une fonction prenant une ligne et renvoyant la valeur souhaitée (imbriquée) dans la ligne; Si vous fournissez une fonction, pour de meilleures performances, référencez-la à partir de votre portée et ne la définissez pas en ligne",
+        "rowsPerPageLabel": "Texte pour remplacer les lignes par défaut par étiquette de page en bas du tableau",
+        "pagination": "Objet de pagination; Vous pouvez également utiliser le 'v-model:pagination' pour la synchronisation; Lorsqu'il n'est pas synchronisé, il initialise simplement la pagination lors du premier rendu",
+        "pagination_sortBy": "Nom de la colonne (depuis la définition de la colonne)",
+        "pagination_descending": "Le tri est-il par ordre décroissant?",
+        "pagination_page": "Numéro de page (basé sur 1)",
+        "pagination_rowsPerPage": "Combien de lignes par page? 0 signifie Infini",
+        "pagination_rowsNumber": "Pour la récupération côté serveur uniquement. Combien de lignes de base de données au total doivent être ajoutées à la table. Si défini, QTable émet une @request lorsque des données sont requises",
+        "rowsPerPageOptions": "Options que l'utilisateur peut choisir (Nombres); le chiffre 0 signifie 'Afficher toutes les lignes sur une seule page'",
+        "selectionStyle": "Type de sélection",
+        "binaryStateSort": "Ignorer le troisième état (non trié) lorsque l'utilisateur change le sens de tri des colonnes",
+        "columnSortOrder": "Définir l'ordre de tri des colonnes: 'ad' (croissant-décroissant) ou 'da' (décroissant-ascendant); il est appliqué à toutes les colonnes, sauf si une colonne a son propre ordre de tri spécifié dans la définition 'columns'" ,
+        "tableId": "Table à partir de laquelle afficher les lignes. Remplace la propriété 'rows'",
+        "query": "Requête à appliquer à la table",
+        "temps": "Affiche les enregistrements temporaires (enregistrements en cours de création mais pas encore sauvegardés)",
+        "hideFilter": "Masque la saisie du texte du filtre dans l'en-tête",
+        "addButton": "Affiche un bouton permettant d'ajouter une nouvelle ligne",
+        "addLabel": "Étiquette à afficher sur le bouton d'ajout",
+        "addIcon": "Icône à afficher dans le bouton Ajouter",
+        "addDisable": "L'ajout d'une ligne est-il désactivé?",
+        "removeButton": "Affiche une action de suppression sur chaque ligne",
+        "removeLabel": "Étiquette à afficher lors de l'action de suppression",
+        "removeIcon": "Icône pour l'action de suppression",
+        "removeDisable": "L'action de suppression est-elle désactivée?",
+        "saveLabel": "Enregistre l'étiquette du bouton d'édition",
+        "saveIcon": "Enregistre l'icône du bouton d'édition",
+        "cancelLabel": "Annule l'édition du libellé du bouton",
+        "cancelIcon": "Icône du bouton Annuler l'édition",
+        "extraFields": "",
+        "extraFields_fieldname": "",
+        "extraFields_value": "",
+        "extraFields_filter": "",
+        "extraFields_create": "",
+        "rowClick": "Déclenché lorsqu'un clic sur une ligne",
+        "rowDblClick": "Déclenché lorsqu'une ligne est double-cliquée",
+        "rowContextMenu": "Déclenché lorsque l'utilisateur clique avec le bouton droit/appuie longuement sur une ligne",
+        "selection": "Déclenché lorsque l'utilisateur sélectionne/désélectionne une ou plusieurs lignes",
+        "actions": "Liste des actions à afficher dans le menu déroulant à droite de chaque ligne",
+        "actions_label": "Libellé de l'action",
+        "actions_icon": "Icône de l'action",
+        "actions_color": "Couleur de l'icône d'action",
+        "actions_click": "Déclenché lorsque l'action est cliquée par l'utilisateur"
+      }
     },
     "table-column": {
-      "label": "Colonne de Table"
-    },
-    "table-field": {
-      "label": "Champ de Table"
+      "label": "Colonne de Table",
+      "tooltips": {
+        "label": "Libellé à afficher comme en-tête de colonne",
+        "field": "Champ avec lequel afficher les lignes",
+        "required": "Le champ est-il obligatoire lors de l'édition?",
+        "align": "Aligne les lignes des colonnes",
+        "sortable": "La colonne est-elle triable?",
+        "sortOrder": "Ordre de tri des colonnes",
+        "type": "Type de champ",
+        "slider": "Modifier la valeur sous forme de curseur",
+        "format": "Formatage pour les types 'chaîne'",
+        "min": "Valeur minimale du modèle; Définir la valeur minimale de la piste",
+        "max": "Valeur maximale du modèle; Définir la valeur maximale de la piste",
+        "step": "Spécifiez le montant du pas entre les valeurs valides (> 0,0); lorsque le pas est égal à 0, il définit une granularité infinie",
+        "multipleOf": "",
+        "exclusiveMin": "Valeur exclusive maximale autorisée",
+        "exclusiveMax": "Valeur exclusive maximale autorisée",
+        "dateMin": "Date minimum autorisée pour la sélection",
+        "dateExclusiveMin": "Exclusivité minimale autorisée pour la sélection",
+        "dateMax": "Date maximale autorisée pour la sélection",
+        "dateExclusiveMax": "Exclusivité maximale autorisée pour la sélection",
+        "pattern": "",
+        "options": "Options à sélectionner lors de l'édition",
+        "options_label": "Étiquette d'option",
+        "options_value": "Valeur de l'option",
+        "multiple": "Autoriser la sélection multiple; utiliser avec la propriété 'options'",
+        "toggles": "",
+        "chip": "Afficher la valeur sous forme de puce",
+        "rating": "Afficher la valeur sous forme d'icônes de notation; pour les types 'nombre'",
+        "ratingIcon": "Icône de note",
+        "ratingIconFilled": "Icône de note remplie",
+        "ratingIconHalf": "Icône de note à moitié remplie",
+        "service": "Table pour le type 'recherche'",
+        "query": "Requête à appliquer à la table",
+        "columns": "Colonnes de recherche à afficher",
+        "valueField": "Champ de valeur de recherche",
+        "labelField": "Champ d'étiquette de recherche"
+      }
     },
     "tabs": {
-      "label": "Onglets"
+      "label": "Onglets",
+      "tooltips": {
+        "currentTab": "Nom de l'onglet actuellement sélectionné",
+        "breakpoint": "Point d'arrêt (en pixels) de la largeur du conteneur d'onglets auquel les onglets se tournent automatiquement vers un alignement justifié",
+        "vertical": "Utiliser un design vertical (onglets les uns sur les autres plutôt que les uns à côté des autres horizontalement)",
+        "shrink": "Par défaut, les onglets sont configurés pour s'agrandir jusqu'à l'espace disponible; Cependant, vous pouvez inverser cela avec cet accessoire; Utile (et obligatoire) lorsque vous placez le composant dans une barre d'outils",
+        "outsideArrows": "Réserver de l'espace pour les flèches pour les placer de chaque côté des onglets (les flèches s'estompent lorsqu'elles sont inactives)",
+        "mobileArrows": "Forcer l'affichage des flèches (si besoin) sur mobile",
+        "switchIndicator": "Change la position de l'indicateur (à gauche de l'onglet pour le mode vertical ou au-dessus de l'onglet pour le mode horizontal par défaut)",
+        "narrowIndicator": "Permet à l'indicateur d'avoir la même largeur que le contenu de l'onglet (texte ou icône), au lieu de toute la largeur de l'onglet",
+        "inlineLabel": "Permet au texte d'être intégré à l'icône, si l'on en utilise une",
+        "align": "Alignement horizontal des onglets dans le conteneur d'onglets",
+        "leftIcon": "Le nom d'une icône pour remplacer la flèche par défaut utilisée pour faire défiler les onglets vers la gauche, lorsque les onglets dépassent la largeur du conteneur d'onglets",
+        "rightIcon": "Le nom d'une icône pour remplacer la flèche par défaut utilisée pour faire défiler les onglets vers la droite, lorsque les onglets dépassent la largeur du conteneur d'onglets",
+        "activeColor": "La couleur à attribuer au texte de l'onglet actif",
+        "activeBgColor": "La couleur à attribuer au fond de l'onglet actif"
+      }
     },
     "tags-select": {
-      "label": "Ceuilleur de mots clés "
+      "label": "Picker de mots clés",
+      "tooltips": {
+        "tableId": "Table dans laquelle rechercher les valeurs",
+        "remove": "Déclenché lorsqu'une sélection est supprimée (en sélection multiple uniquement)",
+        "add": "Déclenché lorsqu'une sélection est ajoutée (en sélection multiple uniquement)",
+        "newValue": "Déclenché lorsqu'une nouvelle valeur est ajoutée à la liste des balises"
+      }
     },
     "time": {
-      "label": "Ceuilleur d'heure"
+      "label": "Picker d'heure",
+      "tooltips": {
+        "withSeconds": "Autoriser le réglage de l'heure en secondes",
+        "nowBtn": "Afficher un bouton qui sélectionne l'heure actuelle",
+        "mask": "Masque (chaîne de formatage) utilisé pour l'analyse et le formatage de la valeur",
+        "calendar": "Spécifier le type de calendrier"
+      }
     },
     "toggle": {
-      "label": "Basculateur"
+      "label": "Basculateur",
+      "tooltips": {
+        "toggled": "Valeur du mode",
+        "leftLabel": "L'étiquette (le cas échéant) doit être affichée sur le côté gauche du composant",
+        "iconColor": "Remplacer la couleur de l'icône par défaut (pour l'état de vérité uniquement)",
+        "keepColor": "La couleur (si spécifiée) doit-elle être conservée lorsque le composant est décoché/désactivé?"
+      }
     },
     "toolbar": {
-      "label": "Barre d'outils"
+      "label": "Barre d'outils",
+      "tooltips": {
+      }
     },
     "value-box": {
-      "label": "Boîte Valeur"
+      "label": "Boîte Valeur",
+      "tooltips": {
+        "value": "Valeur principale",
+        "valueColor": "Couleur de la valeur principale",
+        "valueFormat": "Formatage de l'affichage de la valeur principale",
+        "valueStyle": "Style de police de la valeur principale",
+        "valueDigits": "Combien de chiffres afficher (0-20)",
+        "valueCurrency": "Formate la valeur principale en devise",
+        "valueCurrencyNarrow": "Utilise un symbole au format étroit ('100$' plutôt que '100US$')",
+        "label": "Étiquette principale",
+        "labelColor": "Couleur principale de l'étiquette",
+        "labelStyle": "Style de l'étiquette principale",
+        "icon": "Icône",
+        "iconColor": "Couleur de l'icône",
+        "tag": "Valeur de la balise",
+        "tagColor": "Couleur de la valeur du tag",
+        "tagStyle": "Style de la valeur de la balise",
+        "diff": "Valeur différentielle",
+        "diffFormat": "Formatage des valeurs différentielles",
+        "diffDigits": "Combien de chiffres afficher la valeur différentielle avec (0-20)",
+        "diffCurrency": "Formate la valeur différentielle en devise",
+        "diffCurrencyNarrow": "Utilise un symbole au format étroit ('100$' plutôt que '100US$')",
+        "diffColor": "Couleur de la valeur différentielle",
+        "diffStyle": "Style des valeurs différentielles",
+        "diffIcon": "Icône différentiel pour afficher l'augmentation ou la diminution",
+        "diffIconColor": "Couleur de l'icône de valeur différentielle",
+        "diffIconSize": "Taille de l'icône de valeur différentielle",
+        "diffIconSuffix": "Affiche l'icône de valeur différentielle comme suffixe (côté droit ou valeur)"
+      }
     },
     "stat-box": {
-      "label": "Boîte Stat Table"
+      "label": "Boîte Stat Table",
+      "tooltips": {
+        "type": "Type de statistiques à exécuter pour obtenir la valeur principale",
+        "tableId": "Table sur laquelle exécuter l'agrégation",
+        "field": "Champ sur lequel agréger",
+        "groupFields": "Liste des champs pour regrouper les résultats avant agrégation",
+        "filter": "Requête à appliquer à la table lors de l'agrégation",
+        "valueColor": "Couleur de la valeur principale",
+        "valueFormat": "Formatage de l'affichage de la valeur principale",
+        "valueStyle": "Style de police de la valeur principale",
+        "valueDigits": "Combien de chiffres afficher (0-20)",
+        "valueCurrency": "Formate la valeur principale en devise",
+        "valueCurrencyNarrow": "Utilise un symbole au format étroit ('100$' plutôt que '100US$')",
+        "label": "Étiquette principale",
+        "labelColor": "Couleur principale de l'étiquette",
+        "labelStyle": "Style de l'étiquette principale",
+        "icon": "Icône",
+        "iconColor": "Couleur de l'icône",
+        "tag": "Valeur de la balise",
+        "tagColor": "Couleur de la valeur du tag",
+        "tagStyle": "Style de la valeur de la balise",
+        "diff": "Valeur différentielle",
+        "diffFormat": "Formatage des valeurs différentielles",
+        "diffDigits": "Combien de chiffres afficher la valeur différentielle avec (0-20)",
+        "diffCurrency": "Formate la valeur différentielle en devise",
+        "diffCurrencyNarrow": "Utilise un symbole au format étroit ('100$' plutôt que '100US$')",
+        "diffColor": "Couleur de la valeur différentielle",
+        "diffStyle": "Style des valeurs différentielles",
+        "diffIcon": "Icône différentiel pour afficher l'augmentation ou la diminution",
+        "diffIconColor": "Couleur de l'icône de valeur différentielle",
+        "diffIconSize": "Taille de l'icône de valeur différentielle",
+        "diffIconSuffix": "Affiche l'icône de valeur différentielle comme suffixe (côté droit ou valeur)"
+      }
     },
     "video": {
-      "label": "Vidéo"
+      "label": "Vidéo",
+      "tooltips": {
+        "title": "(Accessibilité) Définit la valeur de l'attribut natif 'title' de l'iframe interne utilisé",
+        "ratio": "Rapport d'aspect du contenu; évitez d'utiliser une instruction informatique (comme '16/9') et spécifiez plutôt directement la valeur du résultat (par exemple '1,7777')",
+        "fetchpriority": "Fournit une indication de la priorité relative à utiliser lors de la récupération du document iframe",
+        "reffererpolicy": "Indique quel référent envoyer lors de la récupération de la ressource de la trame"
+      }
+    },
+    "user-table": {
+      "label": "Table",
+      "tooltips": {
+        "name": "Nom de la table",
+        "methods": "Méthodes supportées par la table",
+        "created": "Ajoute les champs 'created_at' et 'created_by' pour suivre le propriétaire de l'enregistrement et l'heure de création",
+        "updated": "Ajoute les champs 'update_at' et 'updated_by' pour savoir qui a modifié l'enregistrement et à quelle heure",
+        "softDelete": "Utilise la suppression logicielle de l'enregistrement au lieu de la suppression matérielle sur la table",
+        "user": "Limite les enregistrements à leur créateur",
+        "indexes": "Index de champs",
+        "indexes_name": "Nom de l'index",
+        "indexes_unique": "Restriction des enregistrements à dupliquer",
+        "indexes_sparse": "Contient uniquement les entrées des documents qui ont le champ indexé, même si le champ index contient une valeur nulle",
+        "indexes_fields_field": "Champ à indexer",
+        "indexes_fields_descending": "Ordre d'index décroissant"
+      }
+    },
+    "user-table-field": {
+      "label": "Champ de Table",
+      "tooltips": {
+        "type": "Type de champ",
+        "hidden": "Le champ ne sera pas généré automatiquement dans les formulaires",
+        "array": "Ce champ est un tableau de valeurs 'type'",
+        "optional": "Ce champ est considéré comme facultatif",
+        "readonly": "Ce champ n'est utilisé qu'à des fins d'affichage, il ne peut pas être modifié",
+        "queryable": "Ce champ est interrogeable dans les filtres et requêtes",
+        "secret": "Ce champ ne sera pas renvoyé par le serveur. Il n'est visible que lors de la création d'un enregistrement",
+        "transforms": "Applique une ou plusieurs transformations à la valeur du champ côté serveur",
+        "transforms_type": "Type de transformation à appliquer à la valeur du champ",
+        "transforms_value": "Valeur de transformation facultative",
+        "slider": "Modifie la valeur sous forme de curseur",
+        "format": "Formatage pour les types 'chaîne'",
+        "min": "Valeur minimale du modèle; Définir la valeur minimale de la piste",
+        "max": "Valeur maximale du modèle; Définir la valeur maximale de la piste",
+        "step": "Spécifie le montant du pas entre les valeurs valides (> 0,0); lorsque le pas est égal à 0, il définit une granularité infinie",
+        "multipleOf": "",
+        "exclusiveMin": "Valeur exclusive maximale autorisée",
+        "exclusiveMax": "Valeur exclusive maximale autorisée",
+        "dateMin": "Date minimum autorisée pour la sélection",
+        "dateExclusiveMin": "Exclusivité minimale autorisée pour la sélection",
+        "dateMax": "Date maximale autorisée pour la sélection",
+        "dateExclusiveMax": "Exclusivité maximale autorisée pour la sélection",
+        "pattern": "",
+        "options": "Options à sélectionner lors de l'édition",
+        "options_label": "Étiquette d'option",
+        "options_value": "Valeur de l'option",
+        "options_disable": "L'option est désactivée",
+        "multiple": "Autorise la sélection multiple; utiliser avec la propriété 'options'",
+        "toogles": "",
+        "chip": "Affiche la valeur sous forme de puce",
+        "rating": "Affiche la valeur sous forme d'icônes de notation; pour les types 'nombre'",
+        "ratingIcon": "Icône de note",
+        "ratingIconFilled": "Icône de note remplie",
+        "ratingIconHalf": "Icône de note à moitié remplie",
+        "service": "Table pour le type 'recherche'",
+        "query": "Requête à appliquer à la table",
+        "columns": "Colonnes de recherche à afficher",
+        "valueField": "Champ de valeur de recherche",
+        "labelField": "Champ d'étiquette de recherche",
+        "refTableId": "Table de référence de liens croisés pour ce champ",
+        "refFields": "Champs à sélectionner dans la table référencée pour constituer le champ virtuel référencé"
+      }
+    },
+    "user-menu": {
+      "label": "Menu",
+      "tooltips": {
+        "label": "Étiquette du menu",
+        "description": "Infobulle à afficher sous le menu au survol de la souris",
+        "icon": "Icône à afficher sur le menu",
+        "color": "Couleur du texte du menu",
+        "href": "Lien natif vers lequel naviguer lorsque l'on clique sur le menu",
+        "target": "Attribut de cible de lien natif; Utilisez-le uniquement avec la propriété 'href'",
+        "variables": "Liste des variables étendues à ce menu",
+        "variables_value": "Valeur de la variable"
+      }
+    },
+    "user-form": {
+      "label": "Formulaire",
+      "tooltips": {
+        "data": "Données utilisateur appartenant au formulaire",
+        "grid": "Affiche les données sous forme de grille au lieu du tableau par défaut",
+        "gridHeader": "Affiche également l'en-tête pour le mode grille",
+        "editable": "Permet à l'utilisateur de modifier les lignes",
+        "title": "Titre du tableau",
+        "hideHeader": "Masque la couche d'en-tête du tableau",
+        "hideBottom": "Masque le calque inférieur du tableau indépendamment de ce qu'il doit afficher",
+        "hideSelectedBanner": "Masque la bannière des lignes sélectionnées (le cas échéant)",
+        "hideNoData": "Masque la couche inférieure sans données par défaut",
+        "hidePagination": "Masque les contrôles de pagination en bas",
+        "separator": "Utilise un séparateur/bordure entre les lignes, colonnes ou toutes les cellules",
+        "wrapCells": "Enroule le texte dans les cellules du tableau",
+        "noDataLabel": "Remplace le texte par défaut à afficher lorsqu'aucune donnée n'est disponible",
+        "noResultsLabel": "Remplace le texte par défaut à afficher lorsque l'utilisateur filtre le tableau et qu'aucun résultat correspondant n'est trouvé",
+        "loadingLabel": "Remplace le texte par défaut à afficher lorsque la table est en état de chargement (voir propriété 'loading')",
+        "expanded": "Conserve le tableau avec les clés de lignes étendues",
+        "filter": "Chaîne avec laquelle filtrer la table",
+        "rows": "Lignes de données à afficher",
+        "rowKey": "Propriété de chaque ligne qui définit la clé unique de chaque ligne (le résultat doit être une primitive, pas un objet, un tableau, etc.); La valeur de la propriété doit être une chaîne ou une fonction prenant une ligne et renvoyant la valeur souhaitée (imbriquée) dans la ligne; Si vous fournissez une fonction, pour de meilleures performances, référencez-la à partir de votre portée et ne la définissez pas en ligne",
+        "rowsPerPageLabel": "Texte pour remplacer les lignes par défaut par étiquette de page en bas du tableau",
+        "pagination": "Objet de pagination; Vous pouvez également utiliser le 'v-model:pagination' pour la synchronisation; Lorsqu'il n'est pas synchronisé, il initialise simplement la pagination lors du premier rendu",
+        "pagination_sortBy": "Nom de la colonne (depuis la définition de la colonne)",
+        "pagination_descending": "Le tri est-il par ordre décroissant?",
+        "pagination_page": "Numéro de page (basé sur 1)",
+        "pagination_rowsPerPage": "Combien de lignes par page? 0 signifie Infini",
+        "pagination_rowsNumber": "Pour la récupération côté serveur uniquement. Combien de lignes de base de données au total doivent être ajoutées à la table. Si défini, QTable émet une @request lorsque des données sont requises",
+        "rowsPerPageOptions": "Options que l'utilisateur peut choisir (Nombres); le chiffre 0 signifie 'Afficher toutes les lignes sur une seule page'",
+        "selectionStyle": "Type de sélection",
+        "binaryStateSort": "Ignore le troisième état (non trié) lorsque l'utilisateur change le sens de tri des colonnes",
+        "columnSortOrder": "Définit l'ordre de tri des colonnes: 'ad' (croissant-décroissant) ou 'da' (décroissant-ascendant); il est appliqué à toutes les colonnes, sauf si une colonne a son propre ordre de tri spécifié dans la définition 'columns'" ,
+        "tableId": "Table à partir de laquelle afficher les lignes. Remplace la propriété 'rows'",
+        "query": "Requête à appliquer à la table",
+        "temps": "Affiche les enregistrements temporaires (enregistrements en cours de création mais pas encore sauvegardés)",
+        "hideFilter": "Masque la saisie du texte du filtre dans l'en-tête du tableau",
+        "addButton": "Affiche un bouton permettant d'ajouter une nouvelle ligne",
+        "addLabel": "Étiquette à afficher sur le bouton d'ajout",
+        "addIcon": "Icône à afficher dans le bouton Ajouter",
+        "addDisable": "L'ajout d'une ligne est-il désactivé?",
+        "removeButton": "Affiche une action de suppression sur chaque ligne",
+        "removeLabel": "Étiquette à afficher lors de l'action de suppression",
+        "removeIcon": "Icône pour l'action de suppression",
+        "removeDisable": "L'action de suppression est-elle désactivée?",
+        "saveLabel": "Enregistre l'étiquette du bouton d'édition",
+        "saveIcon": "Enregistre l'icône du bouton d'édition",
+        "cancelLabel": "Annule l'édition du libellé du bouton",
+        "cancelIcon": "Icône du bouton Annuler l'édition",
+        "extraFields": "",
+        "extraFields_fieldname": "",
+        "extraFields_value": "",
+        "extraFields_filter": "",
+        "extraFields_create": "",
+        "rowClick": "Déclenché lorsqu'un clic sur une ligne",
+        "rowDblClick": "Déclenché lorsqu'une ligne est double-cliquée",
+        "rowContextMenu": "Déclenché lorsque l'utilisateur clique avec le bouton droit/appuie longuement sur une ligne",
+        "selection": "Déclenché lorsque l'utilisateur sélectionne/désélectionne une ou plusieurs lignes",
+        "actions": "Liste des actions à afficher dans le menu déroulant à droite de chaque ligne",
+        "actions_label": "Libellé de l'action",
+        "actions_icon": "Icône de l'action",
+        "actions_color": "Couleur de l'icône d'action",
+        "actions_click": "Déclenché lorsque l'action est cliquée par l'utilisateur",
+        "hideTable": "Masque le tableau principal qui apparaît à gauche du formulaire",
+        "Mounted": "Déclenché lorsque le formulaire a été monté. Un composant est considéré comme monté après : Tous ses composants enfants synchrones ont été montés. Sa propre arborescence DOM a été créée et insérée dans le conteneur parent",
+        "updated": "Déclenché après que le composant a mis à jour son arborescence DOM en raison d'un changement d'état réactif",
+        "unmount": "Déclenché après le démontage du composant, lorsque tous ses composants enfants ont été démontés.",
+        "tableCreate": "Déclenché lorsqu'un nouvel enregistrement est ajouté à la table principale",
+        "tablePatch": "Déclenché lorsqu'un enregistrement est modifié dans la table principale",
+        "tableRemove": "Déclenché lorsqu'un enregistrement est supprimé de la table principale"
+      }
+    },
+    "user-tab": {
+      "label": "Onglet",
+      "tooltips": {
+        "label": "Étiquette de l'onglet",
+        "description": "Info-bulle à afficher sous l'onglet au survol de la souris",
+        "icon": "Icône à afficher sur l'onglet",
+        "color": "Couleur du texte de l'onglet",
+        "formId": "Formulaire à afficher lorsque cela ",
+        "badgeTableId": "Table sur laquelle exécuter l'agrégation",
+        "badgeFilter": "Requête à appliquer à la table lors de l'agrégation",
+        "badgeField": "Champ à agréger",
+        "badgeGroupFields": "Liste des champs pour l'agrégation de regroupement ",
+        "badgeStat": "Type de statistiques à exécuter"
+      }
     },
     "separators": {
       "display": "Affichage",

@@ -40,6 +40,10 @@
     <template v-for="(_, name) in $slots" #[name]="slotData">
       <slot :name="name" v-bind="slotData" />
     </template>
+
+    <q-tooltip v-if="tooltip" :delay="500">
+      {{ tooltip }}
+    </q-tooltip>
   </q-select>
 </template>
 
@@ -56,6 +60,7 @@ const props = defineProps<{
   query?: AnyData
   createNew?: boolean
   createLabel?: string
+  tooltip?: string
 }>()
 
 const emit = defineEmits<{

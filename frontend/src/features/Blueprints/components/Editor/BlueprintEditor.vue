@@ -269,9 +269,10 @@ const serializeNames = (names: (string | PropName)[]): PropName[] => (
       name: n.name,
       icon: n.icon,
       color: n.color,
+      tooltip: n.tooltip,
       sectionColor: n.sectionColor,
       children: n.children || [],
-    }
+    } as PropName
   })
 )
 

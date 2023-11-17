@@ -28,6 +28,7 @@
         <q-item-section>
           <q-item-label>
             {{ (opt as string).replace(/^mdi-/, '') }}
+            {{ tooltip }}
           </q-item-label>
         </q-item-section>
       </q-item>
@@ -48,6 +49,10 @@
     <template v-for="(_, name) in $slots" #[name]="slotData">
       <slot :name="name" v-bind="slotData" />
     </template>
+
+    <q-tooltip v-if="tooltip" :delay="500">
+      {{ tooltip }}
+    </q-tooltip>
   </q-select>
 </template>
 
@@ -61,6 +66,7 @@ const props = defineProps<{
   modelValue: any
   // don't display the icon label in result
   noLabel?: boolean
+  tooltip?: string
 }>()
 
 const emit = defineEmits<{

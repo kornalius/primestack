@@ -89,6 +89,10 @@
         </q-popup-edit>
       </q-btn>
     </template>
+
+    <q-tooltip :delay="500">
+      {{ tooltip || label }}
+    </q-tooltip>
   </q-input>
 
   <!-- Action -->
@@ -121,6 +125,10 @@
       round
       @click.stop="clearAction"
     />
+
+    <q-tooltip :delay="500">
+      {{ tooltip || label }}
+    </q-tooltip>
   </div>
 
   <!-- Boolean -->
@@ -135,7 +143,7 @@
     dense
   >
     <q-tooltip :delay="500">
-      {{ label }}
+      {{ tooltip || label }}
     </q-tooltip>
   </q-checkbox>
 
@@ -154,7 +162,11 @@
     :color="schema.color"
     label
     dense
-  />
+  >
+    <q-tooltip :delay="500">
+      {{ tooltip || label }}
+    </q-tooltip>
+  </q-slider>
 
   <!-- Numeric rating -->
 
@@ -165,7 +177,11 @@
     :disable="disabled"
     :color="schema.color"
     size="sm"
-  />
+  >
+    <q-tooltip :delay="500">
+      {{ tooltip || label }}
+    </q-tooltip>
+  </q-rating>
 
   <!-- Number -->
 
@@ -181,7 +197,11 @@
     type="number"
     dense
     @keydown="editor.preventSystemUndoRedo"
-  />
+  >
+    <q-tooltip :delay="500">
+      {{ tooltip || label }}
+    </q-tooltip>
+  </q-input>
 
   <!-- Date -->
 
@@ -191,6 +211,7 @@
     :label="embedLabel ? label : undefined"
     :outlined="property"
     :disable="disabled"
+    :tooltip="tooltip"
     hide-bottom-space
     dense
     clearable
@@ -205,6 +226,7 @@
     :label="embedLabel ? label : undefined"
     :outlined="property"
     :disable="disabled"
+    :tooltip="tooltip"
     hide-bottom-space
     dense
     clearable
@@ -231,7 +253,11 @@
     map-options
     options-dense
     @keydown="editor.preventSystemUndoRedo"
-  />
+  >
+    <q-tooltip :delay="500">
+      {{ tooltip || label }}
+    </q-tooltip>
+  </q-select>
 
   <!-- Select -->
 
@@ -251,7 +277,11 @@
     map-options
     options-dense
     @keydown="editor.preventSystemUndoRedo"
-  />
+  >
+    <q-tooltip :delay="500">
+      {{ tooltip || label }}
+    </q-tooltip>
+  </q-select>
 
   <!-- Multiple Toggles -->
 
@@ -263,6 +293,7 @@
     :clearable="clearableToggle"
     :disable="disabled"
     :toggle-color="schema.color"
+    :tooltip="tooltip"
     stretch
     unelevated
     dense
@@ -281,7 +312,11 @@
     stretch
     unelevated
     dense
-  />
+  >
+    <q-tooltip :delay="500">
+      {{ tooltip || label }}
+    </q-tooltip>
+  </q-btn-toggle>
 
   <!-- Icon -->
 
@@ -291,6 +326,7 @@
     :label="embedLabel ? label : undefined"
     :outlined="property"
     :disable="disabled"
+    :tooltip="tooltip"
     dense
     options-dense
     clearable
@@ -306,6 +342,7 @@
     :outlined="property"
     :disable="disabled"
     :quasar-palette="schema.quasarPalette"
+    :tooltip="tooltip"
     dense
     clearable
     @keydown="editor.preventSystemUndoRedo"
@@ -318,6 +355,7 @@
     v-model="value"
     :outlined="property"
     :disable="disabled"
+    :tooltip="tooltip"
     dense
     clearable
     options-dense
@@ -333,6 +371,7 @@
     v-model="value"
     :outlined="property"
     :disable="disabled"
+    :tooltip="tooltip"
     dense
     clearable
     options-dense
@@ -346,6 +385,7 @@
     v-model="value"
     :outlined="property"
     :disable="disabled"
+    :tooltip="tooltip"
     dense
     clearable
     options-dense
@@ -402,6 +442,10 @@
         </span>
       </q-item>
     </template>
+
+    <q-tooltip :delay="500">
+      {{ tooltip || label }}
+    </q-tooltip>
   </q-select>
 
   <!-- Table field -->
@@ -409,9 +453,11 @@
   <field-select
     v-else-if="type === 'field'"
     v-model="value"
+    :label="embedLabel ? label : undefined"
     :fields="fields"
     :outlined="property"
     :disable="disabled"
+    :tooltip="tooltip"
     option-value="name"
     dense
     clearable
@@ -430,6 +476,7 @@
     :query="schema.query"
     :outlined="property"
     :disable="disabled"
+    :tooltip="tooltip"
     dense
     clearable
     options-dense
@@ -572,6 +619,8 @@
     :show-name="objectSchema.showName"
     :renameable="objectSchema.renameable"
     :track-expanded="trackExpanded"
+    :component-type="componentType"
+    :component-path="componentPath"
     embed-label
     flat
   />
@@ -609,6 +658,8 @@
         :show-name="objectSchema.showName"
         :renameable="objectSchema.renameable"
         :track-expanded="trackExpanded"
+        :component-type="componentType"
+        :component-path="componentPath"
         embed-label
         flat
       />
@@ -620,12 +671,13 @@
   <array-editor
     v-else-if="type === 'array' && Array.isArray(value) && property"
     v-model="value"
+    class="q-ma-xs"
     add-button="end"
     :add-function="() => addItem()"
     :remove-function="(v: unknown, idx: number) => removeItem(idx)"
     :no-separator="!arraySchemaIsObject"
     :disable="disabled"
-    reorderable
+    :reorderable="!schema.fixed"
   >
     <template #default="{ index }">
       <properties-editor
@@ -642,6 +694,8 @@
         :show-name="dynamicArraySchema(schema, value[index]).showName"
         :renameable="dynamicArraySchema(schema, value[index]).renameable"
         :track-expanded="trackExpanded"
+        :component-type="componentType"
+        :component-path="componentPath"
         embed-label
         flat
       />
@@ -657,6 +711,8 @@
         :required="arraySchema.required"
         :include-form-data-fields="includeFormDataFields"
         :track-expanded="trackExpanded"
+        :component-type="componentType"
+        :component-path="componentPath"
         embed-label
       />
     </template>
@@ -691,7 +747,7 @@
         :add-function="() => addItem()"
         :remove-function="(v: unknown, idx: number) => removeItem(idx)"
         :no-separator="!arraySchemaIsObject"
-        reorderable
+        :reorderable="!schema.fixed"
       >
         <template #default="{ index }">
           <properties-editor
@@ -708,6 +764,8 @@
             :show-name="dynamicArraySchema(schema, scope.value[index]).showName"
             :renameable="dynamicArraySchema(schema, scope.value[index]).renameable"
             :track-expanded="trackExpanded"
+            :component-type="componentType"
+            :component-path="componentPath"
             embed-label
             flat
           />
@@ -723,6 +781,8 @@
             :required="arraySchema.required"
             :include-form-data-fields="includeFormDataFields"
             :track-expanded="trackExpanded"
+            :component-type="componentType"
+            :component-path="componentPath"
             embed-label
           />
         </template>
@@ -815,6 +875,10 @@ const props = defineProps<{
   modelValue: unknown
   // root value (selected item)
   root?: unknown
+  // component type
+  componentType?: string
+  // path for tooltip generation in PropertiesEditor
+  componentPath?: string[]
   // is the property disabled or not?
   disable?: boolean
   // parent component values
@@ -827,6 +891,8 @@ const props = defineProps<{
   required?: boolean
   // label
   label?: string
+  // tooltip
+  tooltip?: string
   // embed the label inside the input
   embedLabel?: boolean
   // property name in the model for the property being edited

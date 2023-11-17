@@ -4,6 +4,7 @@
     v-bind="$attrs"
     :options="options"
     :columns="columns"
+    :tooltip="tooltip"
     :value-field="valueField"
     :label-field="labelField"
   >
@@ -28,6 +29,7 @@ const props = defineProps<{
   valueField?: string
   labelField?: string
   columns: Column[]
+  tooltip?: string
 }>()
 
 const emit = defineEmits<{

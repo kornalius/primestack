@@ -46,11 +46,11 @@
         size="sm"
       />
 
-      <q-tooltip :delay="500">
-        {{ label }}
-      </q-tooltip>
-
       {{ label }}:
+
+      <q-tooltip :delay="500">
+        {{ tooltip || label }}
+      </q-tooltip>
     </span>
   </div>
 </template>
@@ -70,6 +70,8 @@ defineProps<{
   multipleTypes?: string[]
   // is the label part of a section
   section?: boolean
+  // tooltip
+  tooltip?: string
 }>()
 
 defineEmits<{

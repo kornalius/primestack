@@ -25,6 +25,7 @@
       :schema="selectedAction.schema"
       :categories="selectedAction.categories"
       :title="$t('actions.title')"
+      component-type="action"
       icon="mdi-flash"
       track-expanded
     />
@@ -40,6 +41,7 @@
       :schema="selectedFormColumnSchema"
       :categories="selectedFormColumnSchema.categories"
       :disabled-properties="disabledFormTableColumnProperties"
+      component-type="form-table-column"
       icon="mdi-table-column"
       show-name
       renameable
@@ -56,6 +58,7 @@
       :prop-name="''"
       :schema="selectedComponent.schema"
       :categories="selectedComponent.categories"
+      :component-type="selectedComponent.type"
       :icon="selectedComponent.icon as string"
       include-form-data-fields
       show-name
@@ -85,6 +88,7 @@
       :schema="selectedTableSchema"
       :categories="selectedTableSchema.categories"
       :disabled-properties="disabledTableProperties"
+      component-type="user-table"
       icon="mdi-table"
       show-name
       renameable
@@ -102,6 +106,7 @@
       :schema="selectedSchemaFieldSchema"
       :categories="selectedSchemaFieldSchema.categories"
       :disabled-properties="disabledTableFieldProperties"
+      component-type="user-table-field"
       icon="mdi-table"
       show-name
       renameable
@@ -118,7 +123,8 @@
         :prop-name="''"
         :schema="selectedMenuSchema"
         :categories="selectedMenuSchema.categories"
-        :title="$t('components.menu.label')"
+        :title="$t('components.user-menu.label')"
+        component-type="user-menu"
         icon="mdi-menu"
         track-expanded
       />
@@ -132,7 +138,8 @@
         :prop-name="''"
         :schema="selectedTabSchema"
         :categories="selectedTabSchema.categories"
-        :title="$t('components.tab.label')"
+        :title="$t('components.user-tab.label')"
+        component-type="user-tab"
         icon="mdi-tab"
         track-expanded
       />
@@ -146,6 +153,7 @@
         :prop-name="''"
         :schema="selectedFormSchema"
         :categories="selectedFormSchema.categories"
+        component-type="user-form"
         icon="mdi-window-maximize"
         show-name
         renameable

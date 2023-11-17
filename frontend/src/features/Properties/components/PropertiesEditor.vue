@@ -83,7 +83,7 @@
   >
     <template
       v-for="n in names"
-      :key="n.name"
+      :key="n.name || n.label"
     >
       <property-editor
         v-if="n.name && (!limitToExisting || value[n.name] !== undefined)"
@@ -98,6 +98,9 @@
         :label="n.label"
         :icon="n.icon"
         :color="n.color"
+        :tooltip="n.tooltip"
+        :component-type="componentType"
+        :component-path="[...componentPath || [], n.name]"
         :section-color="n.sectionColor"
         :embed-label="embedLabel"
         :include-form-data-fields="includeFormDataFields"
@@ -140,6 +143,9 @@
         :label="n.label"
         :icon="n.icon"
         :color="n.color"
+        :tooltip="n.tooltip"
+        :component-type="componentType"
+        :component-path="[...componentPath || [], n.name]"
         :section-color="n.sectionColor"
         :embed-label="embedLabel"
         :include-form-data-fields="includeFormDataFields"
@@ -184,6 +190,7 @@
                 :label="n.label"
                 :icon="n.icon"
                 :color="n.color"
+                :tooltip="n.tooltip"
                 section
               />
             </div>
@@ -233,6 +240,9 @@
                     :label="c.label"
                     :icon="c.icon"
                     :color="c.color"
+                    :tooltip="c.tooltip"
+                    :component-type="componentType"
+                    :component-path="[...componentPath || [], c.name]"
                     :section-color="n.sectionColor"
                     :include-form-data-fields="includeFormDataFields"
                     :track-expanded="trackExpanded"
@@ -319,6 +329,10 @@ import PropertyLabel from '@/features/Properties/components/PropertyLabel.vue'
 const props = defineProps<{
   // object's value
   modelValue: Record<string, unknown>
+  // component type
+  componentType?: string
+  // path for tooltip generation
+  componentPath?: string[]
   // root selected item
   root?: unknown
   // section title
@@ -403,19 +417,51 @@ const label = (name: string): string => startCase(name)
 // Selected category name
 const category = ref()
 
+const getTranslation = (tooltip: string): string | undefined => {
+  const r = t(tooltip, '!!!', { missingWarn: false })
+  return r !== '!!!' ? r : undefined
+}
+
+const getTooltip = (tooltip: string, name: string): string | undefined => {
+  if (tooltip && getTranslation(tooltip)) {
+    return getTranslation(tooltip)
+  }
+  const componentTooltipPath = (
+    `components.${props.componentType}.tooltips.${(props.componentPath || []).join('_')}_${name}`
+  )
+  if (props.componentType && props.componentPath && name && getTranslation(componentTooltipPath)) {
+    return getTranslation(componentTooltipPath)
+  }
+  const componentTooltip = `components.${props.componentType}.tooltips.${name}`
+  if (props.componentType && name && getTranslation(componentTooltip)) {
+    return getTranslation(componentTooltip)
+  }
+  const commonTooltip = `components.tooltips.${name}`
+  if (name && getTranslation(commonTooltip)) {
+    return getTranslation(commonTooltip)
+  }
+  return undefined
+}
+
 const serializeNames = (names: (string | PropName)[]): PropName[] => (
   names.map((n: PropName | string) => {
     if (typeof n === 'string') {
-      return { label: label(n), name: n, children: [] }
+      return {
+        label: label(n),
+        name: n,
+        tooltip: getTooltip(undefined, n),
+        children: [],
+      }
     }
     return {
       label: n.label,
       name: n.name,
       icon: n.icon,
       color: n.color,
+      tooltip: getTooltip(n.tooltip, n.name),
       sectionColor: n.sectionColor,
       children: n.children || [],
-    }
+    } as PropName
   })
 )
 
@@ -456,7 +502,12 @@ const names = computed((): PropName[] => {
       .filter((p) => (
         props.schema.properties[p].hidden !== true
           && (!props.limitToExisting || value.value[p] !== undefined)
-      )),
+      ))
+      .map((p) => ({
+        name: p,
+        label: startCase(p),
+        tooltip: props.schema.properties[p].tooltip,
+      })),
   )
 })
 

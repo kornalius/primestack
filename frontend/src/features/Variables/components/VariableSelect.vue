@@ -9,6 +9,10 @@
     <template v-for="(_, name) in $slots" #[name]="slotData">
       <slot :name="name" v-bind="slotData" />
     </template>
+
+    <q-tooltip v-if="tooltip" :delay="500">
+      {{ tooltip }}
+    </q-tooltip>
   </autocomplete>
 </template>
 
@@ -26,6 +30,7 @@ type ActionElement = Static<typeof actionElementSchema>
 
 const props = defineProps<{
   modelValue: unknown
+  tooltip?: string
 }>()
 
 const emit = defineEmits<{

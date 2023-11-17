@@ -18,7 +18,11 @@
         stretch
         unelevated
         dense
-      />
+      >
+        <q-tooltip v-if="tooltip" :delay="500">
+          {{ tooltip }}
+        </q-tooltip>
+      </q-btn-toggle>
     </div>
   </div>
 
@@ -36,7 +40,11 @@
       stretch
       unelevated
       dense
-    />
+    >
+      <q-tooltip v-if="tooltip" :delay="500">
+        {{ tooltip }}
+      </q-tooltip>
+    </q-btn-toggle>
   </div>
 </template>
 
@@ -49,6 +57,7 @@ const props = defineProps<{
   spread?: boolean
   clearable?: boolean
   disable?: boolean
+  tooltip?: string
 }>()
 
 const emit = defineEmits<{

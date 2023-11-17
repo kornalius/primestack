@@ -32,6 +32,10 @@
       </slot>
     </q-item>
   </q-list>
+
+  <q-tooltip v-if="tooltip" :delay="500">
+    {{ tooltip }}
+  </q-tooltip>
 </template>
 
 <script setup lang="ts">
@@ -44,6 +48,7 @@ const props = defineProps<{
   options: string[]
   optionsContainerClass?: string | string[] | AnyData
   optionItemClass?: string | string[] | AnyData
+  tooltip?: string
 }>()
 
 const emit = defineEmits<{

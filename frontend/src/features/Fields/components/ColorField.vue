@@ -32,6 +32,10 @@
     <template v-for="(_, name) in $slots" #[name]="slotData">
       <slot :name="name" v-bind="slotData" />
     </template>
+
+    <q-tooltip v-if="tooltip" :delay="500">
+      {{ tooltip }}
+    </q-tooltip>
   </q-input>
 </template>
 
@@ -43,6 +47,7 @@ import { useModelValue } from '@/composites/prop'
 const props = defineProps<{
   modelValue: string | null | undefined
   quasarPalette?: boolean
+  tooltip?: string
 }>()
 
 const emit = defineEmits<{

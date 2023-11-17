@@ -24,6 +24,10 @@
         </q-menu>
       </q-btn>
     </template>
+
+    <q-tooltip v-if="tooltip" :delay="500">
+      {{ tooltip }}
+    </q-tooltip>
   </q-input>
 </template>
 
@@ -35,6 +39,7 @@ const props = defineProps<{
   modelValue: string | null | undefined
   units: Unit[]
   defaultUnit: string
+  tooltip?: string
 }>()
 
 const emit = defineEmits<{

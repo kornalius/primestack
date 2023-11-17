@@ -25,6 +25,10 @@
         </q-popup-proxy>
       </q-icon>
     </template>
+
+    <q-tooltip v-if="tooltip" :delay="500">
+      {{ tooltip }}
+    </q-tooltip>
   </q-input>
 </template>
 
@@ -33,7 +37,8 @@ import { useModelValue } from '@/composites/prop'
 
 const props = defineProps<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  modelValue: string | any[] | any | null | undefined;
+  modelValue: string | any[] | any | null | undefined
+  tooltip?: string
 }>()
 
 // eslint-disable-next-line vue/valid-define-emits

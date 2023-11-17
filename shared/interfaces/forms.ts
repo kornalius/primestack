@@ -12,6 +12,7 @@ export interface PropName {
   icon?: string
   color?: string
   sectionColor?: string
+  tooltip?: string
   children?: (PropName | string)[]
 }
 

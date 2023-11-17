@@ -438,9 +438,11 @@ const actionsClass = computed(() => ({
 <style scoped lang="sass">
 .vline:not(:last-child)
   margin-bottom: 4px
+  padding-bottom: 4px
   border-bottom: 1px solid lightgrey
 
 .hline:not(:last-child)
   margin-right: 4px
+  padding-right: 4px
   border-right: 1px solid lightgrey
 </style>

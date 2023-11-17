@@ -22,6 +22,10 @@
     <q-item-section side>
       <slot />
     </q-item-section>
+
+    <q-tooltip v-if="tooltip" :delay="500">
+      {{ tooltip }}
+    </q-tooltip>
   </q-item>
 </template>
 
@@ -30,5 +34,6 @@ defineProps<{
   title?: string
   icon?: string
   color?: string
+  tooltip?: string
 }>()
 </script>

@@ -32,6 +32,10 @@
         </q-popup-proxy>
       </q-icon>
     </template>
+
+    <q-tooltip v-if="tooltip" :delay="500">
+      {{ tooltip }}
+    </q-tooltip>
   </q-input>
 </template>
 
@@ -39,7 +43,8 @@
 import { useModelValue } from '@/composites/prop'
 
 const props = defineProps<{
-  modelValue: string | null | undefined;
+  modelValue: string | null | undefined
+  tooltip?: string
 }>()
 
 const emit = defineEmits<{

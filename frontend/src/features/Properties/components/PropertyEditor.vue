@@ -13,6 +13,7 @@
       :label="label"
       :icon="icon"
       :color="color"
+      :tooltip="tooltip"
       allow-expr
       @change-type="changeType"
     />
@@ -35,9 +36,11 @@
           :schema="schema"
           :prop-name="propName"
           :label="label"
+          :tooltip="tooltip"
           :embed-label="embedLabel"
           :horizontal="horizontal"
           :include-form-data-fields="includeFormDataFields"
+          :component-type="componentType"
           property
         />
       </div>
@@ -134,6 +137,7 @@
             :label="label"
             :icon="icon"
             :color="color"
+            :tooltip="tooltip"
             allow-expr
             @change-type="changeType"
           />
@@ -154,8 +158,10 @@
             :embed-label="embedLabel"
             :horizontal="horizontal"
             :include-form-data-fields="includeFormDataFields"
+            :tooltip="tooltip"
             :hover="hover"
             :track-expanded="trackExpanded"
+            :component-type="componentType"
             property
           />
         </div>
@@ -224,7 +230,6 @@
     v-else
     v-model="expanded"
     header-class="q-pa-none"
-    expand-separator
     @mouseover.stop="hover = true"
     @mouseleave="hover = false"
     @focus.stop="hover = true"
@@ -251,15 +256,15 @@
         </div>
 
         <div
-          v-if="label && !embedLabel"
+          v-if="label"
           class="col-auto q-mr-md"
-          :style="`width: ${labelWidth};`"
+          :style="`width: ${!embedLabel ? labelWidth : '74px'};`"
         >
           <!-- Popup array edit button -->
 
           <q-btn
             v-if="type === 'array' && Array.isArray(value)"
-            style="position: absolute; left: 8px; top: 14px;"
+            style="position: absolute; left: 8px; top: 12px;"
             :disable="disabled"
             size="xs"
             color="grey-7"
@@ -287,7 +292,7 @@
                 :no-separator="!arraySchemaIsObject"
                 :add-label="$t('properties.array.add')"
                 add-button="end"
-                reorderable
+                :reorderable="!schema.fixed"
               >
                 <template #default="{ index }">
                   <properties-editor
@@ -304,6 +309,8 @@
                     :show-name="dynamicArraySchema(schema, scope.value[index]).showName"
                     :renameable="dynamicArraySchema(schema, scope.value[index]).renameable"
                     :track-expanded="trackExpanded"
+                    :component-type="componentType"
+                    :component-path="componentPath"
                     embed-label
                     flat
                   />
@@ -320,6 +327,8 @@
                     :required="arraySchema.required"
                     :include-form-data-fields="includeFormDataFields"
                     :track-expanded="trackExpanded"
+                    :component-type="componentType"
+                    :component-path="componentPath"
                     embed-label
                   />
                 </template>
@@ -333,6 +342,7 @@
             :label="label"
             :icon="icon"
             :color="color"
+            :tooltip="tooltip"
             :embed-label="embedLabel"
             section
             @change-type="changeType"
@@ -399,8 +409,11 @@
             :prop-name="propName"
             :include-form-data-fields="includeFormDataFields"
             :label="label"
+            :tooltip="tooltip"
             :horizontal="horizontal"
             :track-expanded="trackExpanded"
+            :component-type="componentType"
+            :component-path="componentPath"
             embed-label
             property
           />
@@ -440,6 +453,10 @@ const props = defineProps<{
   modelValue: unknown
   // root value (selected item)
   root: unknown
+  // component type
+  componentType?: string
+  // path for tooltip generation in PropertiesEditor
+  componentPath?: string[]
   // is the property disabled?
   disable?: boolean
   // parent component values
@@ -450,6 +467,8 @@ const props = defineProps<{
   required?: boolean
   // label to show for the property in the editor
   label?: string
+  // label tooltip
+  tooltip?: string
   // icon
   icon?: string
   // icon color

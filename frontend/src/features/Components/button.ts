@@ -64,10 +64,15 @@ export default {
         'readonly',
         'label',
         'icon',
-        'to',
-        'target',
-        'replace',
         'loading',
+        {
+          label: 'Native link',
+          children: [
+            'to',
+            'target',
+            'replace',
+          ],
+        },
         'renderWhen',
       ],
     },

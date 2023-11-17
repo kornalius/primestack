@@ -21,7 +21,6 @@ export default {
     Type.Object({
       value: Type.String(),
       tableId: ExType.Table(),
-      field: ExType.Field(),
       virtualScrollHorizontal: Type.Boolean(),
       loading: Type.Boolean(),
       clearable: Type.Boolean(),
@@ -59,7 +58,7 @@ export default {
       popupShow: ExType.Action(),
       popupHide: ExType.Action(),
     }),
-  ]),
+  ], true),
   modelValueField: 'value',
   defaultValues: {
     dense: true,

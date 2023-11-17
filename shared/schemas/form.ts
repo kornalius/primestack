@@ -142,7 +142,7 @@ export const formTableColumnSchema = Type.Object({
           label: 'Numeric',
           children: [
             { name: 'slider', label: 'Slider' },
-            { name: 'multipleOf', label: 'Multiple' },
+            { name: 'multipleOf', label: 'Multiple of' },
             { name: 'min', label: 'Minimum' },
             { name: 'exclusiveMin', label: 'Exclusive Minimum' },
             { name: 'max', label: 'Maximum' },

@@ -351,140 +351,901 @@
     "expression": "Filter expression (ex: field:value)"
   },
   "components": {
+    "tooltips": {
+      "field": "Specify a field name that will be associated with this component model value. It can come from the form data or the form's table",
+      "noCaps": "Avoid turning label text into caps (which happens by default)",
+      "noWrap": "Avoid label text wrapping",
+      "glossy": "Use glossy design",
+      "outline": "Use outline design",
+      "flat": "Use flat design",
+      "filled": "Use 'filled' design for the field",
+      "push": "Use push design",
+      "stretch": "When used on flexbox parent, will stretch to parent's height",
+      "round": "Use a circle shape",
+      "rounded": "Applies a more prominent border-radius for a squared shape",
+      "square": "Removes border-radius so borders are squared",
+      "unelevated": "Remove shadow",
+      "standout": "Use 'standout' design for the field; Specifies classes to be applied when focused (overriding default ones)",
+      "size": "Component size unit",
+      "renderWhen": "Only render this component when this value returns true (via expression)",
+      "dense": "Dense mode; occupies less space",
+      "update": "Triggered when the component value is updated",
+      "click": "Triggered when the component is clicked",
+      "focus": "Triggered when the component gains focus",
+      "blur": "Triggered when the component loses focus",
+      "clear": "Triggered when the user presses the clear button, to clear the component's model value",
+      "input": "Triggered when the value in the text input changes",
+      "keydown": "Triggered when a key is pressed down while the component is in focus",
+      "keyup": "Triggered when a key is released",
+      "border": "Apply borders to the component",
+      "padding": "Apply padding to the component",
+      "margin": "Apply margins to the component",
+      "sizes": "Set fixed, minimum or maximum component size",
+      "disable": "Disable user's interactions with the component",
+      "readonly": "Make the component read-only. The user cannot modify its value.",
+      "clearable": "Clears value when clicking the clear button",
+      "spread": "Spread horizontally to all available space",
+      "color": "Color for the component",
+      "textColor": "Overrides text color (if needed)",
+      "bgColor": "Apply a background color to the component",
+      "backgroundColor": "Apply a background color to the component",
+      "stack": "Stack icon and label vertically instead of on same line (like it is by default)",
+      "hideBottomSpace": "Do not reserve space for hint/error/counter anymore when these are not used; As a result, it also disables the animation for those; It also allows the hint/error area to stretch vertically based on its content",
+      "value": "Value of the component model",
+      "defaultValue": "Default component model value",
+      "landscape": "Display using a landscape layout",
+      "popupShow": "Triggered when the picker popup is shown",
+      "popupHide": "Triggered when the picker popup is hidden",
+      "loading": "Place the component into loading state",
+      "label": "Component's content label as string",
+      "labelColor": "Component's content label color",
+      "virtualScrollHorizontal": "Make virtual list work in horizontal mode",
+      "noErrorIcon": "Hide error icon when there is an error",
+      "multiple": "Allow multiple selection; Model must be Array",
+      "maxValues": "Allow a maximum number of selections that the user can do",
+      "hideSelected": "Hides selection; Use the underlying input tag to hold the label (instead of showing it to the right of the input) of the selected option; Only works for non 'multiple' Selects",
+      "hint": "Helper (hint) text which gets placed below your wrapped form component",
+      "hideHint": "Hide the helper (hint) text when field doesn't have focus",
+      "prefix": "Prefix string that will be displayed at the beginning of the component's input area",
+      "suffix": "Suffix string that will be displayed at the end of the component's input area",
+      "stackLabel": "Label will be always shown above the field regardless of field content (if any)",
+      "itemAligned": "Match inner content alignment to that of item",
+      "placeholder": "Text to display as placeholder",
+      "useInput": "Use an input tag where users can type",
+      "tableColspan": "The number of columns in the table (you need this if you use table-layout: fixed)",
+      "useChips": "Use chip to show what is currently selected",
+      "optionsDense": "Dense mode for options list; occupies less space",
+      "displayValue": "Override default selection string, if not using 'use-chips' prop",
+      "virtualScroll": "Allows you to display only a part of a long list of items and update the visible items as the user scrolls in the container",
+      "virtualScrollSliceSize": "Minimum number of items to render in the virtual list",
+      "virtualScrollSliceRatioBefore": "Ratio of number of items in visible zone to render before it",
+      "virtualScrollSliceRatioAfter": "Ratio of number of items in visible zone to render after it",
+      "virtualScrollItemSize": "Default size in pixels (height if vertical, width if horizontal) of an item; This value is used for rendering the initial list; Try to use a value close to the minimum size of an item",
+      "virtualScrollStickySizeStart": "Size in pixels (height if vertical, width if horizontal) of the sticky part (if using one) at the start of the list; A correct value will improve scroll precision",
+      "virtualScrollStickySizeEnd": "Size in pixels (height if vertical, width if horizontal) of the sticky part (if using one) at the end of the list; A correct value will improve scroll precision"
+    },
     "button": {
-      "label": "Button"
+      "label": "Button",
+      "tooltips": {
+        "label": "Button label",
+        "icon": "Button icon",
+        "to": "Native link to goto when button is clicked",
+        "target": "Native link target attribute; Use it only with the 'to' prop",
+        "replace": "Replace instead of regular push the current navigator location",
+        "align": "Label or content alignment",
+        "fab": "Makes button size and shape to fit a Floating Action Button",
+        "fabMini": "Makes button size and shape to fit a small Floating Action Button"
+      }
     },
     "button-toggle": {
-      "label": "Buttons"
+      "label": "Buttons",
+      "tooltips": {
+        "options": "Button options",
+        "options_label": "Button label",
+        "options_value": "Button value (used to set the toggle value)",
+        "options_icon": "Button icon"
+      }
     },
     "card": {
       "label": "Card"
     },
     "card-actions": {
-      "label": "Card Actions"
+      "label": "Card Actions",
+      "tooltips": {
+        "align": "Specify how to align the actions",
+        "vertical": "Display actions one below the other"
+      }
     },
     "card-section": {
-      "label": "Card Section"
+      "label": "Card Section",
+      "tooltips": {
+        "horizontal": "Display a horizontal section (will have no padding and can contain other card section)"
+      }
     },
     "checkbox": {
-      "label": "Checkbox"
+      "label": "Checkbox",
+      "tooltips": {
+        "leftLabel": "Label (if any specified) should be displayed on the left side of the component",
+        "keepColor": "Should the color (if specified any) be kept when the component is unticked/ off?",
+        "checkedIcon": "The icon to be used when the model is truthy (instead of the default design)",
+        "uncheckedIcon": "The icon to be used when the toggle is falsy (instead of the default design"
+      }
     },
     "chip": {
-      "label": "Chip"
+      "label": "Chip",
+      "tooltips": {
+        "visible": "Is the chip visible or not?",
+        "selected": "Is the chip selected or not?",
+        "icon": "Icon to display next to the label",
+        "clickable": "Is the chip clickable? If it's the case, then it will add hover effects and emit 'click' events",
+        "removable": "If set, then it displays a 'remove' icon that when clicked the chip emits 'remove' event",
+        "remove": "Triggered when the remove button is clicked on the chip"
+      }
     },
     "col": {
-      "label": "Column"
+      "label": "Column",
+      "tooltips": {
+        "col": "Flexbox column size",
+        "offset": "Flexbox column offset",
+        "breakpoint": "Flexbox column breakpoint",
+        "breakpointCol": "Flexbox column breaks at size"
+      }
     },
     "color": {
-      "label": "Color Picker"
+      "label": "Color Picker",
+      "tooltips": {
+        "formatModel": "Color format model to return",
+        "defaultView": "Default view to use",
+        "noHeader": "Hide the header",
+        "noHeaderTabs": "Hide the header tabs",
+        "noFooter": "Hide the footer"
+      }
     },
     "date": {
-      "label": "Date Picker"
+      "label": "Date Picker",
+      "tooltips": {
+        "yearsInMonthView": "Show the years selector in months view",
+        "title": "When specified, it overrides the default header title; Makes sense when not in 'minimal' mode",
+        "subTitle": "When specified, it overrides the default header subtitle; Makes sense when not in 'minimal' mode",
+        "todayBtn": "Show the today button",
+        "minimal": "Don’t display the header",
+        "mask": "Mask (formatting string) used for parsing and formatting value. Ex: 'YYYY/MM/DD'",
+        "calendar": "Specify calendar type",
+        "defaultYearMonth": "The default year and month to display (in YYYY/MM format) when model is unfilled (undefined or null); Please ensure it is within the navigation min/max year-month (if using them)",
+        "defaultView": "The view which will be displayed by default",
+        "firstDayOfWeek": "Sets the day of the week that is considered the first day (0 - Sunday, 1 - Monday, ...); This day will show in the left-most column of the calendar",
+        "range": "Allow range selection; Partial compatibility with 'options' prop: selected ranges might also include 'unselectable' days",
+        "emitImmediately": "Emit model when user browses month and year too; ONLY for single selection (non-multiple, non-range)",
+        "navigationMinYearMonth": "Lock user from navigating below a specific year+month (in YYYY/MM format); This prop is not used to correct the model; You might want to also use 'default-year-month' prop",
+        "navigationMaxYearMonth": "Lock user from navigating above a specific year+month (in YYYY/MM format); This prop is not used to correct the model; You might want to also use 'default-year-month' prop",
+        "noUnset": "Remove ability to unselect a date; It does not apply to selecting a range over already selected dates",
+        "navigation": "Triggered when user navigates to a different month or year (and even when the model changes from an outside source)",
+        "rangeStart": "Triggered when user has started a range selection",
+        "rangeEnd": "Triggered when user has ended a range selection"
+      }
     },
     "form": {
-      "label": "Form"
+      "label": "Form",
+      "tooltips": {
+        "data": "Data passed to the form",
+        "formId": "Form to render",
+        "mounted": "Triggered when the form has been mounted. A component is considered mounted after: All of its synchronous child components have been mounted. Its own DOM tree has been created and inserted into the parent container",
+        "updated": "Triggered after the component has updated its DOM tree due to a reactive state change",
+        "unmounted": "Triggered after the component has been unmounted, when all of its child components have been unmounted."
+      }
     },
     "icon": {
-      "label": "Icon"
+      "label": "Icon",
+      "tooltips": {
+        "icon": "Icon to display",
+        "left": "Left align the icon",
+        "right": "Right align the icon"
+      }
     },
     "icon-select": {
-      "label": "Icon Picker"
+      "label": "Icon Picker",
+      "tooltips": {
+        "remove": "Triggered when a value is removed from the multiple selection",
+        "add": "Triggered when a value is added to the multiple selection"
+      }
     },
     "image": {
-      "label": "image"
+      "label": "image",
+      "tooltips": {
+        "src": "Path to the image you want to embed",
+        "srcset": "String which identifies one or more image candidate strings, separated using commas (,) each specifying image resources to use under given circumstances",
+        "alt": "Provides fallback (alternate) text to display when the image specified by the <img> element is not loaded",
+        "sizes": "Allows you to specify the layout width of the image for each of a list of media conditions. This provides the ability to automatically select among different images—even images of different orientations or aspect ratios—as the document state changes to match different media conditions",
+        "placeholderSrc": "While waiting for your image to load, you can use a placeholder image",
+        "loading": "string whose value provides a hint to the user agent on how to handle the loading of the image which is currently outside the window's visual viewport",
+        "crossorigin": "String which specifies the Cross-Origin Resource Sharing (CORS) setting to use when retrieving the image",
+        "decoding": "Provides a hint to the browser as to how it should decode the image. More specifically, whether it should wait for the image to be decoded before presenting other content updates or not",
+        "reffererpolicy": "Defines which referrer is sent when fetching the resource",
+        "fetchpriority": "Provides a hint of the relative priority to use when fetching the image",
+        "draggable": "Adds the native 'draggable' attribute",
+        "noSpinner": "Do not display the default spinner while waiting for the image to be loaded",
+        "noNativeMenu": "Disables the native context menu for the image",
+        "noTransition": "Disable default transition when switching between old and new image",
+        "ratio": "Force the component to maintain an aspect ratio. Ex: '4/3', '16/9', '1'",
+        "position": "The alignment of the image into the container; Equivalent of the object-position CSS prop",
+        "width": "Width at which an image is drawn in CSS pixels if it's being drawn or rendered to any visual medium such as a screen or printer. Otherwise, it's the natural, pixel density-corrected width of the image",
+        "height": "Height at which the image is drawn, in CSS pixels if the image is being drawn or rendered to any visual medium such as the screen or a printer; otherwise, it's the natural, pixel density corrected height of the image",
+        "fit": "How the image will fit into the container; Equivalent of the object-fit prop; Can be coordinated with 'position' prop",
+        "spinnerColor": "Color name for default spinner",
+        "spinnerSize": "Size in CSS units, including unit name, for default spinner",
+        "load": "Triggered when the image has been loaded by the browser",
+        "error": "Triggered when browser could not load image"
+      }
     },
     "input": {
-      "label": "Input"
+      "label": "Input",
+      "tooltips": {
+        "mask": "Mask input",
+        "fillMask": "Fill the mask",
+        "unmaskedValue": "Unmasked value",
+        "counter": "Show an automatic counter on bottom right",
+        "autogrow": "Make field autogrow along with its content (uses a textarea)",
+        "type": "Input type",
+        "maxLength": "Specify a max length of model"
+      }
     },
     "knob": {
-      "label": "Knob"
+      "label": "Knob",
+      "tooltips": {
+        "angle": "Angle to rotate progress arc by",
+        "reverse": "Reverses the direction of progress",
+        "instantFeedback": "No animation when model changes",
+        "showValue": "Enables the default slot and uses it (if available), otherwise it displays the 'value' prop as text; Make sure the text has enough space to be displayed inside the component",
+        "min": "The minimum value that the model (the knob value) should start at",
+        "max": "The maximum value that the model (the knob value) should go to",
+        "innerMin": "Inner minimum value of the model; Use in case you need the model value to be inside of the track's min-max values; Needs to be higher or equal to 'min' prop; Defaults to 'min' prop",
+        "innerMax": "Inner maximum value of the model; Use in case you need the model value to be inside of the track's min-max values; Needs to be lower or equal to 'max' prop; Defaults to 'max' prop",
+        "step": "A number representing steps in the value of the model, while adjusting the knob",
+        "fontSize": "Size of text in CSS units, including unit name. Suggestion: use 'em' units to sync with component size",
+        "centerColor": "Color for the center part of the component",
+        "trackColor": "Color for the track of the component",
+        "thickness": "Thickness of progress arc as a ratio (0.0 < x < 1.0) of component size",
+        "change": "Triggered at the end of a knob's adjustment and offers the value of the model",
+        "dragValue": "Triggered while dragging is still in progress"
+      }
     },
     "label": {
-      "label": "Label"
+      "label": "Label",
+      "tooltips": {
+        "format": "Font formatting to use",
+        "heading": "Header size font styling",
+        "styling": "Font styling to use",
+        "casing": "Force the display casing",
+        "pre": "Display using preformatted text (monospaced font)"
+      }
     },
     "list": {
-      "label": "List"
+      "label": "List",
+      "tooltips": {
+        "iterationVar": "Iteration variable that will be used to store the value of the current loop iteration",
+        "loopExpr": "Looping expression. Can return a number value, an array or an object",
+        "tableId": "Table to use for iteration. 'loopExpr' prop will not be used if a table is specified",
+        "query": "Query to use on the table for looping",
+        "horizontal": "Displays the list horizontally"
+      }
     },
     "lookup-select": {
-      "label": "Lookup Selector"
-    },
-    "menu": {
-      "label": "Menu"
+      "label": "Lookup Selector",
+      "tooltips": {
+        "tableId": "Table to lookup values into",
+        "query": "Query to apply to the table",
+        "valueField": "Field that serves as the value for the component's model",
+        "labelField": "Field that serves as the display value in the list",
+        "columns": "Columns to display in the table",
+        "columns_field": "Column's field",
+        "columns_size": "Size of the column in Flexbox",
+        "columns_filterable": "Is the column filterable?",
+        "columns_class": "Class to apply to the column header",
+        "columns_style":  "Styles to apply to the column header",
+        "columns_title": "Column header title",
+        "columns_titleClass":  "Column header title class",
+        "columns_titleStyle": "Column header title style"
+      }
     },
     "option-group": {
-      "label": "Options Group"
+      "label": "Options Group",
+      "tooltips": {
+        "keepColor": "Should the color (if specified any) be kept when input components are unticked?",
+        "type": "The type of input component to be used",
+        "leftLabel": "Label (if any specified) should be displayed on the left side of the input components",
+        "inline": "Show input components as inline-block rather than each having their own row",
+        "options": "Array of objects with value, label, and disable (optional) props",
+        "options_label": "Option label for display",
+        "options_value": "Option value to be passed to the model when selected",
+        "options_disable": "Disable the option"
+      }
     },
     "paragraph": {
-      "label": "Paragraph"
+      "label": "Paragraph",
+      "tooltips": {
+        "text": "HTML model value",
+        "noRouteFullscreenExit": "Changing route app won't exit fullscreen",
+        "minHeight": "CSS unit for the minimum height of the editable area",
+        "maxHeight": "CSS unit for maximum height of the input area",
+        "definitions": "Definition of commands and their buttons to be included in the 'toolbar' prop",
+        "definitions_commandName": "Unique command name",
+        "definitions_label": "Label of the button",
+        "definitions_tip": "Text to be displayed as a tooltip on hover",
+        "definitions_icon": "Icon of the button",
+        "definitions_key": "Keycode of a key to be used together with the <ctrl> key for use as a shortcut to trigger this element",
+        "toolbar": "An array of strings that you use to define the construction of the elements and commands available in the toolbar",
+        "toolbarColor": "Font color of buttons and text in the toolbar",
+        "toolbarTextColor": "Text color of toolbar commands",
+        "toolbarToggleColor": "Choose the active color of toolbar commands button",
+        "toolbarBg": "Toolbar background color",
+        "toolbarOutline": "Toolbar buttons are rendered 'outlined'",
+        "toolbarPush": "Toolbar buttons are rendered as a 'push-button' type",
+        "toolbarRounded": "Toolbar buttons are rendered 'rounded'"
+      }
     },
     "progress": {
-      "label": "Progress"
+      "label": "Progress",
+      "tooltips": {
+        "angle": "Angle to rotate progress arc by",
+        "indeterminate": "Put component into 'indeterminate' state; Ignores 'value' prop",
+        "reverse": "Reverses the direction of progress; Only for determined state",
+        "instantFeedback": "No animation when model changes",
+        "showValue": "Enables the default slot and uses it (if available), otherwise it displays the 'value' prop as text; Make sure the text has enough space to be displayed inside the component",
+        "min": "Minimum value defining 'no progress' (must be lower than 'max')",
+        "max": "Maximum value defining 100% progress made (must be higher than 'min')",
+        "fontSize": "Size of text in CSS units, including unit name. Suggestion: use 'em' units to sync with component size",
+        "centerColor": "Color name for the center part of the component",
+        "trackColor": "Color name for the track of the component",
+        "thickness": "Thickness of progress arc as a ratio (0.0 < x < 1.0) of component size",
+        "animationSpeed": "Animation speed (in milliseconds, without unit)"
+      }
     },
     "range": {
-      "label": "Range Selector"
+      "label": "Range Selector",
+      "tooltips": {
+        "min": "Minimum value of the model; Set track's minimum value",
+        "max": "Maximum value of the model; Set track's maximum value",
+        "innerMin": "Inner minimum value of the model; Use in case you need the model value to be inside of the track's min-max values; Needs to be higher or equal to 'min' prop; Defaults to 'min' prop",
+        "innerMax": "Inner maximum value of the model; Use in case you need the model value to be inside of the track's min-max values; Needs to be lower or equal to 'max' prop; Defaults to 'max' prop",
+        "step": "Specify step amount between valid values (> 0.0); When step equals to 0 it defines infinite granularity",
+        "snap": "Snap on valid values, rather than sliding freely; Suggestion: use with 'step' prop",
+        "labelAlways": "Always display the label",
+        "reverse": "Work in reverse (changes direction)",
+        "vertical": "Display in vertical direction",
+        "markers": "Display markers on the track, one for each possible value for the model or using a custom step (when specifying a Number)",
+        "markerLabels": "Display the marker labels",
+        "dragRange": "User can drag range instead of just the two thumbs",
+        "dragOnlyRange": "User can drag only the range instead and NOT the two thumbs",
+        "leftLabelValue": "Override default label for min value",
+        "rightLabelValue": "Override default label for max value",
+        "switchLabelSide": "Switch the position of the label (top <-> bottom or left <-> right)",
+        "switchMarkerLabelSide": "Switch the position of the marker labels (top <-> bottom or left <-> right)",
+        "thumbSize": "Thumb size (including CSS unit)",
+        "trackSize": "Track size (including CSS unit)",
+        "labelTextColor": "Color name for component",
+        "trackColor": "Color name for the track (can be 'transparent' too)",
+        "thumbColor": "Color name for component from the Quasar Color Palette",
+        "selectionColor": "Color name for the selection bar (can be 'transparent' too)",
+        "leftLabelColor": "Color name for left label background",
+        "leftLabelTextColor": "Color name for left label text",
+        "rightLabelColor": "Color name for right label background",
+        "rightLabelTextColor": "Color name for right label text",
+        "leftThumbColor": "Color name for left thumb",
+        "rightThumbColor": "Color name for right thumb",
+        "change": "Triggered on lazy model value change (after user slides then releases the thumb)",
+        "pan": "Triggered when user starts panning on the component"
+      }
     },
     "rating": {
-      "label": "Rating Selector"
+      "label": "Rating Selector",
+      "tooltips": {
+        "icon": "Icon name",
+        "iconSelected": "Icon name to be used when selected (optional)",
+        "iconHalf": "Icon name to be used when selected (optional)",
+        "max": "Number of icons to display",
+        "noReset": "When used, disables default behavior of clicking/tapping on icon which represents current model value to reset model to 0",
+        "noDimming": "Does not lower opacity for unselected icons",
+        "colorSelected": "Color name for selected icons",
+        "colorHalf": "Color name for half selected icons"
+      }
     },
     "row": {
-      "label": "Row"
+      "label": "Row",
+      "tooltips": {
+        "hGutter": "Used when the elements that you want to distance one from each other horizontaly",
+        "vGutter": "Used when the elements that you want to distance one from each other vertically",
+        "items": "Items vertical alignment",
+        "justify": "Items horizontal justification"
+      }
     },
     "select": {
-      "label": "Select"
+      "label": "Select",
+      "tooltips": {
+        "tableId": "Table to select values from",
+        "emitValue": "Update model with the value of the selected option instead of the whole option",
+        "options": "Available options that the user can select from. For best performance freeze the list of options",
+        "options_label": "Option label",
+        "options_value": "Option value",
+        "options_disable": "Disable the option",
+        "optionLabel": "Property of option which holds the label",
+        "optionValue": "Property of option which holds the value",
+        "optionDisable": "Property of option which tells it's disabled; The value of the property must be a Boolean",
+        "remove": "Triggered when a selection is removed (in multiple selection only)",
+        "add": "Triggered when a selection is added (in multiple selection only)"
+      }
     },
     "separator": {
-      "label": "Separator"
+      "label": "Separator",
+      "tooltips": {
+        "spaced": "If set to true, the corresponding direction margins will be set to 8px; It can also be set to a size in CSS units, including unit name, or one of the xs|sm|md|lg|xl predefined sizes",
+        "inset": "If set to Boolean true, the left and right margins will be set to 16px. If set to 'item' then it will match a item's design. If set to 'item-thumbnail' then it will match the design of a item with a thumbnail on the left side",
+        "vertical": "If set to true, the separator will be vertical"
+      }
     },
     "sidebar": {
-      "label": "Sidebar"
+      "label": "Sidebar",
+      "tooltips": {
+        "opened": "Is the sidebar opened or closed",
+        "bordered": "Apply a border to visually separate the sidebar from the content of the page",
+        "closeable": "Allow the sidebar to be closed by the user",
+        "closeIcon": "Specify a custom close button icon",
+        "openIcon": "Specify a custom open button icon",
+        "menuIcon": "Specify a custom menu button icon",
+        "openTooltip": "Tooltip to use while hovering the open button",
+        "closeTooltip": "Tooltip to use while hovering the close button"
+      }
     },
     "skeleton": {
-      "label": "Skeleton"
+      "label": "Skeleton",
+      "tooltips": {
+        "type": "Type of skeleton placeholder",
+        "animation": "The animation effect of the skeleton placeholder",
+        "animationSpeed": "Animation speed (in milliseconds, without unit)",
+        "width": "Width in CSS units, including unit name; Apply custom width; Use this prop or through CSS; Overridden by 'size' prop if used",
+        "height": "Height in CSS units, including unit name; Apply custom height; Use this prop or through CSS; Overridden by 'size' prop if used"
+      }
     },
     "slider": {
-      "label": "Slider"
+      "label": "Slider",
+      "tooltips": {
+        "min": "Minimum value of the model; Set track's minimum value",
+        "max": "Maximum value of the model; Set track's maximum value",
+        "innerMin": "Inner minimum value of the model; Use in case you need the model value to be inside of the track's min-max values; Needs to be higher or equal to 'min' prop; Defaults to 'min' prop",
+        "innerMax": "Inner maximum value of the model; Use in case you need the model value to be inside of the track's min-max values; Needs to be lower or equal to 'max' prop; Defaults to 'max' prop",
+        "step": "Specify step amount between valid values (> 0.0); When step equals to 0 it defines infinite granularity",
+        "snap": "Snap on valid values, rather than sliding freely; Suggestion: use with 'step' prop",
+        "reverse": "Work in reverse (changes direction)",
+        "vertical": "Display in vertical direction",
+        "labelAlways": "Always display the label",
+        "switchLabelSide": "Switch the position of the label (top <-> bottom or left <-> right)",
+        "switchMarkerLabelSide": "Switch the position of the marker labels (top <-> bottom or left <-> right)",
+        "thumbSize": "Thumb size (including CSS unit)",
+        "trackSize": "Track size (including CSS unit)",
+        "markers": "Display markers on the track, one for each possible value for the model or using a custom step (when specifying a Number)",
+        "markerLabels": "Display the marker labels",
+        "labelTextColor": "Color name for component",
+        "thumbColor": "Color name for component",
+        "innerTrackColor": "Color name for the inner track (can be 'transparent' too)",
+        "selectionColor": "Color name for the selection bar (can be 'transparent' too)",
+        "change": "Triggered on lazy model value change (after user slides then releases the thumb)",
+        "pan": "Triggered when user starts panning on the component"
+      }
     },
     "space": {
-      "label": "Spacer"
+      "label": "Spacer",
+      "tooltips": {
+      }
     },
     "spinner": {
-      "label": "Spinner"
+      "label": "Spinner",
+      "tooltips": {
+        "thickness": "Override value to use for stroke-width"
+      }
     },
     "tab": {
-      "label": "Tab"
+      "label": "Tab",
+      "tooltips": {
+        "name": "Name of the tab",
+        "alert": "Adds an alert symbol to the tab, notifying the user there are some updates; If its value is not a Boolean, then you can specify a color",
+        "alertColor": "Color of the alert icon",
+        "alertIcon": "Adds a floating icon to the tab, notifying the user there are some updates; It's displayed only if 'alert' is set; Can use the color specified by 'alert' prop",
+        "badgeValue": "Badge value",
+        "badgeColor": "Badge color"
+      }
     },
     "table": {
-      "label": "Table"
+      "label": "Table",
+      "tooltips": {
+        "noRouteFullscreenExit": "Changing route app won't exit fullscreen",
+        "grid": "Display data as a grid instead of the default table",
+        "gridHeader": "Display header for grid-mode also",
+        "editable": "Allows the user to edit the rows",
+        "title": "Table title",
+        "hideHeader": "Hide table header layer",
+        "hideBottom": "Hide table bottom layer regardless of what it has to display",
+        "hideSelectedBanner": "Hide the selected rows banner (if any)",
+        "hideNoData": "Hide the default no data bottom layer",
+        "hidePagination": "Hide the pagination controls at the bottom",
+        "separator": "Use a separator/border between rows, columns or all cells",
+        "wrapCells": "Wrap text within table cells",
+        "noDataLabel": "Override default text to display when no data is available",
+        "noResultsLabel": "Override default text to display when user filters the table and no matched results are found",
+        "loadingLabel": "Override default text to display when table is in loading state (see 'loading' prop)",
+        "expanded": "Keeps the array with expanded rows keys",
+        "filter": "String to filter the table with",
+        "rows": "Rows of data to display",
+        "rowKey": "Property of each row that defines the unique key of each row (the result must be a primitive, not Object, Array, etc); The value of property must be string or a function taking a row and returning the desired (nested) key in the row; If supplying a function then for best performance, reference it from your scope and do not define it inline",
+        "rowsPerPageLabel": "Text to override default rows per page label at bottom of table",
+        "pagination": "Pagination object; You can also use the 'v-model:pagination' for synching; When not synching it simply initializes the pagination on first render",
+        "pagination_sortBy": "Column name (from column definition)",
+        "pagination_descending": "Is sorting in descending order?",
+        "pagination_page": "Page number (1-based)",
+        "pagination_rowsPerPage": "How many rows per page? 0 means Infinite",
+        "pagination_rowsNumber": "For server-side fetching only. How many total database rows are there to be added to the table. If set, causes the QTable to emit @request when data is required",
+        "rowsPerPageOptions": "Options for user to pick (Numbers); Number 0 means 'Show all rows in one page'",
+        "selectionStyle": "Selection type",
+        "binaryStateSort": "Skip the third state (unsorted) when user toggles column sort direction",
+        "columnSortOrder": "Set column sort order: 'ad' (ascending-descending) or 'da' (descending-ascending); It gets applied to all columns unless a column has its own sortOrder specified in the 'columns' definition prop",
+        "tableId": "Table to display rows from. Overrides the 'rows' prop",
+        "query": "Query to apply to the table",
+        "temps": "Show temporary records (records being created but not saved yet)",
+        "hideFilter": "Hide the filter text input in the header",
+        "addButton": "Show a button that allow to add a new row",
+        "addLabel": "Label to show on the add button",
+        "addIcon": "Icon to show in the add button",
+        "addDisable": "Is adding a row disabled?",
+        "removeButton": "Show a remove action on each row",
+        "removeLabel": "Label to show on the remove action",
+        "removeIcon": "Icon for the remove action",
+        "removeDisable": "Is the remove action disabled?",
+        "saveLabel": "Save editing button label",
+        "saveIcon": "Save editing button icon",
+        "cancelLabel": "Cancel editing button label",
+        "cancelIcon": "Cancel editing button icon",
+        "extraFields": "",
+        "extraFields_fieldname": "",
+        "extraFields_value": "",
+        "extraFields_filter": "",
+        "extraFields_create": "",
+        "rowClick": "Triggered when a row is clicked",
+        "rowDblClick": "Triggered when a row is double-clicked",
+        "rowContextMenu": "Triggered when user right clicks/long taps on a row",
+        "selection": "Triggered when user selects/unselects row(s)",
+        "actions": "List of actions to display in the dropdown menu on the right side of each row",
+        "actions_label": "Label of the action",
+        "actions_icon": "Icon for the action",
+        "actions_color": "Color of the action icon",
+        "actions_click": "Triggered when the action is clicked by the user"
+      }
     },
     "table-column": {
-      "label": "Table Column"
-    },
-    "table-field": {
-      "label": "Table Field"
+      "label": "Table Column",
+      "tooltips": {
+        "label": "Label to show as the header of the column",
+        "field": "Field to display rows with",
+        "required": "Is the field required while editing?",
+        "align": "Align the column rows",
+        "sortable": "Is the column sortable?",
+        "sortOrder": "Column sort order",
+        "type": "Field type",
+        "slider": "Edit the value as a slider",
+        "format": "Formatting for 'string' types",
+        "min": "Minimum value of the model; Set track's minimum value",
+        "max": "Maximum value of the model; Set track's maximum value",
+        "step": "Specify step amount between valid values (> 0.0); When step equals to 0 it defines infinite granularity",
+        "multipleOf": "",
+        "exclusiveMin": "Maximum execlusive value allowed",
+        "exclusiveMax": "Maximum execlusive value allowed",
+        "dateMin": "Minimum date allowed for selection",
+        "dateExclusiveMin": "Minimum exclusive allowed for selection",
+        "dateMax": "Maximum date allowed for selection",
+        "dateExclusiveMax": "Maximum exclusive allowed for selection",
+        "pattern": "",
+        "options": "Options to select when editing",
+        "options_label": "Option label",
+        "options_value": "Option value",
+        "multiple": "Allow multiple selection; use with 'options' prop",
+        "toggles": "",
+        "chip": "Display value as a chip",
+        "rating": "Display value as rating icons; for 'number' types",
+        "ratingIcon": "Rating icon",
+        "ratingIconFilled": "Rating filled icon",
+        "ratingIconHalf": "Rating half-filled icon",
+        "service": "Table for 'lookup' type",
+        "query": "Query to apply to table",
+        "columns": "Lookup columns to display",
+        "valueField": "Lookup value field",
+        "labelField": "Lookup label field"
+      }
     },
     "tabs": {
-      "label": "Tabs"
+      "label": "Tabs",
+      "tooltips": {
+        "currentTab": "Currently selected tab name",
+        "breakpoint": "Breakpoint (in pixels) of tabs container width at which the tabs automatically turn to a justify alignment",
+        "vertical": "Use vertical design (tabs one on top of each other rather than one next to the other horizontally)",
+        "shrink": "By default, tabs is set to grow to the available space; However, you can reverse that with this prop; Useful (and required) when placing the component in a toolbar",
+        "outsideArrows": "Reserve space for arrows to place them on each side of the tabs (the arrows fade when inactive)",
+        "mobileArrows": "Force display of arrows (if needed) on mobile",
+        "switchIndicator": "Switches the indicator position (on left of tab for vertical mode or above the tab for default horizontal mode)",
+        "narrowIndicator": "Allows the indicator to be the same width as the tab's content (text or icon), instead of the whole width of the tab",
+        "inlineLabel": "Allows the text to be inline with the icon, should one be used",
+        "align": "Horizontal alignment the tabs within the tabs container",
+        "leftIcon": "The name of an icon to replace the default arrow used to scroll through the tabs to the left, when the tabs extend past the width of the tabs container",
+        "rightIcon": "The name of an icon to replace the default arrow used to scroll through the tabs to the right, when the tabs extend past the width of the tabs container",
+        "activeColor": "The color to be attributed to the text of the active tab",
+        "activeBgColor": "The color to be attributed to the background of the active tab"
+      }
     },
     "tags-select": {
-      "label": "Tags Picker"
+      "label": "Tags Picker",
+      "tooltips": {
+        "tableId": "Table to lookup values into",
+        "remove": "Triggered when a selection is removed (in multiple selection only)",
+        "add": "Triggered when a selection is added (in multiple selection only)",
+        "newValue": "Triggered when a new value is added to the list of tags"
+      }
     },
     "time": {
-      "label": "Time Picker"
+      "label": "Time Picker",
+      "tooltips": {
+        "withSeconds": "Allow the time to be set with seconds",
+        "nowBtn": "Display a button that selects the current time",
+        "mask": "Mask (formatting string) used for parsing and formatting value",
+        "calendar": "Specify calendar type"
+      }
     },
     "toggle": {
-      "label": "Toggle"
+      "label": "Toggle",
+      "tooltips": {
+        "toggled": "Mode value",
+        "leftLabel": "Label (if any specified) should be displayed on the left side of the component",
+        "iconColor": "Override default icon color (for truthy state only)",
+        "keepColor": "Should the color (if specified any) be kept when the component is unticked/ off?"
+      }
     },
     "toolbar": {
-      "label": "Toolbar"
+      "label": "Toolbar",
+      "tooltips": {
+      }
     },
     "video": {
-      "label": "Video"
+      "label": "Video",
+      "tooltips": {
+        "title": "(Accessibility) Set the native 'title' attribute value of the inner iframe being used",
+        "ratio": "Aspect ratio for the content; Avoid using a computational statement (like '16/9') and instead specify the value of the result directly (eg. '1.7777')",
+        "fetchpriority": "Provides a hint of the relative priority to use when fetching the iframe document",
+        "reffererpolicy": "Indicates which referrer to send when fetching the frame's resource"
+      }
     },
     "value-box": {
-      "label": "Value Box"
+      "label": "Value Box",
+      "tooltips": {
+        "value": "Main value",
+        "valueColor": "Main value color",
+        "valueFormat": "Main value display formatting",
+        "valueStyle": "Main value font styling",
+        "valueDigits": "How many digits to display (0-20)",
+        "valueCurrency": "Format the main value as currency",
+        "valueCurrencyNarrow": "Use a narrow format symbol ('$100' rather than 'US$100')",
+        "label": "Main label",
+        "labelColor": "Main label color",
+        "labelStyle": "Main label styling",
+        "icon": "Icon",
+        "iconColor": "Icon color",
+        "tag": "Tag value",
+        "tagColor": "Tag value color",
+        "tagStyle": "Tag value styling",
+        "diff": "Differential value",
+        "diffFormat": "Differential value formatting",
+        "diffDigits": "How many digits to display the differential value with (0-20)",
+        "diffCurrency": "Format the differential value as currency",
+        "diffCurrencyNarrow": "Use a narrow format symbol ('$100' rather than 'US$100')",
+        "diffColor": "Differential value color",
+        "diffStyle": "Differential value styling",
+        "diffIcon": "Differential icon to show increase or decrease",
+        "diffIconColor": "Differential value icon color",
+        "diffIconSize": "Differential value icon size",
+        "diffIconSuffix": "Display differential value icon as suffix (right side or value)"
+      }
     },
     "stat-box": {
-      "label": "Table Stat Box"
+      "label": "Table Stat Box",
+      "tooltips": {
+        "type": "Type of statistics to execute to obtain the main value",
+        "tableId": "Table to execute the aggregation on",
+        "field": "Field to aggregate on",
+        "groupFields": "List of fields to group the results before aggregating",
+        "filter": "Query to apply to the table while doing the aggregation",
+        "valueColor": "Main value color",
+        "valueFormat": "Main value display formatting",
+        "valueStyle": "Main value font styling",
+        "valueDigits": "How many digits to display (0-20)",
+        "valueCurrency": "Format the main value as currency",
+        "valueCurrencyNarrow": "Use a narrow format symbol ('$100' rather than 'US$100')",
+        "label": "Main label",
+        "labelColor": "Main label color",
+        "labelStyle": "Main label styling",
+        "icon": "Icon",
+        "iconColor": "Icon color",
+        "tag": "Tag value",
+        "tagColor": "Tag value color",
+        "tagStyle": "Tag value styling",
+        "diff": "Differential value",
+        "diffFormat": "Differential value formatting",
+        "diffDigits": "How many digits to display the differential value with (0-20)",
+        "diffCurrency": "Format the differential value as currency",
+        "diffCurrencyNarrow": "Use a narrow format symbol ('$100' rather than 'US$100')",
+        "diffColor": "Differential value color",
+        "diffStyle": "Differential value styling",
+        "diffIcon": "Differential icon to show increase or decrease",
+        "diffIconColor": "Differential value icon color",
+        "diffIconSize": "Differential value icon size",
+        "diffIconSuffix": "Display differential value icon as suffix (right side or value)"
+      }
+    },
+    "user-menu": {
+      "label": "Menu",
+      "tooltips": {
+        "label": "Menu label",
+        "description": "Tooltip to display under the menu when hovered with the mouse",
+        "icon": "Icon to display on the menu",
+        "color": "Color of the menu text",
+        "href": "Native link to navigate to when menu is clicked",
+        "target": "Native link target attribute; Use it only with the 'href' prop",
+        "variables": "List of variables scoped to this menu",
+        "variables_value": "Variable value"
+      }
+    },
+    "user-tab": {
+      "label": "Tab",
+      "tooltips": {
+        "label": "Tab label",
+        "description": "Tooltip to display under the tab when hovered with the mouse",
+        "icon": "Icon to display on the tab",
+        "color": "Color of the tab text",
+        "formId": "Form to display when this ",
+        "badgeTableId": "Table to execute the aggregation on",
+        "badgeFilter": "Query to apply to the table while doing the aggregation",
+        "badgeField": "Field to aggregate",
+        "badgeGroupFields": "List of fields for grouping aggregation ",
+        "badgeStat": "Type of statistics to execute"
+      }
+    },
+    "user-form": {
+      "label": "Form",
+      "tooltips": {
+        "data": "User data belonging to the form",
+        "grid": "Display data as a grid instead of the default table",
+        "gridHeader": "Display header for grid-mode also",
+        "editable": "Allows the user to edit the rows",
+        "title": "Table title",
+        "hideHeader": "Hide table header layer",
+        "hideBottom": "Hide table bottom layer regardless of what it has to display",
+        "hideSelectedBanner": "Hide the selected rows banner (if any)",
+        "hideNoData": "Hide the default no data bottom layer",
+        "hidePagination": "Hide the pagination controls at the bottom",
+        "separator": "Use a separator/border between rows, columns or all cells",
+        "wrapCells": "Wrap text within table cells",
+        "noDataLabel": "Override default text to display when no data is available",
+        "noResultsLabel": "Override default text to display when user filters the table and no matched results are found",
+        "loadingLabel": "Override default text to display when table is in loading state (see 'loading' prop)",
+        "expanded": "Keeps the array with expanded rows keys",
+        "filter": "String to filter the table with",
+        "rows": "Rows of data to display",
+        "rowKey": "Property of each row that defines the unique key of each row (the result must be a primitive, not Object, Array, etc); The value of property must be string or a function taking a row and returning the desired (nested) key in the row; If supplying a function then for best performance, reference it from your scope and do not define it inline",
+        "rowsPerPageLabel": "Text to override default rows per page label at bottom of table",
+        "pagination": "Pagination object; You can also use the 'v-model:pagination' for synching; When not synching it simply initializes the pagination on first render",
+        "pagination_sortBy": "Column name (from column definition)",
+        "pagination_descending": "Is sorting in descending order?",
+        "pagination_page": "Page number (1-based)",
+        "pagination_rowsPerPage": "How many rows per page? 0 means Infinite",
+        "pagination_rowsNumber": "For server-side fetching only. How many total database rows are there to be added to the table. If set, causes the QTable to emit @request when data is required",
+        "rowsPerPageOptions": "Options for user to pick (Numbers); Number 0 means 'Show all rows in one page'",
+        "selectionStyle": "Selection type",
+        "binaryStateSort": "Skip the third state (unsorted) when user toggles column sort direction",
+        "columnSortOrder": "Set column sort order: 'ad' (ascending-descending) or 'da' (descending-ascending); It gets applied to all columns unless a column has its own sortOrder specified in the 'columns' definition prop",
+        "tableId": "Table to display rows from. Overrides the 'rows' prop",
+        "query": "Query to apply to the table",
+        "temps": "Show temporary records (records being created but not saved yet)",
+        "hideFilter": "Hide the filter text input in the table header",
+        "addButton": "Show a button that allow to add a new row",
+        "addLabel": "Label to show on the add button",
+        "addIcon": "Icon to show in the add button",
+        "addDisable": "Is adding a row disabled?",
+        "removeButton": "Show a remove action on each row",
+        "removeLabel": "Label to show on the remove action",
+        "removeIcon": "Icon for the remove action",
+        "removeDisable": "Is the remove action disabled?",
+        "saveLabel": "Save editing button label",
+        "saveIcon": "Save editing button icon",
+        "cancelLabel": "Cancel editing button label",
+        "cancelIcon": "Cancel editing button icon",
+        "extraFields": "",
+        "extraFields_fieldname": "",
+        "extraFields_value": "",
+        "extraFields_filter": "",
+        "extraFields_create": "",
+        "rowClick": "Triggered when a row is clicked",
+        "rowDblClick": "Triggered when a row is double-clicked",
+        "rowContextMenu": "Triggered when user right clicks/long taps on a row",
+        "selection": "Triggered when user selects/unselects row(s)",
+        "actions": "List of actions to display in the dropdown menu on the right side of each row",
+        "actions_label": "Label of the action",
+        "actions_icon": "Icon for the action",
+        "actions_color": "Color of the action icon",
+        "actions_click": "Triggered when the action is clicked by the user",
+        "hideTable": "Hide the main table that appears left of the form",
+        "mounted": "Triggered when the form has been mounted. A component is considered mounted after: All of its synchronous child components have been mounted. Its own DOM tree has been created and inserted into the parent container",
+        "updated": "Triggered after the component has updated its DOM tree due to a reactive state change",
+        "unmounted": "Triggered after the component has been unmounted, when all of its child components have been unmounted.",
+        "tableCreate": "Triggered when a new record is added to the main table",
+        "tablePatch": "Triggered when a record is changed in the main table",
+        "tableRemove": "Triggered when a record is removed from the main table"
+      }
+    },
+    "user-table": {
+      "label": "Table",
+      "tooltips": {
+        "name": "Name of the table",
+        "methods": "Methods supported by the table",
+        "created": "Add 'created_at' and 'created_by' fields to track record owner and creation time",
+        "updated": "Add 'update_at' and 'updated_by' fields to track who modified the record and at what time",
+        "softDelete": "Use record's soft-delete instead of hard-delete on the table",
+        "user": "Restrict the records to their creator",
+        "indexes": "Field indexes",
+        "indexes_name": "Name of the index",
+        "indexes_unique":  "Retrict records to be duplicated",
+        "indexes_sparse": "Only contain entries for documents that have the indexed field, even if the index field contains a null value",
+        "indexes_fields_field": "Field to index",
+        "indexes_fields_descending": "Descending index ordering"
+      }
+    },
+    "user-table-field": {
+      "label": "Table Field",
+      "tooltips": {
+        "type": "Field type",
+        "hidden": "Field will not be auto-generated in forms",
+        "array": "This field is an array of 'type' value",
+        "optional": "This field is considered optional",
+        "readonly": "This field is only used for display purposes, it cannot be modified",
+        "queryable": "This field is queryable in filters and queries",
+        "secret": "This field will not be returned from the server. It can only be seen when creating a record",
+        "transforms": "Apply one or multiple transforms to the field's value on the server side",
+        "transforms_type": "Type of transform to apply to field's value",
+        "transforms_value": "Optional transform value",
+        "slider": "Edit the value as a slider",
+        "format": "Formatting for 'string' types",
+        "min": "Minimum value of the model; Set track's minimum value",
+        "max": "Maximum value of the model; Set track's maximum value",
+        "step": "Specify step amount between valid values (> 0.0); When step equals to 0 it defines infinite granularity",
+        "multipleOf": "",
+        "exclusiveMin": "Maximum execlusive value allowed",
+        "exclusiveMax": "Maximum execlusive value allowed",
+        "dateMin": "Minimum date allowed for selection",
+        "dateExclusiveMin": "Minimum exclusive allowed for selection",
+        "dateMax": "Maximum date allowed for selection",
+        "dateExclusiveMax": "Maximum exclusive allowed for selection",
+        "pattern": "",
+        "options": "Options to select when editing",
+        "options_label": "Option label",
+        "options_value": "Option value",
+        "options_disable": "The option is disabled",
+        "multiple": "Allow multiple selection; use with 'options' prop",
+        "toggles": "",
+        "chip": "Display value as a chip",
+        "rating": "Display value as rating icons; for 'number' types",
+        "ratingIcon": "Rating icon",
+        "ratingIconFilled": "Rating filled icon",
+        "ratingIconHalf": "Rating half-filled icon",
+        "service": "Table for 'lookup' type",
+        "query": "Query to apply to table",
+        "columns": "Lookup columns to display",
+        "valueField": "Lookup value field",
+        "labelField": "Lookup label field",
+        "refTableId": "Cross-link reference table for this field",
+        "refFields": "Fields to select from the referenced table to make up the referenced virtual field"
+      }
     },
     "separators": {
       "display": "Display",
