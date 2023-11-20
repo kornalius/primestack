@@ -301,6 +301,7 @@ import { useFormElements } from '@/features/Forms/composites'
 import { useMenus } from '@/features/Menus/composites'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
 import { queryToMongo } from '@/features/Query/composites'
+import { useShare } from '@/features/Shares/store'
 import { AnyData } from '@/shared/interfaces/commons'
 import { Query } from '@/shared/interfaces/query'
 import SnacksDisplay from '@/features/Snacks/components/Snacks.vue'
@@ -308,8 +309,6 @@ import TabsEditor from '@/features/Tabs/components/TabsEditor.vue'
 import MenusEditor from '@/features/Menus/components/MenusEditor.vue'
 import AppProperties from '@/features/App/components/AppProperties.vue'
 import UserMenu from '@/features/App/components/UserMenu.vue'
-import { useShareStore } from '@/features/Shares/store'
-import { useShare } from '@/features/Shares/composites'
 
 type Tab = Static<typeof tabSchema>
 type Menu = Static<typeof menuSchema>
@@ -396,9 +395,7 @@ const routeTabs = computed(() => routeMenu.value?.tabs)
 
 const auth = useAuth()
 
-const share = useShareStore()
-
-const { assignUserToShare } = useShare()
+const share = useShare()
 
 /**
  * Load user's editor data
@@ -412,7 +409,7 @@ const loadUserData = async () => {
   await useFeathersService('blueprints').find({ query: {} })
 
   if (share.shareId) {
-    await assignUserToShare(share.shareId, auth.userId)
+    await share.assignUserToShare(share.shareId, auth.userId)
     share.setShareId(undefined)
     share.setLinkClicked(undefined)
   }

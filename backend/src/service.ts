@@ -103,12 +103,9 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
 
   const limitToUserResolver = options.user
     ? {
-      createdBy: async (value: AnyData, query: AnyData, context: HookContext) => {
-        if (context.params?.user) {
-          return context.params.user._id
-        }
-        return value
-      }
+      createdBy: async (value: AnyData, query: AnyData, context: HookContext) => (
+        context.params?.user?._id
+      )
     } : {}
 
   const limitToNonDeletedResolver = options.softDelete

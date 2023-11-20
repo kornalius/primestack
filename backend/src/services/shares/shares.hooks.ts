@@ -73,6 +73,9 @@ export default {
       checkMaxShares(),
       sendEmail(),
     ],
+    update: [
+      sendEmail(),
+    ],
     patch: [
       sendEmail(),
     ],

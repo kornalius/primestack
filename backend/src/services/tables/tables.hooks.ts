@@ -31,8 +31,10 @@ import { fieldsToSchema, indexesToMongo, refFieldname } from '@/shared/schema'
 import { createService, MongoService } from '@/service'
 import { checkRules } from '@/hooks/check-rules'
 import { AdapterId, NullableAdapterId } from '@feathersjs/mongodb/src/adapter'
-import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
+import { schema, tableFieldSchema, tableSchema } from '@/shared/schemas/table'
+import { deepScanProp, getSharedMenus } from '@/shared-utils'
 
+type TableList = Static<typeof schema>
 type Table = Static<typeof tableSchema>
 type TableField = Static<typeof tableFieldSchema>
 
@@ -74,6 +76,56 @@ const checkMaxRecords = () => async (context: HookContext): Promise<HookContext>
       lng: context.params?.user?.lng as string || 'en',
     }))
   }
+  return context
+}
+
+/**
+ * Populate list of tables with shared tables as well
+ */
+const populateSharedTables = () => async (context: HookContext): Promise<HookContext> => {
+  const sharedMenus = await getSharedMenus(context)
+
+  let sharedTableIds: string[] = []
+
+  await Promise.all(sharedMenus.map(async (m) => {
+    const formIds = m.tabs.map((t) => t.formId.toString())
+    const { data: forms } = await context.app.service('forms').find({
+      query: {
+        _id: { $in: formIds },
+        $limit: -1,
+        $skip: 0,
+      }
+    })
+    sharedTableIds = [
+      ...sharedTableIds,
+      ...deepScanProp(forms, 'tableId').map((id) => (id as AnyData).toString()),
+    ]
+  }))
+
+  if (sharedTableIds.length > 0) {
+    const { data: sharedTables } = await context.app.service('tables').find({
+      query: {
+        tableIds: { $in: sharedTableIds },
+        $limit: -1,
+        $skip: 0,
+      }
+    })
+
+    if (context.result) {
+      if (Array.isArray(context.result)) {
+        (context.result as TableList[]).forEach((r) => {
+          // eslint-disable-next-line no-param-reassign
+          r.list = [...r.list, ...sharedTables]
+        })
+      } else {
+        (context.result as TableList).list = [
+          ...(context.result as TableList).list || [],
+          ...sharedTables,
+        ]
+      }
+    }
+  }
+
   return context
 }
 
@@ -387,7 +439,7 @@ export const createDynamicService = (app: Application, id: string, t: AnyData) =
         create: [
           checkMaxRecords(),
         ]
-      }
+      },
     },
     validators: {
       // querySyntax: Object.keys(querySyntax).length ? querySyntax : undefined,
@@ -466,6 +518,11 @@ export default {
       loadPrev(),
       updateCollections(),
       forceCreatedAndUpdated(),
+    ],
+  },
+  after: {
+    all: [
+      populateSharedTables(),
     ],
   },
 }

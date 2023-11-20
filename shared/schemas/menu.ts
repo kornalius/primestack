@@ -103,6 +103,7 @@ export const menuSchema = Type.Object(
     target: Type.Optional(StringEnum(targetValues)),
     tabs: Type.Array(tabSchema),
     variables: Type.Array(variableSchema),
+    shareId: Type.Optional(ExType.Id()),
     click: Type.Optional(ExType.Action()),
   },
   {

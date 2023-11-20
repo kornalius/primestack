@@ -212,6 +212,7 @@ export const formSchema = Type.Object(
     tableId: Type.Optional(ExType.Table()),
     hideTable: Type.Optional(Type.Boolean()),
     query: Type.Optional(ExType.Query()),
+    shareId: Type.Optional(ExType.Id()),
     mounted: Type.Optional(ExType.Action()),
     updated: Type.Optional(ExType.Action()),
     unmounted: Type.Optional(ExType.Action()),

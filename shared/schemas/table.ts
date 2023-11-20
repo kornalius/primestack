@@ -255,6 +255,7 @@ export const tableSchema = Type.Object(
     indexes: Type.Array(tableIndexSchema, { fixed: true }),
     // when specified (events, files), the data will come from those services instead
     service: Type.Optional(StringEnum(['events', 'files'])),
+    shareId: Type.Optional(ExType.Id()),
   },
   {
     $id: 'Table',

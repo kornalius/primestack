@@ -12,6 +12,7 @@ export const actionElementSchema = Type.Recursive((self) => (
 export const actionSchema = Type.Object({
   _id: ExType.Id(),
   _actions: Type.Array(actionElementSchema),
+  shareId: Type.Optional(ExType.Id()),
 }, { $id: 'Action' })
 
 export const schema = Type.Object({
