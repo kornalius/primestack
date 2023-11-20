@@ -158,7 +158,7 @@
           </q-item-label>
         </q-item>
 
-        <div v-if="userMenu">
+        <div v-if="userMenu?.list">
           <q-item
             v-if="editor.active"
             class="Drawer__item"
@@ -242,6 +242,22 @@
                   {{ m.label }}
                 </q-item-label>
               </q-item-section>
+
+              <q-icon
+                v-if="isMenuShared(m)"
+                class="share-icon-shadow"
+                color="black"
+                name="mdi-share"
+                size="xs"
+              />
+
+              <q-icon
+                v-if="isMenuShared(m)"
+                class="share-icon"
+                color="green-4"
+                name="mdi-share"
+                size="xs"
+              />
             </q-item>
           </div>
         </div>
@@ -292,6 +308,8 @@ import TabsEditor from '@/features/Tabs/components/TabsEditor.vue'
 import MenusEditor from '@/features/Menus/components/MenusEditor.vue'
 import AppProperties from '@/features/App/components/AppProperties.vue'
 import UserMenu from '@/features/App/components/UserMenu.vue'
+import { useShareStore } from '@/features/Shares/store'
+import { useShare } from '@/features/Shares/composites'
 
 type Tab = Static<typeof tabSchema>
 type Menu = Static<typeof menuSchema>
@@ -378,6 +396,10 @@ const routeTabs = computed(() => routeMenu.value?.tabs)
 
 const auth = useAuth()
 
+const share = useShareStore()
+
+const { assignUserToShare } = useShare()
+
 /**
  * Load user's editor data
  */
@@ -388,6 +410,12 @@ const loadUserData = async () => {
   await useFeathersService('forms').find({ query: {} })
   await useFeathersService('actions').find({ query: {} })
   await useFeathersService('blueprints').find({ query: {} })
+
+  if (share.shareId) {
+    await assignUserToShare(share.shareId, auth.userId)
+    share.setShareId(undefined)
+    share.setLinkClicked(undefined)
+  }
 }
 
 watch(() => userMenu.value?.list, () => {
@@ -507,4 +535,20 @@ const title = computed(() => {
 watch(title, () => {
   document.title = title.value
 }, { immediate: true })
+
+const isMenuShared = (m: Menu): boolean => (
+  !!userMenu.value.userIds.find((u: AnyData) => u.menuId === m._id)
+)
 </script>
+
+<style scoped lang="sass">
+.share-icon
+  position: absolute
+  bottom: 5px
+  left: 10px
+.share-icon-shadow
+  position: absolute
+  bottom: 5px
+  left: 10px
+  transform: scale(1.3)
+</style>

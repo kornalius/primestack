@@ -142,7 +142,10 @@ export const schema = Type.Object(
     menuIds: Type.Optional(Type.Array(ExType.Id())),
     formIds: Type.Optional(Type.Array(ExType.Id())),
     tableIds: Type.Optional(Type.Array(ExType.Id())),
-    userIds: Type.Optional(Type.Array(ExType.Id())),
+    userIds: Type.Optional(Type.Array(Type.Object({
+      menuId: ExType.Id(),
+      userId: ExType.Id(),
+    }))),
   },
   { $id: 'MenuList', additionalProperties: false },
 )

@@ -192,15 +192,15 @@ const table = computed(() => (
 ))
 
 const addButtonSide = computed(() => (
-  table.value?.methods.includes('create') ? props.addButton : undefined
+  !table.value?.methods || table.value?.methods.includes('create') ? props.addButton : undefined
 ))
 
 const hasRemoveButton = computed(() => (
-  table.value?.methods.includes('remove') && props.removeButton
+  !table.value?.methods || table.value?.methods.includes('remove') ? props.removeButton : undefined
 ))
 
 const isEditable = computed(() => (
-  table.value?.methods.includes('patch') && props.editable
+  !table.value?.methods || table.value?.methods.includes('patch') ? props.editable : undefined
 ))
 
 const fields = computed(() => (

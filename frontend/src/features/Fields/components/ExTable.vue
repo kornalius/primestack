@@ -446,7 +446,7 @@ watch([
  * @returns {TSchema}
  */
 const fieldSchema = (name: string): TSchema => {
-  const col = props.columns.find((c) => c.name === name)
+  const col = props.columns.find((c) => c.field === name || c.name === name)
   const cf = col
     ? {
       type: col.type,
@@ -474,7 +474,9 @@ const fieldSchema = (name: string): TSchema => {
     : {} as TableField
   return {
     ...(props.schema?.properties[name] || {}),
-    ...cf,
+    ...Object.keys(cf)
+      .filter((k) => cf[k] !== undefined)
+      .reduce((acc, k) => ({ ...acc, [k]: cf[k] }), {}),
   }
 }
 

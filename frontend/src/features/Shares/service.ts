@@ -7,10 +7,7 @@ type Share = Static<typeof schema>
 export default {
   setupInstance: (data: Share): Share => (
     useInstanceDefaults({
-      read: true,
-      create: true,
-      update: true,
-      delete: true,
+      rules: [],
       disabled: false,
     }, data)
   ),

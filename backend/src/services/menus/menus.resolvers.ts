@@ -1,13 +1,11 @@
-import dayjs from 'dayjs'
-import isEmpty from 'lodash/isEmpty'
+import { Static } from '@feathersjs/typebox'
 import compact from 'lodash/compact'
 import { virtual } from '@feathersjs/schema'
 import { HookContext } from '@/declarations'
-import { AnyData } from '@/shared/interfaces/commons'
-import { Static } from '@feathersjs/typebox'
 import { menuSchema, schema, tabSchema } from '@/shared/schemas/menu'
 import { formSchema, schema as formListSchema } from '@/shared/schemas/form'
 import { schema as shareSchema } from '@/shared/schemas/share'
+import { isShareValid } from '@/shared/share'
 
 type MenuList = Static<typeof schema>
 type Menu = Static<typeof menuSchema>
@@ -59,7 +57,7 @@ const tableIds = virtual(async (value: MenuList, context: HookContext) => {
     .map((f: Form) => f.tableId?.toString())
 })
 
-// return a list of user ids that this menu is shared with
+// return a list of user ids that each menu is shared with
 const userIds = virtual(async (value: MenuList, context: HookContext) => {
   // extract all menu ids from the list
   const menuIds = value?.list.map((m: Menu) => m._id)
@@ -77,28 +75,19 @@ const userIds = virtual(async (value: MenuList, context: HookContext) => {
   })).data as Share[]
 
   return compact([
-    // always return the creator of this menu
-    (value as AnyData).createdBy?.toString(),
-    ...shares
-      .filter((s: Share) => {
-        // check if share is still valid
-        if (!s.disabled) {
-          // check for within dates validity
-          if (isEmpty(s.validFrom) && isEmpty(s.validUntil)) {
-            return true
-          }
-          const from = dayjs(s.validFrom)
-          const to = dayjs(s.validUntil)
-          const now = dayjs()
-          if (now.isSame(from)
-            || now.isSame(to)
-            || (now.isAfter(from) && now.isBefore(to))) {
-            return true
-          }
-        }
-        return false
-      })
-      .map((s: Share) => s.userId?.toString())
+    // // always return the creator of this menu
+    // ...(value?.list || [])
+    //   .map((m: Menu) => ({
+    //     menuId: m._id.toString(),
+    //     userId: (value as AnyData).createdBy?.toString(),
+    //   })),
+
+    ...(shares || [])
+      .filter((s: Share) => isShareValid(s))
+      .map((s: Share) => ({
+        menuId: s.menuId?.toString(),
+        userId: s.userId?.toString(),
+      }))
   ])
 })
 

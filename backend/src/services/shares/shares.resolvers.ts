@@ -23,12 +23,19 @@ const getFormIds = (menu: MenuList): string[] => (
 
 // return a list of form ids this share provides
 const formIds = virtual(async (value: Share, context: HookContext) => {
+  if (!value.menuId) {
+    return []
+  }
   const menu = await context.app.service('menus').get(value.menuId) as MenuList
   return getFormIds(menu)
 })
 
 // return a list of form ids this share provides
 const tableIds = virtual(async (value: Share, context: HookContext) => {
+  if (!value.menuId) {
+    return []
+  }
+
   const menu = await context.app.service('menus').get(value.menuId) as MenuList
   const formIds = getFormIds(menu)
 
