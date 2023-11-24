@@ -22,6 +22,7 @@ export const badgetStats = [
 export const tabSchema = Type.Object(
   {
     _id: ExType.Id(),
+    _internalType: Type.String(),
     label: Type.String(),
     description: Type.Optional(Type.String()),
     icon: ExType.Icon(),
@@ -95,6 +96,7 @@ export const variableSchema = Type.Object(
 export const menuSchema = Type.Object(
   {
     _id: ExType.Id(),
+    _internalType: Type.String(),
     label: Type.String(),
     description: Type.Optional(Type.String()),
     icon: ExType.Icon(),
@@ -139,14 +141,6 @@ export const schema = Type.Object(
     _id: ExType.Id(),
     userId: Type.Optional(ExType.Id()),
     list: Type.Array(menuSchema),
-    // from resolvers
-    menuIds: Type.Optional(Type.Array(ExType.Id())),
-    formIds: Type.Optional(Type.Array(ExType.Id())),
-    tableIds: Type.Optional(Type.Array(ExType.Id())),
-    userIds: Type.Optional(Type.Array(Type.Object({
-      menuId: ExType.Id(),
-      userId: ExType.Id(),
-    }))),
   },
   { $id: 'MenuList', additionalProperties: false },
 )

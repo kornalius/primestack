@@ -91,7 +91,20 @@
           </q-tooltip>
         </q-btn>
 
-        <user-menu />
+        <div class="row items-center q-gutter-sm">
+          <div
+            v-if="app.menuId && auth.authenticated"
+            class="col-auto"
+          >
+            <share-menu
+              :menu-id="app.menuId"
+            />
+          </div>
+
+          <div class="col-auto">
+            <user-menu />
+          </div>
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -244,7 +257,7 @@
               </q-item-section>
 
               <q-icon
-                v-if="isMenuShared(m)"
+                v-if="sharedMenu[m._id]"
                 class="share-icon-shadow"
                 color="black"
                 name="mdi-share"
@@ -252,7 +265,7 @@
               />
 
               <q-icon
-                v-if="isMenuShared(m)"
+                v-if="sharedMenu[m._id]"
                 class="share-icon"
                 color="green-4"
                 name="mdi-share"
@@ -299,18 +312,21 @@ import { useExpression } from '@/features/Expression/composites'
 import { useStats } from '@/features/Stats/store'
 import { useFormElements } from '@/features/Forms/composites'
 import { useMenus } from '@/features/Menus/composites'
+import { useShareStore } from '@/features/Shares/store'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
+import { tableSchema } from '@/shared/schemas/table'
 import { queryToMongo } from '@/features/Query/composites'
-import { useShare } from '@/features/Shares/store'
 import { AnyData } from '@/shared/interfaces/commons'
 import { Query } from '@/shared/interfaces/query'
 import SnacksDisplay from '@/features/Snacks/components/Snacks.vue'
 import TabsEditor from '@/features/Tabs/components/TabsEditor.vue'
 import MenusEditor from '@/features/Menus/components/MenusEditor.vue'
 import AppProperties from '@/features/App/components/AppProperties.vue'
-import UserMenu from '@/features/App/components/UserMenu.vue'
+import UserMenu from '@/features/Users/components/UserMenu.vue'
+import ShareMenu from '@/features/Shares/components/ShareMenu.vue'
 
 type Tab = Static<typeof tabSchema>
+type Table = Static<typeof tableSchema>
 type Menu = Static<typeof menuSchema>
 
 const quasar = useQuasar()
@@ -381,7 +397,7 @@ const { menuUrl, tableUrl, formUrl } = useUrl()
  * Returns the current route menu instance when editor is not active
  */
 const routeMenu = computed(() => (
-  userMenu.value?.list.find((m) => m._id === route.params.menuId)
+  userMenu.value?.list.find((m: Menu) => m._id === route.params.menuId)
 ))
 
 /**
@@ -395,7 +411,7 @@ const routeTabs = computed(() => routeMenu.value?.tabs)
 
 const auth = useAuth()
 
-const share = useShare()
+const share = useShareStore()
 
 /**
  * Load user's editor data
@@ -415,9 +431,12 @@ const loadUserData = async () => {
   }
 }
 
-watch(() => userMenu.value?.list, () => {
-  (userMenu.value?.list || []).forEach((m: Menu) => {
+const sharedMenu = ref({})
+
+watch([() => userMenu.value?.list, () => auth.userId], () => {
+  (userMenu.value?.list || []).forEach(async (m: Menu) => {
     setVariables(m, ctx)
+    sharedMenu.value[m._id] = await share.isMenuShared(m._id, auth.userId)
   })
 }, { deep: true })
 
@@ -501,7 +520,7 @@ watch(routeTabs, () => {
     if (badgeTableId) {
       const userTable = useFeathersService('tables')
         .findOneInStore({ query: {} })
-      const table = userTable.value?.list.find((tt) => tt._id === badgeTableId)
+      const table = userTable.value?.list.find((tt: Table) => tt._id === badgeTableId)
 
       if (table) {
         const q = badgeFilter ? queryToMongo(badgeFilter as Query, table, ctx.$expr) : {}
@@ -532,10 +551,6 @@ const title = computed(() => {
 watch(title, () => {
   document.title = title.value
 }, { immediate: true })
-
-const isMenuShared = (m: Menu): boolean => (
-  !!userMenu.value.userIds.find((u: AnyData) => u.menuId === m._id)
-)
 </script>
 
 <style scoped lang="sass">

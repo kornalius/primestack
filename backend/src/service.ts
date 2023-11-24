@@ -14,8 +14,10 @@ import { NextFunction, Params, ServiceInterface } from '@feathersjs/feathers'
 import { HookFunction } from '@feathersjs/feathers/src/declarations'
 import { AnyData } from '@/shared/interfaces/commons'
 import { MongoDBService } from '@feathersjs/mongodb'
-import { Collection, Db } from 'mongodb'
+import { Collection, Db, ObjectId } from 'mongodb'
 import { schema as userSchema } from '@/shared/schemas/user'
+import { loadPrev } from '@/hooks/load-prev'
+import { restrictToOwner } from '@/hooks/restrict-to-owner'
 import { softDelete } from './hooks/soft-delete'
 // eslint-disable-next-line import/no-cycle
 import {
@@ -89,7 +91,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
     }
   }
 
-  if (options.user) {
+  if (options.userRead || options.userWrite) {
     schema.properties = {
       ...schema.properties,
       createdBy: Type.Optional(Type.String({ objectid: true })),
@@ -101,12 +103,25 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
    * Custom resolvers
    */
 
-  const limitToUserResolver = options.user
+  const limitToUserResolver = options.userRead
     ? {
       createdBy: async (value: AnyData, query: AnyData, context: HookContext) => (
         context.params?.user?._id
-      )
+      ),
     } : {}
+
+  const convertIdsResolver = () => {
+    const resolvers: AnyData = {}
+    Object.keys(schema.properties).forEach((k) => {
+      const p = schema.properties[k]
+      if (p.type === 'string' && p.objectid === true) {
+        resolvers[k] = async (value: string) => (
+          value && new ObjectId(value)
+        )
+      }
+    })
+    return resolvers
+  }
 
   const limitToNonDeletedResolver = options.softDelete
     ? {
@@ -134,7 +149,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
       deletedAt: async () => undefined,
     } : {}
 
-  const userResolver = options.user
+  const userResolver = options.userRead
     ? {
       _user: virtual(async (record: AnyData, context: HookContext) => {
         if (record.userId) {
@@ -258,6 +273,7 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
       ...(options.resolvers?.query || {}),
       ...limitToUserResolver as AnyData,
       ...limitToNonDeletedResolver as AnyData,
+      ...convertIdsResolver() as AnyData,
     }
   )
 
@@ -328,14 +344,20 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
         schemaHooks.validateData(dataValidator),
       ],
       update: [
+        loadPrev(),
+        restrictToOwner(),
         ...expandHooks('before.update'),
       ],
       patch: [
+        loadPrev(),
+        restrictToOwner(),
         ...expandHooks('before.patch'),
         schemaHooks.resolveData(patchResolver),
         schemaHooks.validateData(patchValidator),
       ],
       remove: [
+        loadPrev(),
+        restrictToOwner(),
         ...(options.softDelete ? [softDelete()] : []),
         ...expandHooks('before.remove'),
       ],

@@ -90,6 +90,7 @@ export const useMenuEditor = defineStore('menu-editor', () => {
   const add = (options?: AnyData): Menu => {
     const m: Menu = {
       _id: hexObjectId(),
+      _internalType: 'menu',
       label: undefined,
       icon: undefined,
       color: undefined,

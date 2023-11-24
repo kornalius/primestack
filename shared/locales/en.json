@@ -317,6 +317,9 @@
     "user_menu": {
       "tooltip": "User menu"
     },
+    "share_menu": {
+      "tooltip": "Share"
+    },
     "search": {
       "tooltip": "Search anywhere"
     },
@@ -1394,5 +1397,29 @@
   "sidebar": {
     "open": "Open sidebar",
     "close": "Close sidebar"
+  },
+  "share": {
+    "email": {
+      "subject": "{{firstname}} {{lastname}} just shared a new menu item with you",
+      "text": "Hi,\n\n{{firstname}} {{lastname}} just shared a new menu item with you via the PrimeStack app.\n\nYou can access it by clicking the link below:\n\n{{link}}"
+    },
+    "add": "Share",
+    "emailInput": "Enter email you want to share with...",
+    "remove": "Stop sharing",
+    "title": "Shares",
+    "emailSent": "Email sent on",
+    "shareAccepted": "Share accepted on",
+    "resend": "Resend email",
+    "accessLevels": {
+      "-1": "Full access",
+      "0": "Can view",
+      "1": "Can view & edit"
+    },
+    "dialog": {
+      "remove": {
+        "title": "Stop sharing the menu?",
+        "message": "Are you sure you want stop sharing the menu with this user?"
+      }
+    }
   }
 }

@@ -408,7 +408,7 @@ const hover = ref()
 const fields = computed(() => (
   Object.keys(props.schema?.properties || {}).map((k) => (
     schemaToField(k, props.schema?.properties[k])
-  ))
+  )) as TableField[]
 ))
 
 let filterTimeout = 0

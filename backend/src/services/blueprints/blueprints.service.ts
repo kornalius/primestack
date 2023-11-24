@@ -17,7 +17,8 @@ export default function (app: Application): void {
     schema,
     created: true,
     updated: true,
-    user: true,
+    userRead: true,
+    userWrite: true,
     authentication: true,
     methods: ['find', 'get', 'create', 'patch', 'remove'],
   }).init(app, {})

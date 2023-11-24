@@ -87,7 +87,7 @@ export default {
 
   Icon: (options = {}) => Type.String({ icon: true, ...options }),
 
-  Action: (options = {}) => Id({ action: true, ...options }),
+  Action: (options = {}) => Id({ service: 'actions', ...options }),
 
   Table: (options = {}) => Id({ tableid: true, ...options }),
 
@@ -116,13 +116,11 @@ export default {
   ),
 
   MultiField: (options: FieldOptions = {}) => Type.Array(
-    Type.String(),
-    {
-      objectid: true,
+    Type.String({
       field: true,
       select: true,
       ...options,
-    },
+    }),
   ),
 
   Slider: (options: SliderOptions = {}) => Type.Number({ slider: true, ...options }),

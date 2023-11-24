@@ -2,6 +2,7 @@ import {
   computed, ref, WatchStopHandle, watch,
 } from 'vue'
 import { Static } from '@feathersjs/typebox'
+import hexObjectId from 'hex-object-id'
 import isEqual from 'lodash/isEqual'
 import { defineStore } from 'pinia'
 import hotkeys from 'hotkeys-js'
@@ -30,7 +31,7 @@ import { useActionEditor } from '@/features/Actions/store'
 import { useTableEditor } from '@/features/Tables/store'
 import { usePropertiesEditor } from '@/features/Properties/store'
 import { useBlueprintEditor } from '@/features/Blueprints/store'
-import hexObjectId from 'hex-object-id'
+// eslint-disable-next-line import/no-cycle
 import { componentsByType } from '@/features/Components'
 import { TAction } from '@/shared/interfaces/actions'
 import { actionsByType } from '@/features/Actions/composites'
@@ -400,16 +401,28 @@ export const useAppEditor = defineStore('app-editor', () => {
     } = loadFromStore()
 
     if (snapshot.menus && userMenus.value) {
-      userMenus.value.list = snapshot.menus
+      userMenus.value.list = [
+        ...snapshot.menus,
+        ...userMenus.value.list.filter((m: Menu) => m.shareId),
+      ]
     }
     if (snapshot.forms && userForms.value) {
-      userForms.value.list = snapshot.forms
+      userForms.value.list = [
+        ...snapshot.forms,
+        ...userForms.value.list.filter((f: Form) => f.shareId),
+      ]
     }
     if (snapshot.tables && userTables.value) {
-      userTables.value.list = snapshot.tables
+      userTables.value.list = [
+        ...snapshot.tables,
+        ...userTables.value.list.filter((t: Table) => t.shareId),
+      ]
     }
     if (snapshot.actions && userActions.value) {
-      userActions.value.list = snapshot.actions
+      userActions.value.list = [
+        ...snapshot.actions,
+        ...userActions.value.list.filter((a: Action) => a.shareId),
+      ]
     }
     if (snapshot.blueprints && userBlueprints.value) {
       userBlueprints.value.list = snapshot.blueprints
@@ -459,10 +472,10 @@ export const useAppEditor = defineStore('app-editor', () => {
       userBlueprints,
     } = loadFromStore()
 
-    menuEditor.setMenus(cloneDeep(userMenus.value?.list))
-    formEditor.setForms(cloneDeep(userForms.value?.list))
-    tableEditor.setTables(cloneDeep(userTables.value?.list))
-    actionEditor.setActions(cloneDeep(userActions.value?.list))
+    menuEditor.setMenus(cloneDeep(userMenus.value?.list.filter((m: Menu) => !m.shareId)))
+    formEditor.setForms(cloneDeep(userForms.value?.list.filter((f: Form) => !f.shareId)))
+    tableEditor.setTables(cloneDeep(userTables.value?.list.filter((t: Table) => !t.shareId)))
+    actionEditor.setActions(cloneDeep(userActions.value?.list.filter((a: Action) => !a.shareId)))
     blueprintEditor.setBlueprints(cloneDeep(userBlueprints.value?.list))
 
     undoStore.startWatch(startWatch)
@@ -524,10 +537,10 @@ export const useAppEditor = defineStore('app-editor', () => {
       userBlueprints,
     } = loadFromStore()
 
-    menuEditor.setMenus(cloneDeep(
-      (await useFeathersService('menus').patch(userMenus.value._id, {
-        ...userMenus.value,
-        list: menuEditor.menus,
+    formEditor.setForms(cloneDeep(
+      (await useFeathersService('forms').patch(userForms.value._id, {
+        ...userForms.value,
+        list: formEditor.forms,
       }) as AnyData).list,
     ))
 
@@ -535,13 +548,6 @@ export const useAppEditor = defineStore('app-editor', () => {
       (await useFeathersService('tables').patch(userTables.value._id, {
         ...userTables.value,
         list: tableEditor.tables,
-      }) as AnyData).list,
-    ))
-
-    formEditor.setForms(cloneDeep(
-      (await useFeathersService('forms').patch(userForms.value._id, {
-        ...userForms.value,
-        list: formEditor.forms,
       }) as AnyData).list,
     ))
 
@@ -556,6 +562,13 @@ export const useAppEditor = defineStore('app-editor', () => {
       (await useFeathersService('blueprints').patch(userBlueprints.value._id, {
         ...userBlueprints.value,
         list: blueprintEditor.blueprints,
+      }) as AnyData).list,
+    ))
+
+    menuEditor.setMenus(cloneDeep(
+      (await useFeathersService('menus').patch(userMenus.value._id, {
+        ...userMenus.value,
+        list: menuEditor.menus,
       }) as AnyData).list,
     ))
 

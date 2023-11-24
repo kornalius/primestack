@@ -26,6 +26,14 @@ const userMenu = useFeathersService('menus')
 
 const menu = computed(() => userMenu.value?.list.find((m) => m._id === props.menuId))
 
+watch(menu, () => {
+  app.setMenu(menu.value?._id)
+  app.setTab(undefined)
+  app.setForm(undefined)
+  app.setTable(undefined)
+  app.setDoc(undefined)
+}, { immediate: true })
+
 const firstTab = computed(() => menu.value?.tabs[0])
 
 watch(firstTab, () => {

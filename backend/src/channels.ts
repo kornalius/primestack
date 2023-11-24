@@ -57,17 +57,19 @@ export default function (app: Application): void {
           },
         })).data as Share[]
 
+        // check if the table is part of a share
+        const share = userShares.find((s: Share) => (
+          s.tableIds?.map((id) => id.toString()).includes(context.path)
+        ))
+
+        // find the owner's table
         const userTables = (await context.app.service('tables').find({
           query: {
-            tableIds: { $in: [context.path] },
+            'list.path': { $in: [context.path] },
             $limit: -1,
             $skip: 0,
           },
         }, context.params)).data as TableList[]
-
-        const share = userShares.find((s: Share) => (
-          s.tableIds?.includes(context.path)
-        ))
 
         // so if this table is shared with the user or he/she is the creator of the table
         if (share || userTables.length) {

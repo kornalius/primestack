@@ -99,6 +99,7 @@ export const useActionEditor = defineStore('action-editor', () => {
   const add = (options: AnyData): Action => {
     const a: Action = {
       _id: hexObjectId(),
+      _internalType: 'action',
       _actions: [],
       ...options,
     }
@@ -136,6 +137,7 @@ export const useActionEditor = defineStore('action-editor', () => {
    */
   const createActionElement = (action: TAction, options?: AnyData): ActionElement => ({
     _id: hexObjectId(),
+    _internalType: 'action-element',
     _type: action.type,
     _children: [],
     ...Object.keys(action.schema?.properties || {})

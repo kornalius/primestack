@@ -5,6 +5,8 @@ import { flattenActions } from '@/shared/action'
 import { isActionAvailable } from '@/shared/plan'
 import { Static } from '@feathersjs/typebox'
 import { actionSchema } from '@/shared/schemas/actions'
+import { uniquePushInResult } from '@/shared/utils'
+import { getSharedActions } from '@/shared-utils'
 
 type Action = Static<typeof actionSchema>
 
@@ -38,6 +40,23 @@ export const checkPaidActions = () => async (context: HookContext) => {
   return context
 }
 
+/**
+ * Populate list of actions with shared actions as well
+ */
+const populateSharedActions = () => async (context: HookContext): Promise<HookContext> => {
+  // skip if from internal server
+  if (!context.params.connection) {
+    return context
+  }
+
+  const sharedActions = await getSharedActions(context)
+  if (context.result) {
+    uniquePushInResult(context, sharedActions)
+  }
+
+  return context
+}
+
 export default {
   before: {
     all: [],
@@ -49,6 +68,11 @@ export default {
     ],
     patch: [
       checkPaidActions(),
+    ],
+  },
+  after: {
+    all: [
+      populateSharedActions(),
     ],
   },
 }

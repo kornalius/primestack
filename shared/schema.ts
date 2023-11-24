@@ -99,7 +99,7 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string | undefined 
     return 'tableid'
   }
   // Action id selector
-  if (p.type === 'string' && p.objectid === true && p.action === true) {
+  if (p.type === 'string' && p.objectid === true && p.service === 'actions') {
     return 'action'
   }
   // Service selector (optional properties: service, query, columns)
@@ -520,12 +520,13 @@ export const fieldToSchema = (field: TableField): TSchema => {
  *
  * @returns {TSchema} New JSON Schema
  */
-export const fieldsToSchema = (fields: TableField[], $id: string): TSchema => (
-  Type.Object((fields || []).reduce((acc, f) => ({
+export const fieldsToSchema = (fields: TableField[], $id: string): TSchema => {
+  const struct = (fields || []).reduce((acc, f) => ({
     ...acc,
     [f.name]: fieldToSchema(f),
-  }), {}), { $id })
-)
+  }), {})
+  return Type.Object<{}>(struct, { $id })
+}
 
 /**
  * Converts a schema to a table field schema
@@ -558,29 +559,34 @@ export const schemaToField = (name: string, schema: TSchema): TableField => {
         return {
           ...base,
           options: schema.options,
+          _internalType: 'table-field',
           type: 'string',
         }
       }
       return {
         ...base,
+        _internalType: 'table-field',
         type: stringType(),
       }
 
     case 'boolean':
       return {
         ...base,
+        _internalType: 'table-field',
         type: 'boolean',
       }
 
     case 'number':
       return {
         ...base,
+        _internalType: 'table-field',
         type: 'number',
       }
 
     default:
       return {
         ...base,
+        _internalType: 'table-field',
         type: 'string',
       }
   }

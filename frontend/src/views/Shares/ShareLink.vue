@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { useShare } from '@/features/Shares/store'
+import { useShareStore } from '@/features/Shares/store'
 import { useRouter } from 'vue-router'
 
 const props = defineProps<{
@@ -12,7 +12,7 @@ const props = defineProps<{
   linkClicked: number
 }>()
 
-const share = useShare()
+const share = useShareStore()
 
 const router = useRouter()
 

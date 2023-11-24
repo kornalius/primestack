@@ -12,15 +12,19 @@ export default async (app: Application, data: AnyData) => {
     list: [
       {
         _id: '64b806da03ac5093de3f3e78',
+        _internalType: 'table',
         name: 'Test',
+        path: '64b806da03ac5093de3f3e78',
         methods: ['get', 'find', 'create'],
         created: true,
         updated: true,
         softDelete: true,
-        user: true,
+        userRead: true,
+        userWrite: true,
         fields: [
           {
             _id: '64affb4f2a4bb338b8b71d8b',
+            _internalType: 'table-field',
             name: 'stringField',
             type: 'string',
             hidden: true,
@@ -31,6 +35,7 @@ export default async (app: Application, data: AnyData) => {
           },
           {
             _id: '64affb63b22ee0db653cf294',
+            _internalType: 'table-field',
             name: 'numberField',
             type: 'number',
             hidden: false,
@@ -41,6 +46,7 @@ export default async (app: Application, data: AnyData) => {
           },
           {
             _id: '64b00979a16f8ec037f7e041',
+            _internalType: 'table-field',
             name: 'booleanField',
             type: 'boolean',
             hidden: false,
@@ -54,7 +60,12 @@ export default async (app: Application, data: AnyData) => {
           {
             _id: '64affbcf36fd14263d91945e',
             name: 'stringField',
-            order: 1,
+            fields: [
+              {
+                field: 'stringField',
+                descending: false,
+              }
+            ],
             unique: true,
             sparse: false,
           },
@@ -62,15 +73,19 @@ export default async (app: Application, data: AnyData) => {
       },
       {
         _id: '64f894f480db657a3ddbb054',
+        _internalType: 'table',
         name: 'Files',
+        path: '64f894f480db657a3ddbb054',
         methods: ['get', 'find', 'remove'],
         created: true,
         updated: true,
         softDelete: false,
-        user: false,
+        userRead: false,
+        userWrite: true,
         fields: [
           {
             _id: '64f894f480db657a3ddbb055',
+            _internalType: 'table-field',
             name: 'originalFilename',
             type: 'string',
             hidden: false,
@@ -81,6 +96,7 @@ export default async (app: Application, data: AnyData) => {
           },
           {
             _id: '64f894f480db657a3ddbb056',
+            _internalType: 'table-field',
             name: 'mimetype',
             type: 'string',
             hidden: false,
@@ -91,6 +107,7 @@ export default async (app: Application, data: AnyData) => {
           },
           {
             _id: '64f894f480db657a3ddbb057',
+            _internalType: 'table-field',
             name: 'size',
             type: 'number',
             hidden: false,
@@ -100,8 +117,7 @@ export default async (app: Application, data: AnyData) => {
             queryable: true,
           },
         ],
-        indexes: [
-        ],
+        indexes: [],
         service: 'files',
       },
     ]

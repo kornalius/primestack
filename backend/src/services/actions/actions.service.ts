@@ -4,7 +4,6 @@ import { createService, MongoService } from '@/service'
 import { schema } from '@/shared/schemas/actions'
 import { dataValidator } from '@/validators'
 import hooks from './actions.hooks'
-import resolvers from './actions.resolvers'
 
 dataValidator.addSchema(schema)
 
@@ -19,11 +18,11 @@ export default function (app: Application): void {
     schema,
     created: true,
     updated: true,
-    user: true,
+    userRead: true,
+    userWrite: true,
     authentication: true,
     methods: ['find', 'get', 'create', 'patch', 'remove'],
     hooks,
-    resolvers,
   }).init(app, {})
 }
 

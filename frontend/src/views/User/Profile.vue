@@ -38,7 +38,12 @@
               <q-card-section>
                 <div class="row q-gutter-sm items-center">
                   <div class="col-auto">
-                    <q-skeleton type="QAvatar" size="100px" animation="none" />
+                    <avatar
+                      :email="user.email"
+                      :username="`${user.firstname} ${user.lastname}`"
+                      :image-src="user.imageUrl"
+                      :size="100"
+                    />
                   </div>
                   <div class="col">
                     <q-btn color="primary" rounded unelevated>
@@ -153,7 +158,7 @@
                   no-separator
                   @clear="clearSettings"
                 >
-                  <template #default="{ value }">
+                  <template #default="{ value }: { value: AnyData }">
                     <div class="row q-gutter-sm q-mb-xs items-center">
                       <div class="col-2">
                         <q-input
@@ -198,6 +203,8 @@ import { useAuth } from '@/features/Auth/store'
 import { schema } from '@/shared/schemas/user'
 import { newNameForSetting, normalizeName } from '@/shared/user'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
+import Avatar from '@/features/Users/components/Avatar.vue'
+import { AnyData } from '@/shared/interfaces/commons'
 
 type User = Static<typeof schema>
 

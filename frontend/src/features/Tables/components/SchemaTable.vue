@@ -144,6 +144,10 @@ const props = defineProps<{
   tableId?: string
   // show temps records from store
   temps?: boolean
+  // Called just before saving to the server
+  beforeSave?: (row: AnyData) => void
+  // Called just after saving to the server
+  afterSave?: (row: AnyData) => void
 }>()
 
 const emit = defineEmits<{
@@ -214,7 +218,7 @@ const fields = computed(() => (
     : []
 ))
 
-const schemaForRows = computed(() => (
+const schemaForRows = computed((): TSchema | undefined => (
   props.schema || (table.value && fieldsToSchema(table.value.fields, props.tableId))
 ))
 
@@ -429,9 +433,15 @@ const editRecord = async (row: AnyData) => {
  */
 const saveRecord = async (row: AnyData) => {
   const tempId = row.__tempId
+  if (typeof props.beforeSave === 'function') {
+    props.beforeSave(row)
+  }
   await row.save()
   if (tempId) {
     useFeathersService(props.tableId).removeFromStore(tempId)
+  }
+  if (typeof props.afterSave === 'function') {
+    props.afterSave(row)
   }
 }
 

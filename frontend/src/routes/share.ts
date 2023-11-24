@@ -11,15 +11,4 @@ export default (lazyLoad) => ([
       linkClicked: route.params.linkClicked,
     }),
   },
-  {
-    path: `/shares/:id(${mongoIdString}|create)?/`,
-    component: lazyLoad('views/Shares/Main'),
-    props: (route: RouteLocationNormalized): AnyData => ({
-      id: route.params.id !== 'create' ? route.params.id : undefined,
-      create: route.params.id === 'create',
-    }),
-    meta: {
-      requiresAuth: true,
-    },
-  },
 ])

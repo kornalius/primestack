@@ -1386,5 +1386,29 @@
   "sidebar": {
     "open": "Ouvrir barre latérale",
     "close": "Fermer barre latérale"
+  },
+  "share": {
+    "email": {
+      "subject": "{{firstname}} {{lastname}} viens tout juste de vous partager un nouveau menu",
+      "text": "Bonjour,\n\n{{firstname}} {{lastname}} viens tout juste de vous partager un nouveau menu via l'application PrimeStack.\n\nVous pouvez y accéder avec le liens ci-dessous:\n\n{{link}}"
+    },
+    "add": "Partager",
+    "emailInput": "Entrez le courriel avec lequel vous voulez partager...",
+    "remove": "Arrêter le partage",
+    "title": "Partages",
+    "emailSent": "Courriel envoyé le",
+    "shareAccepted": "Partage accepté le",
+    "resend": "Renvoyez le courriel",
+    "accessLevels": {
+      "-1": "Accès complet",
+      "0": "Peut voir",
+      "1": "Peut voir & modifier"
+    },
+    "dialog": {
+      "remove": {
+        "title": "Arrêter le partage de ce menu?",
+        "message": "Êtes-vous certain de vouloir arrêter le partage de ce menu avec cet usager?"
+      }
+    }
   }
 }

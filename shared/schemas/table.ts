@@ -86,6 +86,7 @@ export const lookupSchema = Type.Object({
 export const tableFieldSchema = Type.Object(
   {
     _id: ExType.Id(),
+    _internalType: Type.String(),
     name: Type.String(),
     type: StringEnum(supportedFieldTypes),
     hidden: Type.Optional(Type.Boolean()),
@@ -245,12 +246,15 @@ export const tableIndexSchema = Type.Object(
 export const tableSchema = Type.Object(
   {
     _id: ExType.Id(),
+    _internalType: Type.String(),
+    path: Type.String(),
     name: Type.String(),
     methods: Type.Array(StringEnum(supportedMethods)),
     created: Type.Boolean(),
     updated: Type.Boolean(),
     softDelete: Type.Boolean(),
-    user: Type.Boolean(),
+    userRead: Type.Boolean(),
+    userWrite: Type.Boolean(),
     fields: Type.Array(tableFieldSchema),
     indexes: Type.Array(tableIndexSchema, { fixed: true }),
     // when specified (events, files), the data will come from those services instead
@@ -278,8 +282,6 @@ export const schema = Type.Object(
     _id: ExType.Id(),
     userId: Type.Optional(ExType.Id()),
     list: Type.Array(tableSchema),
-    // from resolvers
-    tableIds: Type.Optional(Type.Array(ExType.Id())),
   },
   { $id: 'TableList', additionalProperties: false },
 )

@@ -16,9 +16,10 @@ import { flattenFields, newNameForField, parentFormField } from '@/shared/form'
 // eslint-disable-next-line import/no-cycle
 import { getProp } from '@/features/Expression/composites'
 import { useAppEditor } from '@/features/Editor/store'
-import { actionSchema } from '@/shared/schemas/actions'
-import { tableFieldSchema } from '@/shared/schemas/table'
+import { actionElementSchema, actionSchema } from '@/shared/schemas/actions'
+import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
 import { columnSchema, fieldSchema, formSchema } from '@/shared/schemas/form'
+import { menuSchema, tabSchema } from '@/shared/schemas/menu'
 import { useFeathersService } from '@/composites/feathers'
 
 type TableField = Static<typeof tableFieldSchema>
@@ -261,13 +262,13 @@ export const pathTo = (form: Form, field: FormField): FormField[] | undefined =>
         const f = fields[y]
 
         if (f._id === field._id) {
-          return [...path, field]
+          return [...path, field as FormField]
         }
 
         // eslint-disable-next-line no-underscore-dangle
         const cols = f._columns
         if (cols) {
-          const pp = scanColumn(cols, [...path, f])
+          const pp = scanColumn(cols, [...path, f as FormField])
           if (pp) {
             return pp
           }
@@ -371,6 +372,29 @@ export const colBreakName = (column: FormColumn): string => {
   return `col-${c.breakpoint}-${c.breakpointCol}`
 }
 
+/**
+ * Get the schema from an object _internalType
+ *
+ * @param o Object
+ *
+ * @returns {TSchema|undefined}
+ */
+export const getSchema = (o: AnyData): TSchema | undefined => {
+  // eslint-disable-next-line no-underscore-dangle
+  switch (o._internalType) {
+    case 'action': return actionSchema
+    case 'action-element': return actionElementSchema
+    case 'menu': return menuSchema
+    case 'tab': return tabSchema
+    case 'form': return formSchema
+    // eslint-disable-next-line no-underscore-dangle
+    case 'field': return componentsByType[(o as FormField | FormColumn)._type]
+    case 'table': return tableSchema
+    case 'table-field': return tableFieldSchema
+    default: return undefined
+  }
+}
+
 export const useFormElements = () => ({
   componentForField,
 
@@ -401,6 +425,7 @@ export const useFormElements = () => ({
       '_id',
       'name',
       '_type',
+      '_internalType',
       '_fields',
       '_columns',
       'modelValue',
@@ -469,6 +494,8 @@ export const useFormElements = () => ({
     // eslint-disable-next-line no-underscore-dangle
     return componentsByType[(f as FormField | FormColumn)._type]?.schema
   },
+
+  getSchema,
 
   colName,
 

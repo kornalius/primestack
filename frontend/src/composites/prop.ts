@@ -18,8 +18,7 @@ const cloneValue = (value: unknown): unknown => (
  * Creates a new Ref which is initialized with the value of a property
  * and updated when the property value changes.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const useProp = (props: AnyData, name: string): Ref => {
+export const useProp = (props: AnyData, name: string, defaultValue?: unknown): Ref => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const p = props as any
 
@@ -29,7 +28,7 @@ export const useProp = (props: AnyData, name: string): Ref => {
   // }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const r = ref(cloneValue(p[name]))
+  const r = ref(cloneValue(p[name] || defaultValue))
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   watch((): Ref => cloneDeep(p[name]), (newValue, oldValue) => {

@@ -1,9 +1,15 @@
 import { Application } from '@/declarations'
 import { AnyData } from '@/shared/interfaces/commons'
+import { info } from '@/logger'
 
 export default async (app: Application, data: AnyData) => {
+  info('  - plans')
+
   // eslint-disable-next-line no-param-reassign
   data.plans = {}
+
+  // Free plan
+
   // eslint-disable-next-line no-param-reassign
   data.plans.free = await app.service('plans').create({
     code: 'free',
@@ -32,6 +38,8 @@ export default async (app: Application, data: AnyData) => {
     bestValue: false,
     color: '',
   })
+
+  // Personal plan
 
   // eslint-disable-next-line no-param-reassign
   data.plans.personal = await app.service('plans').create({
@@ -62,6 +70,8 @@ export default async (app: Application, data: AnyData) => {
     color: 'blue-1',
   })
 
+  // Business plan
+
   // eslint-disable-next-line no-param-reassign
   data.plans.business = await app.service('plans').create({
     code: 'business',
@@ -90,6 +100,8 @@ export default async (app: Application, data: AnyData) => {
     bestValue: false,
     color: '',
   })
+
+  // Enterprise plan
 
   // eslint-disable-next-line no-param-reassign
   data.plans.enterprise = await app.service('plans').create({

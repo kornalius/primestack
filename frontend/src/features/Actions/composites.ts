@@ -51,10 +51,11 @@ export const execForType = (
 export const execAction = async (a: ActionElement, args: AnyData): Promise<AnyData> => {
   // eslint-disable-next-line no-underscore-dangle
   const actionExec = execForType[a._type]
-  const actionArgs = Object.keys(omit(a, ['_id', '_type', '$scoped'])).reduce((acc, k) => ({
-    ...acc,
-    [k]: getProp(a[k], args),
-  }), {})
+  const actionArgs = Object.keys(omit(a, ['_id', '_type', '_internalType', '$scoped']))
+    .reduce((acc, k) => ({
+      ...acc,
+      [k]: getProp(a[k], args),
+    }), {})
   return actionExec({ ...args, ...actionArgs, ...args.$scoped })
 }
 
@@ -152,6 +153,7 @@ export const actionBinds = (action: ActionElement): AnyData => {
   const fieldsToOmit = [
     '_id',
     '_type',
+    '_internalType',
     '_children',
   ]
   return omit(action, fieldsToOmit)

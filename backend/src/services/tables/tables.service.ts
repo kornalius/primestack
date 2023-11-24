@@ -5,7 +5,6 @@ import { schema } from '@/shared/schemas/table'
 import { dataValidator } from '@/validators'
 import { AnyData } from '@/shared/interfaces/commons'
 import hooks, { createDynamicService } from './tables.hooks'
-import resolvers from './tables.resolvers'
 
 dataValidator.addSchema(schema)
 
@@ -26,11 +25,11 @@ export default function (app: Application): void {
     ],
     created: true,
     updated: true,
-    user: true,
+    userRead: true,
+    userWrite: true,
     authentication: true,
     methods: ['find', 'get', 'create', 'patch', 'remove'],
     hooks,
-    resolvers,
   }).init(app, {})
 
   // initialize paths + collections

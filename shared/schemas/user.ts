@@ -10,6 +10,7 @@ export const schema = Type.Intersect([
     username: Type.Optional(Type.String()),
     firstname: Type.Optional(Type.String()),
     lastname: Type.Optional(Type.String()),
+    imageUrl: Type.Optional(Type.String()),
     googleId: Type.Optional(Type.String()),
     facebookId: Type.Optional(Type.String()),
     twitterId: Type.Optional(Type.String()),
@@ -23,6 +24,7 @@ export const schema = Type.Intersect([
     settings: Type.Object({}, { additionalProperties: true }),
     sidebars: Type.Object({}, { additionalProperties: true }),
     locale: Type.Optional(Type.String()),
+    rights: Type.Optional(Type.Object({}, { additionalProperties: true })),
   }),
   maxSchema,
 ], { $id: 'User', additionalProperties: false })

@@ -44,6 +44,7 @@ export const useTabEditor = defineStore('tab-editor', () => {
   const add = (options: AnyData, menu: Menu, form?: Form): Tab => {
     const t: Tab = {
       _id: hexObjectId(),
+      _internalType: 'tab',
       label: 'New Tab',
       icon: undefined,
       color: undefined,

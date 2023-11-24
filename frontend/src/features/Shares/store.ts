@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 import { useFeathersService } from '@/composites/feathers'
 import isNil from 'lodash/isNil'
 
-export const useShare = defineStore('share', () => {
+export const useShareStore = defineStore('share', () => {
   const states = ref({
     shareId: undefined,
     linkClicked: undefined,

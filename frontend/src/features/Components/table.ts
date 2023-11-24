@@ -131,7 +131,6 @@ export default {
         sortable: true,
       },
     ],
-    visibleColumns: [],
     rowsPerPageOptions: [10, 25, 50, 100],
     rows: [],
     ...defaultStyleValues,

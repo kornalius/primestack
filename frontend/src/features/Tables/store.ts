@@ -102,14 +102,18 @@ export const useTableEditor = defineStore('table-editor', () => {
    * @returns {Table} New table instance
    */
   const add = (options?: AnyData): Table => {
-    const t = {
-      _id: hexObjectId(),
+    const id = hexObjectId()
+    const t: Table = {
+      _id: id,
+      _internalType: 'table',
+      path: id,
       name: undefined,
       methods: ['get', 'find', 'create', 'patch', 'remove'],
       created: true,
       updated: true,
       softDelete: false,
-      user: true,
+      userRead: true,
+      userWrite: true,
       fields: [],
       indexes: [],
       ...(options || {}),
@@ -163,8 +167,9 @@ export const useTableEditor = defineStore('table-editor', () => {
    * @returns {TableField} New table field instance
    */
   const addField = (table: Table, options?: AnyData): TableField => {
-    const f = {
+    const f: TableField = {
       _id: hexObjectId(),
+      _internalType: 'table-field',
       name: undefined,
       type: 'string',
       queryable: true,

@@ -19,13 +19,13 @@ export const flattenFields = (fields: FormField[] | FormColumn[]): FormField[] =
       // eslint-disable-next-line no-underscore-dangle
       const cols = (f as FormField)._columns
       if (cols) {
-        flatten(cols)
+        flatten(cols as FormColumn[])
       }
 
       // eslint-disable-next-line no-underscore-dangle
       const flds = (f as FormColumn)._fields
       if (flds) {
-        flatten(flds)
+        flatten(flds as FormField[])
       }
     })
   }
@@ -72,7 +72,7 @@ export const parentFormField = (
     const cols = (ff as FormField)._columns
     if (cols) {
       for (let i = 0; i < cols.length; i++) {
-        const sf = searchField(ff, cols[i])
+        const sf = searchField(ff, cols[i] as FormColumn)
         if (sf) {
           return sf
         }
@@ -83,7 +83,7 @@ export const parentFormField = (
     const flds = (ff as FormColumn)._fields
     if (flds) {
       for (let i = 0; i < flds.length; i++) {
-        const sf = searchField(ff, flds[i])
+        const sf = searchField(ff, flds[i] as FormField)
         if (sf) {
           return sf
         }
@@ -111,7 +111,7 @@ export const parentFormFieldArray = (
   const p = parentFormField(form, field)
   if (p) {
     // eslint-disable-next-line no-underscore-dangle
-    return (p as FormField)._columns || (p as FormColumn)._fields
+    return (p as FormField)._columns as FormColumn[] || (p as FormColumn)._fields as FormField[]
   }
   return undefined
 }
@@ -132,7 +132,7 @@ export const recreateFormIds = (form: Form): Form => {
     const cols = (ff as FormField)._columns
     if (cols) {
       for (let i = 0; i < cols.length; i++) {
-        recreateIds(cols[i])
+        recreateIds(cols[i] as FormColumn)
       }
     }
 
@@ -140,7 +140,7 @@ export const recreateFormIds = (form: Form): Form => {
     const flds = (ff as FormColumn)._fields
     if (flds) {
       for (let i = 0; i < flds.length; i++) {
-        recreateIds(flds[i])
+        recreateIds(flds[i] as FormField)
       }
     }
   }

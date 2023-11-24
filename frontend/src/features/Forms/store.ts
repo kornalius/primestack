@@ -186,6 +186,7 @@ export const useFormEditor = defineStore('form-editor', () => {
   const add = (options?: AnyData): Form => {
     const f: Form = {
       _id: hexObjectId(),
+      _internalType: 'form',
       name: newNameForField('form', states.value.forms),
       _fields: [],
       ...(options || {}),
@@ -246,6 +247,7 @@ export const useFormEditor = defineStore('form-editor', () => {
     if (form) {
       return {
         _id: hexObjectId(),
+        _internalType: 'field',
         _type: component.type,
         _columns: component.row ? [] : undefined,
         _fields: component.col ? [] : undefined,
@@ -339,6 +341,7 @@ export const useFormEditor = defineStore('form-editor', () => {
 
     const col = {
       _id: hexObjectId(),
+      _internalType: 'column',
       _type: type,
       _columns: undefined,
       _fields: [],

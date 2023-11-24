@@ -1,11 +1,8 @@
-import { Static } from '@feathersjs/typebox'
 import i18next from 'i18next'
 import { HookContext } from '@feathersjs/feathers'
 import { Forbidden } from '@feathersjs/errors'
-import { schema as menuListSchema } from '@/shared/schemas/menu'
 import { getSharedMenus } from '@/shared-utils'
-
-type MenuList = Static<typeof menuListSchema>
+import { uniquePushInResult } from '@/shared/utils'
 
 /**
  * Checks to make sure user does not have more menus than is allowed
@@ -31,19 +28,14 @@ const checkMaxMenus = () => async (context: HookContext): Promise<HookContext> =
  * Populate list of menus with shared menus as well
  */
 const populateSharedMenus = () => async (context: HookContext): Promise<HookContext> => {
+  // skip if from internal server
+  if (!context.params.connection) {
+    return context
+  }
+
   const sharedMenus = await getSharedMenus(context)
   if (context.result) {
-    if (Array.isArray(context.result)) {
-      (context.result as MenuList[]).forEach((r) => {
-        // eslint-disable-next-line no-param-reassign
-        r.list = [...r.list, ...sharedMenus]
-      })
-    } else {
-      (context.result as MenuList).list = [
-        ...(context.result as MenuList).list || [],
-        ...sharedMenus,
-      ]
-    }
+    uniquePushInResult(context, sharedMenus)
   }
 
   return context

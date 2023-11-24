@@ -8,6 +8,7 @@ export const configurationSchema = Type.Intersect([
   defaultAppConfiguration,
   Type.Object({
     env: Type.String(),
+    prefix: Type.String(),
     host: Type.String(),
     port: Type.Number(),
     public: Type.String(),
@@ -19,8 +20,21 @@ export const configurationSchema = Type.Intersect([
     adminPwd: Type.Optional(Type.String()),
     adminFirstname: Type.Optional(Type.String()),
     adminLastname: Type.Optional(Type.String()),
+    testUserEmail: Type.Optional(Type.String()),
+    testUserPwd: Type.Optional(Type.String()),
+    testUserFirstname: Type.Optional(Type.String()),
+    testUserLastname: Type.Optional(Type.String()),
     locale: Type.Optional(Type.String()),
     fallbackLocale: Type.Optional(Type.String()),
+    email: Type.Optional(Type.Object({
+      service: Type.String(),
+      host: Type.String(),
+      port: Type.Number(),
+      secure: Type.Boolean(),
+      sender: Type.String(),
+      user: Type.String(),
+      pwd: Type.String(),
+    })),
   }),
 ])
 

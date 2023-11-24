@@ -2,21 +2,22 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { feathersClient as app } from '@/feathers'
 import { AnyData } from '@/shared/interfaces/commons'
+import { Static } from '@feathersjs/typebox'
+import { schema as userSchema } from '@/shared/schemas/user'
+
+type User = Static<typeof userSchema>
 
 export const useAuth = defineStore('auth', () => {
   const states = ref({
     processing: false,
     authenticated: false,
-    user: undefined,
+    user: undefined as User,
   })
 
   const processing = computed(() => states.value.processing)
   const authenticated = computed(() => states.value.authenticated)
   const user = computed(() => states.value.user)
   const userId = computed(() => states.value.user?._id)
-  const username = computed(() => states.value.user?.username)
-  const userEmail = computed(() => states.value.user?.email)
-  const userRights = computed(() => states.value.user?.rights)
 
   const reAuthenticate = async (): Promise<void> => {
     try {
@@ -65,9 +66,6 @@ export const useAuth = defineStore('auth', () => {
     authenticated,
     user,
     userId,
-    username,
-    userEmail,
-    userRights,
     reAuthenticate,
     authenticate,
     logout,

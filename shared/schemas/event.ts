@@ -67,7 +67,8 @@ export const eventTable = {
   created: false,
   updated: false,
   softDelete: false,
-  user: false,
+  userRead: false,
+  userWrite: false,
   fields: eventFields,
   indexes: [],
 }

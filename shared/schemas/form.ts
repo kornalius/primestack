@@ -29,6 +29,7 @@ export const columnSchema = Type.Recursive((self) => Type.Object(
   {
     _id: ExType.Id(),
     _type: Type.String(),
+    _internalType: Type.String(),
     size: Type.Optional(Type.Number()),
     _fields: Type.Array(Type.Object(
       {
@@ -48,6 +49,7 @@ export const fieldSchema = Type.Object(
     _id: ExType.Id(),
     name: Type.String(),
     _type: Type.String(),
+    _internalType: Type.String(),
     _columns: Type.Optional(Type.Array(columnSchema)),
   },
   { $id: 'FormField', additionalProperties: true },
@@ -58,6 +60,7 @@ export const fieldSchema = Type.Object(
  */
 export const formTableColumnSchema = Type.Object({
   _id: ExType.Id(),
+  _internalType: Type.String(),
   name: Type.String(),
   label: Type.String(),
   field: ExType.Field({ tableProp: '../tableId' }),
@@ -185,6 +188,7 @@ export const formTableColumnSchema = Type.Object({
 export const formSchema = Type.Object(
   {
     _id: ExType.Id(),
+    _internalType: Type.String(),
     _fields: Type.Array(fieldSchema),
     name: Type.String(),
     data: Type.Optional(ExType.JSON()),
@@ -328,9 +332,6 @@ export const schema = Type.Object(
   {
     _id: ExType.Id(),
     list: Type.Array(formSchema),
-    // from resolvers
-    formIds: Type.Optional(Type.Array(ExType.Id())),
-    tableIds: Type.Optional(Type.Array(ExType.Id())),
   },
   { $id: 'FormList', additionalProperties: false },
 )

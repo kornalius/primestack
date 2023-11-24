@@ -1,5 +1,6 @@
 {
   "env": "ENV",
+  "prefix": "PREFIX",
   "host": "HOST",
   "port": {
     "__name": "PORT",
@@ -65,11 +66,24 @@
     "__name": "SOCKET_LISTENERS",
     "__format": "number"
   },
+  "email": {
+    "service": "EMAIL_SERVICE",
+    "host": "EMAIL_HOST",
+    "sender": "EMAIL_SENDER",
+    "port": "EMAIL_PORT",
+    "secure": "EMAIL_SECURE",
+    "user": "EMAIL_USER",
+    "pwd": "EMAIL_PWD"
+  },
   "mongodb": "MONGODB",
   "adminEmail": "ADMIN_EMAIL",
   "adminPwd": "ADMIN_PWD",
   "adminFirstname": "ADMIN_FIRSTNAME",
   "adminLastname": "ADMIN_LASTNAME",
+  "testUserEmail": "TESTUSER_EMAIL",
+  "testUserPwd": "TESTUSER_PWD",
+  "testUserFirstname": "TESTUSER_FIRSTNAME",
+  "testUserLastname": "TESTUSER_LASTNAME",
   "locale": "I18N_LOCALE",
   "fallbackLocale": "I18N_FALLBACK_LOCALE"
 }

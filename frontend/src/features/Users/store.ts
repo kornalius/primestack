@@ -39,7 +39,7 @@ export const useUser = defineStore('user', () => {
   )
 
   const isSidebarOpen = (formId: string, right: boolean): boolean => (
-    user.value.sidebars[sidebarName(formId, right)]
+    user.value.sidebars[sidebarName(formId, right)] || false
   )
 
   const setSidebar = async (formId: string, right: boolean, open: boolean) => {

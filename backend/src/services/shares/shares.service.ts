@@ -3,7 +3,6 @@ import { Application } from '@feathersjs/koa'
 import { createService, MongoService } from '@/service'
 import { dataValidator } from '@/validators'
 import { schema } from '@/shared/schemas/share'
-import resolvers from './shares.resolvers'
 import hooks from './shares.hooks'
 
 dataValidator.addSchema(schema)
@@ -18,9 +17,10 @@ export default function (app: Application): void {
     collection,
     schema,
     created: true,
+    updated: true,
+    userWrite: true,
     methods: ['find', 'get', 'create', 'patch', 'remove'],
     hooks,
-    resolvers,
   }).init(app, {})
 }
 

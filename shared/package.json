@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@feathersjs/typebox": "^5.0.6",
+    "bson": "5.3.0",
     "crypto-random-hex": "^1.0.0",
     "dayjs": "^1.11.10",
     "lodash": "^4.17.21"

@@ -58,7 +58,8 @@ export const fileTable = {
   created: true,
   updated: true,
   softDelete: false,
-  user: false,
+  userRead: false,
+  userWrite: true,
   fields: fileFields,
   indexes: [],
 }

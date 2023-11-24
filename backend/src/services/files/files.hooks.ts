@@ -12,9 +12,9 @@ const checkMaxFiles = () => async (context: HookContext): Promise<HookContext> =
     return context
   }
 
-  const { count } = await context.app.service(context.path).find({ query: { $limit: 0 } })
+  const { total } = await context.app.service(context.path).find({ query: { $limit: 0 } })
   const m = context.params?.user?.rights?.maxes?.maxFiles
-  if (m !== -1 && count >= m) {
+  if (m !== -1 && total >= m) {
     throw new Forbidden(i18next.t('paid_feature.file', {
       fileCount: m,
       count: m,

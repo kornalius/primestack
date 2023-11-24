@@ -468,7 +468,7 @@ watch(editValues, () => {
   scrollTop.value = editor.scrollTop(ids)
 }, { immediate: true })
 
-let scrollTimeout: number
+let scrollTimeout = 0
 
 /**
  * When scroll happens, update the store

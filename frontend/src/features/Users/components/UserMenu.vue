@@ -30,7 +30,7 @@
 
         <div class="col-auto">
           <q-btn
-            v-if="(auth.userRights as AnyData).maxes.maxEdits === -1"
+            v-if="(auth.user.rights as AnyData).maxes.maxEdits === -1"
             :color="editor.active ? 'red-7' : 'blue-4'"
             :disable="editor.active"
             icon="mdi-pencil-ruler"
@@ -114,14 +114,18 @@
 
       <div class="row q-pa-md q-gutter-sm items-center">
         <div class="col-auto">
-          <q-skeleton type="QAvatar" size="50px" animation="none" />
+          <avatar
+            :email="auth.user.email"
+            :username="`${auth.user.firstname} ${auth.user.lastname}`"
+            :size="48"
+          />
         </div>
         <div class="col">
           <div class="row">
-            <span class="text-bold">{{ auth.username }}</span>
+            <span class="text-bold">{{ auth.user.username }}</span>
           </div>
           <div class="row">
-            <span>{{ (auth as AnyData).userEmail }}</span>
+            <span>{{ auth.user.email }}</span>
           </div>
         </div>
       </div>
@@ -180,8 +184,9 @@ import { useAuth } from '@/features/Auth/store'
 import { useAppEditor } from '@/features/Editor/store'
 import { useApp } from '@/features/App/store'
 import { AnyData } from '@/shared/interfaces/commons'
-import FrenchFlag from '../flags/FR.svg?component'
-import EnglishFlag from '../flags/US.svg?component'
+import FrenchFlag from '@/features/App/flags/FR.svg?component'
+import EnglishFlag from '@/features/App/flags/US.svg?component'
+import Avatar from '@/features/Users/components/Avatar.vue'
 
 const auth = useAuth()
 

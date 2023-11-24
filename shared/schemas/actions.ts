@@ -5,12 +5,14 @@ export const actionElementSchema = Type.Recursive((self) => (
   Type.Object({
     _id: ExType.Id(),
     _type: Type.String(),
+    _internalType: Type.String(),
     _children: Type.Array(self),
   }, { $id: 'ActionElement' })
 ))
 
 export const actionSchema = Type.Object({
   _id: ExType.Id(),
+  _internalType: Type.String(),
   _actions: Type.Array(actionElementSchema),
   shareId: Type.Optional(ExType.Id()),
 }, { $id: 'Action' })

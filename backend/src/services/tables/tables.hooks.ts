@@ -1,6 +1,6 @@
 import i18next from 'i18next'
 import diff from '@/diff-arrays'
-import { Application } from '@feathersjs/koa'
+import { Application } from '@/declarations'
 import pick from 'lodash/pick'
 import camelCase from 'lodash/camelCase'
 import capitalize from 'lodash/capitalize'
@@ -31,10 +31,10 @@ import { fieldsToSchema, indexesToMongo, refFieldname } from '@/shared/schema'
 import { createService, MongoService } from '@/service'
 import { checkRules } from '@/hooks/check-rules'
 import { AdapterId, NullableAdapterId } from '@feathersjs/mongodb/src/adapter'
-import { schema, tableFieldSchema, tableSchema } from '@/shared/schemas/table'
-import { deepScanProp, getSharedMenus } from '@/shared-utils'
+import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
+import { getSharedTables } from '@/shared-utils'
+import { uniquePushInResult } from '@/shared/utils'
 
-type TableList = Static<typeof schema>
 type Table = Static<typeof tableSchema>
 type TableField = Static<typeof tableFieldSchema>
 
@@ -67,9 +67,9 @@ const checkMaxRecords = () => async (context: HookContext): Promise<HookContext>
     return context
   }
 
-  const { count } = await context.app.service(context.path).find({ query: { $limit: 0 } })
+  const { total } = await context.app.service(context.path).find({ query: { $limit: 0 } })
   const m = context.params?.user?.rights?.maxes?.maxRecords
-  if (m !== -1 && count >= m) {
+  if (m !== -1 && total >= m) {
     throw new Forbidden(i18next.t('paid_feature.record', {
       recordCount: m,
       count: m,
@@ -80,50 +80,54 @@ const checkMaxRecords = () => async (context: HookContext): Promise<HookContext>
 }
 
 /**
+ * Forces the data to have the created, updated fields set to to true
+ */
+const forceCreatedAndUpdated = () => async (context: HookContext) => {
+  // skip if from internal server
+  if (!context.params.connection) {
+    return context
+  }
+
+  context.data.list.forEach((table: Table) => {
+    // eslint-disable-next-line no-param-reassign
+    table.created = true
+    // eslint-disable-next-line no-param-reassign
+    table.updated = true
+  })
+
+  return context
+}
+
+/**
+ * Set each table 'path' to a string version of the _id
+ * This is to ease search for with context.path
+ */
+const setPaths = () => async (context: HookContext) => {
+  // skip if from internal server
+  if (!context.params.connection) {
+    return context
+  }
+
+  context.data.list.forEach((table: Table) => {
+    // eslint-disable-next-line no-param-reassign
+    table.path = table._id.toString()
+  })
+
+  return context
+}
+
+/**
  * Populate list of tables with shared tables as well
  */
 const populateSharedTables = () => async (context: HookContext): Promise<HookContext> => {
-  const sharedMenus = await getSharedMenus(context)
+  // skip if from internal server
+  if (!context.params.connection) {
+    return context
+  }
 
-  let sharedTableIds: string[] = []
-
-  await Promise.all(sharedMenus.map(async (m) => {
-    const formIds = m.tabs.map((t) => t.formId.toString())
-    const { data: forms } = await context.app.service('forms').find({
-      query: {
-        _id: { $in: formIds },
-        $limit: -1,
-        $skip: 0,
-      }
-    })
-    sharedTableIds = [
-      ...sharedTableIds,
-      ...deepScanProp(forms, 'tableId').map((id) => (id as AnyData).toString()),
-    ]
-  }))
-
-  if (sharedTableIds.length > 0) {
-    const { data: sharedTables } = await context.app.service('tables').find({
-      query: {
-        tableIds: { $in: sharedTableIds },
-        $limit: -1,
-        $skip: 0,
-      }
-    })
-
-    if (context.result) {
-      if (Array.isArray(context.result)) {
-        (context.result as TableList[]).forEach((r) => {
-          // eslint-disable-next-line no-param-reassign
-          r.list = [...r.list, ...sharedTables]
-        })
-      } else {
-        (context.result as TableList).list = [
-          ...(context.result as TableList).list || [],
-          ...sharedTables,
-        ]
-      }
-    }
+  const sharedTables = await getSharedTables(context)
+  if (context.result) {
+    uniquePushInResult(context, sharedTables)
   }
 
   return context
@@ -156,6 +160,9 @@ class DynamicService extends MongoService {
           break
       }
     }
+
+    // TODO: Check share rules & accessLevel
+
     const r = await super.create(data, params)
     app.service('stats').emit('calculate', { path: name })
     return r
@@ -174,6 +181,9 @@ class DynamicService extends MongoService {
           break
       }
     }
+
+    // TODO: Check share rules & accessLevel
+
     return super.get(id, params)
   }
 
@@ -193,6 +203,9 @@ class DynamicService extends MongoService {
           break
       }
     }
+
+    // TODO: Check share rules & accessLevel
+
     return super.find(params)
   }
 
@@ -210,6 +223,9 @@ class DynamicService extends MongoService {
           break
       }
     }
+
+    // TODO: Check share rules & accessLevel
+
     const r = await super.update(id, data, params)
     app.service('stats').emit('calculate', { path: name })
     return r
@@ -232,6 +248,9 @@ class DynamicService extends MongoService {
           break
       }
     }
+
+    // TODO: Check share rules & accessLevel
+
     const r = await super.patch(id, data, params)
     app.service('stats').emit('calculate', { path: name })
     return r
@@ -254,6 +273,9 @@ class DynamicService extends MongoService {
           break
       }
     }
+
+    // TODO: Check share rules & accessLevel
+
     const r = await super.remove(id, params)
     app.service('stats').emit('calculate', { path: name })
     return r
@@ -430,7 +452,8 @@ export const createDynamicService = (app: Application, id: string, t: AnyData) =
     methods: t.methods,
     created: t.created,
     updated: t.updated,
-    user: t.user,
+    userRead: t.userRead,
+    userWrite: t.userWrite,
     hooks: {
       before: {
         all: [
@@ -480,44 +503,28 @@ const updateCollections = () => (context: HookContext) => {
   return context
 }
 
-/**
- * Forces the data to have the created, updated fields set to to true
- */
-const forceCreatedAndUpdated = () => async (context: HookContext) => {
-  // skip check if from internal server
-  if (!context.params.connection) {
-    return context
-  }
-
-  context.data.list.forEach((table: Table) => {
-    // eslint-disable-next-line no-param-reassign
-    table.created = true
-    // eslint-disable-next-line no-param-reassign
-    table.updated = true
-  })
-
-  return context
-}
-
 export default {
   before: {
     all: [],
     create: [
       checkMaxTables(),
+      setPaths(),
       forceCreatedAndUpdated(),
       updateCollections(),
     ],
     update: [
       checkMaxTables(),
       loadPrev(),
-      updateCollections(),
+      setPaths(),
       forceCreatedAndUpdated(),
+      updateCollections(),
     ],
     patch: [
       checkMaxTables(),
       loadPrev(),
-      updateCollections(),
+      setPaths(),
       forceCreatedAndUpdated(),
+      updateCollections(),
     ],
   },
   after: {

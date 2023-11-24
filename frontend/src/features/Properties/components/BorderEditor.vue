@@ -129,7 +129,6 @@ import BtnToggleMulti from '@/features/Fields/components/BtnToggleMulti.vue'
 import UnitInput from '@/features/Fields/components/UnitInput.vue'
 
 const props = defineProps<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   modelValue: AnyData
   disable?: boolean
 }>()

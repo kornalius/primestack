@@ -111,8 +111,10 @@ export interface CreateServiceOptions {
   created?: boolean
   // should we manage updatedAt and updatedBy fields automatically?
   updated?: boolean
-  // should we assign the userId when creating
-  user?: boolean
+  // should we assign the userId to createdBy when creating
+  userRead?: boolean
+  // should we protect updating and removing documents for owner only?
+  userWrite?: boolean
   // should we manage deletedAt and deletedBy fields automatically?
   softDelete?: boolean
   // service validators
