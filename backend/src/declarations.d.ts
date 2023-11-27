@@ -52,7 +52,10 @@ export interface CreateServiceValidators {
 }
 
 export interface CreateServiceResolvers {
-  data?: AnyData
+  data?: AnyData | {
+    $create?: AnyData
+    $patch?: AnyData
+  }
   result?: AnyData
   external?: AnyData
   query?: AnyData

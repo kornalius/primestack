@@ -52,11 +52,22 @@ The service files all follow a specific naming standard.
 Each service data model must have a [Typebox](https://feathersjs.com/api/schema/typebox.html) schema which is stored in a `shared` folder in the root folder of the project.
 
 ## Services
-| Name                                                         | Description                       |
-|--------------------------------------------------------------|-----------------------------------|
-| [Actions](../src/services/actions/actions.docs.md)           | User's visual programming actions |          
-| [Blueprints](../src/services/blueprints/blueprints.docs.md)  | User's custom UI properties       |
-| [Forms](../src/services/forms/forms.docs.md)                 | User's UI forms                   |
+| Name                                                        | Description                       |
+|-------------------------------------------------------------|-----------------------------------|
+| [Actions](../src/services/actions/actions.docs.md)          | User's visual programming actions |          
+| [Blueprints](../src/services/blueprints/blueprints.docs.md) | User's custom UI properties       |
+| [Events](../src/services/events/events.docs.md)             | Service method events             |
+| [Files](../src/services/files/files.docs.md)                | Files listing and downloads       |
+| [Forms](../src/services/forms/forms.docs.md)                | User's UI forms                   |
+| [Groups](../src/services/groups/groups.docs.md)             | User's groups                     |
+| [Health](../src/services/health/health.docs.md)             | Server's health API               |
+| [Menus](../src/services/menus/menus.docs.md)                | User's menus                      |
+| [Plans](../src/services/plans/plans.docs.md)                | Subscription plans                |
+| [Shares](../src/services/shares/shares.docs.md)             | User's menu shares                |
+| [Stats](../src/services/stats/stats.docs.md)                | User's tables statistics          |
+| [Tables](../src/services/tables/tables.docs.md)             | User's tables definitions         |
+| [Uploads](../src/services/uploads/uploads.docs.md)          | Files upload                      |
+| [Users](../src/services/users/users.docs.md)                | Users                             |
 
 ## Setup & Installation
 

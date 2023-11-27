@@ -7,6 +7,9 @@ The frontend is structure into feature folders which allow the grouping of visua
   * [Structure of the frontend project](#structure-of-the-frontend-project)
   * [What are composables (composites)?](#what-are-composables-composites)
   * [Structure of the features folder](#structure-of-the-features-folder)
+  * [Running the frontend](#running-the-frontend)
+    * [Running the frontend in development mode](#running-the-frontend-in-development-mode)
+    * [Building the frontend for production](#building-the-frontend-for-production)
 <!-- TOC -->
 
 ## Structure of the frontend project
@@ -41,3 +44,15 @@ A feature folder is usually well defined and neatly organized
 | interfaces.ts  | Typescript interfaces                                  |
 | service.ts     | Feathers-pinia connection to the backend micro-service |
 | store          | Pinia store                                            |
+
+## Running the frontend
+
+### Running the frontend in development mode
+```bash
+yarn dev
+```
+
+### Building the frontend for production
+```bash
+yarn build
+```
