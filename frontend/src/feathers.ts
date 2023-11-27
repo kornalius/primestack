@@ -6,7 +6,7 @@ import io from 'socket.io-client'
 import { useSnacks } from '@/features/Snacks/store'
 // eslint-disable-next-line import/no-cycle
 import { useStats } from '@/features/Stats/store'
-import { getEnv } from './utils/variables'
+import { getEnv } from './utils/env'
 
 const API_URL = getEnv(import.meta.env.VITE_API_URL) as string
 const API_PATH = getEnv(import.meta.env.VITE_API_PATH) as string

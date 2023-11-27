@@ -1,7 +1,7 @@
 import i18next from 'i18next'
 import { HookContext } from '@feathersjs/feathers'
 import { BadRequest, Forbidden } from '@feathersjs/errors'
-import { formatSize } from '@/shared/files/utils'
+import { formatSize } from '@/shared/file'
 
 /**
  * Checks to make sure user does not store more files that is allowed
