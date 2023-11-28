@@ -83,6 +83,12 @@ export const lookupSchema = Type.Object({
   titleStyle: Type.Optional(Type.String()),
 })
 
+export const transformSchema = Type.Object({
+  type: StringEnum(transformNames),
+  value: Type.Optional(Type.Number()),
+  disable: Type.Optional(Type.Boolean()),
+}, { horizontal: true, horizontalPopup: true })
+
 export const tableFieldSchema = Type.Object(
   {
     _id: ExType.Id(),
@@ -95,13 +101,7 @@ export const tableFieldSchema = Type.Object(
     readonly: Type.Optional(Type.Boolean()),
     queryable: Type.Optional(Type.Boolean()),
     secret: Type.Optional(Type.Boolean()),
-    transforms: Type.Optional(Type.Array(
-      Type.Object({
-        type: StringEnum(transformNames),
-        value: Type.Optional(Type.Number()),
-        disable: Type.Optional(Type.Boolean()),
-      }, { horizontal: true, horizontalPopup: true }),
-    )),
+    transforms: Type.Optional(Type.Array(transformSchema)),
     slider: Type.Optional(Type.Boolean()),
     format: Type.Optional(StringEnum(supportedStringFormats)),
     multipleOf: Type.Optional(Type.Number()),

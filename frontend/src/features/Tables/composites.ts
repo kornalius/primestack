@@ -25,6 +25,7 @@ export const extraFields = (
   if (created) {
     fields.push({
       _id: hexObjectId(),
+      _internalType: 'user-table-field',
       name: 'createdAt',
       type: 'date',
       readonly: true,
@@ -33,6 +34,7 @@ export const extraFields = (
     })
     fields.push({
       _id: hexObjectId(),
+      _internalType: 'user-table-field',
       name: 'createdBy',
       type: 'objectid',
       readonly: true,
@@ -44,6 +46,7 @@ export const extraFields = (
   if (updated) {
     fields.push({
       _id: hexObjectId(),
+      _internalType: 'user-table-field',
       name: 'updatedAt',
       type: 'date',
       readonly: true,
@@ -52,6 +55,7 @@ export const extraFields = (
     })
     fields.push({
       _id: hexObjectId(),
+      _internalType: 'user-table-field',
       name: 'updatedBy',
       type: 'objectid',
       readonly: true,
@@ -63,6 +67,7 @@ export const extraFields = (
   if (softDelete) {
     fields.push({
       _id: hexObjectId(),
+      _internalType: 'user-table-field',
       name: 'deletedAt',
       type: 'date',
       readonly: true,
@@ -71,6 +76,7 @@ export const extraFields = (
     })
     fields.push({
       _id: hexObjectId(),
+      _internalType: 'user-table-field',
       name: 'deletedBy',
       type: 'objectid',
       readonly: true,
@@ -103,12 +109,14 @@ export const tableFields = (
     _id: hexObjectId(),
     name: '-',
     type: '',
+    _internalType: 'user-table-field',
   })
 
   return compact([
     // _id
     fields.length ? {
       _id: hexObjectId(),
+      _internalType: 'user-table-field',
       name: '_id',
       type: 'objectid',
       readonly: true,
@@ -126,6 +134,7 @@ export const tableFields = (
       .filter((field) => field.refTableId)
       .map((field) => ({
         _id: hexObjectId(),
+        _internalType: 'user-table-field',
         name: refFieldname(field.name),
         type: 'object',
         readonly: true,

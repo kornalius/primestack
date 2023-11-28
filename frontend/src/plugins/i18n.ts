@@ -1,5 +1,5 @@
 import { createI18n } from 'vue-i18n'
-import { getEnv } from '@/utils/variables'
+import { getEnv } from '@/utils/env'
 
 import fr from '@/shared/locales/fr.json'
 import en from '@/shared/locales/en.json'

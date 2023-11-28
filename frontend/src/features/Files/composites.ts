@@ -2,7 +2,7 @@ import axios, { AxiosResponse, AxiosProgressEvent } from 'axios'
 import { Static } from '@feathersjs/typebox'
 import { schema } from '@/shared/schemas/file'
 import { AnyData, T18N } from '@/shared/interfaces/commons'
-import { formatSize } from '@/shared/files/utils'
+import { formatSize } from '@/shared/file'
 
 const UPLOAD_URL = import.meta.env.VITE_API_URL
 

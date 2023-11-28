@@ -132,4 +132,4 @@ dist
 .pnp.*
 
 # backend file uploads
-uploads/
+backend/uploads/
