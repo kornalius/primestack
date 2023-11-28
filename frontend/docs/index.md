@@ -6,6 +6,7 @@ The frontend is structure into feature folders which allow the grouping of visua
   * [Structure of the frontend project](#structure-of-the-frontend-project)
   * [What are composables (composites)?](#what-are-composables-composites)
   * [Structure of the features folder](#structure-of-the-features-folder)
+  * [Main flow](#main-flow)
   * [Running the frontend](#running-the-frontend)
     * [Running the frontend in development mode](#running-the-frontend-in-development-mode)
     * [Building the frontend for production](#building-the-frontend-for-production)
@@ -45,6 +46,9 @@ A feature folder is usually well defined and neatly organized
 | store          | Pinia store                                            |
 
 Access all feature documentations here: [List of features](../src/features/features.docs.md)
+
+## Main flow
+User creates menus which contain tabs which then points to a form. Each form displays a table connected to on its left side. When the user selects a document in the list, the form data is binded to that document.
 
 ## Running the frontend
 
