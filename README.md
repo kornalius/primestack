@@ -2,7 +2,7 @@
 
 PrimeStack is an online software as a service which allow you build complex business or personal softwares with little to no coding. Using a visual form builder and a powerful properties editor, you can design user interfaces very efficiently and in little time.
 
-The project is structured as a mono-repo to ease development allowing devs to easily modify and run both, the frontend and backend, using one setup.  
+The project is structured as a mono-repo to ease development allowing devs to easily modify and run both, the frontend and backend, using one setup.
 
 ![ui.png](assets/ui.png)
 

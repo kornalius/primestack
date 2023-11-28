@@ -14,4 +14,4 @@ User's actions are stored in a `list` which is an array of Action objects.
   - action 2 
   - ...
 
-Some action can have an array of children actions which are executed when the parent action decides to.
+> Some action can have an array of children actions which are executed when the parent action decides to.

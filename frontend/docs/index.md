@@ -1,5 +1,4 @@
 # Frontend
-
 The frontend is structure into feature folders which allow the grouping of visual components, interfaces, stores and services into neatly encapsulated  modules.
 
 <!-- TOC -->
@@ -14,16 +13,16 @@ The frontend is structure into feature folders which allow the grouping of visua
 
 ## Structure of the frontend project
 
-| Folder     | Description                                    |
-|------------|------------------------------------------------|
-| composites | Gloval Vue composables                         |
-| features   | Encapsulated components, interfaces, stores... |
-| plugins    | External libraries setup                       |
-| routes     | Vue Router routes setup                        |
-| shortcuts  | Hotkeys-js shortcuts and their actions         |
-| styles     | Global SASS styling                            |
-| utils      | Gloval utilities                               |
-| views      | Vue Router views                               |
+| Folder                                      | Description                                    |
+|---------------------------------------------|------------------------------------------------|
+| [composites](../src/composites/_docs.md)    | Gloval Vue composables                         |
+| [features](../src/features/features.docs.md) | Encapsulated components, interfaces, stores... |
+| [plugins](../src/plugins/_docs.md)          | External libraries setup                       |
+| [routes](../src/routes/_docs.md)            | Vue Router routes setup                        |
+| [shortcuts](../src/shortcuts/_docs.md)      | Hotkeys-js shortcuts and their actions         |
+| [styles](../src/styles/_docs.md)            | Global SASS styling                            |
+| utils                                       | Gloval utilities                               |
+| [views](../src/views/_docs.md)              | Vue Router views                               |
 
 ## What are composables (composites)?
 In the context of Vue applications, a "composable" is a function that leverages Vue's Composition API to encapsulate and reuse stateful logic.
@@ -44,6 +43,8 @@ A feature folder is usually well defined and neatly organized
 | interfaces.ts  | Typescript interfaces                                  |
 | service.ts     | Feathers-pinia connection to the backend micro-service |
 | store          | Pinia store                                            |
+
+Access all feature documentations here: [List of features](../src/features/features.docs.md)
 
 ## Running the frontend
 
