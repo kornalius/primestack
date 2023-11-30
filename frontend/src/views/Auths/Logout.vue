@@ -8,16 +8,14 @@
 
 <script setup lang="ts">
 import { useAuth } from '@/features/Auth/store'
-import { useRouter } from 'vue-router'
 import { onMounted } from 'vue'
 
 const auth = useAuth()
-const router = useRouter()
 
 onMounted(() => {
   setTimeout(async () => {
     await auth.logout()
-    await router.replace('/')
+    document.location.replace('/login')
   }, 2000)
 })
 </script>

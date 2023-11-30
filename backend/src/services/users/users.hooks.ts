@@ -204,11 +204,11 @@ const checkMaxSettings = () => async (context: HookContext): Promise<HookContext
 
   const count = Object.keys(context.data.settings || {})
   const m = context.params?.user?.rights?.maxes?.maxSettings
-  if (m !== -1 && count >= m) {
+  if (m !== -1 && count > m) {
     throw new Forbidden(i18next.t('paid_feature.setting', {
       settingCount: m,
       count: m,
-      lng: context.params?.user?.lng as string || 'en',
+      lng: context.params?.user?.locale as string || 'en',
     }))
   }
   return context

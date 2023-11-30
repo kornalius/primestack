@@ -14,7 +14,9 @@ import { NextFunction, Params, ServiceInterface } from '@feathersjs/feathers'
 import { HookFunction } from '@feathersjs/feathers/src/declarations'
 import { AnyData } from '@/shared/interfaces/commons'
 import { MongoDBService } from '@feathersjs/mongodb'
-import { Collection, Db, ObjectId } from 'mongodb'
+import {
+  Collection, Db, MongoServerError, ObjectId,
+} from 'mongodb'
 import { schema as userSchema } from '@/shared/schemas/user'
 import { loadPrev } from '@/hooks/load-prev'
 import { restrictToOwner } from '@/hooks/restrict-to-owner'
@@ -271,9 +273,9 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
   const queryResolver = resolve<Query, HookContext>(
     {
       ...(options.resolvers?.query || {}),
+      ...convertIdsResolver() as AnyData,
       ...limitToUserResolver as AnyData,
       ...limitToNonDeletedResolver as AnyData,
-      ...convertIdsResolver() as AnyData,
     }
   )
 
@@ -345,19 +347,19 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
       ],
       update: [
         loadPrev(),
-        restrictToOwner(),
+        restrictToOwner(options),
         ...expandHooks('before.update'),
       ],
       patch: [
         loadPrev(),
-        restrictToOwner(),
+        restrictToOwner(options),
         ...expandHooks('before.patch'),
         schemaHooks.resolveData(patchResolver),
         schemaHooks.validateData(patchValidator),
       ],
       remove: [
         loadPrev(),
-        restrictToOwner(),
+        restrictToOwner(options),
         ...(options.softDelete ? [softDelete()] : []),
         ...expandHooks('before.remove'),
       ],
@@ -446,19 +448,32 @@ export const createService = (name: string, klass: Newable<AnyData>, options: Cr
           ? app.get('mongodbClient')
             .then((db: Db) => db.collection(collection))
             .then(async (collection: Collection) => {
-              if (options.indexes) {
-                try {
-                  await collection.dropIndexes()
-                } catch (e) {
-                  //
+              try {
+                const db = await app.get('mongodbClient')
+                await db.createCollection(collection.collectionName)
+              } catch (e) {
+                //
+              }
+
+              try {
+                await collection.dropIndexes()
+              } catch (e) {
+                if ((e as MongoServerError).codeName !== 'NamespaceNotFound') {
+                  // eslint-disable-next-line no-console
+                  console.error(e)
                 }
+              }
+
+              if (options.indexes) {
                 options.indexes.forEach((index) => {
                   collection.createIndex(index.fields, omit(index, ['fields']))
                     // eslint-disable-next-line @typescript-eslint/no-empty-function
                     .then(() => {})
                     .catch((e) => {
-                      // eslint-disable-next-line no-console
-                      console.error(e)
+                      if ((e as MongoServerError).codeName !== 'NamespaceNotFound') {
+                        // eslint-disable-next-line no-console
+                        console.error(e)
+                      }
                     })
                 })
               }

@@ -6,9 +6,9 @@ import { defineStore } from 'pinia'
 import {
   columnSchema, fieldSchema, formSchema, formTableColumnSchema,
 } from '@/shared/schemas/form'
+import { newName } from '@/shared/utils'
 import {
   flattenFields,
-  newNameForField,
   parentFormFieldArray,
   recreateFormIds,
 } from '@/shared/form'
@@ -187,7 +187,7 @@ export const useFormEditor = defineStore('form-editor', () => {
     const f: Form = {
       _id: hexObjectId(),
       _internalType: 'form',
-      name: newNameForField('form', states.value.forms),
+      name: newName('form', states.value.forms),
       _fields: [],
       ...(options || {}),
     }
@@ -205,7 +205,7 @@ export const useFormEditor = defineStore('form-editor', () => {
   const duplicate = (form: Form): Form => {
     const f: Form = {
       ...recreateFormIds(cloneDeep(form)),
-      name: newNameForField('form', states.value.forms),
+      name: newName('form', states.value.forms),
     }
     states.value.forms = [...states.value.forms, f]
     return f
@@ -256,7 +256,7 @@ export const useFormEditor = defineStore('form-editor', () => {
             { ...acc, [k]: defaultValueForSchema(component.schema.properties[k]) }
           ), {}),
         ...(defaultValues(component.defaultValues) || {}),
-        name: newNameForField(component.type, flatFields()),
+        name: newName(component.type, flatFields()),
         ...(options || {}),
       }
     }
@@ -307,7 +307,7 @@ export const useFormEditor = defineStore('form-editor', () => {
           ...cloneDeep(field),
           _id: hexObjectId(),
           // eslint-disable-next-line no-underscore-dangle
-          name: newNameForField(c.type, form._fields),
+          name: newName(c.type, form._fields),
         }
         // eslint-disable-next-line no-underscore-dangle
         arr.push(newField)

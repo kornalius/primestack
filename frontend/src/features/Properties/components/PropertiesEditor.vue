@@ -418,7 +418,7 @@ const label = (name: string): string => startCase(name)
 const category = ref()
 
 const getTranslation = (tooltip: string): string | undefined => {
-  const r = t(tooltip, '!!!', { missingWarn: false })
+  const r = t(tooltip, '!!!', { missingWarn: false, fallbackWarn: false })
   return r !== '!!!' ? r : undefined
 }
 

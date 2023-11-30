@@ -14,11 +14,11 @@ const checkMaxMenus = () => async (context: HookContext): Promise<HookContext> =
   }
 
   const m = context.params?.user?.rights?.maxes?.maxMenus
-  if (m !== -1 && context.data?.list.length >= m) {
+  if (m !== -1 && context.data?.list.length > m) {
     throw new Forbidden(i18next.t('paid_feature.menu', {
       menuCount: m,
       count: m,
-      lng: context.params?.user?.lng as string || 'en',
+      lng: context.params?.user?.locale as string || 'en',
     }))
   }
   return context
@@ -35,7 +35,7 @@ const populateSharedMenus = () => async (context: HookContext): Promise<HookCont
 
   const sharedMenus = await getSharedMenus(context)
   if (context.result) {
-    uniquePushInResult(context, sharedMenus)
+    uniquePushInResult(context.result.data, sharedMenus)
   }
 
   return context

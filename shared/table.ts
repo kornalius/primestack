@@ -4,23 +4,6 @@ import { tableSchema } from './schemas/table'
 
 type Table = Static<typeof tableSchema>
 
-export const newNameForTable = (list: Table[]): string => {
-  let index = 1
-  let newName = `table${index}`.toLowerCase()
-  let variable = list.find((t: Table) => (
-    t.name.toLowerCase() === newName
-  ))
-  while (variable) {
-    index += 1
-    newName = `table${index}`.toLowerCase()
-    // eslint-disable-next-line @typescript-eslint/no-loop-func,no-loop-func
-    variable = list.find((t: Table) => (
-      t.name.toLowerCase() === newName
-    ))
-  }
-  return newName
-}
-
 /**
  * Recreate ids in a form
  *

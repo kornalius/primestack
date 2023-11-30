@@ -1,12 +1,12 @@
 import app from './app'
-import { info, error } from './logger'
+import { error } from './logger'
 
-const prefix = app.get('prefix')
 const host = app.get('host')
 const port = app.get('port')
 
 app.listen(port).then(() => {
-  info(`Feathers application started on ${prefix}://${host}:${port}`)
+  // eslint-disable-next-line no-console
+  console.info(`Feathers application started on ${host}:${port}`)
 })
 
 process.on('unhandledRejection', (reason) => {

@@ -31,7 +31,7 @@ export const checkPaidActions = () => async (context: HookContext) => {
         throw new Forbidden(i18next.t('paid_feature.action', {
           // eslint-disable-next-line no-underscore-dangle
           type: a._type,
-          lng: user.lng || 'en',
+          lng: user.locale || 'en',
         }))
       }
     })
@@ -51,7 +51,7 @@ const populateSharedActions = () => async (context: HookContext): Promise<HookCo
 
   const sharedActions = await getSharedActions(context)
   if (context.result) {
-    uniquePushInResult(context, sharedActions)
+    uniquePushInResult(context.result.data, sharedActions)
   }
 
   return context

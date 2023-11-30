@@ -4,7 +4,8 @@ import { defineStore } from 'pinia'
 import cloneDeep from 'lodash/cloneDeep'
 import hexObjectId from 'hex-object-id'
 import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
-import { newNameForTable, recreateTableIds } from '@/shared/table'
+import { recreateTableIds } from '@/shared/table'
+import { newName } from '@/shared/utils'
 import { AnyData } from '@/shared/interfaces/commons'
 
 type Table = Static<typeof tableSchema>
@@ -132,7 +133,7 @@ export const useTableEditor = defineStore('table-editor', () => {
   const duplicate = (table: Table): Table => {
     const t = {
       ...recreateTableIds(cloneDeep(table)),
-      name: newNameForTable(states.value.tables),
+      name: newName('table', states.value.tables),
     }
     states.value.tables = [...states.value.tables, t]
     return t

@@ -15,11 +15,11 @@ const checkMaxForms = () => async (context: HookContext): Promise<HookContext> =
   }
 
   const m = context.params?.user?.rights?.maxes?.maxForms
-  if (m !== -1 && context.data?.list.length >= m) {
+  if (m !== -1 && context.data?.list.length > m) {
     throw new Forbidden(i18next.t('paid_feature.form', {
       formCount: m,
       count: m,
-      lng: context.params?.user?.lng as string || 'en',
+      lng: context.params?.user?.locale as string || 'en',
     }))
   }
   return context
@@ -36,7 +36,7 @@ const populateSharedForms = () => async (context: HookContext): Promise<HookCont
 
   const sharedForms = await getSharedForms(context)
   if (context.result) {
-    uniquePushInResult(context, sharedForms)
+    uniquePushInResult(context.result.data, sharedForms)
   }
 
   return context

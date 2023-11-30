@@ -129,6 +129,8 @@ export interface CreateServiceOptions {
     before?: Middleware[]
     after?: Middleware[]
   }
+  // allow patching certain fields by any users
+  allowPatch?: string[]
 }
 
 export type CreateSchemalessServiceOptions = Omit<CreateServiceOptions, 'schema'>

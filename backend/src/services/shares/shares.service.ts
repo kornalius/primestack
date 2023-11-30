@@ -19,6 +19,7 @@ export default function (app: Application): void {
     created: true,
     updated: true,
     userWrite: true,
+    allowPatch: ['userId', 'emailClicked'],
     methods: ['find', 'get', 'create', 'patch', 'remove'],
     hooks,
   }).init(app, {})

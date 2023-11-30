@@ -30,6 +30,7 @@ Services in PrimeStack are created using a wrapper that handles all the complexi
 | validators     |     ✔      | Service validators                                                                                |
 | resolvers      |     ✔      | Service resolvers                                                                                 |
 | middlewares    |     ✔      | Service middlewares object (`before`, `after`)                                                    |
+| allowPatching  |     ✔      | Array of fields to allow being patched by anybody                                                 |
 
 ### Structure of validators
 ```ts

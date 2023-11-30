@@ -151,7 +151,7 @@ const buildPipeline = (data: Stats, params?: MongoDBAdapterParams): AnyData => {
 
   if (p.pipeline.length === 0) {
     throw new BadRequest(i18next.t('stats.invalid_type', {
-      lng: params?.user?.lng as string || 'en',
+      lng: params?.user?.locale as string || 'en',
     }))
   }
 

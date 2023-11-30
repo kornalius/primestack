@@ -6,6 +6,7 @@ import hexObjectId from 'hex-object-id'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
 import { formSchema } from '@/shared/schemas/form'
 import { AnyData } from '@/shared/interfaces/commons'
+import { newName } from '@/shared/utils'
 
 type Tab = Static<typeof tabSchema>
 type Menu = Static<typeof menuSchema>
@@ -45,8 +46,8 @@ export const useTabEditor = defineStore('tab-editor', () => {
     const t: Tab = {
       _id: hexObjectId(),
       _internalType: 'tab',
-      label: 'New Tab',
-      icon: undefined,
+      label: newName('tab', menu.tabs, 'label'),
+      icon: 'mdi-alert',
       color: undefined,
       formId: form?._id,
       ...(options || {}),

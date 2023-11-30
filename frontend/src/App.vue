@@ -93,7 +93,7 @@
 
         <div class="row items-center q-gutter-sm">
           <div
-            v-if="app.menuId && auth.authenticated"
+            v-if="app.menuId && auth.authenticated && !sharedMenu[app.menuId]"
             class="col-auto"
           >
             <share-menu
@@ -171,12 +171,13 @@
           </q-item-label>
         </q-item>
 
-        <div v-if="userMenu?.list">
+        <div>
           <q-item
             v-if="editor.active"
             class="Drawer__item"
-            :class="{ leftDrawerExpanded, selected: $route.path.startsWith(formUrl()) }"
+            :class="{ leftDrawerExpanded }"
             :to="formUrl()"
+            :active="$route.path.startsWith(formUrl())"
             name="forms"
             tag="router-link"
             clickable
@@ -199,8 +200,9 @@
           <q-item
             v-if="editor.active"
             class="Drawer__item"
-            :class="{ leftDrawerExpanded, selected: $route.path.startsWith(tableUrl()) }"
+            :class="{ leftDrawerExpanded }"
             :to="tableUrl()"
+            :active="$route.path.startsWith(tableUrl())"
             name="schemas"
             tag="router-link"
             clickable
@@ -225,17 +227,18 @@
             v-model="editor.menus"
           />
 
-          <div v-else>
+          <div v-else-if="userDataLoaded">
             <q-item
-              v-for="m in userMenu.list"
+              v-for="m in userMenu?.list || []"
               :key="m._id"
               v-bind="fieldBinds(m, menuSchema, ctx, ['click'])"
               class="Drawer__item"
               :class="{ leftDrawerExpanded }"
               :name="m._id"
-              tag="router-link"
               :to="m.href || menuUrl(m._id)"
+              :active="$route.path.startsWith(menuUrl(m._id))"
               :target="m.target"
+              tag="router-link"
               clickable
             >
               <q-tooltip
@@ -273,14 +276,14 @@
               />
             </q-item>
           </div>
-        </div>
 
-        <div v-else>
-          <q-item v-for="i in 5" :key="i">
-            <q-item-section>
-              <q-skeleton type="rect" />
-            </q-item-section>
-          </q-item>
+          <div v-else>
+            <q-item v-for="i in 5" :key="i">
+              <q-item-section>
+                <q-skeleton type="rect" />
+              </q-item-section>
+            </q-item>
+          </div>
         </div>
       </q-list>
     </q-drawer>
@@ -368,6 +371,8 @@ const endEdit = () => {
 
 const userMenu = ref()
 
+const userDataLoaded = ref(false)
+
 /**
  * Selected menu instance
  */
@@ -418,16 +423,26 @@ const share = useShareStore()
  */
 const loadUserData = async () => {
   await useFeathersService('users').get(auth.userId)
-  userMenu.value = (await useFeathersService('menus').find({ query: {} })).data?.[0]
+  userMenu.value = (await useFeathersService('menus')
+    .find({ query: {} })).data?.[0]
   await useFeathersService('tables').find({ query: {} })
   await useFeathersService('forms').find({ query: {} })
   await useFeathersService('actions').find({ query: {} })
   await useFeathersService('blueprints').find({ query: {} })
 
+  userDataLoaded.value = true
+
   if (share.shareId) {
-    await share.assignUserToShare(share.shareId, auth.userId)
+    const shareDoc = await useFeathersService('shares').get(share.shareId)
+    if (shareDoc.createdBy !== auth.userId) {
+      await share.assignUserToShare(share.shareId, share.linkClicked, auth.userId)
+    }
     share.setShareId(undefined)
     share.setLinkClicked(undefined)
+  }
+
+  if (auth.user.locale) {
+    await app.setLocale(auth.user.locale, false)
   }
 }
 

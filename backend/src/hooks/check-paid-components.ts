@@ -30,7 +30,7 @@ export const checkPaidComponents = () => async (context: HookContext) => {
         throw new Forbidden(i18next.t('paid_feature.component', {
           // eslint-disable-next-line no-underscore-dangle
           type: f._type,
-          lng: user.lng || 'en',
+          lng: user.locale || 'en',
         }))
       }
     })

@@ -43,6 +43,7 @@ import {
 } from '@/shared/form'
 import { recreateMenuIds } from '@/shared/menu'
 import { recreateTableIds } from '@/shared/table'
+import { getId } from '@/composites/utilities'
 
 type Menu = Static<typeof menuSchema>
 type Tab = Static<typeof tabSchema>
@@ -293,22 +294,6 @@ export const useAppEditor = defineStore('app-editor', () => {
   }
 
   /**
-   * Adds a new menu
-   *
-   * @param options Optional values
-   * @param selectIt Select the menu
-   *
-   * @returns {Menu} New menu instance
-   */
-  const addMenu = (options?: AnyData, selectIt?: boolean): Menu => {
-    const menu = menuEditor.add(options)
-    if (menu && selectIt) {
-      select(menu._id)
-    }
-    return menu
-  }
-
-  /**
    * Adds a new tab
    *
    * @param menu Menu instance to add the tab to
@@ -325,6 +310,24 @@ export const useAppEditor = defineStore('app-editor', () => {
       select(tab._id)
     }
     return tab
+  }
+
+  /**
+   * Adds a new menu
+   *
+   * @param options Optional values
+   * @param selectIt Select the menu
+   *
+   * @returns {Menu} New menu instance
+   */
+  const addMenu = (options?: AnyData, selectIt?: boolean): Menu => {
+    const menu = menuEditor.add(options)
+    if (menu && selectIt) {
+      menuEditor.setMenuId(menu._id)
+      const tab = addTab(menu, undefined)
+      tabEditor.setTabId(tab._id)
+    }
+    return menu
   }
 
   /**
@@ -378,13 +381,50 @@ export const useAppEditor = defineStore('app-editor', () => {
   /**
    * Reload all instances from the store
    */
-  const loadFromStore = () => ({
-    userMenus: useFeathersService('menus').findOneInStore({ query: {} }),
-    userForms: useFeathersService('forms').findOneInStore({ query: {} }),
-    userTables: useFeathersService('tables').findOneInStore({ query: {} }),
-    userActions: useFeathersService('actions').findOneInStore({ query: {} }),
-    userBlueprints: useFeathersService('blueprints').findOneInStore({ query: {} }),
-  })
+  const loadFromStore = () => {
+    const userMenus = useFeathersService('menus')
+      .findOneInStore({ query: {} })
+    if (!userMenus.value) {
+      const d = useFeathersService('menus').new()
+      d.save()
+    }
+
+    const userForms = useFeathersService('forms')
+      .findOneInStore({ query: {} })
+    if (!userForms.value) {
+      const d = useFeathersService('forms').new()
+      d.save()
+    }
+
+    const userTables = useFeathersService('tables')
+      .findOneInStore({ query: {} })
+    if (!userTables.value) {
+      const d = useFeathersService('tables').new()
+      d.save()
+    }
+
+    const userActions = useFeathersService('actions')
+      .findOneInStore({ query: {} })
+    if (!userActions.value) {
+      const d = useFeathersService('actions').new()
+      d.save()
+    }
+
+    const userBlueprints = useFeathersService('blueprints')
+      .findOneInStore({ query: {} })
+    if (!userBlueprints.value) {
+      const d = useFeathersService('blueprints').new()
+      d.save()
+    }
+
+    return {
+      userMenus,
+      userForms,
+      userTables,
+      userActions,
+      userBlueprints,
+    }
+  }
 
   /**
    * Save a snapshot to the stores and sets the current editing elements to this snapshot
@@ -472,11 +512,21 @@ export const useAppEditor = defineStore('app-editor', () => {
       userBlueprints,
     } = loadFromStore()
 
-    menuEditor.setMenus(cloneDeep(userMenus.value?.list.filter((m: Menu) => !m.shareId)))
-    formEditor.setForms(cloneDeep(userForms.value?.list.filter((f: Form) => !f.shareId)))
-    tableEditor.setTables(cloneDeep(userTables.value?.list.filter((t: Table) => !t.shareId)))
-    actionEditor.setActions(cloneDeep(userActions.value?.list.filter((a: Action) => !a.shareId)))
-    blueprintEditor.setBlueprints(cloneDeep(userBlueprints.value?.list))
+    menuEditor.setMenus(
+      cloneDeep(userMenus.value?.list.filter((m: Menu) => !m.shareId) || []),
+    )
+    formEditor.setForms(
+      cloneDeep(userForms.value?.list.filter((f: Form) => !f.shareId) || []),
+    )
+    tableEditor.setTables(
+      cloneDeep(userTables.value?.list.filter((t: Table) => !t.shareId) || []),
+    )
+    actionEditor.setActions(
+      cloneDeep(userActions.value?.list.filter((a: Action) => !a.shareId) || []),
+    )
+    blueprintEditor.setBlueprints(
+      cloneDeep(userBlueprints.value?.list || []),
+    )
 
     undoStore.startWatch(startWatch)
     undoStore.snap(snapshot)()
@@ -538,35 +588,35 @@ export const useAppEditor = defineStore('app-editor', () => {
     } = loadFromStore()
 
     formEditor.setForms(cloneDeep(
-      (await useFeathersService('forms').patch(userForms.value._id, {
+      (await useFeathersService('forms').patch(getId(userForms.value), {
         ...userForms.value,
         list: formEditor.forms,
       }) as AnyData).list,
     ))
 
     tableEditor.setTables(cloneDeep(
-      (await useFeathersService('tables').patch(userTables.value._id, {
+      (await useFeathersService('tables').patch(getId(userTables.value), {
         ...userTables.value,
         list: tableEditor.tables,
       }) as AnyData).list,
     ))
 
     actionEditor.setActions(cloneDeep(
-      (await useFeathersService('actions').patch(userActions.value._id, {
+      (await useFeathersService('actions').patch(getId(userActions.value), {
         ...userActions.value,
         list: actionEditor.actions,
       }) as AnyData).list,
     ))
 
     blueprintEditor.setBlueprints(cloneDeep(
-      (await useFeathersService('blueprints').patch(userBlueprints.value._id, {
+      (await useFeathersService('blueprints').patch(getId(userBlueprints.value), {
         ...userBlueprints.value,
         list: blueprintEditor.blueprints,
       }) as AnyData).list,
     ))
 
     menuEditor.setMenus(cloneDeep(
-      (await useFeathersService('menus').patch(userMenus.value._id, {
+      (await useFeathersService('menus').patch(getId(userMenus.value), {
         ...userMenus.value,
         list: menuEditor.menus,
       }) as AnyData).list,

@@ -17,12 +17,6 @@ export default function (app: Application): void {
   createService(path, Service, {
     collection,
     schema,
-    indexes: [
-      {
-        fields: { name: 1 },
-        unique: true,
-      },
-    ],
     created: true,
     updated: true,
     userRead: true,

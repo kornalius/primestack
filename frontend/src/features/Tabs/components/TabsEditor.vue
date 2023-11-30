@@ -16,7 +16,7 @@
       reorderable
       @click.stop=""
     >
-      <template #default="{ value: t }">
+      <template #default="{ value: t }: { value: Tab }">
         <q-route-tab
           v-if="menu"
           :name="t._id"
@@ -40,6 +40,7 @@
 </template>
 
 <script setup lang="ts">
+import hexObjectId from 'hex-object-id'
 import { onMounted, watch } from 'vue'
 import startCase from 'lodash/startCase'
 import kebabcase from 'lodash/kebabCase'
@@ -50,7 +51,7 @@ import { useUrl } from '@/composites/url'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
 import { tabSchema, menuSchema } from '@/shared/schemas/menu'
 import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
-import hexObjectId from 'hex-object-id'
+import { newName } from '@/shared/utils'
 
 type Menu = Static<typeof menuSchema>
 type Tab = Static<typeof tabSchema>
@@ -83,24 +84,11 @@ const selectTab = (id: string) => {
   }
 }
 
-const newTabName = (name: string): string => {
-  let index = 1
-  let newName = `${startCase(name)}${index}`.toLowerCase()
-  let field = tabs.value.find((f) => f.name.toLowerCase() === newName)
-  while (field) {
-    index += 1
-    newName = `${startCase(name)}${index}`.toLowerCase()
-    // eslint-disable-next-line @typescript-eslint/no-loop-func,no-loop-func
-    field = tabs.value.find((f) => f.name.toLowerCase() === newName)
-  }
-  return `${startCase(name)}${index}`
-}
-
 const addTab = () => {
   if (props.menu) {
     editor.addTab(props.menu, undefined, undefined, true)
   } else {
-    const name = newTabName('Tab')
+    const name = newName('tab', tabs.value, 'label')
     tabs.value.push({
       _id: hexObjectId(),
       _type: 'tab',

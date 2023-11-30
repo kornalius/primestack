@@ -178,7 +178,7 @@ import { defaultValueForSchema, defaultValues } from '@/shared/schema'
 import { useExpression } from '@/features/Expression/composites'
 import { stringValue, objectValue } from '@/composites/utilities'
 import { columnSchema, fieldSchema } from '@/shared/schemas/form'
-// eslint-disable-next-line import/no-cycle
+import { newName } from '@/shared/utils'
 import { useFormElements } from '../../composites'
 import FieldsEditor from './FieldsEditor.vue'
 
@@ -207,7 +207,6 @@ const {
   componentsByType,
   isCardActions,
   isCardSection,
-  newNameForField,
 } = useFormElements()
 
 const { t } = useI18n()
@@ -271,7 +270,7 @@ const onAddActionClick = (cardActions: FormColumn) => {
         { ...acc, [k]: defaultValueForSchema(btnComponent.schema.properties[k]) }
       ), {}),
     ...(defaultValues(btnComponent.defaultValues) || {}),
-    name: newNameForField(type, editor.flattenFormFields()),
+    name: newName(type, editor.flattenFormFields()),
     label: 'Action',
   }
 

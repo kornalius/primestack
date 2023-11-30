@@ -29,11 +29,11 @@ export const checkMaxShares = () => async (context: HookContext): Promise<HookCo
     }
   })
   const m = context.params?.user?.rights?.maxes?.maxShares
-  if (m !== -1 && total >= m) {
+  if (m !== -1 && total > m) {
     throw new Forbidden(i18next.t('paid_feature.share', {
       shareCount: m,
       count: m,
-      lng: context.params?.user?.lng as string || 'en',
+      lng: context.params?.user?.locale as string || 'en',
     }))
   }
   return context
@@ -50,10 +50,8 @@ export const sendEmail = () => async (context: HookContext): Promise<HookContext
 
   const share = context.result as Share
 
-  const prefix = context.app.get('prefix')
-  const host = context.app.get('host')
-  const port = context.app.get('port')
-  const link = `${prefix}://${host}:${port}/share-link/${share._id.toString()}`
+  const url = context.app.get('url')
+  const link = `${url}/share-link/${share._id.toString()}`
 
   const email = context.app.get('email')
 
@@ -73,6 +71,12 @@ export const sendEmail = () => async (context: HookContext): Promise<HookContext
   ) {
     info(`Sending share link email to ${share.email}...`)
 
+    const shareUser = (await context.app.service('users').find({
+      query: {
+        email: share.email,
+      }
+    })).data?.[0]
+
     const transporter = nodemailer.createTransport({
       service: email.service,
       host: email.host,
@@ -84,20 +88,28 @@ export const sendEmail = () => async (context: HookContext): Promise<HookContext
       },
     })
 
+    const lng = shareUser?.locale as string || user.locale as string || 'en'
+
     const res = await transporter.sendMail({
       from: context.app.get('email').sender as string,
       to: share.email,
       subject: i18next.t('share.email.subject', {
         firstname: user.firstname,
         lastname: user.lastname,
-        lng: user.lng as string || 'en',
+        lng,
       }) as string,
       text: i18next.t('share.email.text', {
         firstname: user.firstname,
         lastname: user.lastname,
         link,
-        lng: user.lng as string || 'en',
+        lng,
       }),
+      html: i18next.t('share.email.html', {
+        firstname: user.firstname,
+        lastname: user.lastname,
+        link: `<a href="${link}" target="_blank">${i18next.t('share.email.link', { lng })}</a>`,
+        lng,
+      })
     })
 
     info(`Share link email sent to ${share.email}, ${res.response}`)
