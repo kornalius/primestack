@@ -280,7 +280,6 @@ export const tableSchema = Type.Object(
 export const schema = Type.Object(
   {
     _id: ExType.Id(),
-    userId: Type.Optional(ExType.Id()),
     list: Type.Array(tableSchema),
   },
   { $id: 'TableList', additionalProperties: false },

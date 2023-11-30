@@ -1184,7 +1184,8 @@
         "unmounted": "Triggered after the component has been unmounted, when all of its child components have been unmounted.",
         "tableCreate": "Triggered when a new record is added to the main table",
         "tablePatch": "Triggered when a record is changed in the main table",
-        "tableRemove": "Triggered when a record is removed from the main table"
+        "tableRemove": "Triggered when a record is removed from the main table",
+        "visibleColumns": "Column names that are visible in the table"
       }
     },
     "user-table": {
@@ -1401,7 +1402,10 @@
   "share": {
     "email": {
       "subject": "{{firstname}} {{lastname}} just shared a new menu item with you",
-      "text": "Hi,\n\n{{firstname}} {{lastname}} just shared a new menu item with you via the PrimeStack app.\n\nYou can access it by clicking the link below:\n\n{{link}}"
+      "text": "Hi,\n\n{{firstname}} {{lastname}} just shared a new menu item with you via the PrimeStack app.\n\nYou can access it by clicking the link below:\n\n{{- link}}",
+      "html": "Hi,<br><br>{{firstname}} {{lastname}} just shared a new menu item with you via the PrimeStack app.<br><br>You can access it by clicking the link below:<br><br>{{- link}}",
+      "link": "Access the menu",
+      "sent": "Email was sent successfully"
     },
     "add": "Share",
     "emailInput": "Enter email you want to share with...",

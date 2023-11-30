@@ -10,10 +10,10 @@
     <template #default="{ value: m }">
       <q-item
         class="Drawer__item left-drawer-expanded"
-        :class="{ selected: $route.path.startsWith(menuUrl((m as any)._id)) }"
-        tag="router-link"
         :to="(m as any).href || menuUrl((m as any)._id)"
         :target="(m as any).target as string"
+        :active="$route.path.startsWith(menuUrl((m as any)._id))"
+        tag="router-link"
         clickable
         @click.stop="editor.setMenuId((m as any)._id)"
       >

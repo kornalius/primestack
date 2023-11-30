@@ -309,6 +309,9 @@
     "user_menu": {
       "tooltip": "Menu utilisateur"
     },
+    "share_menu": {
+      "tooltip": "Partages"
+    },
     "search": {
       "tooltip": "Recherche globale"
     },
@@ -1221,7 +1224,8 @@
         "unmount": "Déclenché après le démontage du composant, lorsque tous ses composants enfants ont été démontés.",
         "tableCreate": "Déclenché lorsqu'un nouvel enregistrement est ajouté à la table principale",
         "tablePatch": "Déclenché lorsqu'un enregistrement est modifié dans la table principale",
-        "tableRemove": "Déclenché lorsqu'un enregistrement est supprimé de la table principale"
+        "tableRemove": "Déclenché lorsqu'un enregistrement est supprimé de la table principale",
+        "visibleColumns": "Nom des colonnes visibles dans le tableau"
       }
     },
     "user-tab": {
@@ -1390,7 +1394,10 @@
   "share": {
     "email": {
       "subject": "{{firstname}} {{lastname}} viens tout juste de vous partager un nouveau menu",
-      "text": "Bonjour,\n\n{{firstname}} {{lastname}} viens tout juste de vous partager un nouveau menu via l'application PrimeStack.\n\nVous pouvez y accéder avec le liens ci-dessous:\n\n{{link}}"
+      "text": "Bonjour,\n\n{{firstname}} {{lastname}} viens tout juste de vous partager un nouveau menu via l'application PrimeStack.\n\nVous pouvez y accéder avec le liens ci-dessous:\n\n{{- link}}",
+      "html": "Bonjour,<br><br>{{firstname}} {{lastname}} viens tout juste de vous partager un nouveau menu via l'application PrimeStack.<br><br>Vous pouvez y accéder avec le liens ci-dessous:<br><br>{{- link}}",
+      "link": "Accéder au menu",
+      "sent": "Le courriel à été envoyé avec succès"
     },
     "add": "Partager",
     "emailInput": "Entrez le courriel avec lequel vous voulez partager...",

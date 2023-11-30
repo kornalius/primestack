@@ -2,8 +2,7 @@ import { Type, StringEnum } from '@feathersjs/typebox'
 import { actionIcon, contentIcon } from '../icons'
 import ExType from '../extypes'
 import { hexObjectId } from '../schema'
-// eslint-disable-next-line import/no-cycle
-import { newNameForVariable } from '../menu'
+import { newName } from '../utils'
 
 export const targetValues = ['_blank', '_self', '_parent', '_top']
 
@@ -82,7 +81,7 @@ export const variableSchema = Type.Object(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     newValue: (arr: any[]) => ({
       _id: hexObjectId(),
-      name: newNameForVariable(arr),
+      name: newName('variable', arr),
       value: undefined,
     }),
     showName: true,
@@ -139,7 +138,6 @@ export const menuSchema = Type.Object(
 export const schema = Type.Object(
   {
     _id: ExType.Id(),
-    userId: Type.Optional(ExType.Id()),
     list: Type.Array(menuSchema),
   },
   { $id: 'MenuList', additionalProperties: false },

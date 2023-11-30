@@ -1,4 +1,5 @@
 import { AnyData } from './interfaces/commons'
+import startCase from 'lodash/startCase'
 
 /**
  * Insert unique values into result
@@ -22,4 +23,17 @@ export const uniquePushInResult = (result: AnyData[] | AnyData, values: AnyData[
       }
     })
   }
+}
+
+export const newName = (type: string, fields: AnyData[], prop = 'name'): string => {
+  let index = 1
+  let newName = `${startCase(type)}${index}`.toLowerCase()
+  let field = fields.find((f) => f[prop]?.toLowerCase() === newName)
+  while (field) {
+    index += 1
+    newName = `${startCase(type)}${index}`.toLowerCase()
+    // eslint-disable-next-line @typescript-eslint/no-loop-func,no-loop-func
+    field = fields.find((f) => f[prop]?.toLowerCase() === newName)
+  }
+  return `${startCase(type)}${index}`
 }

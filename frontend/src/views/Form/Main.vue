@@ -844,9 +844,9 @@ let marginTimeout = 0
  * and then apply appropriate margins to the mainCol element
  */
 watch([mainCol, fields], () => {
-  if (mainCol.value) {
-    clearTimeout(marginTimeout)
-    marginTimeout = setTimeout(() => {
+  clearTimeout(marginTimeout)
+  marginTimeout = setTimeout(() => {
+    if (mainCol.value) {
       const margins = { left: '0', right: '0' }
 
       const left = mainCol.value.querySelector('.sidebar:not(.right)')
@@ -869,8 +869,8 @@ watch([mainCol, fields], () => {
 
       mainCol.value.style.marginLeft = margins.left
       mainCol.value.style.marginRight = margins.right
-    }, 100)
-  }
+    }
+  }, 100)
 }, { deep: true })
 </script>
 

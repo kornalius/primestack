@@ -40,7 +40,7 @@
                 class="row items-center q-gutter-xs"
               >
                 <div class="col-auto">
-                  <span class="text-caption">
+                  <span class="text-caption text-weight-medium q-mr-xs">
                     {{ $t('share.emailSent') }}:
                   </span>
                   <span class="text-caption">
@@ -73,11 +73,11 @@
                 class="row items-center q-gutter-xs"
               >
                 <div class="col-auto">
-                  <span class="text-caption q-mr-xs">
+                  <span class="text-caption text-weight-medium q-mr-xs">
                     {{ $t('share.shareAccepted') }}:
                   </span>
                   <span class="text-caption">
-                    {{ dayjs(value.emailClicked).format('lll') }}
+                    {{ dayjs(value.emailClicked).format('llll') }}
                   </span>
                 </div>
               </div>
@@ -95,7 +95,7 @@
         <div class="row items-center">
           <div class="col-auto">
             <q-btn
-              :disable="disable"
+              :disable="disable || invalidEmail"
               icon="mdi-check"
               color="green-6"
               size="sm"
@@ -238,7 +238,7 @@
 </template>
 
 <script setup lang="ts">
-import { Ref } from 'vue'
+import { computed, Ref } from 'vue'
 import dayjs from 'dayjs'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 import { Static } from '@feathersjs/typebox'
@@ -319,4 +319,9 @@ const makeFull = () => {
 const resendShare = () => {
   emit('resend-email', props.modelValue)
 }
+
+const invalidEmail = computed(() => (
+  isRequired(t)(value.value.email) !== true
+    || isEmail(t)(value.value.email) !== true
+))
 </script>

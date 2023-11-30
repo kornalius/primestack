@@ -1,11 +1,11 @@
 {
   "env": "ENV",
-  "prefix": "PREFIX",
   "host": "HOST",
   "port": {
     "__name": "PORT",
     "__format": "number"
   },
+  "url": "FRONT_URL",
   "public": "PUBLIC",
   "wsPath": "WS_PATH",
   "uploadsPath": "UPLOADS_PATH",

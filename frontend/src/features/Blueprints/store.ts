@@ -5,7 +5,7 @@ import hexObjectId from 'hex-object-id'
 import { blueprintSchema } from '@/shared/schemas/blueprints'
 import { fieldSchema } from '@/shared/schemas/form'
 import { AnyData } from '@/shared/interfaces/commons'
-import { newNameForBlueprint } from '@/shared/blueprint'
+import { newName } from '@/shared/utils'
 
 type Blueprint = Static<typeof blueprintSchema>
 type FormField = Static<typeof fieldSchema>
@@ -72,7 +72,7 @@ export const useBlueprintEditor = defineStore('blueprint-editor', () => {
   const add = (options: AnyData): Blueprint => {
     const b: Blueprint = {
       _id: hexObjectId(),
-      name: newNameForBlueprint(states.value.blueprints),
+      name: newName('blueprint', states.value.blueprints),
       menuId: undefined,
       properties: {},
       componentType: '',

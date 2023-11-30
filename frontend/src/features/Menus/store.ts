@@ -6,6 +6,7 @@ import hexObjectId from 'hex-object-id'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
 import { recreateMenuIds } from '@/shared/menu'
 import { AnyData } from '@/shared/interfaces/commons'
+import { newName } from '@/shared/utils'
 
 type Menu = Static<typeof menuSchema>
 type Tab = Static<typeof tabSchema>
@@ -91,8 +92,8 @@ export const useMenuEditor = defineStore('menu-editor', () => {
     const m: Menu = {
       _id: hexObjectId(),
       _internalType: 'menu',
-      label: undefined,
-      icon: undefined,
+      label: newName('menu', states.value.menus, 'label'),
+      icon: 'mdi-dots-horizontal-circle',
       color: undefined,
       href: undefined,
       target: '_self',

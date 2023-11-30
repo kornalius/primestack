@@ -14,11 +14,11 @@ const checkMaxFiles = () => async (context: HookContext): Promise<HookContext> =
 
   const { total } = await context.app.service(context.path).find({ query: { $limit: 0 } })
   const m = context.params?.user?.rights?.maxes?.maxFiles
-  if (m !== -1 && total >= m) {
+  if (m !== -1 && total > m) {
     throw new Forbidden(i18next.t('paid_feature.file', {
       fileCount: m,
       count: m,
-      lng: context.params?.user?.lng as string || 'en',
+      lng: context.params?.user?.locale as string || 'en',
     }))
   }
   return context
@@ -34,10 +34,10 @@ const checkMaxFileSize = () => async (context: HookContext): Promise<HookContext
   }
 
   const m = context.params?.user?.rights?.maxes?.maxFileSize
-  if (m !== -1 && context.data.size >= m) {
+  if (m !== -1 && context.data.size > m) {
     throw new Forbidden(i18next.t('paid_feature.fileSize', {
       size: formatSize(m),
-      lng: context.params?.user?.lng as string || 'en',
+      lng: context.params?.user?.locale as string || 'en',
     }))
   }
   return context
@@ -57,7 +57,7 @@ const checkRequiredQueryFields = () => async (context: HookContext): Promise<Hoo
     if (!context.params?.query.tableId) {
       throw new BadRequest(i18next.t('query.missingField', {
         name: 'tableId',
-        lng: context.params?.user?.lng as string || 'en',
+        lng: context.params?.user?.locale as string || 'en',
       }))
     }
 
@@ -65,7 +65,7 @@ const checkRequiredQueryFields = () => async (context: HookContext): Promise<Hoo
       throw new BadRequest(i18next.t('query.missingField', {
         // eslint-disable-next-line no-underscore-dangle
         name: 'docId',
-        lng: context.params?.user?.lng as string || 'en',
+        lng: context.params?.user?.locale as string || 'en',
       }))
     }
   }

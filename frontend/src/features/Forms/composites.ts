@@ -12,7 +12,7 @@ import {
 } from '@/features/Components'
 import { useValidators } from '@/features/Validation/composites'
 import { getTypeFor } from '@/shared/schema'
-import { flattenFields, newNameForField, parentFormField } from '@/shared/form'
+import { flattenFields, parentFormField } from '@/shared/form'
 // eslint-disable-next-line import/no-cycle
 import { getProp } from '@/features/Expression/composites'
 import { useAppEditor } from '@/features/Editor/store'
@@ -403,8 +403,6 @@ export const useFormElements = () => ({
   componentsByType,
 
   components,
-
-  newNameForField,
 
   flattenFields,
 

@@ -48,11 +48,11 @@ const checkMaxTables = () => async (context: HookContext): Promise<HookContext> 
   }
 
   const m = context.params?.user?.rights?.maxes?.maxTables
-  if (m !== -1 && context.data?.list.length >= m) {
+  if (m !== -1 && context.data?.list.length > m) {
     throw new Forbidden(i18next.t('paid_feature.table', {
       tableCount: m,
       count: m,
-      lng: context.params?.user?.lng as string || 'en',
+      lng: context.params?.user?.locale as string || 'en',
     }))
   }
   return context
@@ -69,11 +69,11 @@ const checkMaxRecords = () => async (context: HookContext): Promise<HookContext>
 
   const { total } = await context.app.service(context.path).find({ query: { $limit: 0 } })
   const m = context.params?.user?.rights?.maxes?.maxRecords
-  if (m !== -1 && total >= m) {
+  if (m !== -1 && total > m) {
     throw new Forbidden(i18next.t('paid_feature.record', {
       recordCount: m,
       count: m,
-      lng: context.params?.user?.lng as string || 'en',
+      lng: context.params?.user?.locale as string || 'en',
     }))
   }
   return context
@@ -127,7 +127,7 @@ const populateSharedTables = () => async (context: HookContext): Promise<HookCon
 
   const sharedTables = await getSharedTables(context)
   if (context.result) {
-    uniquePushInResult(context, sharedTables)
+    uniquePushInResult(context.result.data, sharedTables)
   }
 
   return context
@@ -416,7 +416,7 @@ export const createDynamicService = (app: Application, id: string, t: AnyData) =
         if (record[f.name]) {
           if (f.refTableId === t._id) {
             throw new BadRequest(i18next.t('table.sameTableResolve', {
-              lng: context.params?.user?.lng as string || 'en',
+              lng: context.params?.user?.locale as string || 'en',
             }))
           }
 

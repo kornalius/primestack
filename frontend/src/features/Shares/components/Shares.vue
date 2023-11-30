@@ -29,6 +29,7 @@ import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useFeathersService } from '@/composites/feathers'
 import { useAuth } from '@/features/Auth/store'
+import { useSnacks } from '@/features/Snacks/store'
 import { getId } from '@/composites/utilities'
 import {
   ACCESS_LEVEL_EDIT,
@@ -54,6 +55,8 @@ const emit = defineEmits<{
   (e: 'make-editable', value: ServiceInstance<Share>): void,
   (e: 'make-full', value: ServiceInstance<Share>): void,
 }>()
+
+const snacks = useSnacks()
 
 const { t } = useI18n()
 
@@ -140,6 +143,7 @@ const resendShare = async (share: ServiceInstance<Share>) => {
   // eslint-disable-next-line no-param-reassign
   share.emailResend = true
   await share.save()
+  snacks.pushSuccess(t('share.email.sent'))
   emit('resend-email', share)
 }
 </script>

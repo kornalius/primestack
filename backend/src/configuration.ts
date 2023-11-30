@@ -8,9 +8,9 @@ export const configurationSchema = Type.Intersect([
   defaultAppConfiguration,
   Type.Object({
     env: Type.String(),
-    prefix: Type.String(),
     host: Type.String(),
     port: Type.Number(),
+    url: Type.String(),
     public: Type.String(),
     uploadsPath: Type.String(),
     debug: Type.Optional(Type.String()),

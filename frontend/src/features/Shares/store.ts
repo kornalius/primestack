@@ -5,20 +5,26 @@ import isNil from 'lodash/isNil'
 
 export const useShareStore = defineStore('share', () => {
   const states = ref({
-    shareId: undefined,
-    linkClicked: undefined,
   })
 
-  const shareId = computed(() => states.value.shareId)
+  const shareId = computed(() => localStorage.getItem('shareId'))
 
-  const linkClicked = computed(() => states.value.linkClicked)
+  const linkClicked = computed(() => Number(localStorage.getItem('linkClicked')))
 
   const setShareId = (id: string | undefined) => {
-    states.value.shareId = id
+    if (id === undefined) {
+      localStorage.removeItem('shareId')
+    } else {
+      localStorage.setItem('shareId', id)
+    }
   }
 
   const setLinkClicked = (timestamp: number | undefined) => {
-    states.value.linkClicked = timestamp
+    if (timestamp === undefined) {
+      localStorage.removeItem('linkClicked')
+    } else {
+      localStorage.setItem('linkClicked', (timestamp || 0).toString())
+    }
   }
 
   /**
@@ -44,12 +50,14 @@ export const useShareStore = defineStore('share', () => {
      * Assign a user to a shared menu
      *
      * @param sId Share Id
+     * @param clicked Timestamp of when the link was clicked
      * @param userId User Id
      */
-  const assignUserToShare = async (sId: string, userId: string) => {
+  const assignUserToShare = async (sId: string, clicked: number, userId: string) => {
     const share = await useFeathersService('shares').get(sId)
-    if (share && isNil(share.userId) && share.emailSent && share.emailClicked) {
+    if (share && isNil(share.userId) && share.emailSent && !share.emailClicked) {
       share.userId = userId
+      share.emailClicked = clicked
       await share.save()
     }
   }
