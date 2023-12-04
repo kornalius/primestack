@@ -296,6 +296,56 @@
       <router-view />
     </q-page-container>
   </q-layout>
+
+  <q-dialog
+    v-model="dialog.active"
+    :persistent="dialog.persistent"
+  >
+    <q-card
+      :style="{
+        minWidth: '350px',
+        width: dialog.width,
+        maxWidth: '80vw',
+      }"
+    >
+      <q-card-section>
+        <div class="text-h6">
+          {{ dialog.title }}
+        </div>
+      </q-card-section>
+
+      <q-card-section class="q-pt-none">
+        <div v-if="dialog.message">
+          {{ dialog.message }}
+        </div>
+
+        <div style="max-height: 800px; overflow: auto;">
+          <form-display
+            v-if="dialog.formInstance"
+            v-model="dialog.formData"
+            :fields="dialog.formInstance._fields"
+            no-sidebars
+          />
+        </div>
+      </q-card-section>
+
+      <q-card-actions class="text-primary" align="right">
+        <q-btn
+          v-bind="dialog.cancel"
+          :label="$t('dialog.cancel')"
+          v-close-popup
+          @click="dialog.onCancel"
+        />
+
+        <q-btn
+          v-bind="dialog.ok"
+          :label="$t('dialog.ok')"
+          v-close-popup
+          @click="dialog.onOk"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup lang="ts">
@@ -316,6 +366,7 @@ import { useStats } from '@/features/Stats/store'
 import { useFormElements } from '@/features/Forms/composites'
 import { useMenus } from '@/features/Menus/composites'
 import { useShareStore } from '@/features/Shares/store'
+import { useDialog } from '@/features/Dialog/store'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
 import { tableSchema } from '@/shared/schemas/table'
 import { queryToMongo } from '@/features/Query/composites'
@@ -327,6 +378,7 @@ import MenusEditor from '@/features/Menus/components/MenusEditor.vue'
 import AppProperties from '@/features/App/components/AppProperties.vue'
 import UserMenu from '@/features/Users/components/UserMenu.vue'
 import ShareMenu from '@/features/Shares/components/ShareMenu.vue'
+import FormDisplay from '@/features/Forms/components/FormDisplay.vue'
 
 type Tab = Static<typeof tabSchema>
 type Table = Static<typeof tableSchema>
@@ -353,6 +405,8 @@ const ctx = buildCtx()
 const route = useRoute()
 
 const router = useRouter()
+
+const dialog = useDialog()
 
 const { fieldBinds } = useFormElements()
 

@@ -96,6 +96,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Static } from '@feathersjs/typebox'
+import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
 import { useAppEditor } from '@/features/Editor/store'
 import { useActions } from '@/features/Actions/composites'
@@ -122,6 +123,8 @@ const {
   actionsByType,
   actionAfter,
 } = useActions()
+
+const { t } = useI18n()
 
 const actionElement = useModelValue(props, emit)
 
@@ -195,7 +198,7 @@ const actionIcon = computed(() => (
  * @returns {ComputedRef<string>}
  */
 const actionLabel = computed(() => (
-  stringValue(action.value?.label, actionElement.value)
+  t(stringValue(action.value?.label, actionElement.value))
 ))
 
 /**

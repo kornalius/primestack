@@ -85,9 +85,8 @@ export const useModelValue = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   props: Record<string, any>,
   emit: (e: string, ...args: unknown[]) => void,
-  defaultValue?: unknown,
 ): Ref => computed({
-  get: () => (props.modelValue !== undefined ? props.modelValue : defaultValue),
+  get: () => props.modelValue,
   set: (value) => emit('update:model-value', value),
 })
 

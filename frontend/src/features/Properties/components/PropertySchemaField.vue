@@ -348,6 +348,15 @@
     @keydown="editor.preventSystemUndoRedo"
   />
 
+  <!-- Unit -->
+
+  <unit-button
+    v-else-if="type === 'unit'"
+    v-model="value"
+    :label="embedLabel ? label : undefined"
+    @keydown="editor.preventSystemUndoRedo"
+  />
+
   <!-- Variable -->
 
   <variable-select
@@ -865,6 +874,7 @@ import BtnToggleMulti from '@/features/Fields/components/BtnToggleMulti.vue'
 import JsonEditor from '@/features/Json/components/Editor/JsonEditor.vue'
 import SizesEditor from '@/features/Properties/components/SizesEditor.vue'
 import UserSettingSelect from '@/features/Users/components/UserSettingSelect.vue'
+import UnitButton from '@/features/Properties/components/UnitButton.vue'
 
 type Action = Static<typeof actionSchema>
 type FormField = Static<typeof fieldSchema>
@@ -915,8 +925,7 @@ const emit = defineEmits<{
   (e: 'update:model-value', value: unknown): void,
 }>()
 
-// eslint-disable-next-line vue/no-setup-props-destructure
-const value = useModelValue(props, emit, defaultValueForSchema(props.schema))
+const value = useModelValue(props, emit)
 
 watch(value, () => {
   const p = props.schema

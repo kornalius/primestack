@@ -267,7 +267,7 @@ import omit from 'lodash/omit'
 import { Static, TSchema } from '@feathersjs/typebox'
 import { useSyncedProp } from '@/composites/prop'
 import { useFormElements } from '@/features/Forms/composites'
-import { columnAlignmentFor, getTypeFor, schemaToField } from '@/shared/schema'
+import { getTypeFor, schemaToField } from '@/shared/schema'
 import { filterToMongo } from '@/composites/filter'
 import {
   AddOption,
@@ -382,6 +382,23 @@ const { t } = useI18n()
 const { buildCtx } = useExpression(t)
 
 const ctx = buildCtx()
+
+/**
+ * Get the alignment for a column in a table based on its field type
+ *
+ * @param type Field type
+ *
+ * @returns {string} Alignment
+ */
+const columnAlignmentFor = (type: string): string => {
+  if (type === 'boolean') {
+    return 'center'
+  }
+  if (type === 'number') {
+    return 'right'
+  }
+  return 'left'
+}
 
 const computedColumns = computed(() => {
   if (props.columns) {

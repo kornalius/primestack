@@ -23,30 +23,60 @@ export const useApp = defineStore('app', () => {
     formId: undefined,
     tableId: undefined,
     doc: undefined,
-    selection: [],
+    selection: [] as AnyData[],
     locale: (localStorage.getItem('locale') || navigator.language || 'en').substring(0, 2),
   })
 
+  /**
+   * Returns the current menu id
+   */
   const menuId = computed(() => states.value.menuId)
 
+  /**
+   * Returns the current tab id
+   */
   const tabId = computed(() => states.value.tabId)
 
+  /**
+   * Returns the current form id
+   */
   const formId = computed(() => states.value.formId)
 
+  /**
+   * Returns the current table id
+   */
   const tableId = computed(() => states.value.tableId)
 
+  /**
+   * Returns the current document data
+   */
   const doc = computed(() => states.value.doc)
 
+  /**
+   * Returns the currently selected rows in the form's table
+   */
   const selection = computed(() => states.value.selection)
 
+  /**
+   * Returns true if there are rows selected in the form's table
+   */
   const hasSelection = computed(() => states.value.selection.length > 0)
 
+  /**
+   * Returns the active locale code
+   */
   const locale = computed(() => states.value.locale)
 
   const i18n = useI18n()
 
   const auth = useAuth()
 
+  /**
+   * Change the user's language
+   *
+   * @param code Locale code (ex: 'en', 'fr')
+   * @param updateUser Should we also patch the user on the server
+   */
   const setLocale = async (code: string, updateUser = true) => {
     states.value.locale = code
     localStorage.setItem('locale', code)
@@ -59,6 +89,11 @@ export const useApp = defineStore('app', () => {
     }
   }
 
+  /**
+   * Set the current menu id
+   *
+   * @param id Menu Id
+   */
   const setMenu = (id: string) => {
     states.value.menuId = id
     states.value.tabId = undefined
@@ -68,6 +103,11 @@ export const useApp = defineStore('app', () => {
     states.value.selection = []
   }
 
+  /**
+   * Set the current tab id
+   *
+   * @param id Tab Id
+   */
   const setTab = (id: string) => {
     states.value.tabId = id
     states.value.formId = undefined
@@ -76,6 +116,11 @@ export const useApp = defineStore('app', () => {
     states.value.selection = []
   }
 
+  /**
+   * Set the current form id
+   *
+   * @param id Form Id
+   */
   const setForm = (id: string) => {
     states.value.formId = id
     states.value.tableId = undefined
@@ -83,35 +128,70 @@ export const useApp = defineStore('app', () => {
     states.value.selection = []
   }
 
+  /**
+   * Set the current table id
+   *
+   * @param id Table Id
+   */
   const setTable = (id: string) => {
     states.value.tableId = id
     states.value.doc = undefined
     states.value.selection = []
   }
 
+  /**
+   * Set the current document
+   *
+   * @param d Document data
+   */
   const setDoc = (d: AnyData) => {
     states.value.doc = d
     states.value.selection = []
   }
 
+  /**
+   * Set the current form table selection
+   *
+   * @param rows Rows of data
+   */
   const setSelection = (rows: AnyData[]) => {
     states.value.selection = rows
   }
 
+  /**
+   * Get the current menu instance
+   *
+   * @returns {Menu}
+   */
   const menuInstance = computed((): Menu => {
     const userMenu = useFeathersService('menus').findOneInStore({ query: {} })
     return userMenu.value?.list.find((m: Menu) => m._id === states.value.menuId)
   })
 
+  /**
+   * Get the current tab instance
+   *
+   * @returns {Tab}
+   */
   const tabInstance = computed((): Tab => (
     menuInstance.value?.tabs.find((t: Tab) => t._id === states.value.tabId)
   ))
 
+  /**
+   * Get the current form instance
+   *
+   * @returns {Form}
+   */
   const formInstance = computed((): Form => {
     const userForm = useFeathersService('forms').findOneInStore({ query: {} })
     return userForm.value?.list.find((f: Form) => f._id === states.value.formId)
   })
 
+  /**
+   * Get the current table instance
+   *
+   * @returns {Table}
+   */
   const tableInstance = computed((): Table => {
     const userTable = useFeathersService('tables').findOneInStore({ query: {} })
     return userTable.value?.list.find((t: Table) => t._id === states.value.tableId)

@@ -23,8 +23,8 @@ export default {
       value: Type.String(),
     }, { horizontal: true, horizontalPopup: true })),
     body: ExType.JSON(),
-    referer: Type.String(),
-    refererPolicy: StringEnum([
+    referrer: Type.String(),
+    referrerPolicy: StringEnum([
       'no-referrer',
       'no-referrer-when-downgrade',
       'same-origin',
@@ -35,7 +35,6 @@ export default {
       'unsafe-url',
     ]),
     mode: StringEnum(['cors', 'navigate', 'no-cors', 'same-origin']),
-    priority: StringEnum(['high', 'low', 'auto']),
     target: ExType.Variable(),
   }),
   defaultValues: {
@@ -43,6 +42,5 @@ export default {
     credentials: 'omit',
     redirect: 'follow',
     cache: 'no-cache',
-    priority: 'auto',
   },
 } as TAction

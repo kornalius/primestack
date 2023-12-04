@@ -1,5 +1,9 @@
+// eslint-disable-next-line import/no-cycle
 import { TFrontAction } from '@/features/Actions/interface'
 import globalFetch from '@/shared/actions/fetch'
+import { anyToString } from '@/composites/utilities'
+// eslint-disable-next-line import/no-cycle
+import { getProp } from '@/features/Expression/composites'
 import Fetch from '../components/fetch.vue'
 
 export default {
@@ -9,26 +13,34 @@ export default {
   component: Fetch,
   description: 'actions.fetch.description',
   childrenMessage: 'actions.fetch.childrenMessage',
-  exec: async (args) => {
-    const options = {
-      method: args.method as string,
-      credentials: args.credentials as RequestCredentials || undefined,
-      cache: args.cache as RequestCache || undefined,
-      redirect: args.redirect as RequestRedirect || undefined,
-      headers: (args.headers as Array<{ key: string, value: string }>)
+  exec: async (ctx) => {
+    const method = anyToString(getProp(ctx.method, ctx)) || undefined
+    const credentials = (anyToString(getProp(ctx.credentials, ctx)) || undefined) as RequestCredentials
+    const cache = (anyToString(getProp(ctx.cache, ctx)) || undefined) as RequestCache
+    const redirect = (anyToString(getProp(ctx.redirect, ctx)) || undefined) as RequestRedirect
+    const referrer = (anyToString(getProp(ctx.referrer, ctx)) || undefined)
+    const referrerPolicy = (anyToString(getProp(ctx.referrerPolicy, ctx)) || undefined) as ReferrerPolicy
+    const mode = (anyToString(getProp(ctx.mode, ctx)) || undefined) as RequestMode
+    const target = anyToString(getProp(ctx.target, ctx))
+    const href = anyToString(getProp(ctx.href, ctx))
+    const body = getProp(ctx.body, ctx)
+
+    const response = await fetch(href, {
+      method,
+      credentials,
+      cache,
+      redirect,
+      headers: (ctx.headers as Array<{ key: string, value: string }>)
         .map((kv) => ([kv.key, kv.value])) as HeadersInit,
-      body: args.body ? JSON.stringify(args.body) : undefined,
-      referer: args.referer as string || undefined,
-      refererPolicy: args.refererPolicy as ReferrerPolicy,
-      mode: args.mode as RequestMode || undefined,
-      priority: args.priority as ReferrerPolicy || undefined,
-      target: args.target as string || undefined,
-    }
-    const response = await fetch(args.href as string, options)
+      body: body ? JSON.stringify(body) : undefined,
+      referrer,
+      referrerPolicy,
+      mode,
+    })
     if (response.ok && response.body) {
       const json = await response.json()
-      if (args.target) {
-        args.variables.set(args.target as string, json)
+      if (target) {
+        ctx.variables.set(target, json)
       }
       return json
     }

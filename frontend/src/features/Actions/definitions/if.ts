@@ -18,11 +18,11 @@ export default {
   description: 'actions.if.description',
   childrenMessage: 'actions.if.childrenMessage',
   component: If,
-  exec: async (args) => {
-    const r = runExpr(args.expr as string, args.$expr)
+  exec: async (ctx) => {
+    const r = runExpr(ctx.expr as string, ctx.$expr)
     if (r) {
       // eslint-disable-next-line no-underscore-dangle
-      await exec(args._children as ActionElement[], args)
+      await exec(ctx._children as ActionElement[], ctx)
     }
   },
   defaultValues: {

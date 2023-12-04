@@ -54,7 +54,7 @@ export const execAction = async (a: ActionElement, args: AnyData): Promise<AnyDa
   const actionArgs = Object.keys(omit(a, ['_id', '_type', '_internalType', '$scoped']))
     .reduce((acc, k) => ({
       ...acc,
-      [k]: getProp(a[k], args),
+      [k]: a[k],
     }), {})
   return actionExec({ ...args, ...actionArgs, ...args.$scoped })
 }
@@ -216,7 +216,7 @@ export const actionBefore = (acts: ActionElement[], a: ActionElement): ActionEle
   const parent = parentAction(acts, a)
   // eslint-disable-next-line no-underscore-dangle
   const list = parent?._children || acts
-  const idx = list.findIndex((ac) => ac._id === a._id)
+  const idx = list?.findIndex((ac) => ac._id === a._id)
   if (idx !== -1 && idx - 1 >= 0) {
     return list?.[idx - 1]
   }
@@ -235,8 +235,8 @@ export const actionAfter = (acts: ActionElement[], a: ActionElement): ActionElem
   const parent = parentAction(acts, a)
   // eslint-disable-next-line no-underscore-dangle
   const list = parent?._children || acts
-  const idx = list.findIndex((ac) => ac._id === a._id)
-  if (idx !== -1 && idx + 1 < list.length) {
+  const idx = list?.findIndex((ac) => ac._id === a._id)
+  if (idx !== -1 && idx + 1 < list?.length) {
     return list?.[idx + 1]
   }
   return undefined

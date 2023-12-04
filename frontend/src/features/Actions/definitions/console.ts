@@ -1,5 +1,7 @@
 import globalConsole from '@/shared/actions/console'
 // eslint-disable-next-line import/no-cycle
+import { getProp } from '@/features/Expression/composites'
+import { anyToString } from '@/composites/utilities'
 import { TFrontAction } from '../interface'
 import Console from '../components/console.vue'
 
@@ -10,9 +12,11 @@ export default {
   description: 'actions.console.description',
   childrenMessage: 'actions.console.childrenMessage',
   hideTitle: true,
-  exec: async (args) => {
+  exec: async (ctx) => {
+    const type = anyToString(getProp(ctx.type, ctx))
+    const message = anyToString(getProp(ctx.message, ctx))
     // eslint-disable-next-line no-console
-    console[args.type as string](args.message as string)
+    console[type](message)
   },
   defaultValues: {
     type: 'log',

@@ -70,6 +70,12 @@ interface JSONOptions {
   [key: string]: unknown
 }
 
+interface UnitOptions {
+  label?: string
+  units?: { label: string, value: string }[]
+  [key: string]: unknown
+}
+
 const Id = (options: IdOptions = {}) => Type.String({ objectid: true, ...options })
 
 export default {
@@ -124,4 +130,6 @@ export default {
   ),
 
   Slider: (options: SliderOptions = {}) => Type.Number({ slider: true, ...options }),
+
+  Unit: (options: UnitOptions = {}) => Type.String({ unit: true, ...options }),
 }

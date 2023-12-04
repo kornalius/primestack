@@ -1,6 +1,7 @@
 import { Type } from '@feathersjs/typebox'
 import { TAction } from '../interfaces/actions'
 import { sizeString } from '../interfaces/commons'
+import ExType from '../extypes'
 
 export default {
   type: 'dialog',
@@ -8,6 +9,10 @@ export default {
   schema: Type.Object({
     title: Type.String(),
     message: Type.String(),
+    persistent: Type.Boolean(),
+    formId: Type.Optional(ExType.Id({ service: 'forms' })),
+    formData: Type.Optional(ExType.JSON({ rootType: 'object' })),
+    width: Type.Optional(ExType.Unit()),
     ok: Type.Object({
       hidden: Type.Boolean(),
       label: Type.Optional(Type.String()),

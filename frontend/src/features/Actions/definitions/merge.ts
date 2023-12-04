@@ -1,8 +1,11 @@
 import uniq from 'lodash/uniq'
-import { TFrontAction, TFrontActionExecOptions } from '@/features/Actions/interface'
+// eslint-disable-next-line import/no-cycle
+import { TFrontAction } from '@/features/Actions/interface'
 import { AnyData } from '@/shared/interfaces/commons'
 import globalMerge from '@/shared/actions/merge'
 import { deepKeys } from '@/composites/utilities'
+// eslint-disable-next-line import/no-cycle
+import { getProp } from '@/features/Expression/composites'
 import Merge from '../components/merge.vue'
 
 export default {
@@ -11,11 +14,20 @@ export default {
   component: Merge,
   description: 'actions.merge.description',
   childrenMessage: 'actions.merge.childrenMessage',
-  exec: async (args) => ({
-    ...(args.object1 as AnyData),
-    ...(args.object2 as AnyData),
-  }),
-  result: (ctx: TFrontActionExecOptions): string[] => (uniq([
-    ...deepKeys(ctx.object1), ...deepKeys(ctx.object2),
-  ])),
+  exec: async (ctx) => {
+    const obj1 = getProp(ctx.object1, ctx)
+    const obj2 = getProp(ctx.object2, ctx)
+    return {
+      ...(obj1 as AnyData),
+      ...(obj2 as AnyData),
+    }
+  },
+  result: (ctx): string[] => {
+    const obj1 = getProp(ctx.object1, ctx)
+    const obj2 = getProp(ctx.object2, ctx)
+    return uniq([
+      ...deepKeys(obj1),
+      ...deepKeys(obj2),
+    ])
+  },
 } as TFrontAction

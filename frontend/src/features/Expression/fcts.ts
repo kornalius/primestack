@@ -135,6 +135,9 @@ export const fcts = {
   table: '`(name: string): string`\n\n'
     + 'Returns the ID of a table',
 
+  dialogData: '`(): AnyData`\n\n'
+    + 'Returns the previously displayed dialog data',
+
   route: '`(): string`\n\n'
     + ' Returns the current route/url',
 

@@ -134,6 +134,10 @@ export const getTypeFor = (p: TSchema, forcedType?: string): string | undefined 
   if (p.type === 'string' && p.color) {
     return 'color'
   }
+  // Unit input button
+  if (p.type === 'string' && p.unit) {
+    return 'unit'
+  }
   // Icon selector
   if (p.type === 'string' && p.icon) {
     return 'icon'
@@ -226,23 +230,6 @@ export const validForExpr = [
 ]
 
 /**
- * Get the alignment for a column in a table based on its field type
- *
- * @param type Field type
- *
- * @returns {string} Alignment
- */
-export const columnAlignmentFor = (type: string): string => {
-  if (type === 'boolean') {
-    return 'center'
-  }
-  if (type === 'number') {
-    return 'right'
-  }
-  return 'left'
-}
-
-/**
  * Get a default value for a field schema
  *
  * @param schema Field schema
@@ -254,19 +241,21 @@ export const defaultValueForSchema = (schema: TSchema, forcedType?: string): unk
   switch (forcedType || schema?.type) {
     case 'string': {
       // auto-magically create a new id if the schema says so!!!
-      if (schema.objectid) {
-        return hexObjectId()
-      }
+      // if (schema.objectid && schema.service !== 'actions') {
+      //   return hexObjectId()
+      // }
       return undefined
     }
     case 'number': return 0
     case 'boolean': return false
     case 'array': return []
     case 'object':
-      return Object.keys(schema.properties)
-        .reduce((acc, k) => (
-          { ...acc, [k]: defaultValueForSchema(schema.properties[k]) }
-        ), {})
+      return schema.properties
+        ? Object.keys(schema.properties)
+          .reduce((acc, k) => (
+            { ...acc, [k]: defaultValueForSchema(schema.properties[k]) }
+          ), {})
+        : undefined
     default: return undefined
   }
 }

@@ -1,9 +1,13 @@
 import { Static } from '@feathersjs/typebox'
-import { TFrontAction, TFrontActionExecOptions } from '@/features/Actions/interface'
+// eslint-disable-next-line import/no-cycle
+import { TFrontAction } from '@/features/Actions/interface'
 import globalInsert from '@/shared/actions/insert'
 import { tableSchema } from '@/shared/schemas/table'
 import { tableFields } from '@/features/Tables/composites'
 // eslint-disable-next-line import/no-cycle
+import { anyToString } from '@/composites/utilities'
+// eslint-disable-next-line import/no-cycle
+import { getProp } from '@/features/Expression/composites'
 import { fieldsArrayToObject } from '../composites'
 import Insert from '../components/insert.vue'
 
@@ -17,12 +21,14 @@ export default {
   description: 'actions.insert.description',
   childrenMessage: 'actions.insert.childrenMessage',
   exec: async (ctx) => {
+    const tableId = anyToString(getProp(ctx.tableId, ctx))
     const data = fieldsArrayToObject(ctx.fields as [], ctx)
-    await ctx.useFeathersService(ctx.tableId as string).create(data, {})
+    await ctx.useFeathersService(tableId as string).create(data)
   },
-  result: (ctx: TFrontActionExecOptions): string[] => {
+  result: (ctx): string[] => {
+    const tableId = anyToString(getProp(ctx.tableId, ctx))
     const table = ctx.editor.tables
-      ?.find((s: Table) => s._id === ctx.tableId) as Table
+      ?.find((s: Table) => s._id === tableId) as Table
     const fields = tableFields(
       table.fields,
       table.created,

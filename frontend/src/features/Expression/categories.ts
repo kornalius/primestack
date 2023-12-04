@@ -67,6 +67,14 @@ export const categories = [
     ],
   },
   {
+    name: 'dialog',
+    label: 'Dialog',
+    icon: 'mdi-alert-box',
+    children: [
+      'dialogData',
+    ],
+  },
+  {
     name: 'table',
     label: 'Table',
     icon: 'mdi-table',

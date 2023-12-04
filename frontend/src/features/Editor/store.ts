@@ -1010,6 +1010,7 @@ export const useAppEditor = defineStore('app-editor', () => {
 
       const selectedElement = instance(
         states.value.selected
+          || actionEditor.actionId
           || formEditor.formId
           || tableEditor.tableId,
       )

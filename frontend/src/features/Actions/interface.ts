@@ -7,6 +7,13 @@ import { FeathersService } from '@feathersjs/feathers'
 import { TAction, TActionCategory } from '@/shared/interfaces/actions'
 import { actionElementSchema } from '@/shared/schemas/actions'
 import { AnyData } from '@/shared/interfaces/commons'
+import { useDialog } from '@/features/Dialog/store'
+import { useVariables } from '@/features/Variables/store'
+import { useApp } from '@/features/App/store'
+// eslint-disable-next-line import/no-cycle
+import { useAppEditor } from '@/features/Editor/store'
+import { useSnacks } from '@/features/Snacks/store'
+import { useAuth } from '@/features/Auth/store'
 
 type ActionElement = Static<typeof actionElementSchema>
 
@@ -15,16 +22,17 @@ export interface TFrontActionExecOptions {
   quasar: QVueGlobals
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   api: Application<any, any>
-  editor: AnyData
-  app: AnyData
-  variables: AnyData
-  snacks: AnyData
-  store: AnyData
-  auth: AnyData,
-  route: RouteLocationNormalizedLoaded,
-  router: Router,
-  $expr: AnyData,
-  useFeathersService: (servicePath: string) => PiniaService<FeathersService>,
+  editor: ReturnType<typeof useAppEditor>
+  app: ReturnType<typeof useApp>
+  variables: ReturnType<typeof useVariables>
+  dialog: ReturnType<typeof useDialog>
+  snacks: ReturnType<typeof useSnacks>
+  store: ReturnType<typeof useDialog>
+  auth: ReturnType<typeof useAuth>
+  route: RouteLocationNormalizedLoaded
+  router: Router
+  $expr: AnyData
+  useFeathersService: (servicePath: string) => PiniaService<FeathersService>
   [key: string]: unknown
 }
 

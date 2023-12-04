@@ -1,5 +1,9 @@
+// eslint-disable-next-line import/no-cycle
 import { TFrontAction } from '@/features/Actions/interface'
 import globalNavigate from '@/shared/actions/navigate'
+import { anyToString } from '@/composites/utilities'
+// eslint-disable-next-line import/no-cycle
+import { getProp } from '@/features/Expression/composites'
 import Navigate from '../components/navigate.vue'
 
 export default {
@@ -9,11 +13,14 @@ export default {
   description: 'actions.navigate.description',
   childrenMessage: 'actions.navigate.childrenMessage',
   exec: async (ctx) => {
-    if (ctx.menuId) {
+    const menuId = anyToString(getProp(ctx.menuId, ctx))
+    const tabId = anyToString(getProp(ctx.tabId, ctx))
+    if (menuId) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await ctx.router.push((ctx.url as any).menuUrl(ctx.menuId as string, ctx.tabId as string))
+      await ctx.router.push((ctx.url as any).menuUrl(menuId, tabId))
       return
     }
-    await ctx.router.push(ctx.href as string)
+    const href = anyToString(getProp(ctx.href, ctx))
+    await ctx.router.push(href as string)
   },
 } as TFrontAction

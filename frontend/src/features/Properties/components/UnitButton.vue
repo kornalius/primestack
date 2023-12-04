@@ -2,8 +2,8 @@
   <q-btn
     class="q-px-md"
     :label="value"
-    :icon="!value ? 'mdi-minus' : undefined"
-    color="grey-9"
+    :icon="!value ? 'mdi-dots-horizontal' : undefined"
+    color="grey-7"
     size="md"
     no-caps
     dense
@@ -42,7 +42,10 @@
         <q-item>
           <q-item-section>
             <div class="row items-center q-gutter-md">
-              <div class="col-auto">
+              <div
+                v-if="label"
+                class="col-auto"
+              >
                 {{ label }}:
               </div>
 
@@ -50,7 +53,7 @@
                 <unit-input
                   v-model="value"
                   class="field"
-                  :units="units"
+                  :units="computedUnits"
                   default-unit="px"
                   hide-bottom-space
                   dense
@@ -67,6 +70,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { AnyData } from '@/shared/interfaces/commons'
 import { classSizes } from '@/features/Forms/composites'
 import { useModelValue } from '@/composites/prop'
@@ -75,7 +79,8 @@ import UnitInput from '@/features/Fields/components/UnitInput.vue'
 
 const props = defineProps<{
   modelValue: string | undefined
-  label: string
+  label?: string
+  units?: { label: string, value: string }[]
 }>()
 
 const emit = defineEmits<{
@@ -86,11 +91,14 @@ const value = useModelValue(props, emit)
 
 const editor = useAppEditor()
 
-const units = [
-  { label: 'px', value: 'px' },
-  { label: '%', value: '%' },
-  { label: 'rem', value: 'rem' },
-]
+const computedUnits = computed(() => (
+  props.units
+    || [
+      { label: 'px', value: 'px' },
+      { label: '%', value: '%' },
+      { label: 'rem', value: 'rem' },
+    ]
+))
 </script>
 
 <style scoped lang="sass">
