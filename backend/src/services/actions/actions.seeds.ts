@@ -84,11 +84,10 @@ export default async (app: Application, data: AnyData) => {
             credentials: 'omit',
             redirect: 'follow',
             cache: 'no-cache',
-            priority: 'auto',
             href: 'http://localhost:3030/test.json',
             target: 'JSON',
-            mode: null,
-            refererPolicy: null,
+            mode: undefined,
+            referrerPolicy: undefined,
             headers: []
           },
           {

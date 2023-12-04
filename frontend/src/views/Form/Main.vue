@@ -843,7 +843,7 @@ let marginTimeout = 0
  * try to figure out if the is a left or right sidebar on the form
  * and then apply appropriate margins to the mainCol element
  */
-watch([mainCol, fields], () => {
+watch([mainCol, fields, () => editor], () => {
   clearTimeout(marginTimeout)
   marginTimeout = setTimeout(() => {
     if (mainCol.value) {
@@ -861,7 +861,7 @@ watch([mainCol, fields], () => {
       const right = mainCol.value.querySelector('.sidebar.right')
       if (right) {
         const r = right.getBoundingClientRect()
-        margins.right = `${r.width}px`
+        margins.right = !editor.actionId ? `${r.width}px` : '0px'
         if (!editor.active) {
           right.style.right = `-${r.width + 4}px`
         }

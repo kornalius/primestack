@@ -1,8 +1,11 @@
+// eslint-disable-next-line import/no-cycle
 import { TFrontAction } from '@/features/Actions/interface'
 import globalRemove from '@/shared/actions/remove'
 // eslint-disable-next-line import/no-cycle
 import { queryToMongo } from '@/features/Query/composites'
 import { Query } from '@/shared/interfaces/query'
+import { anyToString } from '@/composites/utilities'
+import { getProp } from '@/features/Expression/composites'
 
 export default {
   ...globalRemove,
@@ -10,13 +13,17 @@ export default {
   description: 'actions.remove.description',
   childrenMessage: 'actions.remove.childrenMessage',
   exec: async (ctx) => {
-    if (ctx.id) {
-      await ctx.useFeathersService(ctx.tableId as string)
-        .remove(ctx.id as string)
+    const tableId = anyToString(getProp(ctx.tableId, ctx))
+    const id = anyToString(getProp(ctx.id, ctx))
+    if (id) {
+      await ctx.useFeathersService(tableId).remove(id)
     } else {
-      const table = await ctx.useFeathersService('tables').get(ctx.tableId as string)
-      await ctx.useFeathersService(ctx.tableId as string)
-        .remove(null, { query: queryToMongo(ctx.query as Query, table, ctx.$expr) })
+      const query = getProp(ctx.query, ctx) as Query
+      const table = await ctx.useFeathersService('tables').get(tableId)
+      await ctx.useFeathersService(tableId)
+        .remove(null, {
+          query: queryToMongo(query, table, ctx.$expr),
+        })
     }
   },
 } as TFrontAction

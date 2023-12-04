@@ -65,7 +65,7 @@
       <!-- Sidebar -->
 
       <form-display-sidebar
-        v-else-if="isSidebar(field)"
+        v-else-if="isSidebar(field) && !noSidebars"
         v-model="value"
         :field="field"
       />
@@ -224,6 +224,8 @@ type FormTab = Static<typeof formTabSchema>
 const props = defineProps<{
   modelValue: Record<string, unknown>
   fields: FormField[]
+  // don't display any sidebars
+  noSidebars?: boolean
 }>()
 
 const emit = defineEmits<{

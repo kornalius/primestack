@@ -189,7 +189,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import {
+  computed, onMounted, ref, watch,
+} from 'vue'
 import hexObjectId from 'hex-object-id'
 import draggable from 'vuedraggable'
 import { useModelValue, useSyncedProp } from '@/composites/prop'
@@ -280,7 +282,7 @@ const emit = defineEmits<{
  * Draggable
  */
 
-const values = useModelValue(props, emit, [])
+const values = useModelValue(props, emit)
 
 /**
  * Occurs when items order is changed
@@ -433,6 +435,12 @@ const actionsClass = computed(() => ({
   'q-my-sm': !props.horizontal,
   'inline-block': props.horizontal,
 }))
+
+onMounted(() => {
+  if (!values.value) {
+    values.value = []
+  }
+})
 </script>
 
 <style scoped lang="sass">

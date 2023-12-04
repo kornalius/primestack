@@ -175,25 +175,42 @@
       "description": "Affiche un dialogue à l'écran avec des boutons pour confirmation de l'utilisateur",
       "childrenMessage": "Quand le bouton 'OK' est appuyé..."
     },
+    "download": {
+      "label": "Télécharger",
+      "description": "Télécharger un fichier sur le réseau",
+      "childrenMessage": "",
+      "from": "à partir de"
+    },
     "extract": {
       "label": "Extraire",
       "description": "Extrait des clées à partir d'un objet JSON",
       "childrenMessage": ""
     },
+    "filter": {
+      "label": "Filtre",
+      "description": "Filtre un tableau via une expression",
+      "childrenMessage": "",
+      "with": "avec"
+    },
     "fetch": {
       "label": "Recupérer",
-      "description": "Récupérer une ressource sur le réseau\n",
+      "description": "Récupérer une ressource sur le réseau",
       "childrenMessage": "",
       "from": "à partir de"
     },
-    "getvar": {
-      "label": "Lire la variable",
-      "description": "Obtiens la valeur d'une variable",
+    "getselected": {
+      "label": "Documents sélectionnés",
+      "description": "Obtiens la liste des documents sélectionnés dans le tableau du formulaire actif",
       "childrenMessage": ""
     },
     "getsetting": {
       "label": "Lire un paramètre",
       "description": "Obtiens la valeur d'une clé de paramètres utilisateur",
+      "childrenMessage": ""
+    },
+    "getvar": {
+      "label": "Lire la variable",
+      "description": "Obtiens la valeur d'une variable",
       "childrenMessage": ""
     },
     "if": {
@@ -211,6 +228,16 @@
       "label": "Interval",
       "description": "Exécuter des actions à intervals réguliers",
       "childrenMessage": "Exécuter ces actions à intervals réguliers..."
+    },
+    "loop": {
+      "label": "Boucle",
+      "description": "Exécute le résultat d'une expression en boucle",
+      "childrenMessage": "Exécute ces actions en boucle..."
+    },
+    "map": {
+      "label": "Mapper",
+      "description": "Mapper un tableau via une expression",
+      "childrenMessage": ""
     },
     "merge": {
       "label": "Combiner",
@@ -239,6 +266,11 @@
     "remove": {
       "label": "Enlever",
       "description": "Enlève un enregistrement d'une table",
+      "childrenMessage": ""
+    },
+    "select": {
+      "label": "Selectionne des documents",
+      "description": "Selectionne des documents dans le tableau du formulaire actif",
       "childrenMessage": ""
     },
     "setsetting": {

@@ -1,6 +1,11 @@
 import hexObjectId from 'hex-object-id'
+// eslint-disable-next-line import/no-cycle
 import { TFrontAction } from '@/features/Actions/interface'
 import globalNotify from '@/shared/actions/notify'
+import { anyToString } from '@/composites/utilities'
+// eslint-disable-next-line import/no-cycle
+import { getProp } from '@/features/Expression/composites'
+import { SnackType } from '@/shared/interfaces/snacks'
 import Notify from '../components/notify.vue'
 
 export default {
@@ -27,15 +32,13 @@ export default {
   hideTitle: true,
   description: 'actions.notify.description',
   childrenMessage: 'actions.notify.childrenMessage',
-  exec: async ({
-    level,
-    message,
-    snacks,
-  }) => {
-    snacks.pushSnack({
+  exec: async (ctx) => {
+    const level = anyToString(getProp(ctx.level, ctx)) as SnackType
+    const message = anyToString(getProp(ctx.message, ctx))
+    ctx.snacks.pushSnack({
       id: hexObjectId(),
-      level: level as string,
-      message: message as string,
+      level,
+      message,
     })
   },
 } as TFrontAction

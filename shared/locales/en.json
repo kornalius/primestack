@@ -183,6 +183,12 @@
       "description": "Displays a dialog on the screen with buttons for user's confirmation",
       "childrenMessage": "When user press the OK button..."
     },
+    "download": {
+      "label": "Download",
+      "description": "Download a file from the network",
+      "childrenMessage": "",
+      "from": "from"
+    },
     "extract": {
       "label": "Extract",
       "description": "Extract keys from a JSON object",
@@ -194,14 +200,25 @@
       "childrenMessage": "",
       "from": "from"
     },
-    "getvar": {
-      "label": "Get variable",
-      "description": "Get a variable value",
+    "filter": {
+      "label": "Filter",
+      "description": "Filter an array via an expression",
+      "childrenMessage": "",
+      "with": "with"
+    },
+    "getselected": {
+      "label": "Selected documents",
+      "description": "Get selected documents from the current form's table",
       "childrenMessage": ""
     },
     "getsetting": {
       "label": "Get setting",
       "description": "Get a user setting value",
+      "childrenMessage": ""
+    },
+    "getvar": {
+      "label": "Get variable",
+      "description": "Get a variable value",
       "childrenMessage": ""
     },
     "if": {
@@ -219,6 +236,16 @@
       "label": "Interval",
       "description": "Run children actions at intervals",
       "childrenMessage": "Execute these actions at intervals..."
+    },
+    "loop": {
+      "label": "Loop",
+      "description": "Loop an expression",
+      "childrenMessage": "Repeat these actions..."
+    },
+    "map": {
+      "label": "Map",
+      "description": "Map an array via an expression",
+      "childrenMessage": ""
     },
     "merge": {
       "label": "Merge",
@@ -247,6 +274,11 @@
     "remove": {
       "label": "Remove",
       "description": "Remove a new record from a table",
+      "childrenMessage": ""
+    },
+    "select": {
+      "label": "Select documents",
+      "description": "Select documents in the current form's table",
       "childrenMessage": ""
     },
     "setsetting": {

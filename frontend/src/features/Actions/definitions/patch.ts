@@ -1,5 +1,6 @@
 import { Static } from '@feathersjs/typebox'
-import { TFrontAction, TFrontActionExecOptions } from '@/features/Actions/interface'
+// eslint-disable-next-line import/no-cycle
+import { TFrontAction } from '@/features/Actions/interface'
 import globalPatch from '@/shared/actions/patch'
 // eslint-disable-next-line import/no-cycle
 import { queryToMongo } from '@/features/Query/composites'
@@ -7,6 +8,8 @@ import { Query } from '@/shared/interfaces/query'
 import { tableSchema } from '@/shared/schemas/table'
 import { tableFields } from '@/features/Tables/composites'
 // eslint-disable-next-line import/no-cycle
+import { anyToString } from '@/composites/utilities'
+import { getProp } from '@/features/Expression/composites'
 import { fieldsArrayToObject } from '../composites'
 import Patch from '../components/patch.vue'
 
@@ -20,20 +23,25 @@ export default {
   description: 'actions.patch.description',
   childrenMessage: 'actions.patch.childrenMessage',
   exec: async (ctx) => {
+    const id = anyToString(getProp(ctx.id, ctx))
+    const tableId = anyToString(getProp(ctx.tableId, ctx))
     const data = fieldsArrayToObject(ctx.fields as [], ctx)
 
     if (ctx.id) {
-      await ctx.useFeathersService(ctx.tableId as string)
-        .patch(ctx.id as string, data, {})
+      await ctx.useFeathersService(tableId)
+        .patch(id, data, {})
     } else {
-      const table = await ctx.useFeathersService('tables').get(ctx.tableId as string)
-      await ctx.useFeathersService(ctx.tableId as string)
-        .patch(null, data, { query: queryToMongo(ctx.query as Query, table, ctx.$expr) })
+      const table = await ctx.useFeathersService('tables').get(tableId)
+      await ctx.useFeathersService(tableId)
+        .patch(null, data, {
+          query: queryToMongo(ctx.query as Query, table, ctx.$expr),
+        })
     }
   },
-  result: (ctx: TFrontActionExecOptions): string[] => {
+  result: (ctx): string[] => {
+    const tableId = anyToString(getProp(ctx.tableId, ctx))
     const table = ctx.editor.tables
-      ?.find((s: Table) => s._id === ctx.tableId) as Table
+      ?.find((s: Table) => s._id === tableId) as Table
     const fields = tableFields(
       table.fields,
       table.created,

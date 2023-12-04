@@ -7,7 +7,7 @@ enum SnackTypes {
   Error,
 }
 
-type SnackType = keyof typeof SnackTypes
+export type SnackType = keyof typeof SnackTypes
 
 export interface Snack {
   id?: string

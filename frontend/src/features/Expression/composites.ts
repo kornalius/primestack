@@ -60,6 +60,7 @@ import { useAppEditor } from '@/features/Editor/store'
 import { useApp } from '@/features/App/store'
 import { useUrl } from '@/composites/url'
 import { useAuth } from '@/features/Auth/store'
+import { useDialog } from '@/features/Dialog/store'
 import { AnyData, T18N } from '@/shared/interfaces/commons'
 // eslint-disable-next-line import/no-cycle
 import { exec } from '@/features/Actions/composites'
@@ -156,6 +157,7 @@ export const buildCtx = (extra?: AnyData) => {
   const url = useUrl()
   const variables = useVariables()
   const auth = useAuth()
+  const dialog = useDialog()
 
   return {
     quasar,
@@ -169,6 +171,7 @@ export const buildCtx = (extra?: AnyData) => {
     app,
     url,
     variables,
+    dialog,
     useFeathersService,
     exec,
     ...(extra || {}),
@@ -296,6 +299,13 @@ export const buildCtx = (extra?: AnyData) => {
        * @returns {unknown[]}
        */
       selection: (): unknown[] => app.selection,
+
+      /**
+       * Returns the previously display dialog data
+       *
+       * @returns {AnyData}
+       */
+      dialogData: (): AnyData => dialog.formData,
 
       /**
        * Super powerful string builder

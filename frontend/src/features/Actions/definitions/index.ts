@@ -1,12 +1,16 @@
+// eslint-disable-next-line import/no-cycle
 import { TFrontAction } from '@/features/Actions/interface'
 // eslint-disable-next-line import/no-cycle
 import dialog from './dialog'
 import console from './console'
 import notify from './notify'
 import navigate from './navigate'
-import extract from './extract'
 import merge from './merge'
+import extract from './extract'
+import filter from './filter'
+import map from './map'
 import fetch from './fetch'
+import download from './download'
 import getvar from './getvar'
 import setvar from './setvar'
 import unsetvar from './unsetvar'
@@ -14,12 +18,15 @@ import insert from './insert'
 import patch from './patch'
 import remove from './remove'
 import ifExpr from './if'
+import loop from './loop'
 import interval from './interval'
 import timeout from './timeout'
 import cancel from './cancel'
 import getsetting from './getsetting'
 import setsetting from './setsetting'
 import unsetsetting from './unsetsetting'
+import getselected from './getselected'
+import select from './select'
 
 const separator = (label: string, icon: string, color?: string): TFrontAction => ({
   type: '$separator',
@@ -37,8 +44,11 @@ export const actions = [
   separator('actions.separators.json', 'mdi-code-json', 'brown-2'),
   merge,
   extract,
+  filter,
+  map,
   separator('actions.separators.flow', 'mdi-source-branch', 'purple-2'),
   ifExpr,
+  loop,
   timeout,
   interval,
   cancel,
@@ -56,6 +66,9 @@ export const actions = [
   insert,
   patch,
   remove,
+  getselected,
+  select,
   separator('actions.separators.network', 'mdi-wan', 'pink-2'),
   fetch,
+  download,
 ]
