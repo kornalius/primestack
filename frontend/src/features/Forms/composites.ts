@@ -1,3 +1,4 @@
+import hexObjectId from 'hex-object-id'
 import { Static, TSchema } from '@feathersjs/typebox'
 import startCase from 'lodash/startCase'
 import omit from 'lodash/omit'
@@ -11,16 +12,19 @@ import {
   componentsByType,
 } from '@/features/Components'
 import { useValidators } from '@/features/Validation/composites'
-import { getTypeFor } from '@/shared/schema'
+// eslint-disable-next-line import/no-cycle
+import { useAppEditor } from '@/features/Editor/store'
+import { useFeathersService } from '@/composites/feathers'
+import { defaultValueForSchema, defaultValues, getTypeFor } from '@/shared/schema'
 import { flattenFields, parentFormField } from '@/shared/form'
 // eslint-disable-next-line import/no-cycle
 import { getProp } from '@/features/Expression/composites'
-import { useAppEditor } from '@/features/Editor/store'
+import { generateFormField } from '@/features/Tables/composites'
+import { newName } from '@/shared/utils'
 import { actionElementSchema, actionSchema } from '@/shared/schemas/actions'
 import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
 import { columnSchema, fieldSchema, formSchema } from '@/shared/schemas/form'
 import { menuSchema, tabSchema } from '@/shared/schemas/menu'
-import { useFeathersService } from '@/composites/feathers'
 
 type TableField = Static<typeof tableFieldSchema>
 type Form = Static<typeof formSchema>
@@ -395,6 +399,85 @@ export const getSchema = (o: AnyData): TSchema | undefined => {
   }
 }
 
+/**
+ * Creates a new form instance
+ *
+ * @param forms Array of form instances
+ * @param options Optional options
+ *
+ * @returns {Form}
+ */
+export const newForm = (forms: Form[], options?: AnyData): Form => ({
+  _id: hexObjectId(),
+  _internalType: 'form',
+  name: newName('form', forms),
+  _fields: [],
+  ...(options || {}),
+})
+
+/**
+ * Create a new form field
+ *
+ * @param type Type of component
+ * @param fields Array of fields instance
+ * @param options Optional options
+ *
+ * @return {FormField|undefined}
+ */
+export const newFormField = (
+  type: string,
+  fields: FormField[],
+  options?: AnyData,
+): FormField | undefined => {
+  const component = componentsByType[type]
+  if (component) {
+    return {
+      _id: hexObjectId(),
+      _internalType: 'field',
+      _type: component.type,
+      _columns: component.row ? [] : undefined,
+      _fields: component.col ? [] : undefined,
+      ...Object.keys(component.schema?.properties || {})
+        .reduce((acc, k) => (
+          { ...acc, [k]: defaultValueForSchema(component.schema.properties[k]) }
+        ), {}),
+      ...(defaultValues(component.defaultValues) || {}),
+      // eslint-disable-next-line no-underscore-dangle
+      name: newName(component.type, fields),
+      ...options,
+    } as FormField
+  }
+  return undefined
+}
+
+/**
+ * Creates a new column field
+ *
+ * @param type Type of component
+ *
+ * @returns {FormColumn|undefined}
+ */
+export const newColField = (type: string): FormColumn | undefined => {
+  const component = componentsByType[type]
+
+  if (component) {
+    return {
+      _id: hexObjectId(),
+      _internalType: 'column',
+      _type: type,
+      _columns: undefined,
+      _fields: [],
+      size: undefined,
+      ...Object.keys(component.schema?.properties || {})
+        .reduce((acc, k) => (
+          { ...acc, [k]: defaultValueForSchema(component.schema.properties[k]) }
+        ), {}),
+      ...(defaultValues(component.defaultValues) || {}),
+    } as FormColumn
+  }
+  return undefined
+}
+
 export const useFormElements = () => ({
   componentForField,
 
@@ -694,6 +777,8 @@ export const useFormElements = () => ({
           label: f.name,
           disable: f.readonly,
           readonly: f.readonly,
+          dense: true,
+          outline: true,
         })
       }
       return undefined
@@ -704,53 +789,16 @@ export const useFormElements = () => ({
       table.fields
         .filter((f) => f.hidden !== true)
         .forEach((f) => {
-          // if field is reference to another field in a table
-          if (f.refTableId) {
-            addFieldToForm('lookup-select', f, {
-              tableId: f.refTableId,
-              columns: f.refFields.map((fc) => ({
-                field: fc,
-                filterable: true,
-                titleClass: 'text-bold',
-              })),
-              multiple: f.array,
-            })
-            return
-          }
-
-          switch (f.type) {
-            case 'string':
-              addFieldToForm('input', f)
-              break
-            case 'number':
-              addFieldToForm('input', f, { type: 'number' })
-              break
-            case 'boolean':
-              addFieldToForm('checkbox', f)
-              break
-            case 'date':
-              addFieldToForm('date', f)
-              break
-            case 'time':
-              addFieldToForm('time', f)
-              break
-            case 'color':
-              addFieldToForm('color', f)
-              break
-            case 'icon':
-              addFieldToForm('iconSelect', f)
-              break
-            case 'objectid':
-              addFieldToForm('select', f, {
-                optionLabel: 'name',
-                optionValue: '_id',
-              })
-              break
-            default:
-          }
+          generateFormField(f, addFieldToForm, table)
         })
     }
   },
 
   pathTo,
+
+  newForm,
+
+  newFormField,
+
+  newColField,
 })

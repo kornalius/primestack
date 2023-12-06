@@ -43,8 +43,8 @@
     @cancel="cancelRecord"
     @request="paginationRequest"
   >
-    <template v-for="(_, name) in $slots" #[name]="slotData">
-      <slot :name="name" v-bind="slotData" />
+    <template v-for="(_, slot) in $slots" #[slot]="scope">
+      <slot :name="slot" v-bind="scope || {}" />
     </template>
   </ex-table>
 </template>
@@ -62,7 +62,7 @@ import { useFeathersService } from '@/composites/feathers'
 // eslint-disable-next-line import/no-cycle
 import { useQuery } from '@/features/Query/composites'
 import { useTable } from '@/features/Tables/composites'
-import { filterToMongo } from '@/composites/filter'
+import { useFilter } from '@/features/Filter/composites'
 import { getId } from '@/composites/utilities'
 import { fieldsToSchema } from '@/shared/schema'
 import { ExtraField } from '@/features/Tables/interfaces'
@@ -180,6 +180,8 @@ const quasar = useQuasar()
 
 const { t } = useI18n()
 
+const { filterToMongo } = useFilter()
+
 const dataRows = ref([])
 
 const data = ref()
@@ -224,14 +226,19 @@ const schemaForRows = computed((): TSchema | undefined => (
 
 let timeout = 0
 
+const filterChanged = ref(false)
+
 /**
  * When the temporary filter changes, we set the current filter to it
  */
-watch(tempFilter, () => {
+watch(tempFilter, (newValue, oldValue) => {
   clearTimeout(timeout)
-  timeout = setTimeout(() => {
-    currentFilter.value = tempFilter.value
-  }, 1000)
+  if (oldValue !== undefined) {
+    timeout = setTimeout(() => {
+      currentFilter.value = tempFilter.value
+      filterChanged.value = true
+    }, 1000)
+  }
 })
 
 const cpagination = {
@@ -239,6 +246,9 @@ const cpagination = {
   skip: ref(0),
 }
 
+/**
+ * Parse currentFilter text into a usable mongodb query
+ */
 const query = computed(() => {
   const f = filterToMongo(currentFilter.value || '', fields.value) || {}
 
@@ -299,6 +309,10 @@ watch(() => props.tableId, () => {
 
     watch(paginationFind.data, () => {
       data.value = paginationFind.data.value
+      if (data.value?.[0] && filterChanged.value) {
+        emit('row-click', data.value?.[0])
+      }
+      filterChanged.value = false
     }, { immediate: true })
 
     watch(paginationFind.currentPage, () => {
@@ -311,6 +325,11 @@ watch(() => props.tableId, () => {
   }
 }, { immediate: true })
 
+/**
+ * When a new pagination request is received from the table
+ *
+ * @param r Request
+ */
 const paginationRequest = (r) => {
   cpagination.limit.value = r.pagination.rowsPerPage
   currentPagination.value.rowsPerPage = r.pagination.rowsPerPage
@@ -355,7 +374,7 @@ const addRecord = (value?: AnyData): AnyData => {
       ...extraFields,
     })
     r.createInStore()
-    currentSelected.value = [r]
+    emit('row-click', r)
     emit('add', r)
     return r
   }

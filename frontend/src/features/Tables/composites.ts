@@ -1,9 +1,11 @@
 import { Static } from '@feathersjs/typebox'
 import compact from 'lodash/compact'
 import hexObjectId from 'hex-object-id'
-import { tableFieldSchema } from '@/shared/schemas/table'
+import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
 import { refFieldname } from '@/shared/schema'
+import { AnyData } from '@/shared/interfaces/commons'
 
+type Table = Static<typeof tableSchema>
 type TableField = Static<typeof tableFieldSchema>
 
 /**
@@ -154,7 +156,125 @@ export const tableFields = (
   ])
 }
 
+/**
+ * Generate a form field from a table field
+ *
+ * @param f Table field
+ * @param addFieldToForm addFieldToForm function
+ * @param t Table
+ */
+export const generateFormField = (
+  f: TableField,
+  addFieldToForm: (type: string, f: TableField, options?: AnyData) => void,
+  t?: Table,
+) => {
+  // if field is reference to another field in a table
+  if (f.refTableId) {
+    addFieldToForm('lookup-select', f, {
+      tableId: f.refTableId,
+      columns: f.refFields.map((fc) => ({
+        field: fc,
+        filterable: true,
+        titleClass: 'text-bold',
+      })),
+      labelField: f.labelField,
+      valueField: f.valueField || '_id',
+      multiple: f.array,
+      useChips: f.chip,
+    })
+    return
+  }
+
+  // select from options
+  if (f.options) {
+    if (f.toggles) {
+      addFieldToForm('button-toggle', f, {
+        options: f.options,
+        clearable: f.multiple,
+      })
+    } else {
+      addFieldToForm('select', f, {
+        optionLabel: 'name',
+        optionValue: '_id',
+        options: f.options,
+        useChips: f.chip,
+        multiple: f.multiple,
+      })
+    }
+    return
+  }
+
+  switch (f.type) {
+    case 'string':
+      addFieldToForm('input', f)
+      break
+
+    case 'number':
+      if (f.slider) {
+        addFieldToForm('slider', f, {
+          slider: f.slider,
+          step: f.step,
+          min: f.min,
+          max: f.max,
+        })
+      } else if (f.rating) {
+        addFieldToForm('rating', f, {
+          rating: f.rating,
+          ratingIcon: f.ratingIcon,
+          ratingIconFilled: f.ratingIconFilled,
+          ratingIconHalf: f.ratingIconHalf,
+          min: f.min,
+          max: f.max,
+        })
+      } else {
+        addFieldToForm('input', f, {
+          type: 'number',
+          step: f.step,
+          min: f.min,
+          max: f.max,
+        })
+      }
+      break
+
+    case 'boolean':
+      addFieldToForm('checkbox', f)
+      break
+
+    case 'date':
+      addFieldToForm('date', f)
+      break
+
+    case 'time':
+      addFieldToForm('time', f)
+      break
+
+    case 'color':
+      addFieldToForm('color', f)
+      break
+
+    case 'icon':
+      addFieldToForm('icon-select', f)
+      break
+
+    // choose from a table
+    case 'objectid':
+      if (t) {
+        addFieldToForm('select', f, {
+          optionLabel: f.labelField,
+          optionValue: f.valueField || '_id',
+          tableId: t._id,
+          options: f.options,
+          useChips: f.chip,
+        })
+      }
+      break
+
+    default:
+  }
+}
+
 export const useTable = () => ({
   extraFields,
   tableFields,
+  generateFormField,
 })
