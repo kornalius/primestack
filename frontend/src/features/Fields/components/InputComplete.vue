@@ -7,6 +7,10 @@
       v-model="value"
       v-bind="$attrs"
     >
+      <template v-for="(_, slot) in $slots" #[slot]="scope">
+        <slot :name="slot" v-bind="scope || {}" />
+      </template>
+
       <q-tooltip v-if="tooltip" :delay="500">
         {{ tooltip }}
       </q-tooltip>

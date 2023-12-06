@@ -10,6 +10,7 @@ import { tableFields } from '@/features/Tables/composites'
 // eslint-disable-next-line import/no-cycle
 import { anyToString } from '@/composites/utilities'
 import { getProp } from '@/features/Expression/composites'
+import { useFeathersService } from '@/composites/feathers'
 import { fieldsArrayToObject } from '../composites'
 import Patch from '../components/patch.vue'
 
@@ -40,8 +41,9 @@ export default {
   },
   result: (ctx): string[] => {
     const tableId = anyToString(getProp(ctx.tableId, ctx))
-    const table = ctx.editor.tables
-      ?.find((s: Table) => s._id === tableId) as Table
+    const userTable = useFeathersService('tables')
+      .findOneInStore({ query: {} })
+    const table = userTable.value?.list.find((t: Table) => t._id === tableId)
     const fields = tableFields(
       table.fields,
       table.created,

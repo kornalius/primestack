@@ -10,7 +10,7 @@
       ? $attrs.visibleColumns
       : undefined
     ) as unknown[]"
-    @request="(p) => $emit('request', p)"
+    @request="(r) => $emit('request', r)"
   >
     <template #top>
       <div class="row q-gutter-sm full-width items-center">
@@ -242,8 +242,8 @@
       </q-tr>
     </template>
 
-    <template v-for="(_, name) in $slots" #[name]="slotData">
-      <slot :name="name" v-bind="slotData" />
+    <template v-for="(_, slot) in $slots" #[slot]="scope">
+      <slot :name="slot" v-bind="scope || {}" />
     </template>
   </q-table>
 
@@ -265,10 +265,12 @@ import sift from 'sift'
 import startCase from 'lodash/startCase'
 import omit from 'lodash/omit'
 import { Static, TSchema } from '@feathersjs/typebox'
+import { useI18n } from 'vue-i18n'
 import { useSyncedProp } from '@/composites/prop'
 import { useFormElements } from '@/features/Forms/composites'
+import { useExpression } from '@/features/Expression/composites'
+import { useFilter } from '@/features/Filter/composites'
 import { getTypeFor, schemaToField } from '@/shared/schema'
-import { filterToMongo } from '@/composites/filter'
 import {
   AddOption,
   ExTableColumn,
@@ -278,11 +280,9 @@ import {
 import { AnyData } from '@/shared/interfaces/commons'
 import { tableFieldSchema } from '@/shared/schemas/table'
 import { stringValue } from '@/composites/utilities'
-import { useExpression } from '@/features/Expression/composites'
-import { useI18n } from 'vue-i18n'
 import PropertySchemaField from '@/features/Properties/components/PropertySchemaField.vue'
 import AddButton from '@/features/Fields/components/AddButton.vue'
-import FilterEditor from '@/features/Tables/components/FilterEditor.vue'
+import FilterEditor from '@/features/Filter/components/FilterEditor.vue'
 
 type TableField = Static<typeof tableFieldSchema>
 
@@ -376,6 +376,8 @@ const currentPagination = useSyncedProp(props, 'pagination', emit)
 const currentFilter = useSyncedProp(props, 'filter', emit)
 
 const { callEventAction } = useFormElements()
+
+const { filterToMongo } = useFilter()
 
 const { t } = useI18n()
 

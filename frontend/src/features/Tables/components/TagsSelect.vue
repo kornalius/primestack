@@ -11,8 +11,8 @@
     use-input
     @new-value="newValue"
   >
-    <template v-for="(_, name) in $slots" #[name]="slotData">
-      <slot :name="name" v-bind="slotData" />
+    <template v-for="(_, slot) in $slots" #[slot]="scope">
+      <slot :name="slot" v-bind="scope || {}" />
     </template>
 
     <q-tooltip v-if="tooltip" :delay="500">

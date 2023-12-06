@@ -106,6 +106,7 @@ export const tableFieldSchema = Type.Object(
     format: Type.Optional(StringEnum(supportedStringFormats)),
     multipleOf: Type.Optional(Type.Number()),
     min: Type.Optional(Type.Number()),
+    step: Type.Optional(Type.Number()),
     exclusiveMin: Type.Optional(Type.Number()),
     max: Type.Optional(Type.Number()),
     exclusiveMax: Type.Optional(Type.Number()),
@@ -118,6 +119,7 @@ export const tableFieldSchema = Type.Object(
       Type.Object({
         label: Type.String(),
         value: Type.String(),
+        icon: Type.Optional(ExType.Icon()),
       }, { horizontal: true, horizontalPopup: true }),
     )),
     multiple: Type.Optional(Type.Boolean()),
@@ -175,6 +177,7 @@ export const tableFieldSchema = Type.Object(
           {
             label: 'Numeric',
             children: [
+              { name: 'step', label: 'Step' },
               { name: 'slider', label: 'Slider' },
               { name: 'multipleOf', label: 'Multiple of' },
               { name: 'min', label: 'Minimum' },

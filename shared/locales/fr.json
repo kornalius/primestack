@@ -496,7 +496,8 @@
         "leftLabel": "L'étiquette (le cas échéant) doit être affichée sur le côté gauche du composant",
         "keepColor": "La couleur (si spécifiée) doit-elle être conservée lorsque le composant est décoché/ off?",
         "checkedIcon": "L'icône à utiliser lorsque le modèle est fidèle (au lieu du design par défaut)",
-        "uncheckedIcon": "L'icône à utiliser lorsque la bascule est fausse (au lieu du design par défaut"
+        "uncheckedIcon": "L'icône à utiliser lorsque la bascule est fausse (au lieu du design par défaut",
+        "toggleIndeterminate": "Lorsque l'utilisateur clique/appuie sur le composant, devrions-nous également passer à l'état indéterminé?"
       }
     },
     "chip": {
@@ -1449,5 +1450,16 @@
         "message": "Êtes-vous certain de vouloir arrêter le partage de ce menu avec cet usager?"
       }
     }
+  },
+  "filterUI": {
+    "title": "Filtre...",
+    "isEqual": "Égal à",
+    "isNotEqual": "Pas égal à",
+    "contains": "Contient",
+    "notContain": "Ne contient pas",
+    "isLess": "Inférieur à",
+    "isLessOrEqual": "Inférieur ou égal à",
+    "isGreater": "Supérieur à",
+    "isGreaterOrEqual": "Supérieur ou égal à"
   }
 }

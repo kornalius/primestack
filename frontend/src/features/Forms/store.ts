@@ -4,7 +4,10 @@ import cloneDeep from 'lodash/cloneDeep'
 import hexObjectId from 'hex-object-id'
 import { defineStore } from 'pinia'
 import {
-  columnSchema, fieldSchema, formSchema, formTableColumnSchema,
+  columnSchema,
+  fieldSchema,
+  formSchema,
+  formTableColumnSchema,
 } from '@/shared/schemas/form'
 import { newName } from '@/shared/utils'
 import {
@@ -14,8 +17,12 @@ import {
 } from '@/shared/form'
 import { AnyData } from '@/shared/interfaces/commons'
 // eslint-disable-next-line import/no-cycle
-import { isTable } from '@/features/Forms/composites'
-import { defaultValueForSchema, defaultValues } from '@/shared/schema'
+import {
+  isTable,
+  newColField,
+  newForm,
+  newFormField,
+} from '@/features/Forms/composites'
 import { TFormComponent } from '@/shared/interfaces/forms'
 import { componentsByType } from '@/features/Components'
 
@@ -184,13 +191,7 @@ export const useFormEditor = defineStore('form-editor', () => {
    * @returns {Form} New form instance
    */
   const add = (options?: AnyData): Form => {
-    const f: Form = {
-      _id: hexObjectId(),
-      _internalType: 'form',
-      name: newName('form', states.value.forms),
-      _fields: [],
-      ...(options || {}),
-    }
+    const f = newForm(states.value.forms, options)
     states.value.forms = [...states.value.forms, f]
     return f
   }
@@ -245,20 +246,7 @@ export const useFormEditor = defineStore('form-editor', () => {
   ): FormField | FormColumn | undefined => {
     const form = instance(states.value.formId)
     if (form) {
-      return {
-        _id: hexObjectId(),
-        _internalType: 'field',
-        _type: component.type,
-        _columns: component.row ? [] : undefined,
-        _fields: component.col ? [] : undefined,
-        ...Object.keys(component.schema?.properties || {})
-          .reduce((acc, k) => (
-            { ...acc, [k]: defaultValueForSchema(component.schema.properties[k]) }
-          ), {}),
-        ...(defaultValues(component.defaultValues) || {}),
-        name: newName(component.type, flatFields()),
-        ...(options || {}),
-      }
+      return newFormField(component.type, flatFields(), options)
     }
     return undefined
   }
@@ -337,21 +325,7 @@ export const useFormEditor = defineStore('form-editor', () => {
       type = 'card-section'
     }
 
-    const colComponent = componentsByType[type]
-
-    const col = {
-      _id: hexObjectId(),
-      _internalType: 'column',
-      _type: type,
-      _columns: undefined,
-      _fields: [],
-      size: undefined,
-      ...Object.keys(colComponent.schema?.properties || {})
-        .reduce((acc, k) => (
-          { ...acc, [k]: defaultValueForSchema(colComponent.schema.properties[k]) }
-        ), {}),
-      ...(defaultValues(colComponent.defaultValues) || {}),
-    } as FormColumn
+    const col = newColField(type)
     // eslint-disable-next-line no-underscore-dangle
     field._columns.push(col)
     return col

@@ -503,7 +503,8 @@
         "leftLabel": "Label (if any specified) should be displayed on the left side of the component",
         "keepColor": "Should the color (if specified any) be kept when the component is unticked/ off?",
         "checkedIcon": "The icon to be used when the model is truthy (instead of the default design)",
-        "uncheckedIcon": "The icon to be used when the toggle is falsy (instead of the default design"
+        "uncheckedIcon": "The icon to be used when the toggle is falsy (instead of the default design",
+        "toggleIndeterminate": "When user clicks/taps on the component, should we toggle through the indeterminate state too?"
       }
     },
     "chip": {
@@ -1457,5 +1458,16 @@
         "message": "Are you sure you want stop sharing the menu with this user?"
       }
     }
+  },
+  "filterUI": {
+    "title": "Filter...",
+    "isEqual": "Equal to",
+    "isNotEqual": "Not equal to",
+    "contains": "Contains",
+    "notContain": "Does not contain",
+    "isLess": "Less than",
+    "isLessOrEqual": "Less or equal to",
+    "isGreater": "Greater than",
+    "isGreaterOrEqual": "Greater or equal to"
   }
 }
