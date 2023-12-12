@@ -9,7 +9,6 @@
       <q-tab name="ArrayEditor" label="Array Editor" />
       <q-tab name="PropertiesEditor" label="Properties Editor" />
       <q-tab name="QueryEditor" label="Query Editor" />
-      <q-tab name="SchemaEditor" label="Schema Editor" />
       <q-tab name="Table" label="ExTable" />
       <q-tab name="Columns" label="Columns Select" />
       <q-tab name="Tags" label="Tags Select" />
@@ -79,17 +78,6 @@
 
           <div class="col q-ml-md">
             <pre>{{ mongoQuery }}</pre>
-          </div>
-        </div>
-      </q-tab-panel>
-
-      <q-tab-panel name="SchemaEditor">
-        <div class="row">
-          <div class="col">
-            <schema-editor
-              v-if="userTable"
-              v-model="userTable.list[0]"
-            />
           </div>
         </div>
       </q-tab-panel>
@@ -321,7 +309,6 @@ import ArrayEditor from '@/features/Array/components/ArrayEditor.vue'
 import PropertiesEditor from '@/features/Properties/components/PropertiesEditor.vue'
 import QueryEditor from '@/features/Query/components/Editor/QueryEditor.vue'
 import ExTable from '@/features/Fields/components/ExTable.vue'
-import SchemaEditor from '@/features/Forms/components/Editor/TableEditor.vue'
 import ColumnsSelect from '@/features/Fields/components/ColumnsSelect.vue'
 import TagsSelect from '@/features/Tables/components/TagsSelect.vue'
 import ValueBox from '@/features/Fields/components/ValueBox.vue'
@@ -449,15 +436,11 @@ const valid = ref(false)
 const selection = ref([])
 
 /**
- * Schema
+ * Query
  */
 
 const userTable = useFeathersService('tables')
   .findOneInStore({ query: {} })
-
-/**
- * Query
- */
 
 const { queryToMongo } = useQuery()
 

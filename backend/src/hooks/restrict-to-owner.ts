@@ -18,7 +18,7 @@ export const restrictToOwner = (options: CreateServiceOptions) => async (context
 
   const { user } = context.params
 
-  if (context.prev?.createdBy && context.prev?.createdBy.toString() !== user._id.toString()) {
+  if (context.prev?.createdBy?.toString() !== user._id.toString()) {
     // only allow patching specific fields
     if (context.method === 'patch' && options.allowPatch) {
       context.data = options.allowPatch.reduce((acc, k) => ({

@@ -133,19 +133,21 @@
 
   <!-- Boolean -->
 
-  <q-checkbox
+  <q-toggle
     v-else-if="type === 'boolean'"
     v-model="value"
     class="full-width"
     :label="checkboxLabel"
     :disable="disabled"
     :color="schema.color"
+    :indeterminate-value="undefined"
+    keep-color
     dense
   >
     <q-tooltip :delay="500">
       {{ tooltip || label }}
     </q-tooltip>
-  </q-checkbox>
+  </q-toggle>
 
   <!-- Numeric slider -->
 

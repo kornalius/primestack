@@ -25,7 +25,7 @@
             </span>
 
             <q-icon
-              v-if="hoverName"
+              v-if="hoverName && renameable"
               class="q-ml-xs"
               name="mdi-pencil"
               color="grey-8"

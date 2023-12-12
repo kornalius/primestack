@@ -5,7 +5,7 @@
         v-if="showDrawer"
         v-model="leftDrawerOpened"
         class="col-auto q-mr-sm"
-        closeable
+        :closeable="!formsViewMode"
       >
         <schema-table
           v-if="!formsViewMode"
@@ -802,7 +802,7 @@ const mainCol = ref()
 const leftDrawerOpened = ref(false)
 
 watch(leftDrawerOpened, () => {
-  if (form.value) {
+  if (form.value && !formsViewMode.value) {
     user.setSidebar(form.value._id, false, leftDrawerOpened.value)
   }
 })
@@ -828,8 +828,14 @@ watch([() => (rightSidebarField.value as AnyData)?.opened], () => {
  * to the previous user sidebar setting
  */
 watch([form, rightSidebarField, () => user.user], () => {
+  if (formsViewMode.value) {
+    leftDrawerOpened.value = true
+  }
+
   if (form.value && user.user) {
-    leftDrawerOpened.value = user.isSidebarOpen(form.value._id, false)
+    if (!formsViewMode.value) {
+      leftDrawerOpened.value = user.isSidebarOpen(form.value._id, false)
+    }
     if (rightSidebarField.value) {
       (rightSidebarField.value as AnyData).opened = user.isSidebarOpen(form.value._id, true)
     }

@@ -3,7 +3,7 @@
     <!-- Start action buttons -->
 
     <div
-      v-if="addButton === 'start' || addButton === undefined"
+      v-if="['start', undefined].includes(addButton)"
       :class="actionsClass"
     >
       <div class="col">
@@ -65,10 +65,12 @@
           <div
             class="items-center"
             :class="{
+              item: true,
               row: !horizontal,
               'inline-block': horizontal,
               vline: !horizontal && !noSeparator,
               hline: horizontal && !noSeparator,
+              'q-mx-xs': true,
             }"
             style="min-height: 30px;"
             @mouseover="hover = index as number"
