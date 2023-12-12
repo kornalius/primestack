@@ -11,6 +11,7 @@
       : undefined
     ) as unknown[]"
     @request="(r) => $emit('request', r)"
+    @row-dblclick="(r) => editRow(r)"
   >
     <template #top>
       <div class="row q-gutter-sm full-width items-center">
@@ -71,13 +72,14 @@
           :props="p"
         >
           <property-schema-field
-            v-if="editing[getId(p.row)] && fieldSchema(col.field)"
-            v-model="p.row[col.field]"
+            v-if="!!editing[getId(p.row)] && fieldSchema(col.field)"
+            v-model="editing[getId(p.row)][col.field]"
             :parents="[p.row]"
             :schema="fieldSchema(col.field)"
             :prop-name="col.field"
             :label="col.label"
             horizontal
+            property
           />
 
           <q-chip
@@ -166,7 +168,7 @@
                 <!-- Edit action -->
 
                 <q-item
-                  v-if="editable && !showConfirmButtons(p.row)"
+                  v-if="editable"
                   :disable="disable"
                   clickable
                   v-close-popup
@@ -210,7 +212,7 @@
                 </q-item>
 
                 <q-separator
-                  v-if="(editable && !showConfirmButtons(p.row)) || showRemoveAction(p.row)"
+                  v-if="editable || showRemoveAction(p.row)"
                 />
 
                 <!-- Actions -->
@@ -249,9 +251,13 @@
 
   <add-button
     v-if="addButton === 'end'"
+    class="add-button end"
     :label="addLabel"
     :disable="disable || addDisable"
     :options="addOptions"
+    :flat="false"
+    color="white"
+    text-color="primary"
     @click="addRow"
     @click-option="(value) => $emit('add-option', value)"
   />
@@ -311,6 +317,8 @@ const props = defineProps<{
   hideFilter?: boolean
   // Can we edit the rows?
   editable?: boolean
+  // function to clone the row for editing purposes
+  cloneFunction?: (row: unknown) => unknown | undefined
   // are table's interactions disabled?
   disable?: boolean
   // position of the add button
@@ -330,17 +338,17 @@ const props = defineProps<{
   // icon for the remove button
   removeIcon?: string
   // function called before removing item at index
-  canRemove?: (value: unknown) => boolean
+  canRemove?: (row: unknown) => boolean
   // label for the remove button
   removeLabel?: string
   // function to execute to remove an item from the table
-  removeFunction?: (value: unknown) => void
+  removeFunction?: (row: unknown) => void
   // should we disable the remove row feature
   removeDisable?: boolean
   // type of selection allowed
   selectionStyle?: 'single' | 'multiple' | 'none'
   // returns true if the row is considered modified
-  isRowModified?: (row: AnyData) => boolean
+  isRowModified?: (row: unknown) => boolean
   // icon for the save button
   saveIcon?: string
   // label for the save button
@@ -495,7 +503,10 @@ const fieldSchema = (name: string): TSchema => {
     ...(props.schema?.properties[name] || {}),
     ...Object.keys(cf)
       .filter((k) => cf[k] !== undefined)
-      .reduce((acc, k) => ({ ...acc, [k]: cf[k] }), {}),
+      .reduce((acc, k) => ({
+        ...acc,
+        [k]: cf[k],
+      }), {}),
   }
 }
 
@@ -543,9 +554,9 @@ const getId = (row: AnyData): string => {
  * @param row Row to start editing on
  */
 const editRow = (row: AnyData) => {
-  const id = editing.value[getId(row)]
-  if (!editing.value[id]) {
-    editing.value[getId(row)] = true
+  const id = getId(row)
+  if (props.editable && !editing.value[id]) {
+    editing.value[id] = props.cloneFunction ? props.cloneFunction(row) : row
     emit('edit', row)
   }
 }
@@ -570,7 +581,9 @@ const removeRow = (row: AnyData) => {
     if (props.removeFunction) {
       props.removeFunction(row)
     }
+    const id = getId(row)
     emit('remove', row)
+    delete editing.value[id]
   }
 }
 
@@ -582,7 +595,7 @@ const removeRow = (row: AnyData) => {
  * @returns {boolean}
  */
 const showConfirmButtons = (row: AnyData): boolean => (
-  editing.value[getId(row)]
+  !!editing.value[getId(row)]
 )
 
 /**
@@ -602,8 +615,9 @@ const showRemoveAction = (row: AnyData): boolean => (
  * @param row Row to save the editing from
  */
 const saveRow = (row: AnyData) => {
-  emit('save', row)
-  delete editing.value[getId(row)]
+  const id = getId(row)
+  emit('save', editing.value[getId(row)])
+  delete editing.value[id]
 }
 
 /**
@@ -612,8 +626,9 @@ const saveRow = (row: AnyData) => {
  * @param row Row to cancel editing on
  */
 const cancelRow = (row: AnyData) => {
-  emit('cancel', row)
-  delete editing.value[getId(row)]
+  const id = getId(row)
+  emit('cancel', editing.value[getId(row)])
+  delete editing.value[id]
 }
 
 /**
@@ -658,5 +673,5 @@ const runAction = async (action: ExTableRowAction, row: AnyData) => {
   &.end
     position: absolute
     right: 20px
-    bottom: 10px
+    bottom: 118px
 </style>

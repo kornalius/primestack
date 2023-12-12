@@ -147,7 +147,6 @@ export const tableFieldSchema = Type.Object(
       content: {
         icon: contentIcon,
         names: [
-          'name',
           'type',
           { name: 'refTableId', label: 'Reference Table' },
           { name: 'refFields', label: 'Reference Fields' },

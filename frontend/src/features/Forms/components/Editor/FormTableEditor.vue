@@ -2,7 +2,7 @@
   <schema-table
     v-model:selected="selected"
     :class="{
-      'table-editor': true,
+      'form-table-editor': true,
       ...objectValue(component?.editClasses || {}, field),
       ...classBinds(field),
     }"
@@ -19,7 +19,7 @@
         v-model="cols"
         tag="tr"
         :component-data="p"
-        :group="{ name: 'table-editor-headers' }"
+        :group="{ name: 'form-table-editor-headers' }"
         filter=".overlay"
         :animation="150"
         easing="cubic-bezier(1, 0, 0, 1)"
@@ -207,7 +207,7 @@ const component = computed(() => (
 <style lang="sass">
 @import 'quasar/src/css/variables'
 
-.table-editor
+.form-table-editor
   thead tr th
     .label
       &.selected

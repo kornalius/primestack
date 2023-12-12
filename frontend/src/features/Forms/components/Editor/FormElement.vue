@@ -139,7 +139,7 @@
 
       <!-- Table -->
 
-      <table-editor
+      <form-table-editor
         v-else-if="isTable(field)"
         v-model:columns="field.columns"
         v-model:visible-columns="field.visibleColumns"
@@ -218,7 +218,7 @@ import { useQuery } from '@/features/Query/composites'
 import { useExpression } from '@/features/Expression/composites'
 import { stringValue, objectValue } from '@/composites/utilities'
 import { columnSchema, fieldSchema } from '@/shared/schemas/form'
-import TableEditor from '@/features/Forms/components/Editor/TableEditor.vue'
+import FormTableEditor from '@/features/Forms/components/Editor/FormTableEditor.vue'
 import Paragraph from '@/features/Fields/components/Editor.vue'
 import { useFormElements } from '../../composites'
 import FormElementRow from './FormElementRow.vue'

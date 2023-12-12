@@ -9,9 +9,9 @@
     :schema="schemaForRows"
     :actions="actions"
     :hide-filter="hideFilter"
-    :editable="isEditable"
+    :editable="isEditable && table"
     :disable="disable"
-    :add-button="addButtonSide"
+    :add-button="table ? addButtonSide : undefined"
     :add-function="addFunction"
     :add-icon="addIcon"
     :add-label="addLabel"
@@ -32,13 +32,13 @@
     :edit-icon="editIcon"
     :edit-label="editLabel"
     :loading="isPending"
-    :row-keys="[$attrs.rowKey as string, '__tempId']"
+    :row-keys="[$attrs['row-key'] as string, '__tempId']"
+    :clone-function="(row) => row.clone()"
     custom-filter
     @add="addRecord"
     @add-option="(value) => $emit('add-option', value)"
     @row-click="(value) => $emit('row-click', value)"
     @remove="removeRecord"
-    @edit="editRecord"
     @save="saveRecord"
     @cancel="cancelRecord"
     @request="paginationRequest"
@@ -197,16 +197,28 @@ const table = computed(() => (
   userTable.value?.list.find((tt) => tt._id === props.tableId)
 ))
 
+const isCreatable = computed(() => (
+  !table.value?.methods || table.value?.methods.includes('create')
+))
+
+const isModifiable = computed(() => (
+  !table.value?.methods || table.value?.methods.includes('patch')
+))
+
+const isRemovable = computed(() => (
+  !table.value?.methods || table.value?.methods.includes('remove')
+))
+
 const addButtonSide = computed(() => (
-  !table.value?.methods || table.value?.methods.includes('create') ? props.addButton : undefined
+  isCreatable.value ? props.addButton : undefined
 ))
 
 const hasRemoveButton = computed(() => (
-  !table.value?.methods || table.value?.methods.includes('remove') ? props.removeButton : undefined
+  isRemovable.value ? props.removeButton : undefined
 ))
 
 const isEditable = computed(() => (
-  !table.value?.methods || table.value?.methods.includes('patch') ? props.editable : undefined
+  isModifiable.value && props.editable
 ))
 
 const fields = computed(() => (
@@ -291,23 +303,38 @@ const useFindParams = computed(() => ({
   temps: props.temps,
 }))
 
+let cancelTotal = () => {}
+let cancelData = () => {}
+let cancelCurrentPage = () => {}
+let cancelIsPending = () => {}
+
 /**
  * To start fetching on the table
  */
-watch(() => props.tableId, () => {
-  if (props.tableId) {
-    paginationFind = useFeathersService(props.tableId)
+watch(table, () => {
+  data.value = []
+  dataRows.value = []
+
+  cancelTotal()
+  cancelData()
+  cancelCurrentPage()
+  cancelIsPending()
+
+  if (table.value) {
+    paginationFind = useFeathersService(table.value._id)
       .useFind(useFindParams, {
         pagination: cpagination,
         paginateOn: 'hybrid',
       })
     paginationFind.find()
 
-    watch(paginationFind.total, () => {
-      currentPagination.value.rowsNumber = paginationFind.total.value
+    cancelTotal = watch(paginationFind.total, () => {
+      if (currentPagination.value) {
+        currentPagination.value.rowsNumber = paginationFind.total.value
+      }
     }, { immediate: true })
 
-    watch(paginationFind.data, () => {
+    cancelData = watch(paginationFind.data, () => {
       data.value = paginationFind.data.value
       if (data.value?.[0] && filterChanged.value) {
         emit('row-click', data.value?.[0])
@@ -315,11 +342,13 @@ watch(() => props.tableId, () => {
       filterChanged.value = false
     }, { immediate: true })
 
-    watch(paginationFind.currentPage, () => {
-      currentPagination.value.page = paginationFind.currentPage.value as number
+    cancelCurrentPage = watch(paginationFind.currentPage, () => {
+      if (currentPagination.value) {
+        currentPagination.value.page = paginationFind.currentPage.value as number
+      }
     }, { immediate: true })
 
-    watch(() => paginationFind.isPending.value, () => {
+    cancelIsPending = watch(() => paginationFind.isPending.value, () => {
       isPending.value = paginationFind.isPending.value
     }, { immediate: true })
   }
@@ -354,9 +383,9 @@ const filteredRows = computed(() => data.value || dataRows.value || [])
 /**
  * Add a new record
  *
- * @param value Optional values to extend the row with
+ * @param customData Optional values to extend the row with
  */
-const addRecord = (value?: AnyData): AnyData => {
+const addRecord = (customData?: AnyData): AnyData => {
   if (props.tableId) {
     const extraFields = props.extraFields && props.extraFields
       .filter((ef) => ef.create)
@@ -369,18 +398,18 @@ const addRecord = (value?: AnyData): AnyData => {
         return { ...acc, [ef.fieldname]: v }
       }, {})
 
-    const r = useFeathersService(props.tableId).new({
-      ...value,
+    const row = useFeathersService(props.tableId).new({
+      ...customData,
       ...extraFields,
     })
-    r.createInStore()
-    emit('row-click', r)
-    emit('add', r)
-    return r
+    row.createInStore()
+    emit('row-click', row)
+    emit('add', row)
+    return row
   }
 
-  emit('add', value)
-  return value
+  emit('add', customData)
+  return customData
 }
 
 /**
@@ -402,9 +431,9 @@ const getRecord = async (id: string): Promise<AnyData> => {
 /**
  * Confirm removal of record
  *
- * @param value Selected row value from the table
+ * @param row Selected row value from the table
  */
-const removeRecord = (value: AnyData) => {
+const removeRecord = (row: AnyData) => {
   if (props.tableId) {
     quasar.dialog({
       title: t('record.dialog.delete.title'),
@@ -421,7 +450,7 @@ const removeRecord = (value: AnyData) => {
         outline: true,
       },
     }).onOk(async () => {
-      const r = await getRecord(getId(value))
+      const r = await getRecord(getId(row))
       if (r) {
         const tempId = r.__tempId
         await r.remove()
@@ -432,17 +461,8 @@ const removeRecord = (value: AnyData) => {
       }
     })
   } else {
-    emit('remove', value)
+    emit('remove', row)
   }
-}
-
-/**
- * Start editing a specific row
- *
- * @param row Row
- */
-const editRecord = async (row: AnyData) => {
-  row.clone()
 }
 
 /**
@@ -457,7 +477,7 @@ const saveRecord = async (row: AnyData) => {
   }
   await row.save()
   if (tempId) {
-    useFeathersService(props.tableId).removeFromStore(tempId)
+    useFeathersService(props.tableId).removeFromStore(tempId, { temps: true })
   }
   if (typeof props.afterSave === 'function') {
     props.afterSave(row)

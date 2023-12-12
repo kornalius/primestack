@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col">
         <ex-table
-          v-model:selected="selectedTable"
+          v-model:selected="selectedTables"
           style="height: 300px"
           :rows="editor.tables"
           :columns="schemaColumns"
@@ -13,8 +13,8 @@
           :remove-function="removeTable"
           add-button="start"
           title="Tables"
-          selection-style="single"
           row-key="_id"
+          hide-filter
           remove-button
           virtual-scroll
           bordered
@@ -27,27 +27,26 @@
     </div>
 
     <div class="row q-mt-sm">
-      <div v-if="selectedTable.length > 0" class="col">
-        <ex-table
-          v-model:selected="selectedTableField"
+      <div v-if="selectedTable" class="col">
+        <table-editor
+          v-model:fields="selectedTable.fields"
+          :model-value="selectedTable"
           style="height: 600px"
-          :rows="tableFields"
-          :columns="fieldColumns"
+          :title="`${$t('table.title')} - ${selectedTable?.name}`"
           :rows-per-page-options="[0]"
           :add-function="addTableField"
           :remove-function="removeTableField"
           :add-disable="tableHasService"
           :can-remove="() => !tableHasService"
-          add-button="start"
-          title="Fields"
-          selection-style="single"
+          selection-style="none"
           row-key="_id"
-          remove-button
           virtual-scroll
           bordered
           dense
           flat
-          @row-click="toggleTableFieldSelection"
+          @add-field="addTableField"
+          @remove-field="removeTableField"
+          @select-field="toggleTableFieldSelection"
         />
       </div>
     </div>
@@ -72,6 +71,7 @@ import { AddOption, ExTableColumn } from '@/features/Fields/interfaces'
 import { isServiceAvailable } from '@/shared/plan'
 import { useI18n } from 'vue-i18n'
 import ExTable from '@/features/Fields/components/ExTable.vue'
+import TableEditor from '@/features/Tables/components/Editor/TableEditor.vue'
 
 type Table = Static<typeof tableSchema>
 type TableField = Static<typeof tableFieldSchema>
@@ -105,25 +105,33 @@ onBeforeUnmount(() => {
   editor.setTablesEditor(false)
 })
 
-const selectedTable = ref([])
+const selectedTables = ref([])
 
-const selectedTableField = ref([])
-
-const toggleTableSelection = (row) => {
-  selectedTableField.value = []
-  selectedTable.value = [row]
-}
-
-const toggleTableFieldSelection = (row) => {
-  selectedTableField.value = [row]
-}
-
-const tableFields = computed(() => (
-  editor.tableInstance(selectedTable.value?.[0]?._id)?.fields || []
+const selectedTable = computed(() => (
+  editor.tableInstance(selectedTables.value?.[0]?._id)
 ))
 
+const selectedTableFields = ref([])
+
+const selectedTableField = computed(() => {
+  const id = selectedTableFields.value?.[0]?._id
+  if (selectedTable.value) {
+    return selectedTable.value.fields.find((f) => f._id === id)
+  }
+  return undefined
+})
+
+const toggleTableSelection = (row) => {
+  selectedTableFields.value = []
+  selectedTables.value = [row]
+}
+
+const toggleTableFieldSelection = (field) => {
+  selectedTableFields.value = [field]
+}
+
 const tableHasService = computed((): boolean => (
-  !!editor.tableInstance(selectedTable.value?.[0]?._id)?.service
+  !!editor.tableInstance(selectedTable.value?._id)?.service
 ))
 
 const addOptions = computed((): AddOption[] => ([
@@ -149,34 +157,26 @@ const addOptions = computed((): AddOption[] => ([
 
 watch(() => props.id, () => {
   if (props.id) {
-    selectedTable.value = [editor.tableInstance(props.id)]
+    selectedTables.value = [editor.tableInstance(props.id)]
   }
 }, { immediate: true })
 
 watch(() => props.fieldId, () => {
   if (props.fieldId) {
-    selectedTableField.value = [editor.tableFieldInstance(props.fieldId)]
+    selectedTableFields.value = [editor.tableFieldInstance(props.fieldId)]
   }
 }, { immediate: true })
 
-watch(selectedTable, () => {
-  if (selectedTable.value?.[0]?._id) {
-    editor.setTableId(selectedTable.value?.[0]?._id)
-    router.push(tableUrl(selectedTable.value?.[0]?._id))
-  }
-})
-
-watch(selectedTableField, () => {
-  if (selectedTable.value?.[0]?._id && selectedTableField.value?.[0]?._id) {
-    editor.select(selectedTableField.value?.[0]?._id)
-    router.push(tableUrl(selectedTable.value?.[0]?._id, selectedTableField.value?.[0]?._id))
-  }
+watch([selectedTable, selectedTableField], () => {
+  editor.setTableId(selectedTable.value?._id)
+  editor.select(selectedTableField.value?._id)
+  router.push(tableUrl(selectedTable.value?._id, selectedTableField.value?._id))
 })
 
 const addTable = () => {
-  const ta = editor.addTable(undefined, true)
-  selectedTable.value = [ta]
-  return ta
+  const table = editor.addTable(undefined, true)
+  selectedTables.value = [table]
+  return table
 }
 
 const addSpecialTable = (type: string) => {
@@ -215,14 +215,17 @@ const removeTable = (table: Table): void => {
   }).onOk(async () => {
     if (editor.removeTable(table._id)) {
       editor.setTableId(undefined)
-      selectedTable.value = []
+      selectedTableFields.value = []
+      selectedTables.value = []
     }
   })
 }
 
 const addTableField = () => {
-  const field = editor.addFieldToTable(selectedTable.value?.[0])
-  selectedTableField.value = [field]
+  if (selectedTable.value) {
+    const field = editor.addFieldToTable(selectedTable.value)
+    selectedTableFields.value = [field]
+  }
 }
 
 const removeTableField = (f: TableField): void => {
@@ -241,9 +244,9 @@ const removeTableField = (f: TableField): void => {
       outline: true,
     },
   }).onOk(async () => {
-    if (editor.removeFieldFromTable(f._id, selectedTable.value?.[0])) {
+    if (editor.removeFieldFromTable(f._id, selectedTable.value)) {
       editor.unselectAll()
-      selectedTableField.value = []
+      selectedTableFields.value = []
     }
   })
 }
@@ -251,7 +254,7 @@ const removeTableField = (f: TableField): void => {
 watch(() => props.create, () => {
   if (props.create) {
     if (props.id) {
-      selectedTable.value = [editor.tableInstance(props.id)]
+      selectedTables.value = [editor.tableInstance(props.id)]
       addTableField()
     } else {
       addTable()
@@ -280,65 +283,6 @@ const schemaColumns = ref([
     align: 'left',
     field: 'fields',
     format: (val, row) => (!row ? val : val?.length),
-  },
-] as ExTableColumn[])
-
-const fieldColumns = ref([
-  {
-    name: 'name',
-    label: 'Name',
-    required: true,
-    align: 'left',
-    field: 'name',
-    sortable: true,
-  },
-  {
-    name: 'type',
-    label: 'Type',
-    field: 'type',
-    align: 'left',
-  },
-  {
-    name: 'optional',
-    label: 'Optional',
-    align: 'center',
-    field: 'optional',
-    format: (val) => (val ? '\u2714' : ''),
-  },
-  {
-    name: 'hidden',
-    label: 'Hidden',
-    align: 'center',
-    field: 'hidden',
-    format: (val) => (val ? '\u2714' : ''),
-  },
-  {
-    name: 'array',
-    label: 'Array',
-    align: 'center',
-    field: 'array',
-    format: (val) => (val ? '\u2714' : ''),
-  },
-  {
-    name: 'queryable',
-    label: 'Queryable',
-    align: 'center',
-    field: 'queryable',
-    format: (val) => (val ? '\u2714' : ''),
-  },
-  {
-    name: 'readonly',
-    label: 'Readonly',
-    align: 'center',
-    field: 'readonly',
-    format: (val) => (val ? '\u2714' : ''),
-  },
-  {
-    name: 'secret',
-    label: 'Secret',
-    align: 'center',
-    field: 'secret',
-    format: (val) => (val ? '\u2714' : ''),
   },
 ] as ExTableColumn[])
 </script>

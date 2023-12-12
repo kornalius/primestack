@@ -171,7 +171,7 @@ export const useTableEditor = defineStore('table-editor', () => {
     const f: TableField = {
       _id: hexObjectId(),
       _internalType: 'table-field',
-      name: undefined,
+      name: newName('field', table.fields),
       type: 'string',
       queryable: true,
       optional: true,

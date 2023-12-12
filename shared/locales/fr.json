@@ -126,7 +126,8 @@
         "message": "Voulez-vous vraiment effacer cette table?"
       }
     },
-    "sameTableResolve": "Ne peut resoudre sur la même table"
+    "sameTableResolve": "Ne peut resoudre sur la même table",
+    "title": "Table"
   },
   "field": {
     "dialog": {
