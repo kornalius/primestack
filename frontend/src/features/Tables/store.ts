@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, Ref } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { defineStore } from 'pinia'
 import cloneDeep from 'lodash/cloneDeep'
@@ -12,29 +12,20 @@ type Table = Static<typeof tableSchema>
 type TableField = Static<typeof tableFieldSchema>
 
 export const useTableEditor = defineStore('table-editor', () => {
-  const states = ref({
-    // is the table editor active?
-    tablesEditor: false,
-    // table id being edited
-    tableId: undefined,
-    // tables being edited
-    tables: [] as Table[],
-  })
+  /**
+   * Is the tables editor active?
+   */
+  const tablesEditor = ref(false)
 
   /**
    * Table id being edited
    */
-  const tableId = computed(() => states.value.tableId)
-
-  /**
-   * Is the tables editor active?
-   */
-  const tablesEditor = computed(() => states.value.tablesEditor)
+  const tableId = ref() as Ref<string>
 
   /**
    * Clone of the user's tables
    */
-  const tables = computed(() => states.value.tables)
+  const tables = ref([]) as Ref<Table[]>
 
   /**
    * Sets the cloned tables
@@ -42,7 +33,7 @@ export const useTableEditor = defineStore('table-editor', () => {
    * @param list
    */
   const setTables = (list: Table[]) => {
-    states.value.tables = list
+    tables.value = list
   }
 
   /**
@@ -51,7 +42,7 @@ export const useTableEditor = defineStore('table-editor', () => {
    * @param id ID of the table
    */
   const setTableId = (id: string) => {
-    states.value.tableId = id
+    tableId.value = id
   }
 
   /**
@@ -60,7 +51,7 @@ export const useTableEditor = defineStore('table-editor', () => {
    * @param active
    */
   const setTablesEditor = (active: boolean) => {
-    states.value.tablesEditor = active
+    tablesEditor.value = active
   }
 
   /**
@@ -71,8 +62,8 @@ export const useTableEditor = defineStore('table-editor', () => {
    * @returns {Table|undefined} Instance of the table
    */
   const instance = (id: string): Table | undefined => (
-    states.value.tables?.find
-      ? states.value.tables?.find((t) => t._id === id)
+    tables.value?.find
+      ? tables.value?.find((t) => t._id === id)
       : undefined
   )
 
@@ -84,8 +75,8 @@ export const useTableEditor = defineStore('table-editor', () => {
    * @returns {TableField|undefined} Instance of the table field
    */
   const fieldInstance = (id: string): TableField | undefined => {
-    for (let i = 0; i < states.value.tables.length; i++) {
-      const t = states.value.tables[i]
+    for (let i = 0; i < tables.value.length; i++) {
+      const t = tables.value[i]
       const field = t?.fields
         .find((f) => f._id === id)
       if (field) {
@@ -119,7 +110,7 @@ export const useTableEditor = defineStore('table-editor', () => {
       indexes: [],
       ...(options || {}),
     }
-    states.value.tables = [...states.value.tables, t]
+    tables.value = [...tables.value, t]
     return t
   }
 
@@ -133,9 +124,9 @@ export const useTableEditor = defineStore('table-editor', () => {
   const duplicate = (table: Table): Table => {
     const t = {
       ...recreateTableIds(cloneDeep(table)),
-      name: newName('table', states.value.tables),
+      name: newName('table', tables.value),
     }
-    states.value.tables = [...states.value.tables, t]
+    tables.value = [...tables.value, t]
     return t
   }
 
@@ -147,12 +138,12 @@ export const useTableEditor = defineStore('table-editor', () => {
    * @returns {boolean} True is successful
    */
   const remove = (id: string): boolean => {
-    const index = states.value.tables
+    const index = tables.value
       .findIndex((m) => m._id === id)
     if (index !== -1) {
-      states.value.tables = [
-        ...states.value.tables.slice(0, index),
-        ...states.value.tables.slice(index + 1),
+      tables.value = [
+        ...tables.value.slice(0, index),
+        ...tables.value.slice(index + 1),
       ]
       return true
     }
@@ -225,7 +216,6 @@ export const useTableEditor = defineStore('table-editor', () => {
   }
 
   return {
-    states,
     tablesEditor,
     tableId,
     tables,

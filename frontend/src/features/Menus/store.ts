@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, Ref } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { defineStore } from 'pinia'
 import cloneDeep from 'lodash/cloneDeep'
@@ -12,22 +12,11 @@ type Menu = Static<typeof menuSchema>
 type Tab = Static<typeof tabSchema>
 
 export const useMenuEditor = defineStore('menu-editor', () => {
-  const states = ref({
-    // menu id begin edited
-    menuId: undefined,
-    // menus being edited
-    menus: [] as Menu[],
-  })
+  // menu id begin edited
+  const menuId = ref() as Ref<string>
 
-  /**
-   * Menu id being edited
-   */
-  const menuId = computed(() => states.value.menuId)
-
-  /**
-   * Clone of the user's menus
-   */
-  const menus = computed(() => states.value.menus)
+  // menus being edited
+  const menus = ref([]) as Ref<Menu[]>
 
   /**
    * Selects a menu
@@ -35,7 +24,7 @@ export const useMenuEditor = defineStore('menu-editor', () => {
    * @param id Id of the menu
    */
   const setMenuId = (id: string): boolean => {
-    states.value.menuId = id
+    menuId.value = id
     return true
   }
 
@@ -45,7 +34,7 @@ export const useMenuEditor = defineStore('menu-editor', () => {
    * @param list
    */
   const setMenus = (list: Menu[]) => {
-    states.value.menus = list
+    menus.value = list
   }
 
   /**
@@ -56,8 +45,8 @@ export const useMenuEditor = defineStore('menu-editor', () => {
    * @returns {Menu|undefined} Instance of the menu
    */
   const instance = (id: string): Menu | undefined => (
-    states.value.menus?.find
-      ? states.value.menus
+    menus.value?.find
+      ? menus.value
         ?.find((m) => m._id === id)
       : undefined
   )
@@ -70,8 +59,8 @@ export const useMenuEditor = defineStore('menu-editor', () => {
    * @returns {Tab|undefined} Instance of the tab
    */
   const tabInstance = (id: string): Tab | undefined => {
-    for (let i = 0; i < states.value.menus.length; i++) {
-      const m = states.value.menus[i]
+    for (let i = 0; i < menus.value.length; i++) {
+      const m = menus.value[i]
       const tab = m?.tabs
         .find((t) => t._id === id)
       if (tab) {
@@ -92,7 +81,7 @@ export const useMenuEditor = defineStore('menu-editor', () => {
     const m: Menu = {
       _id: hexObjectId(),
       _internalType: 'menu',
-      label: newName('menu', states.value.menus, 'label'),
+      label: newName('menu', menus.value, 'label'),
       icon: 'mdi-dots-horizontal-circle',
       color: undefined,
       href: undefined,
@@ -101,7 +90,7 @@ export const useMenuEditor = defineStore('menu-editor', () => {
       variables: [],
       ...(options || {}),
     }
-    states.value.menus = [...states.value.menus, m]
+    menus.value = [...menus.value, m]
     return m
   }
 
@@ -114,7 +103,7 @@ export const useMenuEditor = defineStore('menu-editor', () => {
    */
   const duplicate = (menu: Menu): Menu => {
     const m: Menu = recreateMenuIds(cloneDeep(menu))
-    states.value.menus = [...states.value.menus, m]
+    menus.value = [...menus.value, m]
     return m
   }
 
@@ -126,12 +115,12 @@ export const useMenuEditor = defineStore('menu-editor', () => {
    * @returns {boolean} True is successful
    */
   const remove = (id: string): boolean => {
-    const index = states.value.menus
+    const index = menus.value
       .findIndex((m) => m._id === id)
     if (index !== -1) {
-      states.value.menus = [
-        ...states.value.menus.slice(0, index),
-        ...states.value.menus.slice(index + 1),
+      menus.value = [
+        ...menus.value.slice(0, index),
+        ...menus.value.slice(index + 1),
       ]
       return true
     }
@@ -139,7 +128,6 @@ export const useMenuEditor = defineStore('menu-editor', () => {
   }
 
   return {
-    states,
     menuId,
     menus,
     setMenuId,

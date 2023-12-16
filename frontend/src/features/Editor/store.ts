@@ -1,5 +1,5 @@
 import {
-  computed, ref, WatchStopHandle, watch,
+  computed, ref, WatchStopHandle, watch, Ref,
 } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import hexObjectId from 'hex-object-id'
@@ -77,18 +77,24 @@ export const menuOrPopupPresent = (): boolean => (
 )
 
 export const useAppEditor = defineStore('app-editor', () => {
-  const states = ref({
-    // are we in an editing session or not?
-    active: false,
-    // selected entity id
-    selected: undefined,
-    // id of element being hovered on with the mouse
-    hovered: undefined,
-    // is something being dragged?
-    dragging: false,
-    // Original snapshot at start of editing
-    origSnapshot: {} as Snapshot,
-  })
+  /**
+   * Is the editor active?
+   */
+  const active = ref(false)
+
+  /**
+   * Currently selected form element id
+   */
+  const selected = ref() as Ref<string>
+
+  /**
+   * Id of an element being hovered on with the mouse
+   */
+  const hovered = ref() as Ref<string>
+
+  const dragging = ref(false)
+
+  const origSnapshot = ref({}) as Ref<Snapshot>
 
   const undoStore = useUndo('editor-undo')()
 
@@ -107,25 +113,15 @@ export const useAppEditor = defineStore('app-editor', () => {
   const blueprintEditor = useBlueprintEditor()
 
   /**
-   * Is the editor active?
-   */
-  const active = computed(() => states.value.active)
-
-  /**
-   * Currently selected form element id
-   */
-  const selected = computed(() => states.value.selected)
-
-  /**
    * Was there any modifications to the elements being edited?
    */
   const isModified = computed((): boolean => {
-    const f = isEqual(states.value.origSnapshot.forms, formEditor.forms)
-    const t = isEqual(states.value.origSnapshot.tables, tableEditor.tables)
-    const m = isEqual(states.value.origSnapshot.menus, menuEditor.menus)
-    const a = isEqual(states.value.origSnapshot.actions, actionEditor.actions)
-    const b = isEqual(states.value.origSnapshot.blueprints, blueprintEditor.blueprints)
-    return states.value.active && (!f || !t || !m || !a || !b)
+    const f = isEqual(origSnapshot.value.forms, formEditor.forms)
+    const t = isEqual(origSnapshot.value.tables, tableEditor.tables)
+    const m = isEqual(origSnapshot.value.menus, menuEditor.menus)
+    const a = isEqual(origSnapshot.value.actions, actionEditor.actions)
+    const b = isEqual(origSnapshot.value.blueprints, blueprintEditor.blueprints)
+    return active.value && (!f || !t || !m || !a || !b)
   })
 
   /**
@@ -207,7 +203,7 @@ export const useAppEditor = defineStore('app-editor', () => {
   const select = (id: string): boolean => {
     if (!menuOrPopupPresent()) {
       setTimeout(() => {
-        states.value.selected = id
+        selected.value = id
       }, 100)
       return true
     }
@@ -220,8 +216,8 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @param id Id of the entity
    */
   const unselect = (id: string): boolean => {
-    if (!menuOrPopupPresent() && states.value.selected === id) {
-      states.value.selected = undefined
+    if (!menuOrPopupPresent() && selected.value === id) {
+      selected.value = undefined
       return true
     }
     return false
@@ -232,7 +228,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    */
   const unselectAll = (): void => {
     if (!menuOrPopupPresent()) {
-      states.value.selected = undefined
+      selected.value = undefined
     }
   }
 
@@ -244,13 +240,8 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @returns {boolean} True if selected
    */
   const isSelected = (id: string): boolean => (
-    states.value.selected === id
+    selected.value === id
   )
-
-  /**
-   * Id of an element being hovered on with the mouse
-   */
-  const hovered = computed((): string => states.value.hovered)
 
   /**
    * Sets the element id being hovered on with the mouse
@@ -258,14 +249,14 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @param id Id of the element
    */
   const hover = (id: string): void => {
-    states.value.hovered = id
+    hovered.value = id
   }
 
   /**
    * Resets what element id is being hovered on with the mouse
    */
   const unhover = (): void => {
-    states.value.hovered = undefined
+    hovered.value = undefined
   }
 
   /**
@@ -276,13 +267,13 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @returns {boolean} True if same as id
    */
   const isHovered = (id: string): boolean => (
-    states.value.hovered === id
+    hovered.value === id
   )
 
   /**
    * Is something being dragged?
    */
-  const isDragging = computed(() => states.value.dragging)
+  const isDragging = computed(() => dragging.value)
 
   /**
    * Sets whether something is being dragged or not
@@ -290,7 +281,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @param d Is something currently being dragged
    */
   const setDragging = (d: boolean): void => {
-    states.value.dragging = d
+    dragging.value = d
   }
 
   /**
@@ -502,7 +493,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    * Starts an editing session. Also saves an original snapshot.
    */
   const startEdit = (): void => {
-    states.value.active = true
+    active.value = true
 
     const {
       userMenus,
@@ -531,7 +522,7 @@ export const useAppEditor = defineStore('app-editor', () => {
     undoStore.startWatch(startWatch)
     undoStore.snap(snapshot)()
 
-    states.value.origSnapshot = snapshot()
+    origSnapshot.value = snapshot()
 
     previousScope = hotkeys.getScope()
 
@@ -543,7 +534,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    */
   const endEdit = (): void => {
     undoStore.cancelWatch()
-    states.value.active = false
+    active.value = false
     menuEditor.setMenuId(undefined)
     tableEditor.setTableId(undefined)
     tableEditor.setTablesEditor(false)
@@ -552,7 +543,7 @@ export const useAppEditor = defineStore('app-editor', () => {
     menuEditor.setMenuId(undefined)
     tabEditor.setTabId(undefined)
     actionEditor.setActionId(undefined)
-    states.value.selected = undefined
+    selected.value = undefined
     undoStore.clearUndoStack()
     hotkeys.setScope(previousScope)
   }
@@ -562,8 +553,8 @@ export const useAppEditor = defineStore('app-editor', () => {
    * editing was last started started
    */
   const reset = (): void => {
-    saveToStore(states.value.origSnapshot)
-    states.value.origSnapshot = {} as Snapshot
+    saveToStore(origSnapshot.value)
+    origSnapshot.value = {} as Snapshot
   }
 
   /**
@@ -656,7 +647,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @param e
    */
   const preventSystemUndoRedo = (e: KeyboardEvent) => {
-    if (states.value.active) {
+    if (active.value) {
       undoStore.preventSystemUndoRedo(e)
     }
   }
@@ -869,7 +860,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    * Duplicate an instance
    */
   const duplicate = () => {
-    const o = instance(states.value.selected)
+    const o = instance(selected.value)
     const type = storeTypeForId(o._id)
 
     switch (type) {
@@ -978,7 +969,7 @@ export const useAppEditor = defineStore('app-editor', () => {
    * @param element Element instance
    */
   const copy = async (element?: AnyData) => {
-    const o = element || instance(states.value.selected)
+    const o = element || instance(selected.value)
     return navigator.clipboard.writeText(JSON.stringify({
       type: storeTypeForId(o._id),
       data: o,
@@ -1009,7 +1000,7 @@ export const useAppEditor = defineStore('app-editor', () => {
       const { type, data: o } = JSON.parse(t)
 
       const selectedElement = instance(
-        states.value.selected
+        selected.value
           || actionEditor.actionId
           || formEditor.formId
           || tableEditor.tableId,
@@ -1089,7 +1080,7 @@ export const useAppEditor = defineStore('app-editor', () => {
             addTable(recreateTableIds(o), true)
           } else if (type === 'table-field') {
             // eslint-disable-next-line no-underscore-dangle
-            addFieldToTable(tableEditor.instance(states.value.selected), reid(o), true)
+            addFieldToTable(tableEditor.instance(selected.value), reid(o), true)
           }
           break
 
@@ -1110,7 +1101,7 @@ export const useAppEditor = defineStore('app-editor', () => {
   }
 
   const removeSelected = () => {
-    const o = instance(states.value.selected)
+    const o = instance(selected.value)
     const type = storeTypeForId(o?._id)
 
     switch (type) {
@@ -1183,7 +1174,6 @@ export const useAppEditor = defineStore('app-editor', () => {
   }
 
   return {
-    states,
     active,
     reset,
     isModified,

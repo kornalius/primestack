@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue'
+import { Ref, computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { feathersClient as app } from '@/feathers'
 import { AnyData } from '@/shared/interfaces/commons'
@@ -8,60 +8,56 @@ import { schema as userSchema } from '@/shared/schemas/user'
 type User = Static<typeof userSchema>
 
 export const useAuth = defineStore('auth', () => {
-  const states = ref({
-    processing: false,
-    authenticated: false,
-    user: undefined as User,
-  })
+  const processing = ref(false)
 
-  const processing = computed(() => states.value.processing)
-  const authenticated = computed(() => states.value.authenticated)
-  const user = computed(() => states.value.user)
-  const userId = computed(() => states.value.user?._id)
+  const authenticated = ref(false)
+
+  const user = ref() as Ref<User>
+
+  const userId = computed(() => user.value?._id)
 
   const reAuthenticate = async (): Promise<void> => {
     try {
-      states.value.processing = true
+      processing.value = true
       const r = await app.reAuthenticate()
-      states.value.user = r.user
-      states.value.authenticated = true
+      user.value = r.user
+      authenticated.value = true
     } catch (e) {
-      states.value.authenticated = false
+      authenticated.value = false
       throw e
     } finally {
-      states.value.processing = false
+      processing.value = false
     }
   }
 
   const authenticate = async (strategy: string, args: AnyData): Promise<void> => {
     try {
-      states.value.processing = true
+      processing.value = true
       const r = await app.authenticate({
         strategy: 'local',
         ...args,
       })
-      states.value.user = r.user
-      states.value.authenticated = true
+      user.value = r.user
+      authenticated.value = true
     } catch (e) {
-      states.value.authenticated = false
+      authenticated.value = false
       throw e
     } finally {
-      states.value.processing = false
+      processing.value = false
     }
   }
 
   const logout = async (): Promise<void> => {
     try {
-      states.value.processing = true
+      processing.value = true
       await app.logout()
-      states.value.authenticated = false
+      authenticated.value = false
     } finally {
-      states.value.processing = false
+      processing.value = false
     }
   }
 
   return {
-    states,
     processing,
     authenticated,
     user,

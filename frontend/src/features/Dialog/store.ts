@@ -1,4 +1,6 @@
-import { computed, ref, watch } from 'vue'
+import {
+  Ref, computed, ref, watch,
+} from 'vue'
 import { defineStore } from 'pinia'
 import { Static } from '@feathersjs/typebox'
 import { AnyData } from '@/shared/interfaces/commons'
@@ -19,74 +21,66 @@ interface DialogShowOptions {
 }
 
 type Form = Static<typeof formSchema>
-export const useDialog = defineStore('dialog', () => {
-  const states = ref({
-    title: undefined,
-    persistent: false,
-    message: undefined,
-    formId: undefined,
-    formData: {},
-    width: undefined,
-    ok: undefined,
-    cancel: undefined,
-    onOk: undefined,
-    onCancel: undefined,
-  } as DialogShowOptions)
 
+export const useDialog = defineStore('dialog', () => {
   /**
    * Returns true if the dialog is active
    */
   const active = ref(false)
 
   /**
-   * Returns the form instance
-   */
-  const formInstance = computed((): Form => {
-    const userForm = useFeathersService('forms').findOneInStore({ query: {} })
-    return userForm.value?.list.find((f: Form) => f._id === states.value.formId)
-  })
-
-  /**
    * Returns the dialog's title
    */
-  const title = computed(() => states.value.title)
+  const title = ref() as Ref<string>
 
   /**
    * Returns true if the dialog is persistent
    */
-  const persistent = computed(() => states.value.persistent)
-
-  /**
-   * Returns the dialog's width
-   */
-  const width = computed(() => states.value.width)
+  const persistent = ref(false)
 
   /**
    * Returns the dialog's message
    */
-  const message = computed(() => states.value.message)
+  const message = ref() as Ref<string>
 
   /**
    * Returns the dialog's form to show
    */
-  const formId = computed(() => states.value.formId)
-
-  const formInstanceData = ref({})
+  const formId = ref() as Ref<string>
 
   /**
    * Returns the dialog's form data
    */
-  const formData = computed(() => formInstanceData.value)
+  const formData = ref({})
+
+  const formInstanceData = ref({}) as Ref<AnyData>
+
+  /**
+   * Returns the dialog's width
+   */
+  const width = ref() as Ref<string>
 
   /**
    * Returns the dialog's ok button props
    */
-  const ok = computed(() => states.value.ok)
+  const ok = ref() as Ref<AnyData>
 
   /**
    * Returns the dialog's cancel button props
    */
-  const cancel = computed(() => states.value.cancel)
+  const cancel = ref() as Ref<AnyData>
+
+  const onOkLocal = ref() as Ref<() => void>
+
+  const onCancelLocal = ref() as Ref<() => void>
+
+  /**
+   * Returns the form instance
+   */
+  const formInstance = computed((): Form => {
+    const userForm = useFeathersService('forms').findOneInStore({ query: {} })
+    return userForm.value?.list.find((f: Form) => f._id === formId.value)
+  })
 
   /**
    * Returns the function to execute when the ok button is pressed
@@ -94,8 +88,8 @@ export const useDialog = defineStore('dialog', () => {
   const onOk = computed(() => (
     () => {
       active.value = false
-      if (states.value.onOk) {
-        states.value.onOk()
+      if (onOkLocal.value) {
+        onOkLocal.value()
       }
     }
   ))
@@ -106,8 +100,8 @@ export const useDialog = defineStore('dialog', () => {
   const onCancel = computed(() => (
     () => {
       active.value = false
-      if (states.value.onCancel) {
-        states.value.onCancel()
+      if (onCancelLocal.value) {
+        onCancelLocal.value()
       }
     }
   ))
@@ -118,16 +112,16 @@ export const useDialog = defineStore('dialog', () => {
    * @param options
    */
   const open = (options: DialogShowOptions) => {
-    states.value.width = options.width
-    states.value.title = options.title
-    states.value.persistent = options.persistent
-    states.value.message = options.message
-    states.value.formId = options.formId
-    states.value.formData = options.formData
-    states.value.ok = options.ok
-    states.value.cancel = options.cancel
-    states.value.onOk = options.onOk
-    states.value.onCancel = options.onCancel
+    width.value = options.width
+    title.value = options.title
+    persistent.value = options.persistent
+    message.value = options.message
+    formId.value = options.formId
+    formData.value = options.formData
+    ok.value = options.ok
+    cancel.value = options.cancel
+    onOkLocal.value = options.onOk
+    onCancelLocal.value = options.onCancel
     active.value = true
   }
 
@@ -138,15 +132,14 @@ export const useDialog = defineStore('dialog', () => {
     active.value = false
   }
 
-  watch([() => states.value.formData, () => formInstance.value?.data], () => {
+  watch([() => formData.value, () => formInstance.value?.data], () => {
     formInstanceData.value = {
       ...(formInstance.value?.data || {}),
-      ...(states.value.formData || {}),
+      ...(formData.value || {}),
     }
   }, { immediate: true, deep: true })
 
   return {
-    states,
     active,
     title,
     persistent,

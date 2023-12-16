@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, Ref } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { defineStore } from 'pinia'
 import hexObjectId from 'hex-object-id'
@@ -11,35 +11,28 @@ type Blueprint = Static<typeof blueprintSchema>
 type FormField = Static<typeof fieldSchema>
 
 export const useBlueprintEditor = defineStore('blueprint-editor', () => {
-  const states = ref({
-    // blueprints being edited
-    blueprints: [] as Blueprint[],
-    // currently edited blueprint
-    blueprintId: undefined,
-  })
-
   /**
    * Clone of the user's blueprints
    */
-  const blueprints = computed(() => states.value.blueprints)
+  const blueprints = ref([]) as Ref<Blueprint[]>
 
   /**
    * Current blueprint being edited
    */
-  const blueprintId = computed(() => states.value.blueprintId)
+  const blueprintId = ref() as Ref<string>
 
   /**
    * Local blueprints
    */
   const locals = (menuId: string): Blueprint[] => (
-    states.value.blueprints.filter((b) => menuId && b.menuId === menuId)
+    blueprints.value.filter((b) => menuId && b.menuId === menuId)
   )
 
   /**
    * Global blueprints
    */
   const globals = (): Blueprint[] => (
-    states.value.blueprints.filter((b) => b.menuId === undefined)
+    blueprints.value.filter((b) => b.menuId === undefined)
   )
 
   /**
@@ -48,7 +41,7 @@ export const useBlueprintEditor = defineStore('blueprint-editor', () => {
    * @param list
    */
   const setBlueprints = (list: Blueprint[]) => {
-    states.value.blueprints = list
+    blueprints.value = list
   }
 
   /**
@@ -59,7 +52,7 @@ export const useBlueprintEditor = defineStore('blueprint-editor', () => {
    * @returns {Blueprint|undefined} Blueprint instance from the id
    */
   const instance = (id: string): Blueprint | undefined => (
-    states.value.blueprints.find((b) => b._id === id)
+    blueprints.value.find((b) => b._id === id)
   )
 
   /**
@@ -72,13 +65,13 @@ export const useBlueprintEditor = defineStore('blueprint-editor', () => {
   const add = (options: AnyData): Blueprint => {
     const b: Blueprint = {
       _id: hexObjectId(),
-      name: newName('blueprint', states.value.blueprints),
+      name: newName('blueprint', blueprints.value),
       menuId: undefined,
       properties: {},
       componentType: '',
       ...options,
     }
-    states.value.blueprints = [...states.value.blueprints, b]
+    blueprints.value = [...blueprints.value, b]
     return b
   }
 
@@ -90,12 +83,12 @@ export const useBlueprintEditor = defineStore('blueprint-editor', () => {
    * @returns {boolean} True is successful
    */
   const remove = (id: string): boolean => {
-    const idx = states.value.blueprints
+    const idx = blueprints.value
       .findIndex((b) => b._id === id)
     if (idx !== -1) {
-      states.value.blueprints = [
-        ...states.value.blueprints.slice(0, idx),
-        ...states.value.blueprints.slice(idx + 1),
+      blueprints.value = [
+        ...blueprints.value.slice(0, idx),
+        ...blueprints.value.slice(idx + 1),
       ]
       return true
     }
@@ -178,7 +171,7 @@ export const useBlueprintEditor = defineStore('blueprint-editor', () => {
    * @returns {boolean} True if the same
    */
   const isEditing = (id: string): boolean => (
-    states.value.blueprintId === id
+    blueprintId.value === id
   )
 
   /**
@@ -187,11 +180,10 @@ export const useBlueprintEditor = defineStore('blueprint-editor', () => {
    * @param id ID of the blueprint
    */
   const edit = (id: string) => {
-    states.value.blueprintId = id
+    blueprintId.value = id
   }
 
   return {
-    states,
     blueprints,
     blueprintId,
     locals,

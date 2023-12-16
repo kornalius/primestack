@@ -1,5 +1,5 @@
 import {
-  computed, Ref, ref, watch, WatchStopHandle,
+  Ref, ref, watch, WatchStopHandle,
 } from 'vue'
 import get from 'lodash/get'
 import set from 'lodash/set'
@@ -14,41 +14,34 @@ export type JSON = AnyData | AnyData[]
 let previousHotkeysScope: string
 
 export const useJsonEditor = defineStore('json-editor', () => {
-  const states = ref({
-    active: false,
-    dragging: false,
-    expandedPaths: [] as string[],
-    focusedPath: undefined,
-    focusedKey: undefined,
-    jsonFn: undefined as (d?: JSON) => Ref<JSON> | undefined,
-  })
-
-  const undoStore = useUndo('json-undo')()
-
   /**
    * Returns true if a JSON editing session is in progress
    */
-  const active = computed(() => states.value.active)
+  const active = ref(false)
 
   /**
    * Returns true if JSON Array item is being dragged
    */
-  const dragging = computed(() => states.value.dragging)
+  const dragging = ref(false)
 
   /**
    * Returns all expanded paths
    */
-  const expandedPaths = computed(() => states.value.expandedPaths)
+  const expandedPaths = ref([]) as Ref<string[]>
 
   /**
    * Returns the focused path
    */
-  const focusedPath = computed(() => states.value.focusedPath)
+  const focusedPath = ref() as Ref<string>
 
   /**
    * Returns the focused key
    */
-  const focusedKey = computed(() => states.value.focusedKey)
+  const focusedKey = ref() as Ref<string>
+
+  const jsonFn = ref() as Ref<(d?: JSON) => Ref<JSON> | undefined>
+
+  const undoStore = useUndo('json-undo')()
 
   /**
    * Build a path from arguments (array, strings and numbers)
@@ -85,7 +78,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
    * @return {AnyData|AnyData[]}
    */
   const getPathValue = (path: string): unknown => {
-    const json = states.value.jsonFn().value
+    const json = jsonFn.value().value
     return path === '' || path === undefined ? json : get(json, path)
   }
 
@@ -96,7 +89,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
    * @param value Value to set
    */
   const setPathValue = (path: string, value: unknown) => {
-    const json = states.value.jsonFn()
+    const json = jsonFn.value()
     if (path === '' || path === undefined) {
       json.value = value
     } else {
@@ -220,7 +213,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
    * Creates a snapshot of the current editing json data
    */
   const snapshot = (): JSON => (
-    cloneDeep(states.value.jsonFn().value)
+    cloneDeep(jsonFn.value().value)
   )
 
   /**
@@ -228,7 +221,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
    * If changed, creates a snapshot in the undo stack.
    */
   const startWatch = (): WatchStopHandle => watch(
-    states.value.jsonFn(),
+    jsonFn.value(),
     undoStore.snap(snapshot),
     { deep: true },
   )
@@ -236,11 +229,11 @@ export const useJsonEditor = defineStore('json-editor', () => {
   /**
    * Start a JSON editing session
    *
-   * @param jsonFn Function to get and set JSON data
+   * @param jfn Function to get and set JSON data
    */
-  const startEdit = (jsonFn: (d?: JSON) => Ref<JSON> | undefined) => {
-    states.value.active = true
-    states.value.jsonFn = jsonFn
+  const startEdit = (jfn: (d?: JSON) => Ref<JSON> | undefined) => {
+    active.value = true
+    jsonFn.value = jfn
     previousHotkeysScope = hotkeys.getScope()
     undoStore.startWatch(startWatch)
     undoStore.snap(snapshot)()
@@ -252,8 +245,8 @@ export const useJsonEditor = defineStore('json-editor', () => {
    */
   const endEdit = () => {
     undoStore.cancelWatch()
-    states.value.active = false
-    states.value.jsonFn = undefined
+    active.value = false
+    jsonFn.value = undefined
     undoStore.clearUndoStack()
     hotkeys.setScope(previousHotkeysScope)
   }
@@ -264,7 +257,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
    * @param d Is dragging on or off?
    */
   const setDragging = (d: boolean) => {
-    states.value.dragging = d
+    dragging.value = d
   }
 
   /**
@@ -275,7 +268,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
    * @return {boolean}
    */
   const isPathExpanded = (path: string): boolean => (
-    states.value.expandedPaths.includes(path)
+    expandedPaths.value.includes(path)
   )
 
   /**
@@ -284,8 +277,8 @@ export const useJsonEditor = defineStore('json-editor', () => {
    * @param path Path for the element in the JSON object
    */
   const expandPath = (path: string) => {
-    if (!states.value.expandedPaths.includes(path)) {
-      states.value.expandedPaths = [...states.value.expandedPaths, path]
+    if (!expandedPaths.value.includes(path)) {
+      expandedPaths.value = [...expandedPaths.value, path]
     }
   }
 
@@ -295,11 +288,11 @@ export const useJsonEditor = defineStore('json-editor', () => {
    * @param path Path for the element in the JSON object
    */
   const collapsePath = (path: string) => {
-    const idx = states.value.expandedPaths.indexOf(path)
+    const idx = expandedPaths.value.indexOf(path)
     if (idx !== -1) {
-      states.value.expandedPaths = [
-        ...states.value.expandedPaths.slice(0, idx),
-        ...states.value.expandedPaths.slice(idx + 1),
+      expandedPaths.value = [
+        ...expandedPaths.value.slice(0, idx),
+        ...expandedPaths.value.slice(idx + 1),
       ]
     }
   }
@@ -339,7 +332,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
    * @param path Path for the element in the JSON object
    */
   const setFocusedPath = (path: string) => {
-    states.value.focusedPath = path
+    focusedPath.value = path
   }
 
   /**
@@ -348,7 +341,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
    * @param path Path for the element in the JSON object
    */
   const setFocusedKey = (path: string) => {
-    states.value.focusedKey = path
+    focusedKey.value = path
   }
 
   /**
@@ -357,7 +350,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
   const undo = (): boolean => {
     const { ppath, key } = deconstructParentPath(focusedPath.value)
     if (undoStore.undo()) {
-      states.value.jsonFn(cloneDeep(undoStore.undoStack[undoStore.undoPtr]))
+      jsonFn.value(cloneDeep(undoStore.undoStack[undoStore.undoPtr]))
       const parent = getPathValue(ppath)
       if (Array.isArray(parent)) {
         const idx = Number(key || -1)
@@ -387,7 +380,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
   const redo = (): boolean => {
     const { ppath, key } = deconstructParentPath(focusedPath.value)
     if (undoStore.redo()) {
-      states.value.jsonFn(cloneDeep(undoStore.undoStack[undoStore.undoPtr]))
+      jsonFn.value(cloneDeep(undoStore.undoStack[undoStore.undoPtr]))
       const parent = getPathValue(ppath)
       if (Array.isArray(parent)) {
         const idx = Number(key || -1)
@@ -417,7 +410,7 @@ export const useJsonEditor = defineStore('json-editor', () => {
    * @param e
    */
   const preventSystemUndoRedo = (e: KeyboardEvent) => {
-    if (states.value.active) {
+    if (active.value) {
       if (e.ctrlKey && e.shiftKey && e.key === 'Z') {
         redo()
         e.preventDefault()
@@ -436,11 +429,11 @@ export const useJsonEditor = defineStore('json-editor', () => {
    * @returns {string} Item type (string, number, boolean, null, array, object)
    */
   const itemType = (path: string): string => {
-    if (typeof states.value.jsonFn !== 'function') {
+    if (typeof jsonFn.value !== 'function') {
       return 'string'
     }
 
-    const json = states.value.jsonFn()
+    const json = jsonFn.value()
     const item = path ? get(json.value, path) : json.value
 
     if (Array.isArray(item)) {
@@ -467,11 +460,11 @@ export const useJsonEditor = defineStore('json-editor', () => {
    * @returns {boolean} if the type change was successfull or not
    */
   const changeItemType = (path: string, type: string): boolean => {
-    if (typeof states.value.jsonFn !== 'function') {
+    if (typeof jsonFn.value !== 'function') {
       return false
     }
 
-    const json = states.value.jsonFn()
+    const json = jsonFn.value()
     const item = path ? get(json.value, path) : json.value
     const t = itemType(path)
 
@@ -590,14 +583,14 @@ export const useJsonEditor = defineStore('json-editor', () => {
       if (idx !== -1) {
         collapsePath(path)
         parent.splice(idx, 1)
-        const newPaths = [...states.value.expandedPaths]
+        const newPaths = [...expandedPaths.value]
         for (let i = idx; i <= parent.length; i++) {
-          const epi = states.value.expandedPaths.indexOf(buildPath(ppath, i))
+          const epi = expandedPaths.value.indexOf(buildPath(ppath, i))
           if (epi !== -1) {
             newPaths.splice(epi, 1, buildPath(ppath, i - 1))
           }
         }
-        states.value.expandedPaths = newPaths
+        expandedPaths.value = newPaths
         return focusTo(ppath, Math.min(parent.length - 1, idx))
       }
     }
@@ -789,7 +782,6 @@ export const useJsonEditor = defineStore('json-editor', () => {
   }
 
   return {
-    states,
     active,
     dragging,
     setDragging,

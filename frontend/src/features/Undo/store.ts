@@ -1,43 +1,37 @@
 import {
-  ref, computed, WatchStopHandle,
+  ref, computed, Ref, WatchStopHandle,
 } from 'vue'
 import debounce from 'lodash/debounce'
 import { defineStore } from 'pinia'
 
 export const useUndo = (name: string) => defineStore(name, () => {
-  const states = ref({
-    // Undo pointer
-    undoPtr: 0,
-    // Undo stack
-    undoStack: [] as unknown[],
-    // Maximum size of the undo stack
-    maxUndoStack: 25,
-  })
+  // Undo pointer
+  const undoPtr = ref(0)
 
-  const undoPtr = computed(() => states.value.undoPtr)
+  // Undo stack
+  const undoStack = ref([]) as Ref<unknown[]>
 
-  const undoStack = computed(() => states.value.undoStack)
-
-  const maxUndoStack = computed(() => states.value.maxUndoStack)
+  // Maximum size of the undo stack
+  const maxUndoStack = ref(25)
 
   /**
    * Clears the undo stack
    */
   const clearUndoStack = (): void => {
-    states.value.undoStack = []
-    states.value.undoPtr = 0
+    undoStack.value = []
+    undoPtr.value = 0
   }
 
   /**
    * Debounced snap function
    */
   const snap = (snapshotFn: () => unknown) => debounce(() => {
-    if (states.value.undoStack.length > states.value.maxUndoStack) {
-      states.value.undoStack.shift()
+    if (undoStack.value.length > maxUndoStack.value) {
+      undoStack.value.shift()
     }
-    states.value.undoStack = states.value.undoStack.slice(0, states.value.undoPtr + 1)
-    states.value.undoStack.push(snapshotFn())
-    states.value.undoPtr = states.value.undoStack.length - 1
+    undoStack.value = undoStack.value.slice(0, undoPtr.value + 1)
+    undoStack.value.push(snapshotFn())
+    undoPtr.value = undoStack.value.length - 1
   }, 250)
 
   let stopWatchHandle: WatchStopHandle
@@ -66,7 +60,7 @@ export const useUndo = (name: string) => defineStore(name, () => {
    * Can we undo changes?
    */
   const canUndo = computed(() => (
-    states.value.undoPtr > 0
+    undoPtr.value > 0
   ))
 
   /**
@@ -75,7 +69,7 @@ export const useUndo = (name: string) => defineStore(name, () => {
   const undo = (): boolean => {
     if (canUndo.value) {
       cancelWatch()
-      states.value.undoPtr -= 1
+      undoPtr.value -= 1
       return true
     }
     return false
@@ -85,7 +79,7 @@ export const useUndo = (name: string) => defineStore(name, () => {
    * Can we redo changes?
    */
   const canRedo = computed(() => (
-    states.value.undoPtr < states.value.undoStack.length - 1
+    undoPtr.value < undoStack.value.length - 1
   ))
 
   /**
@@ -94,7 +88,7 @@ export const useUndo = (name: string) => defineStore(name, () => {
   const redo = (): boolean => {
     if (canRedo.value) {
       cancelWatch()
-      states.value.undoPtr += 1
+      undoPtr.value += 1
       return true
     }
     return false
@@ -116,7 +110,6 @@ export const useUndo = (name: string) => defineStore(name, () => {
   }
 
   return {
-    states,
     undoPtr,
     undoStack,
     maxUndoStack,
