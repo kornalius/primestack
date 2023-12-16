@@ -50,8 +50,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import {
+  computed, onBeforeUnmount, ref, watch,
+} from 'vue'
 import omit from 'lodash/omit'
+import isEqual from 'lodash/isEqual'
 import sift from 'sift'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
@@ -308,6 +311,8 @@ let cancelData = () => {}
 let cancelCurrentPage = () => {}
 let cancelIsPending = () => {}
 
+let oldUseFindParams
+
 /**
  * To start fetching on the table
  */
@@ -316,9 +321,16 @@ watch(table, () => {
   dataRows.value = []
 
   cancelTotal()
+  cancelTotal = () => {}
+
   cancelData()
+  cancelData = () => {}
+
   cancelCurrentPage()
+  cancelCurrentPage = () => {}
+
   cancelIsPending()
+  cancelIsPending = () => {}
 
   if (table.value) {
     paginationFind = useFeathersService(table.value._id)
@@ -327,6 +339,11 @@ watch(table, () => {
         paginateOn: 'hybrid',
       })
     paginationFind.find()
+    paginationFind.queryWhen(() => {
+      const ok = !isEqual(useFindParams.value, oldUseFindParams)
+      oldUseFindParams = useFindParams.value
+      return ok
+    })
 
     cancelTotal = watch(paginationFind.total, () => {
       if (currentPagination.value) {
@@ -364,6 +381,13 @@ const paginationRequest = (r) => {
   currentPagination.value.rowsPerPage = r.pagination.rowsPerPage
   paginationFind.toPage(r.pagination.page)
 }
+
+onBeforeUnmount(() => {
+  cancelTotal()
+  cancelData()
+  cancelCurrentPage()
+  cancelIsPending()
+})
 
 /**
  * Watcher for hard-coded rows from props

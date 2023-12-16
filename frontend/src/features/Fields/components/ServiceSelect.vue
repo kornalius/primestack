@@ -48,7 +48,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import {
+  computed, onBeforeUnmount, ref, watch,
+} from 'vue'
 import { useModelValue } from '@/composites/prop'
 import { useFeathersService } from '@/composites/feathers'
 import { AnyData } from '@/shared/interfaces/commons'
@@ -129,21 +131,33 @@ const params = computed(() => ({
   },
 }))
 
+let cancelWatch = () => {}
+
 watch([() => props.service, () => props.tableId], () => {
+  cancelWatch()
+  cancelWatch = () => {}
+
   if (props.service && !reservedTableNames.includes(props.service)) {
     const { data: c, find } = useFeathersService(props.service)
       .useFind(params)
     find()
-    watch(c, () => {
+
+    cancelWatch = watch(c, () => {
       data.value = c.value
     }, { immediate: true })
   } else if (props.tableId) {
     const { data: c, find } = useFeathersService(props.tableId)
       .useFind(params)
     find()
-    watch(c, () => {
+
+    cancelWatch = watch(c, () => {
       data.value = c.value
     }, { immediate: true })
   }
 }, { immediate: true })
+
+onBeforeUnmount(() => {
+  cancelWatch()
+})
+
 </script>

@@ -294,7 +294,7 @@
 
 <script setup lang="ts">
 import {
-  computed, Ref, ref, watch,
+  computed, onBeforeUnmount, Ref, ref, watch,
 } from 'vue'
 import sample from 'lodash/sample'
 import hexObjectId from 'hex-object-id'
@@ -599,7 +599,20 @@ let paginationFind
 
 const paginatedRows = ref([])
 
+let cancelTotal = () => {}
+let cancelData = () => {}
+let cancelCurrentPage = () => {}
+
 watch(service, () => {
+  cancelTotal()
+  cancelTotal = () => {}
+
+  cancelData()
+  cancelData = () => {}
+
+  cancelCurrentPage()
+  cancelCurrentPage = () => {}
+
   paginationFind = service.value.useFind(
     paginationParams,
     {
@@ -609,11 +622,11 @@ watch(service, () => {
   )
   paginationFind.find()
 
-  watch(paginationFind.total, () => {
+  cancelTotal = watch(paginationFind.total, () => {
     currentPagination.value.rowsNumber = paginationFind.total.value
   }, { immediate: true })
 
-  watch(paginationFind.data, () => {
+  cancelData = watch(paginationFind.data, () => {
     paginatedRows.value = paginationFind.data.value
   }, { immediate: true, deep: true })
 
@@ -625,10 +638,16 @@ watch(service, () => {
   //   }
   // }, { immediate: true, deep: true })
 
-  watch(paginationFind.currentPage, () => {
+  cancelCurrentPage = watch(paginationFind.currentPage, () => {
     currentPagination.value.page = paginationFind.currentPage.value as number
   }, { immediate: true })
 }, { immediate: true })
+
+onBeforeUnmount(() => {
+  cancelTotal()
+  cancelData()
+  cancelCurrentPage()
+})
 
 const paginationRequest = (r) => {
   paginationFind.toPage(r.pagination.page)

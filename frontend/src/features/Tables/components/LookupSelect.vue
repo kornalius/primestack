@@ -15,7 +15,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import {
+  computed, onBeforeUnmount, ref, watch,
+} from 'vue'
 import { useModelValue } from '@/composites/prop'
 import { useFeathersService } from '@/composites/feathers'
 import { AnyData } from '@/shared/interfaces/commons'
@@ -57,14 +59,24 @@ const params = computed(() => ({
   },
 }))
 
+let cancelWatch = () => {}
+
 watch(() => props.tableId, () => {
+  cancelWatch()
+  cancelWatch = () => {}
+
   if (props.tableId) {
     const { data: rows, find } = useFeathersService(props.tableId)
       .useFind(params)
     find(params.value)
-    watch(rows, () => {
+
+    cancelWatch = watch(rows, () => {
       data.value = rows.value
     }, { immediate: true })
   }
 }, { immediate: true })
+
+onBeforeUnmount(() => {
+  cancelWatch()
+})
 </script>
