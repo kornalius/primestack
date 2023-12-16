@@ -4,7 +4,7 @@
       ...objectValue(component?.elementClasses || {}, field),
       'form-element': true,
       selected,
-      hovered: editor.isHovered(field._id),
+      hovered: isHovered,
     }"
     :style="{
       display: horizontal ? 'inline-block' : undefined,
@@ -19,8 +19,7 @@
     <!-- Component Icon -->
 
     <div
-      v-if="(!editor.isDragging && editor.isHovered(field._id))
-        || editor.isSelected(field._id)"
+      v-if="(!editor.isDragging && isHovered) || isSelected"
       class="action-button component-icon bg-grey-9 rounded-borders no-pointer-events"
     >
       <q-icon
@@ -33,7 +32,7 @@
     <!-- Interact button -->
 
     <q-btn
-      v-if="interactable && !editor.isDragging && editor.isHovered(field._id)"
+      v-if="interactable && !editor.isDragging && isHovered"
       class="action-button interactable"
       :icon="activeInteractable ? 'mdi-cursor-pointer' : 'mdi-cursor-move'"
       color="green-4"
@@ -49,7 +48,7 @@
     <!-- Remove button -->
 
     <q-btn
-      v-if="!editor.isDragging && editor.isHovered(field._id)"
+      v-if="!editor.isDragging && isHovered"
       class="action-button remove"
       icon="mdi-trash-can"
       color="red-4"
@@ -154,7 +153,6 @@
         v-bind="fieldBinds(field, schemaForField(field), ctx)"
         :model-value="field"
         :add-button="undefined"
-        :query="queryToMongo(field.query, fieldTable, ctx.$expr)"
       />
 
       <!-- Icon -->
@@ -214,7 +212,6 @@ import { Static } from '@feathersjs/typebox'
 import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
 import { useAppEditor } from '@/features/Editor/store'
-import { useQuery } from '@/features/Query/composites'
 import { useExpression } from '@/features/Expression/composites'
 import { stringValue, objectValue } from '@/composites/utilities'
 import { columnSchema, fieldSchema } from '@/shared/schemas/form'
@@ -273,19 +270,11 @@ const { buildCtx, getProp } = useExpression(t)
 
 const ctx = buildCtx()
 
-const { queryToMongo } = useQuery()
-
 const editor = useAppEditor()
 
 const component = computed(() => (
   // eslint-disable-next-line no-underscore-dangle
   componentsByType[field.value._type]
-))
-
-const fieldTable = computed(() => (
-  field.value.tableId
-    ? editor.tables.find((tbl) => tbl._id === field.value.tableId)
-    : undefined
 ))
 
 const onClick = () => {
@@ -316,6 +305,10 @@ const activeInteractable = ref(false)
 const toggleInteractable = () => {
   activeInteractable.value = !activeInteractable.value
 }
+
+const isHovered = computed(() => editor.isHovered(field.value._id))
+
+const isSelected = computed(() => editor.isSelected(field.value._id))
 
 const overlayTop = ref('')
 

@@ -22,7 +22,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import {
+  computed, onBeforeUnmount, ref, watch,
+} from 'vue'
 import { useModelValue } from '@/composites/prop'
 import { useFeathersService } from '@/composites/feathers'
 import { AnyData } from '@/shared/interfaces/commons'
@@ -70,15 +72,26 @@ const params = computed(() => ({
   },
 }))
 
+let cancelRows = () => {}
+let cancelIsPending = () => {}
+
 watch([() => props.tableId, () => props.field], () => {
+  cancelRows()
+  cancelRows = () => {}
+
+  cancelIsPending()
+  cancelIsPending = () => {}
+
   if (props.tableId && props.field) {
     const { data: rows, pending, find } = useFeathersService(props.tableId)
       .useFind(params)
     find(params.value)
-    watch(rows, () => {
+
+    cancelRows = watch(rows, () => {
       data.value = rows.value
     }, { immediate: true })
-    watch(pending, () => {
+
+    cancelIsPending = watch(pending, () => {
       isPending.value = pending.value
     }, { immediate: true })
   }
@@ -94,4 +107,9 @@ const newValue = (v: string, doneFn: ((item: string, mode?: string) => void)) =>
   doneFn(v)
   emit('new-value', v)
 }
+
+onBeforeUnmount(() => {
+  cancelRows()
+  cancelIsPending()
+})
 </script>

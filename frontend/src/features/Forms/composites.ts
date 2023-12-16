@@ -21,6 +21,7 @@ import { flattenFields, parentFormField } from '@/shared/form'
 import { getProp } from '@/features/Expression/composites'
 import { generateFormField } from '@/features/Tables/composites'
 import { newName } from '@/shared/utils'
+import { queryToMongo } from '@/features/Query/composites'
 import { actionElementSchema, actionSchema } from '@/shared/schemas/actions'
 import { tableFieldSchema, tableSchema } from '@/shared/schemas/table'
 import { columnSchema, fieldSchema, formSchema } from '@/shared/schemas/form'
@@ -31,6 +32,7 @@ type Form = Static<typeof formSchema>
 type FormField = Static<typeof fieldSchema>
 type FormColumn = Static<typeof columnSchema>
 type Action = Static<typeof actionSchema>
+type Table = Static<typeof tableSchema>
 
 const validators = useValidators()
 
@@ -502,6 +504,8 @@ export const useFormElements = () => ({
    * @returns {AnyData}
    */
   fieldBinds: (field: FormField | FormColumn, schema: TSchema, ctx: AnyData, pick?: string[]): AnyData => {
+    const editor = useAppEditor()
+
     const fieldsToOmit = [
       '_id',
       'name',
@@ -535,14 +539,20 @@ export const useFormElements = () => ({
     return Object.keys(omit(field, fieldsToOmit))
       .reduce((acc, k) => {
         let fieldname = k
-        const prop = schema.properties[k] as AnyData
+        const prop = schema.properties[k] as TSchema
+        const type = prop && getTypeFor(prop)
 
         // if (ctx.editor.active) {
         //   return { ...acc, [k]: field[k] }
         // }
 
+        // schema property specifies its own prop name
+        if (prop && prop.propname) {
+          fieldname = prop.propname
+        }
+
         // if it's an action, use onXxxx event key names instead
-        if (prop && getTypeFor(schema.properties[k]) === 'action') {
+        if (type === 'action') {
           // eslint-disable-next-line no-underscore-dangle
           const eventArgsFn = eventArgsForField(field._type)?.[k]
           return {
@@ -551,9 +561,26 @@ export const useFormElements = () => ({
           }
         }
 
-        // schema property specifies its own prop name
-        if (prop && prop.propname) {
-          fieldname = prop.propname
+        if (type === 'query') {
+          const { tableId } = (field as AnyData)
+
+          if (editor.active) {
+            const fieldTable = editor.tables
+              .find((tbl: Table) => tbl._id === tableId)
+            return {
+              ...acc,
+              [fieldname]: queryToMongo(field[k], fieldTable, ctx.$expr),
+            }
+          }
+
+          const userTable = useFeathersService('tables')
+            .findOneInStore({ query: {} })
+          const fieldTable = userTable.value?.list
+            .find((tt: Table) => tt._id === tableId)
+          return {
+            ...acc,
+            [fieldname]: queryToMongo(field[k], fieldTable, ctx.$expr),
+          }
         }
 
         return { ...acc, [fieldname]: getProp(field[k], ctx) }

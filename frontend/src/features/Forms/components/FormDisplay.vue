@@ -137,25 +137,6 @@
         lazy-rules
       />
 
-      <!-- Numeric without field -->
-
-      <component
-        :is="componentForField(field)"
-        v-else-if="isNumericInput(field)"
-        :model-value="field[modelValueForField(field)]"
-        :class="{
-          ...objectValue(componentsByType[field._type]?.classes || {}, field),
-          ...classBinds(field),
-        }"
-        :style="{
-          ...objectValue(componentsByType[field._type]?.styles || {}, field),
-          ...styleBinds(field),
-        }"
-        v-bind="fieldBinds(field, schemaForField(field), ctx)"
-        :rules="serializeRules(t, field)"
-        lazy-rules
-      />
-
       <!-- Regular with field -->
 
       <component

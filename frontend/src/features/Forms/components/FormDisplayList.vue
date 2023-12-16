@@ -59,7 +59,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import {
+  computed, onBeforeUnmount, ref, watch,
+} from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { useI18n } from 'vue-i18n'
 import { useModelValue } from '@/composites/prop'
@@ -124,7 +126,16 @@ const list = ref([])
 
 const isLoading = ref(false)
 
+let cancelData = () => {}
+let cancelIsPending = () => {}
+
 watch(() => props.field, () => {
+  cancelData()
+  cancelData = () => {}
+
+  cancelIsPending()
+  cancelIsPending = () => {}
+
   const field = props.field as AnyData
 
   // expression
@@ -143,15 +154,22 @@ watch(() => props.field, () => {
     if (table) {
       const q = field.query ? queryToMongo(field.query as Query, table, ctx.$expr) : {}
       const find = useFeathersService(field.tableId).useFind(computed(() => ({ query: q })))
-      watch(find.data, () => {
+
+      cancelData = watch(find.data, () => {
         list.value = find.data.value
       })
-      watch(find.isPending, () => {
+
+      cancelIsPending = watch(find.isPending, () => {
         isLoading.value = find.isPending.value
       })
     }
   }
 }, { immediate: true, deep: true })
+
+onBeforeUnmount(() => {
+  cancelData()
+  cancelIsPending()
+})
 
 const objectItem = (item: unknown, index: number): Record<string, unknown> => {
   // if it's an object, expand it
