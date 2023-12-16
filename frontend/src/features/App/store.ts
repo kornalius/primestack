@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue'
+import { Ref, computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { defineStore } from 'pinia'
 import { Static } from '@feathersjs/typebox'
@@ -17,55 +17,49 @@ type Tab = Static<typeof tabSchema>
 type User = Static<typeof userSchema>
 
 export const useApp = defineStore('app', () => {
-  const states = ref({
-    menuId: undefined,
-    tabId: undefined,
-    formId: undefined,
-    tableId: undefined,
-    doc: undefined,
-    selection: [] as AnyData[],
-    locale: (localStorage.getItem('locale') || navigator.language || 'en').substring(0, 2),
-  })
-
   /**
    * Returns the current menu id
    */
-  const menuId = computed(() => states.value.menuId)
+  const menuId = ref() as Ref<string>
 
   /**
    * Returns the current tab id
    */
-  const tabId = computed(() => states.value.tabId)
+  const tabId = ref() as Ref<string>
 
   /**
    * Returns the current form id
    */
-  const formId = computed(() => states.value.formId)
+  const formId = ref() as Ref<string>
 
   /**
    * Returns the current table id
    */
-  const tableId = computed(() => states.value.tableId)
+  const tableId = ref() as Ref<string>
 
   /**
    * Returns the current document data
    */
-  const doc = computed(() => states.value.doc)
+  const doc = ref() as Ref<AnyData>
 
   /**
    * Returns the currently selected rows in the form's table
    */
-  const selection = computed(() => states.value.selection)
-
-  /**
-   * Returns true if there are rows selected in the form's table
-   */
-  const hasSelection = computed(() => states.value.selection.length > 0)
+  const selection = ref([]) as Ref<AnyData[]>
 
   /**
    * Returns the active locale code
    */
-  const locale = computed(() => states.value.locale)
+  const locale = ref(
+    (localStorage.getItem('locale') || navigator.language || 'en').substring(0, 2),
+  ) as Ref<string>
+
+  /**
+   * Returns true if there are rows selected in the form's table
+   */
+  const hasSelection = computed(() => (
+    selection.value.length > 0
+  ))
 
   const i18n = useI18n()
 
@@ -78,7 +72,7 @@ export const useApp = defineStore('app', () => {
    * @param updateUser Should we also patch the user on the server
    */
   const setLocale = async (code: string, updateUser = true) => {
-    states.value.locale = code
+    locale.value = code
     localStorage.setItem('locale', code)
     i18n.locale.value = code
     if (auth.userId && updateUser) {
@@ -95,12 +89,12 @@ export const useApp = defineStore('app', () => {
    * @param id Menu Id
    */
   const setMenu = (id: string) => {
-    states.value.menuId = id
-    states.value.tabId = undefined
-    states.value.formId = undefined
-    states.value.tableId = undefined
-    states.value.doc = undefined
-    states.value.selection = []
+    menuId.value = id
+    tabId.value = undefined
+    formId.value = undefined
+    tableId.value = undefined
+    doc.value = undefined
+    selection.value = []
   }
 
   /**
@@ -109,11 +103,11 @@ export const useApp = defineStore('app', () => {
    * @param id Tab Id
    */
   const setTab = (id: string) => {
-    states.value.tabId = id
-    states.value.formId = undefined
-    states.value.tableId = undefined
-    states.value.doc = undefined
-    states.value.selection = []
+    tabId.value = id
+    formId.value = undefined
+    tableId.value = undefined
+    doc.value = undefined
+    selection.value = []
   }
 
   /**
@@ -122,10 +116,10 @@ export const useApp = defineStore('app', () => {
    * @param id Form Id
    */
   const setForm = (id: string) => {
-    states.value.formId = id
-    states.value.tableId = undefined
-    states.value.doc = undefined
-    states.value.selection = []
+    formId.value = id
+    tableId.value = undefined
+    doc.value = undefined
+    selection.value = []
   }
 
   /**
@@ -134,9 +128,9 @@ export const useApp = defineStore('app', () => {
    * @param id Table Id
    */
   const setTable = (id: string) => {
-    states.value.tableId = id
-    states.value.doc = undefined
-    states.value.selection = []
+    tableId.value = id
+    doc.value = undefined
+    selection.value = []
   }
 
   /**
@@ -145,8 +139,8 @@ export const useApp = defineStore('app', () => {
    * @param d Document data
    */
   const setDoc = (d: AnyData) => {
-    states.value.doc = d
-    states.value.selection = []
+    doc.value = d
+    selection.value = []
   }
 
   /**
@@ -155,7 +149,7 @@ export const useApp = defineStore('app', () => {
    * @param rows Rows of data
    */
   const setSelection = (rows: AnyData[]) => {
-    states.value.selection = rows
+    selection.value = rows
   }
 
   /**
@@ -165,7 +159,7 @@ export const useApp = defineStore('app', () => {
    */
   const menuInstance = computed((): Menu => {
     const userMenu = useFeathersService('menus').findOneInStore({ query: {} })
-    return userMenu.value?.list.find((m: Menu) => m._id === states.value.menuId)
+    return userMenu.value?.list.find((m: Menu) => m._id === menuId.value)
   })
 
   /**
@@ -174,7 +168,7 @@ export const useApp = defineStore('app', () => {
    * @returns {Tab}
    */
   const tabInstance = computed((): Tab => (
-    menuInstance.value?.tabs.find((t: Tab) => t._id === states.value.tabId)
+    menuInstance.value?.tabs.find((t: Tab) => t._id === tabId.value)
   ))
 
   /**
@@ -184,7 +178,7 @@ export const useApp = defineStore('app', () => {
    */
   const formInstance = computed((): Form => {
     const userForm = useFeathersService('forms').findOneInStore({ query: {} })
-    return userForm.value?.list.find((f: Form) => f._id === states.value.formId)
+    return userForm.value?.list.find((f: Form) => f._id === formId.value)
   })
 
   /**
@@ -194,13 +188,12 @@ export const useApp = defineStore('app', () => {
    */
   const tableInstance = computed((): Table => {
     const userTable = useFeathersService('tables').findOneInStore({ query: {} })
-    return userTable.value?.list.find((t: Table) => t._id === states.value.tableId)
+    return userTable.value?.list.find((t: Table) => t._id === tableId.value)
   })
 
-  setLocale(states.value.locale, false).then(() => {})
+  setLocale(locale.value, false).then(() => {})
 
   return {
-    states,
     menuId,
     tabId,
     formId,

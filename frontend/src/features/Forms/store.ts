@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, Ref } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import cloneDeep from 'lodash/cloneDeep'
 import hexObjectId from 'hex-object-id'
@@ -32,47 +32,23 @@ type FormColumn = Static<typeof columnSchema>
 type FormTableColumn = Static<typeof formTableColumnSchema>
 
 export const useFormEditor = defineStore('form-editor', () => {
-  const states = ref({
-    // is the forms editor active or not?
-    formsEditor: false,
-    // id of the form being edited
-    formId: undefined,
-    // forms being edited
-    forms: [] as Form[],
-    // is the preview mode activated or not?
-    preview: false,
-    // data to preview
-    previewFormData: undefined,
-    // should we show the form data in preview mode?
-    showPreviewFormData: false,
-  })
+  // is the forms editor active or not?
+  const formsEditor = ref(false)
 
-  /**
-   * Is the forms editor active?
-   */
-  const formsEditor = computed(() => (
-    states.value.formsEditor
-  ))
+  // id of the form being edited
+  const formId = ref() as Ref<string>
 
-  /**
-   * Id of the form being edited
-   */
-  const formId = computed(() => (
-    states.value.formId
-  ))
+  // forms being edited
+  const forms = ref([]) as Ref<Form[]>
 
-  /**
-   * Clone of the user's forms
-   */
-  const forms = computed(() => (
-    states.value.forms
-  ))
+  // is the preview mode activated or not?
+  const preview = ref(false)
 
-  const preview = computed(() => states.value.preview)
+  // data to preview
+  const previewFormData = ref()
 
-  const previewFormData = computed(() => states.value.previewFormData)
-
-  const showPreviewFormData = computed(() => states.value.showPreviewFormData)
+  // should we show the form data in preview mode?
+  const showPreviewFormData = ref(false)
 
   /**
    * Sets the cloned forms
@@ -80,7 +56,7 @@ export const useFormEditor = defineStore('form-editor', () => {
    * @param list
    */
   const setForms = (list: Form[]) => {
-    states.value.forms = list
+    forms.value = list
   }
 
   /**
@@ -89,7 +65,7 @@ export const useFormEditor = defineStore('form-editor', () => {
    * @param a Active or not
    */
   const setFormsEditor = (a: boolean): void => {
-    states.value.formsEditor = a
+    formsEditor.value = a
   }
 
   /**
@@ -98,7 +74,7 @@ export const useFormEditor = defineStore('form-editor', () => {
    * @param id Id of the form
    */
   const setFormId = (id: string): void => {
-    states.value.formId = id
+    formId.value = id
   }
 
   /**
@@ -109,8 +85,8 @@ export const useFormEditor = defineStore('form-editor', () => {
    * @returns {Form|undefined} Instance of the form
    */
   const instance = (id: string): Form | undefined => (
-    states.value.forms?.find
-      ? states.value.forms
+    forms.value?.find
+      ? forms.value
         ?.find((f) => f._id === id)
       : undefined
   )
@@ -120,7 +96,7 @@ export const useFormEditor = defineStore('form-editor', () => {
    */
   const flatFields = (): FormField[] => (
     // eslint-disable-next-line no-underscore-dangle
-    flattenFields(instance(states.value.formId)?._fields || [])
+    flattenFields(instance(formId.value)?._fields || [])
   )
 
   /**
@@ -191,8 +167,8 @@ export const useFormEditor = defineStore('form-editor', () => {
    * @returns {Form} New form instance
    */
   const add = (options?: AnyData): Form => {
-    const f = newForm(states.value.forms, options)
-    states.value.forms = [...states.value.forms, f]
+    const f = newForm(forms.value, options)
+    forms.value = [...forms.value, f]
     return f
   }
 
@@ -206,9 +182,9 @@ export const useFormEditor = defineStore('form-editor', () => {
   const duplicate = (form: Form): Form => {
     const f: Form = {
       ...recreateFormIds(cloneDeep(form)),
-      name: newName('form', states.value.forms),
+      name: newName('form', forms.value),
     }
-    states.value.forms = [...states.value.forms, f]
+    forms.value = [...forms.value, f]
     return f
   }
 
@@ -220,12 +196,12 @@ export const useFormEditor = defineStore('form-editor', () => {
    * @returns {boolean} True is successful
    */
   const remove = (id: string): boolean => {
-    const index = states.value.forms
+    const index = forms.value
       .findIndex((f) => f._id === id)
     if (index !== -1) {
-      states.value.forms = [
-        ...states.value.forms.slice(0, index),
-        ...states.value.forms.slice(index + 1),
+      forms.value = [
+        ...forms.value.slice(0, index),
+        ...forms.value.slice(index + 1),
       ]
       return true
     }
@@ -244,7 +220,7 @@ export const useFormEditor = defineStore('form-editor', () => {
     component: TFormComponent,
     options?: AnyData,
   ): FormField | FormColumn | undefined => {
-    const form = instance(states.value.formId)
+    const form = instance(formId.value)
     if (form) {
       return newFormField(component.type, flatFields(), options)
     }
@@ -263,7 +239,7 @@ export const useFormEditor = defineStore('form-editor', () => {
     component: TFormComponent,
     options?: AnyData,
   ): FormField | FormColumn | undefined => {
-    const form = instance(states.value.formId)
+    const form = instance(formId.value)
     if (form) {
       const field = createField(component, options)
       if (field) {
@@ -285,7 +261,7 @@ export const useFormEditor = defineStore('form-editor', () => {
   const duplicateField = (
     field: FormField | FormColumn,
   ): FormField | FormColumn | undefined => {
-    const form = instance(states.value.formId)
+    const form = instance(formId.value)
     const arr = parentFormFieldArray(form, field) as unknown[]
     if (arr) {
       // eslint-disable-next-line no-underscore-dangle
@@ -404,19 +380,18 @@ export const useFormEditor = defineStore('form-editor', () => {
   }
 
   const setPreview = (p: boolean) => {
-    states.value.preview = p
+    preview.value = p
   }
 
   const setPreviewFormData = (data: AnyData | undefined) => {
-    states.value.previewFormData = data
+    previewFormData.value = data
   }
 
   const setShowPreviewFormData = (show: boolean) => {
-    states.value.showPreviewFormData = show
+    showPreviewFormData.value = show
   }
 
   return {
-    states,
     formsEditor,
     formId,
     forms,

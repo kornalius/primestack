@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, Ref } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import cloneDeep from 'lodash/cloneDeep'
 import { defineStore } from 'pinia'
@@ -13,15 +13,10 @@ type Menu = Static<typeof menuSchema>
 type Form = Static<typeof formSchema>
 
 export const useTabEditor = defineStore('tab-editor', () => {
-  const states = ref({
-    // tab id being edited
-    tabId: undefined,
-  })
-
   /**
    * Selected tab id
    */
-  const tabId = computed(() => states.value.tabId)
+  const tabId = ref() as Ref<string>
 
   /**
    * Selects a tab
@@ -29,7 +24,7 @@ export const useTabEditor = defineStore('tab-editor', () => {
    * @param id Id of the tab
    */
   const setTabId = (id: string): boolean => {
-    states.value.tabId = id
+    tabId.value = id
     return true
   }
 
@@ -96,7 +91,6 @@ export const useTabEditor = defineStore('tab-editor', () => {
   }
 
   return {
-    states,
     tabId,
     setTabId,
     add,

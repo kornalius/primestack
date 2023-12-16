@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, Ref } from 'vue'
 import { Static } from '@feathersjs/typebox'
 import { defineStore } from 'pinia'
 import hexObjectId from 'hex-object-id'
@@ -14,29 +14,20 @@ type Action = Static<typeof actionSchema>
 type ActionElement = Static<typeof actionElementSchema>
 
 export const useActionEditor = defineStore('action-editor', () => {
-  const states = ref({
-    // id of action being edited
-    actionId: undefined,
-    // name of action event being edited
-    actionEvent: undefined,
-    // actions being edited
-    actions: [] as Action[],
-  })
-
   /**
    * Selected action id
    */
-  const actionId = computed(() => states.value.actionId)
+  const actionId = ref(undefined) as Ref<string>
 
   /**
    * Selected action event name
    */
-  const actionEvent = computed(() => states.value.actionEvent)
+  const actionEvent = ref() as Ref<string>
 
   /**
    * Clone of the user's actions
    */
-  const actions = computed(() => states.value.actions)
+  const actions = ref([]) as Ref<Action[]>
 
   /**
    * Sets the cloned actions
@@ -44,7 +35,7 @@ export const useActionEditor = defineStore('action-editor', () => {
    * @param list
    */
   const setActions = (list: Action[]) => {
-    states.value.actions = list
+    actions.value = list
   }
 
   /**
@@ -55,7 +46,7 @@ export const useActionEditor = defineStore('action-editor', () => {
    * @returns {Action|undefined} Action instance from the id
    */
   const instance = (id: string): Action | undefined => (
-    states.value.actions.find((a) => a._id === id)
+    actions.value.find((a) => a._id === id)
   )
 
   /**
@@ -66,7 +57,7 @@ export const useActionEditor = defineStore('action-editor', () => {
    * @returns {ActionElement|undefined} ActionElement instance from the id
    */
   const actionElementInstance = (id: string): ActionElement | undefined => {
-    const currentAction = instance(states.value.actionId)
+    const currentAction = instance(actionId.value)
     // eslint-disable-next-line no-underscore-dangle
     return flattenActions(currentAction?._actions)
       .find((a) => a._id === id)
@@ -77,7 +68,7 @@ export const useActionEditor = defineStore('action-editor', () => {
    * @param id
    */
   const setActionId = (id: string): void => {
-    states.value.actionId = id
+    actionId.value = id
   }
 
   /**
@@ -86,7 +77,7 @@ export const useActionEditor = defineStore('action-editor', () => {
    * @param name Name of the event
    */
   const setActionEvent = (name: string): void => {
-    states.value.actionEvent = name
+    actionEvent.value = name
   }
 
   /**
@@ -103,7 +94,7 @@ export const useActionEditor = defineStore('action-editor', () => {
       _actions: [],
       ...options,
     }
-    states.value.actions = [...states.value.actions, a]
+    actions.value = [...actions.value, a]
     return a
   }
 
@@ -115,12 +106,12 @@ export const useActionEditor = defineStore('action-editor', () => {
    * @returns {boolean} True is successful
    */
   const remove = (id: string): boolean => {
-    const idx = states.value.actions
+    const idx = actions.value
       .findIndex((a) => a._id === id)
     if (idx !== -1) {
-      states.value.actions = [
-        ...states.value.actions.slice(0, idx),
-        ...states.value.actions.slice(idx + 1),
+      actions.value = [
+        ...actions.value.slice(0, idx),
+        ...actions.value.slice(idx + 1),
       ]
       return true
     }
@@ -157,7 +148,7 @@ export const useActionEditor = defineStore('action-editor', () => {
    * @returns {ActionElement} New action element instance
    */
   const addActionElement = (action: TAction, options?: AnyData): ActionElement => {
-    const currentAction = instance(states.value.actionId)
+    const currentAction = instance(actionId.value)
     const a: ActionElement = createActionElement(action, options)
     // eslint-disable-next-line no-underscore-dangle
     currentAction._actions.push(a)
@@ -201,7 +192,7 @@ export const useActionEditor = defineStore('action-editor', () => {
       ...cloneDeep(action),
       _id: hexObjectId(),
     }
-    states.value.actions = [...states.value.actions, a]
+    actions.value = [...actions.value, a]
     return a
   }
 
@@ -224,7 +215,6 @@ export const useActionEditor = defineStore('action-editor', () => {
   }
 
   return {
-    states,
     actionId,
     actionEvent,
     actions,
